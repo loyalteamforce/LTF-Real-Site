@@ -1,201 +1,259 @@
-<!doctype html>
-<html lang="tr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Projelerimiz</title>
-  <!-- Dış CSS bağlantısı -->
-  <link rel="stylesheet" href="projelerimiz.css">
-</head>
-<body>
-  <header>
-    <div class="logo-area">
-      <div class="photo-placeholder" title="Buraya küçük fotoğraf ekleyin">
-        <!-- Buraya kendi resmini koy -->
-        <img id="user-photo" src="522796671_633320249801242_3069423785049686180_n.jpg" alt="fotoğraf"/>
-      </div>
-      <div>
-        <div class="site-title">Projelerimiz</div>
-        <div class="subtitle">Sitemizin Projeler Sayfası</div>
-      </div>
-    </div>
-  </header>
-
-  <main class="container">
-    <div class="grid">
-
-      <!-- Ana içerik -->
-      <section>
-        <div id="home-page" class="page active">
-          <div class="main-card">
-            <h1>Projelerimiz</h1>
-            <p class="lead">Aşağıdaki projelere tıklayarak ilgili sayfaya gidin.</p>
-
-            <div class="projects-list" id="projectsList">
-              <div class="project" data-id="p1">
-                <h3>Lost Spirit Whisper</h3>
-                <p>Yakında..</p>
-              </div>
-
-              <div class="project" data-id="p2">
-                <h3>Yakında...</h3>
-                <p>Kısa açıklama: Yok.</p>
-              </div>
-
-              <div class="project" data-id="p3">
-                <h3>Yakında.../h3>
-                <p>Kısa açıklama: Yok.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Detay sayfası -->
-        <div id="detail-page" class="page">
-          <div class="detail">
-            <button class="back" id="backBtn">← Geri</button>
-            <h2 id="detailTitle"></h2>
-            <p id="detailDesc"></p>
-            <div class="detail-box">
-              <strong>Proje açıklaması:</strong>
-              <p id="detailContent"></p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Sağ kenar -->
-      <aside>
-        <div class="sidebar">
-          <h4>Hızlı Bağlantılar</h4>
-          <ul>
-            <li><span class="link" id="index.html">Anasayfa</span></li>
-            <li><span class="link" data-target="p1">LSW</span></li>
-            <li><span class="link" data-target="p2">Yakında...</span></li>
-            <li><span class="link" data-target="p3">Yakında...</span></li>
-          </ul>
-          <hr>
-          <div class="info">Kurucular: <b class="yellow">Nihish</b> & <b class="black-bg">Chivas</b></div>
-        </div>
-      </aside>
-
-    </div>
-  </main>
-
-  <!-- Dış JS bağlantısı -->
-  <script src="projelerimiz.js"></script>
-</body>
-</html>
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>Hamburger Menü Test</title>
-
-<style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-    }
-
-    /* --- ANİMASYONLU HAMBURGER --- */
-    .hamburger {
-        width: 35px;
-        height: 28px;
-        position: fixed;
-        top: 15px;
-        left: 15px;
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        cursor: pointer;
-    }
-
-    .hamburger span {
-        display: block;
-        height: 4px;
-        background: #fff;
-        border-radius: 4px;
-        transition: 0.35s ease;
-    }
-
-    /* X HALİ */
-    .hamburger.open .bar1 {
-        transform: translateY(12px) rotate(45deg);
-    }
-    .hamburger.open .bar2 {
-        opacity: 0;
-    }
-    .hamburger.open .bar3 {
-        transform: translateY(-12px) rotate(-45deg);
-    }
-
-    /* Menü */
-    .side-menu {
-        width: 220px;
-        height: 100%;
-        background: #222;
-        color: #fff;
-        position: fixed;
-        top: 0;
-        left: -220px;
-        padding-top: 60px;
-        transition: left 0.3s;
-    }
-
-    .side-menu a {
-        display: block;
-        color: #fff;
-        padding: 15px;
-        text-decoration: none;
-        font-size: 18px;
-    }
-
-    .side-menu a:hover {
-        background: #444;
-    }
-
-    .side-menu.open {
-        left: 0;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loyal Team Force - Projelerimiz</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS dosyası -->
+    <link rel="stylesheet" href="projelerimiz.css">
 </head>
-
 <body>
+    <!-- LOADING -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader"></div>
+    </div>
 
-<!-- ANİMASYONLU HAMBURGER BUTONU -->
-<div id="menuBtn" class="hamburger">
-    <span class="bar1"></span>
-    <span class="bar2"></span>
-    <span class="bar3"></span>
-</div>
+    <!-- HAMBURGER -->
+    <div id="menuBtn" class="hamburger">
+        <span class="bar1"></span>
+        <span class="bar2"></span>
+        <span class="bar3"></span>
+    </div>
 
-<nav id="sideMenu" class="side-menu">
-    <a href="index.html">Ana Sayfa</a>
-    <a href="leaderboard.html">Liderlik Tablosu</a>
-    <a href="proje.html">Projelerimiz</a>
-    <a href="social.html">Sosyal Medya</a>
-    <a href="team.html">Takımımız</a>
-</nav>
+    <!-- SIDE MENU -->
+    <nav id="sideMenu" class="side-menu">
+        <div class="menu-items">
+            <a href="index.html" class="menu-link">
+                <i class="fas fa-home"></i>
+                Ana Sayfa
+            </a>
+            <a href="leaderboard.html" class="menu-link">
+                <i class="fas fa-trophy"></i>
+                Liderlik Tablosu
+            </a>
+            <a href="proje.html" class="menu-link active">
+                <i class="fas fa-code-branch"></i>
+                Projelerimiz
+            </a>
+            <a href="social.html" class="menu-link">
+                <i class="fas fa-users"></i>
+                Sosyal Medya
+            </a>
+            <a href="team.html" class="menu-link">
+                <i class="fas fa-user-ninja"></i>
+                Takımımız
+            </a>
+        </div>
+        <div class="menu-footer">
+            <p>LTF © 2025</p>
+        </div>
+    </nav>
 
-<script>
-    const btn = document.getElementById("menuBtn");
-    const menu = document.getElementById("sideMenu");
+    <!-- HEADER -->
+    <header>
+        <div class="logo-area">
+            <div class="photo-placeholder">
+                <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="fotoğraf" onerror="this.src='https://via.placeholder.com/70/FFD700/000000?text=LTF'">
+            </div>
+            <div>
+                <div class="site-title">Projelerimiz</div>
+                <div class="subtitle">Loyal Team Force - Aktif Projeler</div>
+            </div>
+        </div>
+    </header>
 
-    btn.addEventListener("click", () => {
-        menu.classList.toggle("open");
-        btn.classList.toggle("open");
-    });
-</script>
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <div class="grid">
+            <!-- ANA İÇERİK -->
+            <section>
+                <!-- Ana Sayfa -->
+                <div id="home-page" class="page active">
+                    <div class="main-card">
+                        <h1>Projelerimiz</h1>
+                        <p class="lead">Aktif ve yakında gelecek projelerimizi keşfedin</p>
 
-<div class="menu-icon" id="menuBtn"></div>
-  <span class="bar bar1"></span>
-  <span class="bar bar2"></span>
-  <span class="bar bar3"></span>
-</div>
+                        <!-- Proje İstatistikleri -->
+                        <div class="project-stats">
+                            <div class="stat-item">
+                                <span class="number">8</span>
+                                <span class="label">Aktif Proje</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="number">3</span>
+                                <span class="label">Tamamlandı</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="number">12</span>
+                                <span class="label">Geliştirici</span>
+                            </div>
+                        </div>
 
+                        <!-- PROJE LİSTESİ -->
+                        <div class="projects-list" id="projectsList">
+                            <!-- Proje 1 -->
+                            <div class="project" data-id="p1">
+                                <div class="project-icon">
+                                    <i class="fas fa-ghost"></i>
+                                </div>
+                                <h3>Lost Spirit Whisper <span class="project-type">Yeni</span></h3>
+                                <p>Gizem ve macera dolu bir oyun projesi</p>
+                                <span class="project-badge">İlerleme: %45</span>
+                            </div>
 
+                            <!-- Proje 2 -->
+                            <div class="project" data-id="p2">
+                                <div class="project-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <h3>LTF Web Platform <span class="project-type">Aktif</span></h3>
+                                <p>Ekip yönetim ve iletişim platformu</p>
+                                <span class="project-badge">İlerleme: %80</span>
+                            </div>
+
+                            <!-- Proje 3 -->
+                            <div class="project" data-id="p3">
+                                <div class="project-icon">
+                                    <i class="fas fa-gamepad"></i>
+                                </div>
+                                <h3>Cyber Arena <span class="project-type">Yakında</span></h3>
+                                <p>Çok oyunculu online arena oyunu</p>
+                                <span class="project-badge">İlerleme: %20</span>
+                            </div>
+
+                            <!-- Proje 4 -->
+                            <div class="project" data-id="p4">
+                                <div class="project-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <h3>AI Assistant <span class="project-type">Beta</span></h3>
+                                <p>Yapay zeka destekli discord botu</p>
+                                <span class="project-badge">İlerleme: %95</span>
+                            </div>
+
+                            <!-- Proje 5 -->
+                            <div class="project" data-id="p5">
+                                <div class="project-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <h3>Güvenlik Duvarı <span class="project-type">Plan</span></h3>
+                                <p>Gelişmiş ağ güvenlik sistemi</p>
+                                <span class="project-badge">İlerleme: %10</span>
+                            </div>
+
+                            <!-- Proje 6 -->
+                            <div class="project" data-id="p6">
+                                <div class="project-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <h3>LTF Mobile <span class="project-type">Tasarım</span></h3>
+                                <p>Mobil uygulama arayüzü</p>
+                                <span class="project-badge">İlerleme: %30</span>
+                            </div>
+
+                            <!-- Proje 7 -->
+                            <div class="project" data-id="p7">
+                                <div class="project-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <h3>Veri Analiz <span class="project-type">Aktif</span></h3>
+                                <p>Ekip performans takip sistemi</p>
+                                <span class="project-badge">İlerleme: %60</span>
+                            </div>
+
+                            <!-- Proje 8 -->
+                            <div class="project" data-id="p8">
+                                <div class="project-icon">
+                                    <i class="fas fa-cloud"></i>
+                                </div>
+                                <h3>Cloud Storage <span class="project-type">Yakında</span></h3>
+                                <p>Bulut depolama çözümleri</p>
+                                <span class="project-badge">İlerleme: %15</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detay Sayfası -->
+                <div id="detail-page" class="page">
+                    <div class="detail">
+                        <button class="back" id="backBtn">← Geri</button>
+                        <h2 id="detailTitle"></h2>
+                        <p id="detailDesc"></p>
+                        <div class="detail-box">
+                            <strong>Proje Açıklaması:</strong>
+                            <p id="detailContent"></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SIDEBAR -->
+            <aside>
+                <div class="sidebar">
+                    <h4>Hızlı Bağlantılar</h4>
+                    <ul>
+                        <li><a href="#" class="link" data-target="home"><i class="fas fa-home" style="margin-right: 8px;"></i>Ana Sayfa</a></li>
+                        <li><a href="#" class="link" data-target="p1"><i class="fas fa-ghost" style="margin-right: 8px;"></i>LSW</a></li>
+                        <li><a href="#" class="link" data-target="p2"><i class="fas fa-code" style="margin-right: 8px;"></i>Web Platform</a></li>
+                        <li><a href="#" class="link" data-target="p3"><i class="fas fa-gamepad" style="margin-right: 8px;"></i>Cyber Arena</a></li>
+                        <li><a href="#" class="link" data-target="p4"><i class="fas fa-robot" style="margin-right: 8px;"></i>AI Assistant</a></li>
+                        <li><a href="#" class="link" data-target="p5"><i class="fas fa-shield-alt" style="margin-right: 8px;"></i>Güvenlik Duvarı</a></li>
+                    </ul>
+                    <hr>
+                    <div class="info">
+                        <i class="fas fa-crown" style="color: var(--sari); margin-right: 8px;"></i>
+                        Kurucular: <span class="yellow">Zinny</span> & <span class="yellow">Chivas</span>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 0.85rem; opacity: 0.7;">
+                        <i class="fas fa-code-branch"></i> Toplam 8 aktif proje
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>LTF</h2>
+                    <p>Loyal Team Force</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Hızlı Bağlantılar</h4>
+                    <ul>
+                        <li><a href="index.html">Ana Sayfa</a></li>
+                        <li><a href="team.html">Takımımız</a></li>
+                        <li><a href="proje.html">Projeler</a></li>
+                        <li><a href="social.html">İletişim</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h4>Sosyal Medya</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Kurucu: Zinny | Kurucu Yardımcısı: Chivas</p>
+                <p>© 2025 Loyal Team Force. Tüm Hakları Saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript dosyası -->
+    <script src="projelerimiz.js"></script>
 </body>
 </html>
