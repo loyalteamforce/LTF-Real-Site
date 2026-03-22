@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LTF - Canlı Sohbet</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --siyah: #0A0A0F;
+            --siyah-2: #1A1A20;
+            --altin: #FFD700;
+            --kirmizi: #8B0000;
+            --beyaz: #FFFFFF;
+            --mavi: #87CEEB;
+            --gri: #2A2A30;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--siyah);
+            color: var(--beyaz);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        @keyframes slowDrift {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 40%, rgba(255, 215, 0, 0.03) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(139, 0, 0, 0.03) 0%, transparent 40%);
+            animation: slowDrift 35s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .fade-left { animation: fadeInLeft 0.5s ease forwards; }
+        .fade-up { animation: fadeInUp 0.3s ease forwards; }
+
+        /* HAMBURGER MENU */
+        .hamburger {
+            width: 40px;
+            height: 30px;
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 5px;
+            z-index: 101;
+        }
+
+        .hamburger span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background: var(--altin);
+            border-radius: 3px;
+            transition: 0.3s;
+        }
+
+        .hamburger.open .bar1 {
+            transform: translateY(12px) rotate(45deg);
+            background: var(--mavi);
+        }
+
+        .hamburger.open .bar2 {
+            opacity: 0;
+        }
+
+        .hamburger.open .bar3 {
+            transform: translateY(-12px) rotate(-45deg);
+            background: var(--mavi);
+        }
+
+        /* SIDE MENU */
+        .side-menu {
+            width: 260px;
+            height: 100vh;
+            background: var(--siyah-2);
+            position: fixed;
+            top: 0;
+            left: -280px;
+            z-index: 99;
+            transition: left 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            padding: 80px 0 30px;
+            border-right: 2px solid var(--altin);
+        }
+
+        .side-menu.open {
+            left: 0;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 25px;
+            color: var(--beyaz);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-link i {
+            width: 20px;
+            color: var(--altin);
+        }
+
+        .menu-link:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-left-color: var(--altin);
+        }
+
+        .menu-link.active {
+            background: rgba(255, 215, 0, 0.15);
+            border-left-color: var(--altin);
+            color: var(--altin);
+        }
+
+        .menu-footer {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        /* ANA İÇERİK */
+        .main-content {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 80px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* SOHBET KARTI */
+        .chat-card {
+            background: var(--siyah-2);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            overflow: hidden;
+            animation: fadeInUp 0.5s;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--siyah), var(--siyah-2));
+            padding: 20px 25px;
+            border-bottom: 2px solid var(--altin);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .chat-header h1 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-header h1 i {
+            color: var(--altin);
+        }
+
+        .online-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* KULLANICI BİLGİ ALANI */
+        .user-setup {
+            padding: 20px 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .avatar-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .avatar-option {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--siyah);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.1);
+        }
+
+        .avatar-option.selected {
+            border-color: var(--altin);
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .username-input {
+            flex: 1;
+            background: var(--siyah);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 12px 18px;
+            color: var(--beyaz);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            min-width: 150px;
+        }
+
+        .username-input:focus {
+            outline: none;
+            border-color: var(--altin);
+        }
+
+        /* MESAJ ALANI */
+        .messages-area {
+            height: 450px;
+            overflow-y: auto;
+            padding: 20px 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .messages-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages-area::-webkit-scrollbar-track {
+            background: var(--siyah);
+            border-radius: 10px;
+        }
+
+        .messages-area::-webkit-scrollbar-thumb {
+            background: var(--altin);
+            border-radius: 10px;
+        }
+
+        .message-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            animation: fadeInUp 0.2s ease;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--siyah);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .message-content {
+            flex: 1;
+            background: var(--siyah);
+            padding: 10px 15px;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .message-name {
+            font-weight: 600;
+            color: var(--altin);
+            font-size: 0.9rem;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.5;
+        }
+
+        .message-text {
+            font-size: 0.95rem;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        .empty-messages {
+            text-align: center;
+            opacity: 0.5;
+            padding: 40px;
+        }
+
+        /* MESAJ GÖNDERME ALANI */
+        .message-input-area {
+            padding: 20px 25px;
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: var(--siyah-2);
+        }
+
+        .message-input {
+            flex: 1;
+            background: var(--siyah);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 12px 18px;
+            color: var(--beyaz);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            resize: none;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--altin);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, var(--altin), #e6c300);
+            color: var(--siyah);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--siyah);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--siyah-2);
+            border-left: 4px solid var(--altin);
+            padding: 12px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 200;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .user-setup { flex-direction: column; align-items: stretch; }
+            .avatar-selector { justify-content: center; }
+            .messages-area { height: 350px; }
+            .toast { bottom: 20px; right: 20px; left: 20px; transform: translateY(100px); }
+            .toast.show { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="menuBtn" class="hamburger">
+        <span class="bar1"></span>
+        <span class="bar2"></span>
+        <span class="bar3"></span>
+    </div>
+
+    <nav id="sideMenu" class="side-menu">
+        <div class="menu-items">
+            <a href="index.html" class="menu-link"><i class="fas fa-home"></i> Ana Sayfa</a>
+            <a href="leaderboard.html" class="menu-link"><i class="fas fa-trophy"></i> Liderlik Tablosu</a>
+            <a href="proje.html" class="menu-link"><i class="fas fa-code-branch"></i> Projelerimiz</a>
+            <a href="social.html" class="menu-link"><i class="fas fa-users"></i> Sosyal Medya</a>
+            <a href="team.html" class="menu-link"><i class="fas fa-user-ninja"></i> Takımımız</a>
+            <a href="puanlama.html" class="menu-link"><i class="fas fa-star"></i> Puanlama</a>
+            <a href="sohbet.html" class="menu-link active"><i class="fas fa-comments"></i> Sohbet</a>
+        </div>
+        <div class="menu-footer"><p>LTF © 2025</p></div>
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="chat-card">
+                <div class="chat-header">
+                    <h1><i class="fas fa-comments"></i> Canlı Sohbet</h1>
+                    <div class="online-status">
+                        <div class="online-dot"></div>
+                        <span id="onlineCount">0</span> kişi aktif
+                    </div>
+                </div>
+
+                <div class="user-setup">
+                    <div class="avatar-selector" id="avatarSelector">
+                        <div class="avatar-option" data-avatar="😎">😎</div>
+                        <div class="avatar-option" data-avatar="👨‍💻">👨‍💻</div>
+                        <div class="avatar-option" data-avatar="🎮">🎮</div>
+                        <div class="avatar-option" data-avatar="🔥">🔥</div>
+                        <div class="avatar-option" data-avatar="⭐">⭐</div>
+                        <div class="avatar-option" data-avatar="🚀">🚀</div>
+                        <div class="avatar-option" data-avatar="🐱‍👤">🐱‍👤</div>
+                        <div class="avatar-option" data-avatar="🎧">🎧</div>
+                    </div>
+                    <input type="text" class="username-input" id="usernameInput" placeholder="Kullanıcı adınız (zorunlu)" maxlength="25">
+                </div>
+
+                <div class="messages-area" id="messagesArea">
+                    <div class="empty-messages">
+                        <i class="fas fa-comment-dots"></i> Sohbete hoş geldin! İlk mesajı sen gönder.
+                    </div>
+                </div>
+
+                <div class="message-input-area">
+                    <textarea class="message-input" id="messageInput" rows="1" placeholder="Mesajınızı yazın..." onkeydown="if(event.keyCode===13 && !event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+                    <button class="send-btn" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"><i class="fas fa-check-circle"></i><span id="toastMessage"></span></div>
+
+    <script>
+        // ========== FIREBASE KONFIGÜRASYONU ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyDAi_IqftZcuMmgvjIHlZXlC0hV2KmZA78",
+            authDomain: "ltf-puanlama-9a139.firebaseapp.com",
+            projectId: "ltf-puanlama-9a139",
+            storageBucket: "ltf-puanlama-9a139.firebasestorage.app",
+            messagingSenderId: "158627242883",
+            appId: "1:158627242883:web:09aa2caff119ae9ebc0cb6",
+            measurementId: "G-T1C2ZFV4MC",
+            databaseURL: "https://ltf-puanlama-9a139-default-rtdb.firebaseio.com"
+        };
+        
+        // Firebase başlat
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // Global değişkenler
+        let selectedAvatar = "😎";
+        let username = "";
+        let isSending = false;
+        
+        const messagesArea = document.getElementById('messagesArea');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const usernameInput = document.getElementById('usernameInput');
+        const onlineCountSpan = document.getElementById('onlineCount');
+        
+        // Kullanıcı ID (oturum için)
+        let userId = localStorage.getItem('chat_user_id');
+        if (!userId) {
+            userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+            localStorage.setItem('chat_user_id', userId);
+        }
+        
+        // Avatar seçimi
+        const avatarOptions = document.querySelectorAll('.avatar-option');
+        avatarOptions.forEach(opt => {
+            opt.addEventListener('click', () => {
+                avatarOptions.forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+                selectedAvatar = opt.dataset.avatar;
+                localStorage.setItem('chat_avatar', selectedAvatar);
+            });
+        });
+        
+        // Kayıtlı avatarı yükle
+        const savedAvatar = localStorage.getItem('chat_avatar');
+        if (savedAvatar) {
+            selectedAvatar = savedAvatar;
+            avatarOptions.forEach(opt => {
+                if (opt.dataset.avatar === savedAvatar) {
+                    opt.classList.add('selected');
+                }
+            });
+        } else {
+            avatarOptions[0].classList.add('selected');
+        }
+        
+        // Kayıtlı kullanıcı adını yükle
+        const savedUsername = localStorage.getItem('chat_username');
+        if (savedUsername) {
+            usernameInput.value = savedUsername;
+            username = savedUsername;
+        }
+        
+        usernameInput.addEventListener('change', () => {
+            username = usernameInput.value.trim();
+            if (username) {
+                localStorage.setItem('chat_username', username);
+            }
+        });
+        
+        // Toast göster
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const icon = toast.querySelector('i');
+            
+            toastMessage.textContent = message;
+            icon.className = isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+            toast.style.borderLeftColor = isError ? 'var(--kirmizi)' : 'var(--altin)';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // Mesaj gönder
+        async function sendMessage() {
+            if (isSending) return;
+            
+            const newUsername = usernameInput.value.trim();
+            if (newUsername === "") {
+                showToast('Lütfen kullanıcı adınızı girin!', true);
+                usernameInput.style.animation = 'shake 0.4s ease';
+                setTimeout(() => usernameInput.style.animation = '', 400);
+                return;
+            }
+            username = newUsername;
+            
+            const messageText = messageInput.value.trim();
+            if (messageText === "") {
+                showToast('Mesaj yazın!', true);
+                return;
+            }
+            
+            isSending = true;
+            sendBtn.innerHTML = '<span class="loading-spinner"></span>';
+            sendBtn.disabled = true;
+            
+            const now = new Date();
+            const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+            const messageId = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            
+            const messageData = {
+                text: messageText,
+                username: username,
+                avatar: selectedAvatar,
+                time: timeStr,
+                timestamp: now.getTime(),
+                userId: userId
+            };
+            
+            try {
+                await database.ref('chat_messages/' + messageId).set(messageData);
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+                showToast('Mesaj gönderildi!');
+            } catch (error) {
+                console.error('Mesaj hatası:', error);
+                showToast('Mesaj gönderilemedi!', true);
+            }
+            
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+            sendBtn.disabled = false;
+            isSending = false;
+        }
+        
+        // Mesajları dinle
+        function loadMessages() {
+            const messagesRef = database.ref('chat_messages');
+            
+            messagesRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data && typeof data === 'object') {
+                    const messagesArray = Object.values(data);
+                    messagesArray.sort((a, b) => a.timestamp - b.timestamp);
+                    displayMessages(messagesArray);
+                } else {
+                    displayMessages([]);
+                }
+            });
+        }
+        
+        function displayMessages(messages) {
+            if (!messages || messages.length === 0) {
+                messagesArea.innerHTML = '<div class="empty-messages"><i class="fas fa-comment-dots"></i> Sohbete hoş geldin! İlk mesajı sen gönder.</div>';
+                return;
+            }
+            
+            messagesArea.innerHTML = messages.map(msg => `
+                <div class="message-item fade-up">
+                    <div class="message-avatar">${msg.avatar || '😎'}</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-name">${escapeHtml(msg.username || 'Anonim')}</span>
+                            <span class="message-time">${msg.time}</span>
+                        </div>
+                        <div class="message-text">${escapeHtml(msg.text)}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Son mesaja kaydır
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+        
+        // Aktif kullanıcı sayısı (son 1 dakika içinde mesaj atanlar)
+        function updateOnlineCount() {
+            const messagesRef = database.ref('chat_messages');
+            const oneMinuteAgo = Date.now() - 60000;
+            
+            messagesRef.once('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data && typeof data === 'object') {
+                    const messagesArray = Object.values(data);
+                    const recentUsers = new Set();
+                    messagesArray.forEach(msg => {
+                        if (msg.timestamp > oneMinuteAgo && msg.userId) {
+                            recentUsers.add(msg.userId);
+                        }
+                    });
+                    onlineCountSpan.textContent = recentUsers.size;
+                } else {
+                    onlineCountSpan.textContent = 0;
+                }
+            });
+        }
+        
+        // Her 30 saniyede bir aktif kullanıcı sayısını güncelle
+        setInterval(updateOnlineCount, 30000);
+        updateOnlineCount();
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Textarea yüksekliğini otomatik ayarla
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+        
+        // Gönder butonu
+        sendBtn.addEventListener('click', sendMessage);
+        
+        // Hamburger menu
+        const btn = document.getElementById("menuBtn");
+        const menu = document.getElementById("sideMenu");
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            menu.classList.toggle("open");
+            btn.classList.toggle("open");
+        });
+        document.addEventListener('click', (e) => {
+            if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.remove('open');
+                btn.classList.remove('open');
+            }
+        });
+        
+        // Başlat
+        loadMessages();
+    </script>
+</body>
+</html>
