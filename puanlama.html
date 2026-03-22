@@ -10,6 +10,10 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -43,12 +47,6 @@
             0% { background-position: 0% 0%; }
             50% { background-position: 100% 100%; }
             100% { background-position: 0% 0%; }
-        }
-
-        @keyframes slowPulse {
-            0% { opacity: 0.2; }
-            50% { opacity: 0.4; }
-            100% { opacity: 0.2; }
         }
 
         body::before {
@@ -99,10 +97,8 @@
             75% { transform: translateX(3px); }
         }
 
-        @keyframes borderPulse {
-            0% { border-color: rgba(255, 215, 0, 0.3); }
-            50% { border-color: rgba(255, 215, 0, 0.8); }
-            100% { border-color: rgba(255, 215, 0, 0.3); }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         .fade-up { animation: fadeInUp 0.6s ease forwards; }
@@ -110,7 +106,7 @@
         .fade-right { animation: fadeInRight 0.6s ease forwards; }
         .scale-in { animation: scaleIn 0.5s ease forwards; }
 
-        /* HAMBURGER MENU - Index'ten aynen alındı */
+        /* HAMBURGER MENU */
         .hamburger {
             width: 40px;
             height: 30px;
@@ -149,7 +145,7 @@
             background: var(--mavi);
         }
 
-        /* SIDE MENU - Index'ten aynen alındı */
+        /* SIDE MENU */
         .side-menu {
             width: 260px;
             height: 100vh;
@@ -229,7 +225,7 @@
             font-family: 'Montserrat', sans-serif;
             font-size: clamp(2rem, 6vw, 3.2rem);
             font-weight: 800;
-            background: linear-gradient(135deg, var(--altin), var(--altin));
+            background: linear-gradient(135deg, var(--altin), var(--mavi));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -324,18 +320,6 @@
             opacity: 0.7;
         }
 
-        /* Puan Göstergesi */
-        .rating-badge {
-            background: linear-gradient(135deg, var(--kirmizi), #5a0000);
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
         /* Geri Bildirim Alanı */
         .feedback-area {
             margin-top: 20px;
@@ -387,6 +371,12 @@
 
         .btn-submit:active {
             transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* Ortalama Puan Kartı */
@@ -444,15 +434,10 @@
             color: var(--altin);
         }
 
-        .star-display i.half-filled {
-            position: relative;
-            color: #444;
-        }
-
-        /* Son Geri Bildirimler */
+        /* Geri Bildirim Listesi */
         .feedback-list {
             margin-top: 20px;
-            max-height: 250px;
+            max-height: 300px;
             overflow-y: auto;
         }
 
@@ -497,7 +482,20 @@
             font-style: italic;
         }
 
-        /* Loading Toast */
+        /* Loading */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--siyah);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -557,14 +555,14 @@
 </head>
 <body>
 
-    <!-- HAMBURGER MENU - Index'ten birebir -->
+    <!-- HAMBURGER MENU -->
     <div id="menuBtn" class="hamburger">
         <span class="bar1"></span>
         <span class="bar2"></span>
         <span class="bar3"></span>
     </div>
 
-    <!-- SIDE MENU - Index'teki linkler aynen korundu -->
+    <!-- SIDE MENU -->
     <nav id="sideMenu" class="side-menu">
         <div class="menu-items">
             <a href="index.html" class="menu-link">
@@ -635,8 +633,8 @@
                 <div class="card average-card fade-up" style="animation-delay: 0.1s;">
                     <h2><i class="fas fa-chart-line"></i> Ortalama Puan</h2>
                     <div class="average-score">
-                        <div class="big-score" id="averageScore">0.00</div>
-                        <div class="total-votes" id="totalVotes">0 kişi puanladı</div>
+                        <div class="big-score" id="averageScore">--</div>
+                        <div class="total-votes" id="totalVotes">Yükleniyor...</div>
                         <div class="star-display" id="averageStars">
                             <i class="far fa-star"></i>
                             <i class="far fa-star"></i>
@@ -653,7 +651,7 @@
                 <h2><i class="fas fa-comments"></i> Son Geri Bildirimler</h2>
                 <div id="feedbackList" class="feedback-list">
                     <div class="empty-feedback">
-                        <i class="fas fa-inbox"></i> Henüz geri bildirim yok. İlk sen paylaş!
+                        <i class="fas fa-spinner fa-spin"></i> Yükleniyor...
                     </div>
                 </div>
             </div>
@@ -667,18 +665,45 @@
     </div>
 
     <script>
-        // ---------- YILDIZ PUANLAMA SİSTEMİ ----------
+        // ========== FIREBASE YAPILANDIRMASI ==========
+        // ⚠️ BURAYA KENDİ FIREBASE CONFIG'İNİZİ YAPIŞTIRIN ⚠️
+        // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDAi_IqftZcuMmgvjIHlZXlC0hV2KmZA78",
+  authDomain: "ltf-puanlama-9a139.firebaseapp.com",
+  projectId: "ltf-puanlama-9a139",
+  storageBucket: "ltf-puanlama-9a139.firebasestorage.app",
+  messagingSenderId: "158627242883",
+  appId: "1:158627242883:web:09aa2caff119ae9ebc0cb6",
+  measurementId: "G-T1C2ZFV4MC"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+        
+        // Firebase'i başlat
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // ========== GLOBAL DEĞİŞKENLER ==========
         let currentRating = 0;
+        let isSubmitting = false;
+        
         const stars = document.querySelectorAll('.star');
         const selectedRatingText = document.getElementById('selectedRatingText');
         const submitBtn = document.getElementById('submitBtn');
         const feedbackTextarea = document.getElementById('feedbackText');
         
-        // localStorage'dan verileri al
-        let ratings = JSON.parse(localStorage.getItem('ltf_ratings')) || [];
-        let feedbacks = JSON.parse(localStorage.getItem('ltf_feedbacks')) || [];
-        
-        // Yıldız hover efekti
+        // ========== YILDIZ PUANLAMA ==========
         stars.forEach(star => {
             star.addEventListener('mouseenter', function() {
                 const value = parseInt(this.dataset.value);
@@ -694,7 +719,6 @@
                 highlightStars(currentRating);
                 updateRatingText();
                 
-                // Kısa animasyon
                 this.style.animation = 'starGlow 0.3s ease';
                 setTimeout(() => {
                     this.style.animation = '';
@@ -721,13 +745,45 @@
             }
         }
         
-        // Ortalama puanı hesapla ve göster
-        function updateAverageScore() {
-            if (ratings.length === 0) {
-                document.getElementById('averageScore').textContent = '0.00';
-                document.getElementById('totalVotes').textContent = '0 kişi puanladı';
-                const avgStars = document.getElementById('averageStars');
-                avgStars.innerHTML = `
+        // ========== FIREBASE VERİLERİNİ OKU ==========
+        function loadDataFromFirebase() {
+            // Ortalama puan ve tüm puanları dinle
+            const ratingsRef = database.ref('ratings');
+            const feedbacksRef = database.ref('feedbacks');
+            
+            ratingsRef.on('value', (snapshot) => {
+                const ratingsData = snapshot.val();
+                if (ratingsData) {
+                    // ratings bir nesne, değerleri diziye çevir
+                    const ratingsArray = Object.values(ratingsData);
+                    updateAverageScore(ratingsArray);
+                } else {
+                    updateAverageScore([]);
+                }
+            });
+            
+            feedbacksRef.on('value', (snapshot) => {
+                const feedbacksData = snapshot.val();
+                if (feedbacksData) {
+                    const feedbacksArray = Object.values(feedbacksData);
+                    // Tarihe göre sırala (en yeniler önce)
+                    feedbacksArray.sort((a, b) => b.timestamp - a.timestamp);
+                    updateFeedbackList(feedbacksArray);
+                } else {
+                    updateFeedbackList([]);
+                }
+            });
+        }
+        
+        function updateAverageScore(ratingsArray) {
+            const avgScoreEl = document.getElementById('averageScore');
+            const totalVotesEl = document.getElementById('totalVotes');
+            const avgStarsEl = document.getElementById('averageStars');
+            
+            if (ratingsArray.length === 0) {
+                avgScoreEl.textContent = '0.00';
+                totalVotesEl.textContent = '0 kişi puanladı';
+                avgStarsEl.innerHTML = `
                     <i class="far fa-star"></i>
                     <i class="far fa-star"></i>
                     <i class="far fa-star"></i>
@@ -737,36 +793,33 @@
                 return;
             }
             
-            const sum = ratings.reduce((a, b) => a + b, 0);
-            const avg = sum / ratings.length;
+            const sum = ratingsArray.reduce((a, b) => a + b, 0);
+            const avg = sum / ratingsArray.length;
             const avgRounded = avg.toFixed(2);
-            document.getElementById('averageScore').textContent = avgRounded;
-            document.getElementById('totalVotes').textContent = `${ratings.length} kişi puanladı`;
+            avgScoreEl.textContent = avgRounded;
+            totalVotesEl.textContent = `${ratingsArray.length} kişi puanladı`;
             
-            // Yıldız gösterimi (tam yıldız + yarım yıldız desteği)
-            const fullStars = Math.floor(avg);
-            const decimal = avg - fullStars;
-            const hasHalf = decimal >= 0.25 && decimal < 0.75;
-            const showFull = decimal >= 0.75 ? fullStars + 1 : fullStars;
+            // Yıldız gösterimi
+            const fullStars = Math.round(avg * 2) / 2; // yarım yıldız desteği
+            const fullStarsCount = Math.floor(fullStars);
+            const hasHalf = fullStars % 1 !== 0;
             
-            const avgStars = document.getElementById('averageStars');
-            avgStars.innerHTML = '';
+            avgStarsEl.innerHTML = '';
             for (let i = 1; i <= 5; i++) {
-                if (i <= showFull) {
-                    avgStars.innerHTML += '<i class="fas fa-star filled" style="color: var(--altin);"></i>';
-                } else if (hasHalf && i === showFull + 1) {
-                    avgStars.innerHTML += '<i class="fas fa-star-half-alt filled" style="color: var(--altin);"></i>';
+                if (i <= fullStarsCount) {
+                    avgStarsEl.innerHTML += '<i class="fas fa-star filled" style="color: var(--altin);"></i>';
+                } else if (hasHalf && i === fullStarsCount + 1) {
+                    avgStarsEl.innerHTML += '<i class="fas fa-star-half-alt filled" style="color: var(--altin);"></i>';
                 } else {
-                    avgStars.innerHTML += '<i class="far fa-star"></i>';
+                    avgStarsEl.innerHTML += '<i class="far fa-star"></i>';
                 }
             }
         }
         
-        // Geri bildirimleri listele
-        function updateFeedbackList() {
+        function updateFeedbackList(feedbacksArray) {
             const feedbackListDiv = document.getElementById('feedbackList');
             
-            if (feedbacks.length === 0) {
+            if (feedbacksArray.length === 0) {
                 feedbackListDiv.innerHTML = `
                     <div class="empty-feedback">
                         <i class="fas fa-inbox"></i> Henüz geri bildirim yok. İlk sen paylaş!
@@ -775,8 +828,8 @@
                 return;
             }
             
-            // Son 5 geri bildirimi göster (en yeniler önce)
-            const recentFeedbacks = [...feedbacks].reverse().slice(0, 6);
+            // Son 10 geri bildirimi göster
+            const recentFeedbacks = feedbacksArray.slice(0, 10);
             
             feedbackListDiv.innerHTML = recentFeedbacks.map(fb => `
                 <div class="feedback-item">
@@ -791,14 +844,13 @@
             `).join('');
         }
         
-        // XSS koruması için basit escape
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
         
-        // Toast göster
+        // ========== TOAST BİLDİRİM ==========
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toastMessage');
@@ -820,11 +872,44 @@
             }, 3000);
         }
         
-        // Gönder butonu
-        submitBtn.addEventListener('click', () => {
+        // ========== FIREBASE'E VERİ GÖNDER ==========
+        async function submitToFirebase(rating, feedbackText) {
+            const now = new Date();
+            const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            const feedbackId = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            const ratingId = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            
+            const feedbackData = {
+                rating: rating,
+                text: feedbackText || '',
+                date: dateStr,
+                timestamp: now.getTime()
+            };
+            
+            const ratingData = {
+                rating: rating,
+                timestamp: now.getTime()
+            };
+            
+            try {
+                // Geri bildirimi kaydet
+                await database.ref('feedbacks/' + feedbackId).set(feedbackData);
+                // Puanı kaydet
+                await database.ref('ratings/' + ratingId).set(ratingData);
+                return true;
+            } catch (error) {
+                console.error('Firebase hatası:', error);
+                return false;
+            }
+        }
+        
+        // ========== GÖNDER BUTONU ==========
+        submitBtn.addEventListener('click', async () => {
+            if (isSubmitting) return;
+            
             if (currentRating === 0) {
                 showToast('Lütfen bir puan seçin!', true);
-                // Hata animasyonu
                 const starsContainer = document.querySelector('.stars');
                 starsContainer.style.animation = 'shake 0.4s ease';
                 setTimeout(() => {
@@ -833,57 +918,38 @@
                 return;
             }
             
+            isSubmitting = true;
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span> Gönderiliyor...';
+            submitBtn.disabled = true;
+            
             const feedbackText = feedbackTextarea.value.trim();
+            const success = await submitToFirebase(currentRating, feedbackText);
             
-            // Puanı kaydet
-            ratings.push(currentRating);
-            localStorage.setItem('ltf_ratings', JSON.stringify(ratings));
+            if (success) {
+                showToast('Geri bildiriminiz için teşekkürler! 🎉');
+                
+                // Formu sıfırla
+                currentRating = 0;
+                highlightStars(0);
+                updateRatingText();
+                feedbackTextarea.value = '';
+                
+                // Buton animasyonu
+                submitBtn.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    submitBtn.style.transform = '';
+                }, 150);
+            } else {
+                showToast('Bir hata oluştu. Lütfen tekrar deneyin.', true);
+            }
             
-            // Geri bildirimi kaydet
-            const now = new Date();
-            const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-            
-            feedbacks.unshift({
-                rating: currentRating,
-                text: feedbackText || '',
-                date: dateStr,
-                timestamp: now.getTime()
-            });
-            
-            // Sadece son 30 geri bildirimi tut
-            if (feedbacks.length > 30) feedbacks.pop();
-            localStorage.setItem('ltf_feedbacks', JSON.stringify(feedbacks));
-            
-            // Güncelle
-            updateAverageScore();
-            updateFeedbackList();
-            
-            // Formu sıfırla
-            currentRating = 0;
-            highlightStars(0);
-            updateRatingText();
-            feedbackTextarea.value = '';
-            
-            // Başarılı toast
-            showToast('Geri bildiriminiz için teşekkürler! 🎉');
-            
-            // Butona mini animasyon
-            submitBtn.style.transform = 'scale(0.98)';
-            setTimeout(() => {
-                submitBtn.style.transform = '';
-            }, 150);
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            isSubmitting = false;
         });
         
-        // Sayfa yüklendiğinde verileri göster
-        function init() {
-            updateAverageScore();
-            updateFeedbackList();
-            highlightStars(0);
-        }
-        
-        init();
-        
-        // ---------- HAMBURGER MENU (Index'ten aynen) ----------
+        // ========== HAMBURGER MENU ==========
         const btn = document.getElementById("menuBtn");
         const menu = document.getElementById("sideMenu");
 
@@ -900,16 +966,13 @@
             }
         });
         
-        // Sayfa yüklendiğinde menü aktif kontrolü (puanlama.html aktif)
-        const currentPage = window.location.pathname.split('/').pop();
-        const menuLinks = document.querySelectorAll('.menu-link');
-        menuLinks.forEach(link => {
-            if (link.getAttribute('href') === 'puanlama.html') {
-                link.classList.add('active');
-            } else if (link.getAttribute('href') === 'index.html' && currentPage === '') {
-                // ana sayfa kontrolü
-            }
-        });
+        // ========== SAYFA YÜKLENDİĞİNDE ==========
+        function init() {
+            loadDataFromFirebase();
+            highlightStars(0);
+        }
+        
+        init();
     </script>
 </body>
 </html>
