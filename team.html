@@ -50,6 +50,167 @@
             to { opacity: 1; transform: scale(1); }
         }
 
+        /* MODAL STILLERI - Yeni Eklendi */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--siyah-2);
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            border: 2px solid var(--sari);
+            animation: scaleIn 0.3s;
+            overflow: hidden;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--beyaz);
+            transition: color 0.2s;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            color: var(--sari);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--siyah), var(--siyah-2));
+            padding: 30px 20px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .modal-profile-img {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--sari);
+            background: var(--gri);
+        }
+
+        .modal-profile-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-profile-img.no-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--sari);
+            background: var(--gri);
+        }
+
+        .modal-header h2 {
+            color: var(--sari);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .modal-header .member-role {
+            color: var(--beyaz);
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-item i {
+            width: 30px;
+            color: var(--sari);
+            font-size: 1.2rem;
+        }
+
+        .info-item .info-label {
+            font-weight: 600;
+            min-width: 90px;
+            color: var(--beyaz);
+            opacity: 0.9;
+        }
+
+        .info-item .info-value {
+            color: var(--beyaz);
+            flex: 1;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .social-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 2px solid var(--sari);
+            border-radius: 30px;
+            color: var(--beyaz);
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .social-btn:hover {
+            background: var(--sari);
+            color: var(--siyah);
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .skill-tag {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--sari);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            color: var(--sari);
+        }
+
         /* LOADING - Index'tekiyle aynı */
         .loader-wrapper {
             position: fixed;
@@ -333,6 +494,7 @@
             transition: transform 0.2s;
             animation: scaleIn 0.6s;
             animation-fill-mode: both;
+            cursor: pointer;
         }
 
         /* Her üye kartı için gecikmeli animasyon */
@@ -574,6 +736,52 @@
         </div>
     </nav>
 
+    <!-- MODAL - Yeni Eklendi -->
+    <div id="memberModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="modal-header">
+                <div class="modal-profile-img" id="modalProfileImg">
+                    <img id="modalImg" src="" alt="">
+                </div>
+                <h2 id="modalName"></h2>
+                <p class="member-role" id="modalRole"></p>
+            </div>
+            <div class="modal-body">
+                <div class="info-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span class="info-label">Yaş:</span>
+                    <span class="info-value" id="modalAge"></span>
+                </div>
+                <div class="info-item">
+                    <i class="fab fa-instagram"></i>
+                    <span class="info-label">Instagram:</span>
+                    <span class="info-value" id="modalInstagram"></span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="info-label">Hakkında:</span>
+                    <span class="info-value" id="modalAbout"></span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-code"></i>
+                    <span class="info-label">Uzmanlık:</span>
+                    <div class="info-value" id="modalSkills"></div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-user-plus"></i>
+                    <span class="info-label">Katılım:</span>
+                    <span class="info-value" id="modalJoined"></span>
+                </div>
+                <div class="social-buttons">
+                    <a href="#" id="modalInstaLink" class="social-btn" target="_blank">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- HERO SECTION -->
     <section class="team-hero">
         <div class="team-hero-content">
@@ -617,7 +825,7 @@
     <section class="team-section">
         <div class="team-container" id="teamContainer">
             <!-- ZINNY - Kurucu -->
-            <div class="team-member" data-category="founder">
+            <div class="team-member" data-category="founder" data-name="Zinny" data-role="Kurucu" data-instagram="yalnz_nihish" data-instagram-url="https://instagram.com/yalnz_nihish" data-age="22" data-about="Loyal Team Force'un kurucusu. Ekibi bir araya getiren ve vizyonu belirleyen lider." data-skills="Liderlik, Strateji, Proje Yönetimi" data-joined="2023">
                 <div class="member-image">
                     <img src="nihishpfp.jpg" alt="Zinny" onerror="this.src='https://via.placeholder.com/120/FFD700/000000?text=Z'">
                 </div>
@@ -629,7 +837,7 @@
             </div>
 
             <!-- CHIVAS - Kurucu Yardımcısı -->
-            <div class="team-member" data-category="founder">
+            <div class="team-member" data-category="founder" data-name="Chivas" data-role="Baş Yardımcı" data-instagram="chwwx7" data-instagram-url="https://instagram.com/chwwx7" data-age="21" data-about="Baş Yardımcı olarak ekibin organizasyonundan sorumlu. Takımın koordinasyonunu sağlar." data-skills="Organizasyon, İletişim, Koordinasyon" data-joined="2023">
                 <div class="member-image">
                     <img src="ltflogoblack.jpeg" alt="Chivas" onerror="this.src='https://via.placeholder.com/120/FFD700/000000?text=C'">
                 </div>
@@ -641,7 +849,7 @@
             </div>
 
             <!-- TAMER -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Tamer" data-role="Kurucu Yardımcısı" data-instagram="tamer190727" data-instagram-url="https://instagram.com/tamer190727" data-age="20" data-about="Kurucu Yardımcısı, teknik konularda ekibe destek verir." data-skills="Teknik Destek, Problem Çözme" data-joined="2023">
                 <div class="member-image">
                     <img src="tamerikosspfp.jpg" alt="Tamer" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=T'">
                 </div>
@@ -653,7 +861,7 @@
             </div>
 
             <!-- NARANCIA -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Narancia" data-role="Üye" data-instagram="naran.ciaa" data-instagram-url="https://instagram.com/naran.ciaa" data-age="19" data-about="Yaratıcı fikirleriyle ekibe katkı sağlar." data-skills="Yaratıcılık, Tasarım" data-joined="2024">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Narancia" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=N'">
                 </div>
@@ -665,7 +873,7 @@
             </div>
 
             <!-- YILDIZ -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Yıldız" data-role="Üye" data-instagram="yildiz42k" data-instagram-url="https://instagram.com/yildiz42k" data-age="20" data-about="Sosyal medya yönetiminde aktif rol alır." data-skills="Sosyal Medya, İçerik Üretimi" data-joined="2024">
                 <div class="member-image">
                     <img src="yildizpfp.jpg" alt="Yıldız" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=Y'">
                 </div>
@@ -677,7 +885,7 @@
             </div>
 
             <!-- QUARTEX -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Quartex" data-role="Kurucu Yardımcısı" data-instagram="norwnqua" data-instagram-url="https://instagram.com/norwnqua" data-age="21" data-about="Teknik altyapı ve sistemlerden sorumlu." data-skills="Sistem Yönetimi, Teknik Altyapı" data-joined="2023">
                 <div class="member-image">
                     <img src="quapfp.jpg" alt="Quartex" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=Q'">
                 </div>
@@ -689,7 +897,7 @@
             </div>
 
             <!-- TAHA -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Taha" data-role="Üye" data-instagram="tahabugra01" data-instagram-url="https://instagram.com/tahabugra01" data-age="19" data-about="Yazılım geliştirme konusunda çalışmalar yapar." data-skills="Yazılım Geliştirme, Python" data-joined="2024">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Taha" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=T'">
                 </div>
@@ -701,7 +909,7 @@
             </div>
 
             <!-- YAHYA -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Yahya" data-role="Üye" data-instagram="r3al_.y" data-instagram-url="https://instagram.com/r3al_.y" data-age="20" data-about="Grafik tasarım ve görsel içeriklerden sorumlu." data-skills="Grafik Tasarım, Photoshop" data-joined="2024">
                 <div class="member-image">
                     <img src="yahyapfp.jpg" alt="Yahya" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=Y'">
                 </div>
@@ -713,7 +921,7 @@
             </div>
 
             <!-- NEGAN -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Negan" data-role="Üye" data-instagram="ero1n._18" data-instagram-url="https://instagram.com/ero1n._18" data-age="21" data-about="Proje yönetimi ve takım koordinasyonunda görev alır." data-skills="Proje Yönetimi, Liderlik" data-joined="2023">
                 <div class="member-image">
                     <img src="neganpfp.jpg" alt="Negan" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=N'">
                 </div>
@@ -725,7 +933,7 @@
             </div>
 
             <!-- RAII -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Raii" data-role="Üye" data-instagram="h.oktay.krkmz" data-instagram-url="https://instagram.com/h.oktay.krkmz" data-age="19" data-about="Sosyal medya stratejileri üzerine çalışır." data-skills="Sosyal Medya Stratejisi, İçerik Planlama" data-joined="2024">
                 <div class="member-image">
                     <img src="zloipfpp.jpg" alt="Raii" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=R'">
                 </div>
@@ -737,7 +945,7 @@
             </div>
 
             <!-- THOUSAND -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Thousand" data-role="Üye" data-instagram="aliissthew1" data-instagram-url="https://instagram.com/aliissthew1" data-age="20" data-about="Backend geliştirme konusunda uzman." data-skills="Backend, Node.js, PHP" data-joined="2024">
                 <div class="member-image">
                     <img src="thousandpfpp.jpg" alt="Thousand" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=T'">
                 </div>
@@ -749,7 +957,7 @@
             </div>
 
             <!-- JYXZZ -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Jyxzz" data-role="Üye" data-instagram="bilgeh4n_tosun" data-instagram-url="https://instagram.com/bilgeh4n_tosun" data-age="18" data-about="Frontend geliştirme ve tasarım konularında çalışır." data-skills="Frontend, HTML/CSS, JavaScript" data-joined="2024">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Jyxzz" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=J'">
                 </div>
@@ -761,7 +969,7 @@
             </div>
 
             <!-- JUSTBERRU -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="JustBerru" data-role="Üye" data-instagram="justbestruu" data-instagram-url="https://instagram.com/justbestruu" data-age="19" data-about="Topluluk yönetimi ve moderasyon görevlerinde aktif." data-skills="Topluluk Yönetimi, Moderasyon" data-joined="2024">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="JustBerru" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=J'">
                 </div>
@@ -773,7 +981,7 @@
             </div>
 
             <!-- SKURS -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Skurs" data-role="Üye" data-instagram="skursbs" data-instagram-url="https://instagram.com/skursbs" data-age="20" data-about="Veri analizi ve raporlama konularında uzman." data-skills="Veri Analizi, Excel, Raporlama" data-joined="2024">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Skurs" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=S'">
                 </div>
@@ -785,7 +993,7 @@
             </div>
 
             <!-- AXEM -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Axem" data-role="Üye" data-instagram="batuhandoruk_" data-instagram-url="https://instagram.com/batuhandoruk_" data-age="21" data-about="Güvenlik ve sistem optimizasyonu üzerine çalışır." data-skills="Siber Güvenlik, Sistem Optimizasyonu" data-joined="2023">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Axem" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=A'">
                 </div>
@@ -797,7 +1005,7 @@
             </div>
 
             <!-- EKIN -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Ekin" data-role="Üye" data-instagram="llekwn_" data-instagram-url="https://instagram.com/llekwn_" data-age="19" data-about="İçerik üretimi ve video düzenleme konularında yetenekli." data-skills="Video Düzenleme, İçerik Üretimi" data-joined="2024">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Ekin" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=E'">
                 </div>
@@ -809,7 +1017,7 @@
             </div>
 
             <!-- SPONY -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Spony" data-role="Üye" data-instagram="ismail_ylmz1616" data-instagram-url="https://instagram.com/ismail_ylmz1616" data-age="20" data-about="Pazarlama ve marka yönetimi konularında çalışır." data-skills="Pazarlama, Marka Yönetimi" data-joined="2024">
                 <div class="member-image">
                     <img src="sponypfp.jpg" alt="Spony" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=S'">
                 </div>
@@ -821,7 +1029,7 @@
             </div>
 
             <!-- DRAKEN -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Draken" data-role="Üye" data-instagram="spaceanime912" data-instagram-url="https://instagram.com/spaceanime912" data-age="21" data-about="Anime ve popüler kültür içerikleri üretir." data-skills="İçerik Üretimi, Popüler Kültür" data-joined="2023">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Draken" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=D'">
                 </div>
@@ -833,7 +1041,7 @@
             </div>
 
             <!-- RAYS -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Rays" data-role="Üye" data-instagram="luigininkucukburnu" data-instagram-url="https://instagram.com/luigininkucukburnu" data-age="19" data-about="Müzik prodüksiyonu ve ses tasarımı ile ilgilenir." data-skills="Müzik Prodüksiyonu, Ses Tasarımı" data-joined="2024">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Rays" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=R'">
                 </div>
@@ -845,7 +1053,7 @@
             </div>
 
             <!-- NXISS -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Nxiss" data-role="Üye" data-instagram="nxissqq11" data-instagram-url="https://instagram.com/nxissqq11" data-age="20" data-about="Oyun geliştirme ve tasarım konularında çalışır." data-skills="Oyun Geliştirme, Unity" data-joined="2024">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Nxiss" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=N'">
                 </div>
@@ -857,7 +1065,7 @@
             </div>
 
             <!-- ROMS -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Roms" data-role="Üye" data-instagram="mrroms224" data-instagram-url="https://instagram.com/mrroms224" data-age="18" data-about="Mobil uygulama geliştirme konusunda yetenekli." data-skills="Mobil Geliştirme, Flutter" data-joined="2024">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Roms" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=R'">
                 </div>
@@ -869,7 +1077,7 @@
             </div>
 
             <!-- RAWEN -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Rawen" data-role="Üye" data-instagram="rawenqpw" data-instagram-url="https://instagram.com/rawenqpw" data-age="20" data-about="Yapay zeka ve makine öğrenmesi üzerine çalışmalar yapar." data-skills="Yapay Zeka, Makine Öğrenmesi" data-joined="2023">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Rawen" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=R'">
                 </div>
@@ -881,7 +1089,7 @@
             </div>
 
             <!-- KADIR -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Kadir" data-role="Üye" data-instagram="babanizagain" data-instagram-url="https://instagram.com/babanizagain" data-age="22" data-about="E-ticaret ve dijital pazarlama konularında uzman." data-skills="E-ticaret, Dijital Pazarlama" data-joined="2023">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Kadir" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=K'">
                 </div>
@@ -893,7 +1101,7 @@
             </div>
 
             <!-- ZLOI -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Zloi" data-role="Üye" data-instagram="tw_ziko" data-instagram-url="https://instagram.com/tw_ziko" data-age="19" data-about="Bot geliştirme ve otomasyon konularında çalışır." data-skills="Bot Geliştirme, Otomasyon" data-joined="2024">
                 <div class="member-image">
                     <img src="zloipfp.jpg" alt="Zloi" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=Z'">
                 </div>
@@ -905,7 +1113,7 @@
             </div>
 
             <!-- VANILYA -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Vanilya" data-role="Üye" data-instagram="sh.vnlyaa" data-instagram-url="https://instagram.com/sh.vnlyaa" data-age="20" data-about="UI/UX tasarım ve kullanıcı deneyimi konularında uzman." data-skills="UI/UX Tasarım, Figma" data-joined="2024">
                 <div class="member-image">
                     <img src="vanilyapfp.jpg" alt="Vanilya" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=V'">
                 </div>
@@ -917,7 +1125,7 @@
             </div>
 
             <!-- KAKISH -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Kakish" data-role="Üye" data-instagram="kakish3113" data-instagram-url="https://instagram.com/kakish3113" data-age="21" data-about="Test ve kalite kontrol süreçlerinden sorumlu." data-skills="Test Otomasyonu, Kalite Kontrol" data-joined="2023">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Kakish" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=K'">
                 </div>
@@ -929,7 +1137,7 @@
             </div>
 
             <!-- ESKIEDIJ -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Eskiedij" data-role="Üye" data-instagram="eskiedij" data-instagram-url="https://instagram.com/eskiedij" data-age="20" data-about="Dijital sanat ve illüstrasyon konularında çalışır." data-skills="Dijital Sanat, İllüstrasyon" data-joined="2024">
                 <div class="member-image">
                     <img src="522796671_633320249801242_3069423785049686180_n.jpg" alt="Eskiedij" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=E'">
                 </div>
@@ -941,7 +1149,7 @@
             </div>
 
             <!-- PHOENIX -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Phoenix" data-role="Üye" data-instagram="mamwxp" data-instagram-url="https://instagram.com/mamwxp" data-age="19" data-about="Sosyal sorumluluk projeleri ve etkinlik organizasyonu." data-skills="Etkinlik Yönetimi, Sosyal Sorumluluk" data-joined="2024">
                 <div class="member-image">
                     <img src="phoenixpfp.jpg" alt="Phoenix" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=P'">
                 </div>
@@ -953,7 +1161,7 @@
             </div>
 
             <!-- HALIT -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Halit" data-role="Üye" data-instagram="halityim" data-instagram-url="https://instagram.com/halityim" data-age="21" data-about="Finans ve bütçe yönetiminden sorumlu." data-skills="Finans Yönetimi, Bütçeleme" data-joined="2023">
                 <div class="member-image">
                     <img src="halitpfp.jpeg" alt="Halit" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=H'">
                 </div>
@@ -965,7 +1173,7 @@
             </div>
 
             <!-- MUSAP -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Krxll1303" data-role="Üye" data-instagram="00192300_" data-instagram-url="https://instagram.com/00192300_" data-age="19" data-about="Yazılım geliştirme ve kod optimizasyonu konularında çalışır." data-skills="Yazılım Geliştirme, Kod Optimizasyonu" data-joined="2024">
                 <div class="member-image">
                     <img src="musappfp.jpeg" alt="Musap" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=E'">
                 </div>
@@ -977,7 +1185,7 @@
             </div>
 
             <!-- BARIS -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Barış" data-role="Üye" data-instagram="bari_ss78" data-instagram-url="https://instagram.com/bari_ss78" data-age="22" data-about="İnsan kaynakları ve ekip yönetiminden sorumlu." data-skills="İnsan Kaynakları, Ekip Yönetimi" data-joined="2023">
                 <div class="member-image">
                     <img src="ltflogo.jpg" alt="Barış" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=B'">
                 </div>
@@ -989,7 +1197,7 @@
             </div>
 
             <!-- LINTANG -->
-            <div class="team-member" data-category="member">
+            <div class="team-member" data-category="member" data-name="Lintang" data-role="Üye" data-instagram="wakeuplildude" data-instagram-url="https://instagram.com/wakeuplildude" data-age="20" data-about="Uluslararası ilişkiler ve iş birliklerinden sorumlu." data-skills="Uluslararası İlişkiler, İş Geliştirme" data-joined="2024">
                 <div class="member-image">
                     <img src="ltflogo.jpg" alt="Lintang" onerror="this.src='https://via.placeholder.com/120/2A2A30/FFFFFF?text=L'">
                 </div>
@@ -1081,6 +1289,92 @@
                 }
             });
         }
+
+        // MODAL FONKSİYONLARI
+        const modal = document.getElementById('memberModal');
+        const closeModalBtn = document.querySelector('.modal-close');
+        
+        function openModal(memberElement) {
+            // Verileri al
+            const name = memberElement.dataset.name;
+            const role = memberElement.dataset.role;
+            const instagram = memberElement.dataset.instagram;
+            const instagramUrl = memberElement.dataset.instagramUrl;
+            const age = memberElement.dataset.age;
+            const about = memberElement.dataset.about;
+            const skills = memberElement.dataset.skills;
+            const joined = memberElement.dataset.joined;
+            
+            // Karttaki fotoğrafı al
+            const cardImg = memberElement.querySelector('.member-image img');
+            const modalImg = document.getElementById('modalImg');
+            const modalProfileDiv = document.getElementById('modalProfileImg');
+            
+            if (cardImg && cardImg.src && !cardImg.parentElement.classList.contains('no-image')) {
+                modalImg.src = cardImg.src;
+                modalImg.style.display = 'block';
+                modalProfileDiv.classList.remove('no-image');
+                modalImg.onerror = function() {
+                    modalProfileDiv.classList.add('no-image');
+                    modalImg.style.display = 'none';
+                    modalProfileDiv.innerHTML = name.charAt(0);
+                };
+            } else {
+                modalProfileDiv.classList.add('no-image');
+                modalImg.style.display = 'none';
+                modalProfileDiv.innerHTML = name.charAt(0);
+            }
+            
+            // Modal içeriğini doldur
+            document.getElementById('modalName').textContent = name;
+            document.getElementById('modalRole').textContent = role;
+            document.getElementById('modalAge').textContent = age;
+            document.getElementById('modalInstagram').innerHTML = `<a href="${instagramUrl}" target="_blank" style="color: var(--sari); text-decoration: none;">@${instagram}</a>`;
+            document.getElementById('modalAbout').textContent = about;
+            
+            // Yetenekleri etiket olarak göster
+            const skillsArray = skills.split(', ');
+            const skillsHtml = skillsArray.map(skill => `<span class="skill-tag">${skill}</span>`).join('');
+            document.getElementById('modalSkills').innerHTML = `<div class="skills">${skillsHtml}</div>`;
+            
+            document.getElementById('modalJoined').textContent = joined;
+            document.getElementById('modalInstaLink').href = instagramUrl;
+            
+            // Modal'ı göster
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Kartlara tıklama olayı ekle
+        document.querySelectorAll('.team-member').forEach(member => {
+            member.addEventListener('click', (e) => {
+                // Eğer tıklanan yer Instagram linki ise modal açılmasın
+                if (e.target.closest('.member-social a')) {
+                    return;
+                }
+                openModal(member);
+            });
+        });
+        
+        // Modal kapatma
+        closeModalBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Escape tuşu ile kapatma
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
 
         // Fotoğraf yüklenemezse placeholder göster
         document.querySelectorAll('.member-image img').forEach(img => {
