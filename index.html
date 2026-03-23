@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loyal Team Force - Ana Sayfa</title>
+    <title>Loyal Team Force | Profesyonel ve Dinamik Ekip</title>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts - Özel fontlar -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         /* RESET VE TEMEL STILLER */
@@ -18,56 +18,48 @@
             box-sizing: border-box;
         }
 
-        /* RENK PALETİ - Sadece 2'şerli kombinasyonlar */
+        /* RENK PALETİ - Siyah + Sarı (Ana), Koyu Kırmızı, Beyaz, Açık Mavi (Ara) */
         :root {
-            --siyah: #0A0A0F;
-            --siyah-2: #1A1A20;
-            --sari: #FFD700;
-            --kirmizi: #8B0000;
-            --beyaz: #FFFFFF;
-            --mavi: #87CEEB;  /* Açık mavi */
-            --gri: #2A2A30;
+            --bg-dark: #050505;
+            --bg-card: #0F0F0F;
+            --bg-sidebar: #0A0A0A;
+            --gold: #FFD700;
+            --dark-red: #8B0000;      /* Koyu kırmızı */
+            --white: #FFFFFF;
+            --light-blue: #87CEEB;     /* Açık mavi */
+            --light-blue-glow: #9AD9F5;
+            --gray-border: #1F1F1F;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--siyah);
-            color: var(--beyaz);
+            background-color: var(--bg-dark);
+            color: var(--white);
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* ===== DURMAKSIZIN YAVAŞ ARKA PLAN ANİMASYONU ===== */
+        /* Özel Scroll Bar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FFE55C;
+        }
+
+        /* ===== YUMUŞAK HAREKET EDEN ARKA PLAN ===== */
         @keyframes slowDrift {
             0% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-            100% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
         }
 
-        @keyframes slowPulse {
-            0% { opacity: 0.3; }
-            50% { opacity: 0.5; }
-            100% { opacity: 0.3; }
-        }
-
-        @keyframes slowRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes slowFloat {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(20px); }
-            100% { transform: translateY(0px); }
-        }
-
-        @keyframes slowShimmer {
-            0% { opacity: 0.2; transform: translateX(-100%); }
-            50% { opacity: 0.4; }
-            100% { opacity: 0.2; transform: translateX(100%); }
-        }
-
-        /* Arka plan animasyonu - gradient hareketi */
         body::before {
             content: '';
             position: fixed;
@@ -75,47 +67,27 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 30% 50%, rgba(255, 215, 0, 0.03) 0%, transparent 30%),
-                        radial-gradient(circle at 80% 70%, rgba(139, 0, 0, 0.03) 0%, transparent 30%),
-                        radial-gradient(circle at 20% 80%, rgba(135, 206, 235, 0.03) 0%, transparent 30%);
-            animation: slowDrift 30s ease-in-out infinite;
+            background: radial-gradient(circle at 20% 40%, rgba(255, 215, 0, 0.03) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(135, 206, 235, 0.02) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(139, 0, 0, 0.02) 0%, transparent 40%);
+            animation: slowDrift 45s ease-in-out infinite alternate;
             pointer-events: none;
             z-index: -1;
         }
 
-        /* Ekstra arka plan dokusu */
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 100px,
-                rgba(255, 255, 255, 0.01) 100px,
-                rgba(255, 255, 255, 0.01) 200px
-            );
-            animation: slowDrift 60s linear infinite;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* ===== KISA METİN ANİMASYONLARI ===== */
+        /* ===== METİN ANİMASYONLARI ===== */
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeInLeft {
-            from { opacity: 0; transform: translateX(-20px); }
+            from { opacity: 0; transform: translateX(-30px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
         @keyframes fadeInRight {
-            from { opacity: 0; transform: translateX(20px); }
+            from { opacity: 0; transform: translateX(30px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
@@ -124,28 +96,47 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        @keyframes titleGlow {
-            0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.1); }
-            50% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
-            100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.1); }
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.2); }
+            100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
         }
 
-        /* Metin animasyon sınıfları */
-        .fade-up {
-            animation: fadeInUp 0.8s ease forwards;
+        /* Açık mavi için yumuşak renk geçiş animasyonu */
+        @keyframes softBluePulse {
+            0% { 
+                color: #87CEEB;
+                text-shadow: 0 0 5px rgba(135, 206, 235, 0.3);
+            }
+            50% { 
+                color: #ADD8E6;
+                text-shadow: 0 0 15px rgba(135, 206, 235, 0.6);
+            }
+            100% { 
+                color: #87CEEB;
+                text-shadow: 0 0 5px rgba(135, 206, 235, 0.3);
+            }
         }
 
-        .fade-left {
-            animation: fadeInLeft 0.8s ease forwards;
+        /* Lider kartları için yumuşak kenar efekti */
+        @keyframes softBorderGlow {
+            0% { 
+                border-color: rgba(135, 206, 235, 0.2);
+                box-shadow: 0 0 0px rgba(135, 206, 235, 0);
+            }
+            50% { 
+                border-color: rgba(135, 206, 235, 0.6);
+                box-shadow: 0 0 20px rgba(135, 206, 235, 0.2);
+            }
+            100% { 
+                border-color: rgba(135, 206, 235, 0.2);
+                box-shadow: 0 0 0px rgba(135, 206, 235, 0);
+            }
         }
 
-        .fade-right {
-            animation: fadeInRight 0.8s ease forwards;
-        }
-
-        .scale-in {
-            animation: scaleIn 0.8s ease forwards;
-        }
+        .fade-up { animation: fadeInUp 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards; }
+        .fade-left { animation: fadeInLeft 0.8s ease forwards; }
+        .fade-right { animation: fadeInRight 0.8s ease forwards; }
+        .scale-in { animation: scaleIn 0.7s ease forwards; }
 
         /* LOADING */
         .loader-wrapper {
@@ -154,228 +145,189 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--siyah);
+            background: var(--bg-dark);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.5s;
+            transition: opacity 0.6s, visibility 0.6s;
         }
-
         .loader-wrapper.hidden {
             opacity: 0;
-            pointer-events: none;
+            visibility: hidden;
         }
-
         .loader {
             width: 50px;
             height: 50px;
-            border: 3px solid var(--siyah-2);
-            border-top-color: var(--sari);
+            border: 3px solid rgba(255, 215, 0, 0.2);
+            border-top-color: var(--gold);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* HAMBURGER */
+        /* HAMBURGER MENU */
         .hamburger {
             width: 40px;
             height: 30px;
             position: fixed;
-            top: 25px;
-            left: 25px;
-            z-index: 100;
+            top: 28px;
+            left: 28px;
+            z-index: 1001;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             cursor: pointer;
-            padding: 5px;
-            animation: fadeInLeft 0.8s ease;
+            background: transparent;
+            border: none;
+            padding: 0;
         }
-
         .hamburger span {
             display: block;
             height: 3px;
             width: 100%;
-            background: var(--sari);
-            border-radius: 3px;
-            transition: 0.3s;
+            background: var(--gold);
+            border-radius: 4px;
+            transition: all 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
-
         .hamburger.open .bar1 {
             transform: translateY(12px) rotate(45deg);
-            background: var(--mavi);
+            background: var(--white);
         }
-
         .hamburger.open .bar2 {
             opacity: 0;
+            transform: scaleX(0);
         }
-
         .hamburger.open .bar3 {
             transform: translateY(-12px) rotate(-45deg);
-            background: var(--mavi);
+            background: var(--white);
         }
 
         /* SIDE MENU */
         .side-menu {
-            width: 260px;
+            width: 280px;
             height: 100vh;
-            background: var(--siyah-2);
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(12px);
             position: fixed;
             top: 0;
-            left: -280px;
-            z-index: 99;
-            transition: left 0.3s;
-            padding: 80px 0 30px;
-            border-right: 2px solid var(--sari);
+            left: -300px;
+            z-index: 1000;
+            transition: left 0.3s ease-out;
+            padding: 90px 0 30px;
+            border-right: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 4px 0 25px rgba(0,0,0,0.5);
         }
-
-        .side-menu.open {
-            left: 0;
-        }
-
+        .side-menu.open { left: 0; }
         .menu-link {
             display: flex;
             align-items: center;
             gap: 15px;
-            padding: 15px 25px;
-            color: var(--beyaz);
+            padding: 14px 28px;
+            color: var(--white);
             text-decoration: none;
-            transition: background 0.2s;
+            transition: all 0.2s;
             border-left: 3px solid transparent;
+            font-weight: 500;
         }
-
-        .menu-link i {
-            width: 20px;
-            color: var(--sari);
-        }
-
+        .menu-link i { width: 24px; color: var(--gold); font-size: 1.2rem; }
         .menu-link:hover {
-            background: rgba(255, 215, 0, 0.1);
-            border-left-color: var(--sari);
+            background: rgba(255, 215, 0, 0.08);
+            border-left-color: var(--gold);
+            padding-left: 32px;
         }
-
         .menu-link.active {
-            background: rgba(255, 215, 0, 0.15);
-            border-left-color: var(--sari);
-            color: var(--sari);
+            background: rgba(255, 215, 0, 0.12);
+            border-left-color: var(--gold);
+            color: var(--gold);
         }
-
         .menu-footer {
             position: absolute;
             bottom: 30px;
             left: 0;
             right: 0;
             text-align: center;
-            font-size: 0.8rem;
-            opacity: 0.6;
+            font-size: 0.75rem;
+            opacity: 0.5;
         }
 
-        /* HERO SECTION - Siyah + Sarı */
+        /* HERO - Siyah + Sarı */
         .hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            background: linear-gradient(135deg, var(--siyah), var(--siyah-2));
-            border-bottom: 3px solid var(--sari);
+            background: linear-gradient(145deg, #030303 0%, #0a0a0a 100%);
+            border-bottom: 2px solid var(--gold);
             position: relative;
-            overflow: hidden;
         }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.02) 0%, transparent 30%);
-            animation: slowRotate 60s linear infinite;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            padding: 0 20px;
-            max-width: 800px;
-        }
-
-        /* ÖZEL FONT - Büyük başlık */
+        .hero-content { max-width: 900px; padding: 0 20px; z-index: 2; }
         .hero h1 {
             font-family: 'Montserrat', sans-serif;
-            font-size: clamp(3rem, 10vw, 6rem);
+            font-size: clamp(2.8rem, 9vw, 5.5rem);
             font-weight: 900;
-            letter-spacing: 5px;
-            color: var(--sari);
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, var(--gold) 0%, #FFE55C 50%, #FFD966 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             margin-bottom: 20px;
-            line-height: 1.1;
-            animation: fadeInUp 1s ease, titleGlow 4s ease-in-out infinite;
+            animation: fadeInUp 0.9s, glowPulse 3s infinite alternate;
         }
-
         .hero p {
             font-size: 1.2rem;
-            color: var(--beyaz);
+            color: #ddd;
             margin-bottom: 40px;
-            opacity: 0.9;
-            animation: fadeInUp 1s 0.2s both;
+            animation: fadeInUp 0.9s 0.2s both;
         }
-
         .hero-buttons {
             display: flex;
-            gap: 20px;
+            gap: 24px;
             justify-content: center;
             flex-wrap: wrap;
-            animation: fadeInUp 1s 0.4s both;
+            animation: fadeInUp 0.9s 0.4s both;
         }
-
         .btn {
-            padding: 14px 35px;
+            padding: 14px 38px;
             border-radius: 50px;
             font-weight: 600;
             text-decoration: none;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             font-size: 1rem;
-            animation: scaleIn 0.8s;
+            letter-spacing: 0.5px;
         }
-
         .btn-primary {
-            background: var(--sari);
-            color: var(--siyah);
-            border: 2px solid var(--sari);
+            background: var(--gold);
+            color: #000;
+            border: 2px solid var(--gold);
         }
-
         .btn-primary:hover {
             background: transparent;
-            color: var(--sari);
+            color: var(--gold);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.2);
         }
-
         .btn-outline {
             background: transparent;
-            color: var(--beyaz);
-            border: 2px solid var(--beyaz);
+            color: var(--white);
+            border: 2px solid var(--white);
         }
-
         .btn-outline:hover {
-            background: var(--beyaz);
-            color: var(--siyah);
+            background: var(--white);
+            color: #000;
+            transform: translateY(-3px);
         }
-
         .scroll-indicator {
             position: absolute;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            width: 30px;
-            height: 50px;
-            border: 2px solid var(--sari);
-            border-radius: 15px;
+            width: 28px;
+            height: 48px;
+            border: 2px solid var(--gold);
+            border-radius: 20px;
         }
-
         .scroll-indicator::before {
             content: '';
             position: absolute;
@@ -383,396 +335,266 @@
             left: 50%;
             transform: translateX(-50%);
             width: 4px;
-            height: 8px;
-            background: var(--sari);
+            height: 10px;
+            background: var(--gold);
             border-radius: 2px;
-            animation: scroll 2s infinite;
+            animation: scrollAnim 2s infinite;
         }
-
-        @keyframes scroll {
+        @keyframes scrollAnim {
             0% { opacity: 1; transform: translateX(-50%) translateY(0); }
             100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
         }
 
-        /* ABOUT SECTION - Siyah + Kırmızı */
+        /* ABOUT - Siyah + Koyu Kırmızı */
         .about {
-            padding: 100px 20px;
-            background: var(--siyah);
-            position: relative;
-            overflow: hidden;
+            padding: 110px 20px;
+            background: var(--bg-dark);
         }
-
-        .about::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--kirmizi), transparent);
-            animation: slowShimmer 8s linear infinite;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-
+        .container { max-width: 1280px; margin: 0 auto; }
         .section-header {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 70px;
         }
-
         .section-header h2 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: 700;
-            color: var(--kirmizi);
-            margin-bottom: 15px;
-            animation: fadeInUp 0.8s;
+            color: var(--dark-red);
+            margin-bottom: 12px;
         }
-
         .section-header p {
-            color: var(--beyaz);
-            opacity: 0.8;
-            max-width: 600px;
-            margin: 0 auto;
-            animation: fadeInUp 0.8s 0.1s both;
+            color: #aaa;
+            font-size: 1.1rem;
         }
-
         .about-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 60px;
+            gap: 70px;
             align-items: center;
         }
-
-        .about-text {
-            animation: fadeInLeft 0.8s;
-        }
-
         .about-text p {
             margin-bottom: 20px;
-            color: var(--beyaz);
-            opacity: 0.9;
+            color: #ccc;
         }
-
         .highlight {
-            color: var(--kirmizi);
+            color: var(--dark-red);
             font-weight: 600;
             font-size: 1.2rem;
-            border-left: 4px solid var(--kirmizi);
-            padding-left: 20px;
+            border-left: 4px solid var(--dark-red);
+            padding-left: 24px;
             margin: 30px 0;
+            background: rgba(139, 0, 0, 0.05);
+            border-radius: 0 12px 12px 0;
         }
-
         .about-stats {
             display: flex;
-            gap: 40px;
+            gap: 45px;
             margin-top: 40px;
         }
-
-        .stat-item {
-            text-align: center;
-            animation: scaleIn 0.6s;
-            animation-fill-mode: both;
-        }
-
-        .stat-item:nth-child(1) { animation-delay: 0.2s; }
-        .stat-item:nth-child(2) { animation-delay: 0.3s; }
-        .stat-item:nth-child(3) { animation-delay: 0.4s; }
-
+        .stat-item { text-align: center; }
         .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--kirmizi);
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--dark-red);
             display: block;
+            line-height: 1;
         }
-
-        .stat-label {
-            color: var(--beyaz);
-            opacity: 0.7;
-            font-size: 0.9rem;
-        }
-
-        .about-image {
-            animation: fadeInRight 0.8s;
-        }
-
+        .stat-label { color: #bbb; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
         .about-image img {
             width: 100%;
-            border-radius: 10px;
-            border: 2px solid var(--kirmizi);
-            transition: transform 0.3s;
+            border-radius: 24px;
+            border: 1px solid rgba(139, 0, 0, 0.4);
+            transition: all 0.4s;
+            box-shadow: 0 20px 35px -15px rgba(0,0,0,0.5);
         }
+        .about-image img:hover { transform: scale(1.02); border-color: var(--dark-red); }
 
-        .about-image img:hover {
-            transform: scale(1.02);
-        }
-
-        /* FEATURES SECTION - Siyah + Beyaz */
+        /* FEATURES - Siyah + Beyaz */
         .features {
-            padding: 100px 20px;
-            background: var(--siyah-2);
+            padding: 110px 20px;
+            background: var(--bg-card);
         }
-
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
+            gap: 35px;
+            margin-top: 30px;
         }
-
         .feature-card {
-            background: var(--siyah);
-            padding: 40px 30px;
-            border-radius: 10px;
+            background: #0c0c0c;
+            padding: 45px 30px;
+            border-radius: 28px;
             text-align: center;
-            transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: scaleIn 0.8s;
-            animation-fill-mode: both;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid #1e1e1e;
         }
-
-        .feature-card:nth-child(1) { animation-delay: 0.1s; }
-        .feature-card:nth-child(2) { animation-delay: 0.2s; }
-        .feature-card:nth-child(3) { animation-delay: 0.3s; }
-
         .feature-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--beyaz);
+            transform: translateY(-8px);
+            border-color: var(--white);
+            background: #111;
         }
-
         .feature-card i {
-            font-size: 2.5rem;
-            color: var(--beyaz);
-            margin-bottom: 20px;
+            font-size: 2.8rem;
+            color: var(--white);
+            margin-bottom: 25px;
             transition: transform 0.3s;
         }
-
         .feature-card:hover i {
             transform: scale(1.1);
         }
+        .feature-card h3 { font-size: 1.6rem; margin-bottom: 15px; color: #fff; }
+        .feature-card p { color: #aaa; }
 
-        .feature-card h3 {
-            font-size: 1.5rem;
-            color: var(--beyaz);
-            margin-bottom: 15px;
-        }
-
-        .feature-card p {
-            color: var(--beyaz);
-            opacity: 0.8;
-        }
-
-        /* LEADERS SECTION - Siyah + Mavi */
+        /* LEADERS - Siyah + Açık Mavi (Yumuşak Hareketli) */
         .leaders {
-            padding: 100px 20px;
-            background: var(--siyah);
+            padding: 110px 20px;
+            background: var(--bg-dark);
+            position: relative;
         }
-
         .leaders-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 50px;
             justify-items: center;
-            margin-top: 40px;
         }
-
         .leader-card {
             text-align: center;
-            padding: 40px 30px;
-            background: var(--siyah-2);
-            border-radius: 10px;
-            max-width: 350px;
+            padding: 45px 30px;
+            background: var(--bg-card);
+            border-radius: 32px;
+            max-width: 380px;
             width: 100%;
-            transition: all 0.3s;
-            border: 1px solid rgba(135, 206, 235, 0.2);
-            animation: scaleIn 0.8s;
-            animation-fill-mode: both;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 2px solid rgba(135, 206, 235, 0.3);
+            animation: softBorderGlow 3s ease-in-out infinite;
         }
-
-        .leader-card:nth-child(1) { animation-delay: 0.2s; }
-        .leader-card:nth-child(2) { animation-delay: 0.4s; }
-
         .leader-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--mavi);
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--light-blue);
+            box-shadow: 0 10px 30px rgba(135, 206, 235, 0.2);
         }
-
         .leader-image {
             width: 150px;
             height: 150px;
             margin: 0 auto 20px;
             border-radius: 50%;
             overflow: hidden;
-            border: 3px solid var(--mavi);
-            transition: transform 0.3s;
+            border: 3px solid var(--light-blue);
+            transition: all 0.4s;
         }
-
-        .leader-card:hover .leader-image {
+        .leader-card:hover .leader-image { 
             transform: scale(1.05);
+            border-color: var(--light-blue-glow);
         }
-
-        .leader-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
+        .leader-image img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Lider isimleri - Açık mavi ve yumuşak hareketli */
         .leader-card h3 {
-            font-size: 1.8rem;
-            color: var(--mavi);
-            margin-bottom: 5px;
+            font-size: 1.9rem;
+            margin-bottom: 6px;
+            animation: softBluePulse 3s ease-in-out infinite;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
-
-        .leader-title {
-            color: var(--beyaz);
-            opacity: 0.8;
+        
+        .leader-title { 
+            color: #bbb; 
             margin-bottom: 20px;
+            font-size: 1rem;
         }
-
-        .leader-social {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
+        
+        .leader-social { 
+            display: flex; 
+            gap: 20px; 
+            justify-content: center; 
         }
-
         .leader-social a {
-            color: var(--beyaz);
-            font-size: 1.2rem;
-            transition: all 0.2s;
+            color: #ccc;
+            font-size: 1.3rem;
+            transition: all 0.3s;
+        }
+        .leader-social a:hover { 
+            color: var(--light-blue); 
+            transform: translateY(-3px) scale(1.1);
         }
 
-        .leader-social a:hover {
-            color: var(--mavi);
-            transform: translateY(-3px);
-        }
-
-        /* FOOTER */
+        /* FOOTER - Siyah + Sarı */
         footer {
-            background: var(--siyah-2);
-            padding: 60px 20px 20px;
-            border-top: 2px solid var(--sari);
-            position: relative;
-            overflow: hidden;
+            background: #080808;
+            padding: 70px 20px 30px;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
         }
-
-        footer::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--sari), transparent);
-            animation: slowShimmer 10s linear infinite;
-        }
-
         .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 50px;
             margin-bottom: 50px;
-            position: relative;
-            z-index: 2;
         }
-
         .footer-logo h2 {
-            font-size: 2rem;
-            color: var(--sari);
-            margin-bottom: 10px;
+            font-size: 2.2rem;
+            color: var(--gold);
+            margin-bottom: 12px;
+            animation: glowPulse 3s infinite alternate;
         }
-
-        .footer-logo p {
-            color: var(--beyaz);
-            opacity: 0.7;
-        }
-
-        .footer-links h4,
-        .footer-social h4 {
-            color: var(--sari);
-            margin-bottom: 20px;
-        }
-
-        .footer-links ul {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-
+        .footer-logo p { color: #aaa; }
+        .footer-links h4, .footer-social h4 { color: var(--gold); margin-bottom: 22px; font-size: 1.2rem; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 12px; }
         .footer-links a {
-            color: var(--beyaz);
+            color: #ccc;
             text-decoration: none;
-            transition: color 0.2s;
-            opacity: 0.8;
+            transition: all 0.3s;
         }
-
-        .footer-links a:hover {
-            color: var(--sari);
-            opacity: 1;
+        .footer-links a:hover { 
+            color: var(--gold); 
+            padding-left: 5px;
         }
-
-        /* SOSYAL MEDYA İKONLARI */
         .social-icons {
             display: flex;
-            gap: 20px;
+            gap: 22px;
         }
-
         .social-icons a {
-            color: var(--beyaz);
-            font-size: 1.5rem;
-            transition: all 0.2s;
+            color: #ccc;
+            font-size: 1.6rem;
+            transition: all 0.3s;
         }
-
-        .social-icons a:hover {
-            color: var(--sari);
-            transform: translateY(-3px);
+        .social-icons a:hover { 
+            color: var(--gold); 
+            transform: translateY(-3px) scale(1.1);
         }
-
         .footer-bottom {
             text-align: center;
             padding-top: 30px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: var(--beyaz);
-            opacity: 0.6;
-            font-size: 0.9rem;
+            border-top: 1px solid #1a1a1a;
+            color: #777;
+            font-size: 0.85rem;
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .about-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .about-stats {
-                justify-content: center;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn {
-                width: 100%;
-                max-width: 300px;
-                text-align: center;
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            
-            .social-icons {
-                justify-content: center;
-            }
+        /* Ekstra: Rastgele parlayan noktalar efekti */
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(0); }
+            50% { opacity: 0.3; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            width: 2px;
+            height: 2px;
+            background: var(--light-blue);
+            border-radius: 50%;
+            animation: twinkle 4s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @media (max-width: 850px) {
+            .about-content { grid-template-columns: 1fr; text-align: center; gap: 40px; }
+            .about-stats { justify-content: center; }
+            .highlight { text-align: left; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .btn { width: 220px; }
+            .section-header h2 { font-size: 2.2rem; }
+            .leader-card h3 { font-size: 1.6rem; }
         }
     </style>
     <meta name="google-site-verification" content="C4KC3KBcpljBfRCb-ylSvCFpP2aE4c9tumThHu5Hifg" />
@@ -784,96 +606,57 @@
     </div>
 
     <!-- HAMBURGER -->
-    <div id="menuBtn" class="hamburger">
+    <button id="menuBtn" class="hamburger" aria-label="Menü">
         <span class="bar1"></span>
         <span class="bar2"></span>
         <span class="bar3"></span>
-    </div>
+    </button>
 
     <!-- SIDE MENU -->
     <nav id="sideMenu" class="side-menu">
         <div class="menu-items">
-            <a href="index.html" class="menu-link active">
-                <i class="fas fa-home"></i>
-                Ana Sayfa
-            </a>
-            <a href="leaderboard.html" class="menu-link">
-                <i class="fas fa-trophy"></i>
-                Liderlik Tablosu
-            </a>
-            <a href="proje.html" class="menu-link">
-                <i class="fas fa-code-branch"></i>
-                Projelerimiz
-            </a>
-            <a href="social.html" class="menu-link">
-                <i class="fas fa-users"></i>
-                Sosyal Medya
-            </a>
-            <a href="team.html" class="menu-link">
-                <i class="fas fa-user-ninja"></i>
-                Takımımız
-            </a>
-            <a href="puanlama.html" class="menu-link">
-                <i class="fas fa-star"></i>
-                Puanlama
-            </a>
-            <a href="sohbet.html" class="menu-link active">
-                <i class="fas fa-comments"></i>
-                Sohbet
-            </a>
+            <a href="index.html" class="menu-link active"><i class="fas fa-home"></i> Ana Sayfa</a>
+            <a href="leaderboard.html" class="menu-link"><i class="fas fa-trophy"></i> Liderlik Tablosu</a>
+            <a href="proje.html" class="menu-link"><i class="fas fa-code-branch"></i> Projelerimiz</a>
+            <a href="social.html" class="menu-link"><i class="fas fa-users"></i> Sosyal Medya</a>
+            <a href="team.html" class="menu-link"><i class="fas fa-user-ninja"></i> Takımımız</a>
+            <a href="puanlama.html" class="menu-link"><i class="fas fa-star"></i> Puanlama</a>
+            <a href="sohbet.html" class="menu-link"><i class="fas fa-comments"></i> Sohbet</a>
         </div>
-        <div class="menu-footer">
-            <p>LTF © 2025</p>
-        </div>
+        <div class="menu-footer"><p>LTF © 2025</p></div>
     </nav>
 
-    <!-- HERO SECTION - Siyah + Sarı -->
+    <!-- HERO - Siyah + Sarı -->
     <section class="hero">
         <div class="hero-content">
             <h1>LOYAL TEAM FORCE</h1>
-            <p class="fade-up">Güven, bağlılık ve profesyonellik</p>
+            <p>Güven, bağlılık ve profesyonellik</p>
             <div class="hero-buttons">
-                <a href="team.html" class="btn btn-primary scale-in">Ekibimizi Gör</a>
-                <a href="#about" class="btn btn-outline scale-in">Keşfet</a>
+                <a href="team.html" class="btn btn-primary">Ekibimizi Gör</a>
+                <a href="#about" class="btn btn-outline">Keşfet</a>
             </div>
         </div>
         <div class="scroll-indicator"></div>
     </section>
 
-    <!-- ABOUT SECTION - Siyah + Kırmızı -->
+    <!-- ABOUT - Siyah + Koyu Kırmızı -->
     <section id="about" class="about">
         <div class="container">
             <div class="section-header">
                 <h2>Hakkımızda</h2>
                 <p>Güven ve bağlılık üzerine kurulu profesyonel ekip</p>
             </div>
-            
             <div class="about-content">
                 <div class="about-text">
                     <p>Loyal Team Force (LTF) - Güven, bağlılık ve dayanışma üzerine kurulu bir ekip olarak bir araya gelmiştir. Biz sadece bir ekip değil, birbirine destek olan, birlikte büyüyen ve birlikte başaran bir aileyiz.</p>
-                    
-                    <div class="highlight">
-                        Her üyemiz kendi alanında uzman ve sürekli gelişim içindedir.
-                    </div>
-                    
+                    <div class="highlight">Her üyemiz kendi alanında uzman ve sürekli gelişim içindedir.</div>
                     <p>Misyonumuz, adalet, saygı ve sadakati temel alarak sürekli gelişmek ve sınırları zorlamak; vizyonumuz ise Loyal Team Force'u ilham verici bir topluluk haline getirmektir.</p>
-                    
                     <div class="about-stats">
-                        <div class="stat-item">
-                            <span class="stat-number">27+</span>
-                            <span class="stat-label">Aktif Üye</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">50+</span>
-                            <span class="stat-label">Proje</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">7/24</span>
-                            <span class="stat-label">Destek</span>
-                        </div>
+                        <div class="stat-item"><span class="stat-number">27+</span><span class="stat-label">Aktif Üye</span></div>
+                        <div class="stat-item"><span class="stat-number">50+</span><span class="stat-label">Proje</span></div>
+                        <div class="stat-item"><span class="stat-number">7/24</span><span class="stat-label">Destek</span></div>
                     </div>
                 </div>
-                
                 <div class="about-image">
                     <img src="ltflogored.jpeg" alt="LTF Team">
                 </div>
@@ -881,49 +664,31 @@
         </div>
     </section>
 
-    <!-- FEATURES SECTION - Siyah + Beyaz -->
+    <!-- FEATURES - Siyah + Beyaz -->
     <section class="features">
         <div class="container">
             <div class="section-header">
                 <h2>Özelliklerimiz</h2>
                 <p>Bizi farklı kılan değerler</p>
             </div>
-            
             <div class="features-grid">
-                <div class="feature-card">
-                    <i class="fas fa-users"></i>
-                    <h3>Profesyonel Ekip</h3>
-                    <p>Her üye kendi alanında uzman ve sürekli gelişim içindedir.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <i class="fas fa-crown"></i>
-                    <h3>Liderlik</h3>
-                    <p>Oyun ve projelerde liderlik yapabilecek yetenekli üyeler.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <i class="fas fa-handshake"></i>
-                    <h3>İş Birliği</h3>
-                    <p>Ekibimizde uyum ve iş birliği önceliklidir.</p>
-                </div>
+                <div class="feature-card"><i class="fas fa-users"></i><h3>Profesyonel Ekip</h3><p>Her üye kendi alanında uzman ve sürekli gelişim içindedir.</p></div>
+                <div class="feature-card"><i class="fas fa-crown"></i><h3>Liderlik</h3><p>Oyun ve projelerde liderlik yapabilecek yetenekli üyeler.</p></div>
+                <div class="feature-card"><i class="fas fa-handshake"></i><h3>İş Birliği</h3><p>Ekibimizde uyum ve iş birliği önceliklidir.</p></div>
             </div>
         </div>
     </section>
 
-    <!-- LEADERS SECTION - Siyah + Mavi -->
+    <!-- LEADERS - Siyah + Açık Mavi (Yumuşak Hareketli İsimler) -->
     <section class="leaders">
         <div class="container">
             <div class="section-header">
-                <h2>Kurucularımız</h2>
+                <h2 style="color: var(--light-blue);">Kurucularımız</h2>
                 <p>Lider kadromuz</p>
             </div>
-            
             <div class="leaders-grid">
                 <div class="leader-card">
-                    <div class="leader-image">
-                        <img src="nihishpfp.jpg" alt="Zinny">
-                    </div>
+                    <div class="leader-image"><img src="nihishpfp.jpg" alt="Zinny"></div>
                     <h3>Zinny</h3>
                     <p class="leader-title">Kurucu</p>
                     <div class="leader-social">
@@ -932,11 +697,8 @@
                         <a href="https://instagram.com/yalnz_nihish"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
-                
                 <div class="leader-card">
-                    <div class="leader-image">
-                        <img src="ltflogoblack.jpeg" alt="Chivas">
-                    </div>
+                    <div class="leader-image"><img src="ltflogoblack.jpeg" alt="Chivas"></div>
                     <h3>Chivas</h3>
                     <p class="leader-title">Kurucu Yardımcısı</p>
                     <div class="leader-social">
@@ -953,10 +715,7 @@
     <footer>
         <div class="container">
             <div class="footer-content">
-                <div class="footer-logo">
-                    <h2>LTF</h2>
-                    <p>Loyal Team Force</p>
-                </div>
+                <div class="footer-logo"><h2>LTF</h2><p>Loyal Team Force</p></div>
                 <div class="footer-links">
                     <h4>Hızlı Bağlantılar</h4>
                     <ul>
@@ -965,7 +724,7 @@
                         <li><a href="proje.html">Projeler</a></li>
                         <li><a href="social.html">İletişim</a></li>
                         <li><a href="puanlama.html">Puanlama</a></li>
-                        <li><a href="sohbet.html" class="menu-link active"><i class="fas fa-comments"></i> Sohbet</a></li>
+                        <li><a href="sohbet.html">Sohbet</a></li>
                     </ul>
                 </div>
                 <div class="footer-social">
@@ -987,41 +746,63 @@
 
     <script>
         // LOADING
-        window.addEventListener('load', function() {
+        window.addEventListener('load', () => {
             setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-            }, 1000);
+                const loader = document.getElementById('loader');
+                if(loader) loader.classList.add('hidden');
+            }, 800);
         });
 
         // HAMBURGER MENU
         const btn = document.getElementById("menuBtn");
         const menu = document.getElementById("sideMenu");
 
-        btn.addEventListener("click", function() {
-            menu.classList.toggle("open");
-            btn.classList.toggle("open");
-        });
+        if(btn && menu) {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                menu.classList.toggle("open");
+                btn.classList.toggle("open");
+            });
 
-        // Menü dışına tıklandığında kapat
-        document.addEventListener('click', function(e) {
-            if (!menu.contains(e.target) && !btn.contains(e.target)) {
-                menu.classList.remove('open');
-                btn.classList.remove('open');
-            }
-        });
+            document.addEventListener('click', (e) => {
+                if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                    menu.classList.remove('open');
+                    btn.classList.remove('open');
+                }
+            });
+        }
 
-        // Sayfa içi linklere smooth scroll
+        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
+                if(target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
+
+        // Ekstra: Rastgele parlayan noktalar (açık mavi renkte)
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+            const size = Math.random() * 3 + 1;
+            sparkle.style.width = size + 'px';
+            sparkle.style.height = size + 'px';
+            sparkle.style.left = Math.random() * 100 + '%';
+            sparkle.style.top = Math.random() * 100 + '%';
+            sparkle.style.animationDelay = Math.random() * 5 + 's';
+            sparkle.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                sparkle.remove();
+            }, 5000);
+        }
+        
+        // Her 3 saniyede bir yeni bir ışıltı oluştur
+        setInterval(createSparkle, 3000);
     </script>
 </body>
 </html>
