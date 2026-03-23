@@ -79,17 +79,6 @@
             75% { transform: translateX(8px); }
         }
 
-        @keyframes openLid {
-            0% { transform: rotateX(0deg) translateY(0); }
-            100% { transform: rotateX(-120deg) translateY(-30px); }
-        }
-
-        @keyframes openBox {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
             100% { opacity: 0; transform: translateY(-150px) scale(1.5); }
@@ -101,9 +90,103 @@
             100% { opacity: 0; transform: scale(0); }
         }
 
-        .fade-up { animation: fadeInUp 0.8s ease forwards; }
+        /* Login Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
 
-        /* HAMBURGER MENU - Index ile aynı */
+        .login-modal.hidden {
+            display: none;
+        }
+
+        .login-card {
+            background: linear-gradient(135deg, var(--bg-card), #0a0a0a);
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            border: 2px solid var(--gold);
+            max-width: 400px;
+            width: 90%;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .login-card h2 {
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            background: var(--bg-dark);
+            border: 1px solid var(--gray-border);
+            border-radius: 50px;
+            color: var(--white);
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .login-card input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .login-card button {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .user-info-bar {
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--gold);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .user-welcome {
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid var(--dark-red);
+            color: var(--dark-red);
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: var(--dark-red);
+            color: var(--white);
+        }
+
+        /* HAMBURGER MENU */
         .hamburger {
             width: 40px;
             height: 30px;
@@ -192,14 +275,14 @@
         .leaderboard-header {
             background: linear-gradient(135deg, #030303 0%, #0a0a0a 100%);
             border-bottom: 2px solid var(--gold);
-            padding: 40px 20px 30px;
+            padding: 30px 20px 20px;
             text-align: center;
             position: relative;
         }
 
         .leaderboard-header h1 {
             font-family: 'Montserrat', sans-serif;
-            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-size: clamp(1.8rem, 5vw, 3rem);
             font-weight: 900;
             background: linear-gradient(135deg, var(--gold) 0%, #FFE55C 100%);
             -webkit-background-clip: text;
@@ -207,7 +290,7 @@
             color: transparent;
         }
 
-        /* Günlük Ödül Kutusu - YENİ 4K TASARIM */
+        /* Günlük Ödül Kutusu */
         .daily-box-section {
             max-width: 1400px;
             margin: 30px auto 0;
@@ -223,18 +306,6 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
-        }
-
-        .chest-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
-            animation: slowDrift 20s linear infinite;
-            pointer-events: none;
         }
 
         .chest-3d {
@@ -253,15 +324,9 @@
             cursor: pointer;
         }
 
-        .chest-box.shake {
-            animation: shake 0.3s ease-in-out;
-        }
+        .chest-box.shake { animation: shake 0.3s ease-in-out; }
+        .chest-box.open { animation: openBox 0.5s ease-out; }
 
-        .chest-box.open {
-            animation: openBox 0.5s ease-out;
-        }
-
-        /* Kutu gövdesi */
         .chest-body {
             width: 100%;
             height: 100%;
@@ -272,7 +337,6 @@
             border: 3px solid var(--gold);
         }
 
-        /* Kutu kapağı */
         .chest-lid {
             width: 100%;
             height: 80px;
@@ -299,83 +363,12 @@
             background: var(--gold);
             border-radius: 50%;
             padding: 5px;
-            box-shadow: 0 0 10px rgba(255,215,0,0.5);
         }
 
-        .chest-lid.opening {
-            transform: rotateX(-120deg) translateY(-30px);
-        }
+        .chest-lid.opening { transform: rotateX(-120deg) translateY(-30px); }
 
-        /* Kutu süslemeleri */
-        .chest-detail {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .chest-detail::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 20%;
-            width: 60%;
-            height: 10px;
-            background: var(--gold);
-            border-radius: 5px;
-            transform: translateY(-50%);
-            box-shadow: 0 0 10px rgba(255,215,0,0.5);
-        }
-
-        .chest-detail::after {
-            content: '';
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            width: 10px;
-            height: 40%;
-            background: var(--gold);
-            border-radius: 5px;
-            transform: translateX(-50%);
-        }
-
-        /* XP parçacıkları */
-        .xp-particle {
-            position: fixed;
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--gold);
-            text-shadow: 0 0 10px rgba(255,215,0,0.8);
-            pointer-events: none;
-            z-index: 2000;
-            animation: floatUp 1.5s ease-out forwards;
-        }
-
-        /* Işıltı efekti */
-        .sparkle-particle {
-            position: fixed;
-            width: 4px;
-            height: 4px;
-            background: var(--gold);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 2000;
-            animation: sparkle 0.8s ease-out forwards;
-        }
-
-        .click-counter {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: var(--light-blue);
-        }
-
-        .reward-display {
-            margin-top: 20px;
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--gold);
-            display: none;
-        }
+        .click-counter { margin-top: 15px; font-size: 0.9rem; color: var(--light-blue); }
+        .reward-display { margin-top: 20px; font-size: 2rem; font-weight: bold; color: var(--gold); display: none; }
 
         /* XP Kazanma Yöntemleri */
         .xp-methods {
@@ -386,7 +379,7 @@
 
         .methods-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-top: 15px;
         }
@@ -398,12 +391,25 @@
             text-align: center;
             border: 1px solid var(--gray-border);
             transition: all 0.3s;
+            position: relative;
         }
 
         .method-card:hover { transform: translateY(-3px); border-color: var(--gold); }
         .method-card i { font-size: 1.8rem; color: var(--gold); margin-bottom: 8px; }
-        .method-card h4 { font-size: 0.85rem; margin-bottom: 5px; }
-        .method-card p { font-size: 0.75rem; color: var(--light-blue); font-weight: 600; }
+        .method-card h4 { font-size: 0.9rem; margin-bottom: 5px; }
+        .method-card p { font-size: 0.8rem; color: var(--light-blue); font-weight: 600; }
+        
+        .method-status {
+            font-size: 0.7rem;
+            margin-top: 8px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .method-status.available { background: rgba(0, 200, 81, 0.2); color: var(--green-success); }
+        .method-status.claimed { background: rgba(100, 100, 100, 0.2); color: #888; }
+        .method-status.waiting { background: rgba(255, 215, 0, 0.2); color: var(--gold); }
 
         .section-title {
             font-size: 1.3rem;
@@ -483,13 +489,30 @@
         .level-badge { background: rgba(135, 206, 235, 0.2); color: var(--light-blue); padding: 2px 10px; border-radius: 20px; font-size: 0.7rem; }
         .user-stats span { font-size: 0.8rem; color: #aaa; margin-right: 15px; }
 
-        .xp-section { min-width: 220px; }
+        .xp-section { min-width: 250px; }
         .xp-label { display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 5px; color: #aaa; }
         .xp-bar-bg { background: #1e1e1e; height: 8px; border-radius: 10px; overflow: hidden; }
         .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), #FFE55C); border-radius: 10px; width: 0%; transition: width 1s ease; }
 
         .points { text-align: right; min-width: 100px; }
         .points-value { font-size: 1.3rem; font-weight: 800; color: var(--gold); }
+
+        .level-up-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, var(--gold), #FFE55C);
+            color: #000;
+            padding: 20px 40px;
+            border-radius: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            z-index: 2000;
+            animation: bounce 0.5s ease;
+            box-shadow: 0 0 50px rgba(255,215,0,0.5);
+            white-space: nowrap;
+        }
 
         footer {
             background: #080808;
@@ -508,19 +531,42 @@
             .points { min-width: auto; }
             .chest-box { width: 200px; height: 160px; }
             .chest-lid { height: 60px; top: -30px; }
+            .user-info-bar { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-    <!-- HAMBURGER MENU - Index ile aynı -->
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-card">
+            <i class="fas fa-user-astronaut" style="font-size: 3rem; color: var(--gold); margin-bottom: 20px;"></i>
+            <h2>Hoş Geldin!</h2>
+            <p style="color: #aaa; margin-bottom: 20px;">Kullanıcı adınla giriş yap veya yeni hesap oluştur</p>
+            <input type="text" id="usernameInput" placeholder="Kullanıcı adın" maxlength="20">
+            <button id="loginBtn">Giriş Yap / Kayıt Ol</button>
+        </div>
+    </div>
+
+    <!-- USER INFO BAR -->
+    <div id="userInfoBar" class="user-info-bar" style="display: none;">
+        <div class="user-welcome">
+            <i class="fas fa-user"></i> Hoş geldin, <span id="currentUserName">Zinny</span>!
+        </div>
+        <div>
+            <span id="userLevel" style="color: var(--light-blue);">Seviye 1</span>
+            <button id="logoutBtn" class="logout-btn">Çıkış Yap</button>
+        </div>
+    </div>
+
+    <!-- HAMBURGER MENU -->
     <button id="menuBtn" class="hamburger" aria-label="Menü">
         <span class="bar1"></span>
         <span class="bar2"></span>
         <span class="bar3"></span>
     </button>
 
-    <!-- SIDE MENU - Index ile aynı -->
+    <!-- SIDE MENU -->
     <nav id="sideMenu" class="side-menu">
         <div class="menu-items">
             <a href="index.html" class="menu-link"><i class="fas fa-home"></i> Ana Sayfa</a>
@@ -536,10 +582,10 @@
 
     <div class="leaderboard-header">
         <h1><i class="fas fa-trophy"></i> Liderlik Tablosu</h1>
-        <p>Otomatik XP Sistemi | Her gün giriş yap, aktif ol, XP kazan!</p>
+        <p>⚡ HERKES KENDİ XP'SİNİ KAZANIR! Aktif ol, XP kazan, seviye atla! ⚡</p>
     </div>
 
-    <!-- 4K HEDİYE KUTUSU - YENİ TASARIM -->
+    <!-- Günlük Ödül Kutusu -->
     <div class="daily-box-section">
         <div class="chest-container">
             <div class="chest-3d">
@@ -550,21 +596,19 @@
                     </div>
                 </div>
             </div>
-            <div class="click-counter" id="clickCounter">Kutuya tıkla! (0/3)</div>
+            <div class="click-counter" id="clickCounter">🔒 Kutuya tıkla! (0/3)</div>
             <div class="reward-display" id="rewardDisplay"></div>
-            <p style="margin-top: 15px; color: #aaa; font-size: 0.8rem;">✨ Kapağa 3 kez tıkla, içinden XP çıksın! ✨</p>
+            <p style="margin-top: 15px; color: #aaa; font-size: 0.8rem;">✨ Kapağa 3 kez tıkla, içinden XP çıksın! (Günde 1 kez) ✨</p>
         </div>
     </div>
 
-    <!-- XP Kazanma Yöntemleri (Otomatik) -->
+    <!-- XP Kazanma Yöntemleri -->
     <div class="xp-methods">
         <div class="section-title">
             <i class="fas fa-chart-line"></i>
-            <span>⚡ Otomatik XP Kazanma Yöntemleri</span>
+            <span>⚡ OTOMATİK XP KAZANMA GÖREVLERİ (Hepsi Çalışıyor!)</span>
         </div>
-        <div class="methods-grid" id="methodsGrid">
-            <!-- JS ile doldurulacak -->
-        </div>
+        <div class="methods-grid" id="methodsGrid"></div>
     </div>
 
     <!-- Filtre Bölümü -->
@@ -580,63 +624,269 @@
     </div>
 
     <footer>
-        <p>© 2025 Loyal Team Force - Otomatik XP Sistemi | Aktif ol, XP kazan, seviye atla!</p>
+        <p>© 2025 Loyal Team Force - HERKES KENDİ XP'SİNİ KAZANIR! | Seviye atlamak zorlaşıyor! | Görevler %100 çalışıyor!</p>
     </footer>
 
     <script>
-        // 15 Kişilik Liderlik Verileri
-        let leadersData = [
-            { id: 1, name: "Zinny", avatar: "nihishpfp.jpg", xp: 28450, level: 28, activity: 98, role: "Kurucu", weeklyXP: 0 },
-            { id: 2, name: "Chivas", avatar: "ltflogoblack.jpeg", xp: 26780, level: 26, activity: 95, role: "Kurucu Yardımcısı", weeklyXP: 0 },
-            { id: 3, name: "Efe", avatar: "https://randomuser.me/api/portraits/men/32.jpg", xp: 24120, level: 24, activity: 92, role: "Moderatör", weeklyXP: 0 },
-            { id: 4, name: "Mert", avatar: "https://randomuser.me/api/portraits/men/45.jpg", xp: 22340, level: 22, activity: 88, role: "Geliştirici", weeklyXP: 0 },
-            { id: 5, name: "Selin", avatar: "https://randomuser.me/api/portraits/women/28.jpg", xp: 20980, level: 20, activity: 85, role: "Tasarımcı", weeklyXP: 0 },
-            { id: 6, name: "Can", avatar: "https://randomuser.me/api/portraits/men/52.jpg", xp: 19560, level: 19, activity: 82, role: "Geliştirici", weeklyXP: 0 },
-            { id: 7, name: "Zeynep", avatar: "https://randomuser.me/api/portraits/women/45.jpg", xp: 18230, level: 18, activity: 79, role: "Sosyal Medya", weeklyXP: 0 },
-            { id: 8, name: "Kaan", avatar: "https://randomuser.me/api/portraits/men/67.jpg", xp: 16890, level: 16, activity: 75, role: "İçerik Üretici", weeklyXP: 0 },
-            { id: 9, name: "Elif", avatar: "https://randomuser.me/api/portraits/women/62.jpg", xp: 15420, level: 15, activity: 71, role: "Destek", weeklyXP: 0 },
-            { id: 10, name: "Ali", avatar: "https://randomuser.me/api/portraits/men/78.jpg", xp: 14150, level: 14, activity: 68, role: "Üye", weeklyXP: 0 },
-            { id: 11, name: "Ayşe", avatar: "https://randomuser.me/api/portraits/women/33.jpg", xp: 12890, level: 12, activity: 64, role: "Üye", weeklyXP: 0 },
-            { id: 12, name: "Burak", avatar: "https://randomuser.me/api/portraits/men/84.jpg", xp: 11560, level: 11, activity: 60, role: "Üye", weeklyXP: 0 },
-            { id: 13, name: "Cem", avatar: "https://randomuser.me/api/portraits/men/91.jpg", xp: 10230, level: 10, activity: 55, role: "Üye", weeklyXP: 0 },
-            { id: 14, name: "Deniz", avatar: "https://randomuser.me/api/portraits/women/12.jpg", xp: 8950, level: 8, activity: 52, role: "Üye", weeklyXP: 0 },
-            { id: 15, name: "Emre", avatar: "https://randomuser.me/api/portraits/men/23.jpg", xp: 7680, level: 7, activity: 48, role: "Üye", weeklyXP: 0 }
-        ];
-
-        let currentSearch = "";
-        let currentUserId = 1; // Giriş yapan kullanıcı (demo: Zinny)
+        // ============= ZORLAŞTIRILMIŞ SEVİYE SİSTEMİ =============
+        function getRequiredXPForLevel(level) {
+            if(level <= 10) return 500;
+            if(level <= 20) return 1000;
+            if(level <= 30) return 1500;
+            return 2000;
+        }
         
-        // Kutu açma sistemi
+        function calculateLevel(totalXP) {
+            let level = 1;
+            let remainingXP = totalXP;
+            while(true) {
+                let requiredXP = getRequiredXPForLevel(level);
+                if(remainingXP >= requiredXP) {
+                    remainingXP -= requiredXP;
+                    level++;
+                } else break;
+            }
+            return level;
+        }
+        
+        function getCurrentLevelXP(totalXP) {
+            let level = 1;
+            let remainingXP = totalXP;
+            while(true) {
+                let requiredXP = getRequiredXPForLevel(level);
+                if(remainingXP >= requiredXP) {
+                    remainingXP -= requiredXP;
+                    level++;
+                } else return remainingXP;
+            }
+        }
+        
+        function getNextLevelRequiredXP(totalXP) {
+            return getRequiredXPForLevel(calculateLevel(totalXP));
+        }
+        
+        function getXpPercentage(totalXP) {
+            let currentLevelXP = getCurrentLevelXP(totalXP);
+            let requiredXP = getNextLevelRequiredXP(totalXP);
+            return (currentLevelXP / requiredXP) * 100;
+        }
+        
+        // ============= KULLANICI SİSTEMİ =============
+        let allUsers = []; // Tüm kullanıcılar
+        let currentUser = null; // Şu anki kullanıcı
+        
+        // Kullanıcı verilerini yükle
+        function loadUsers() {
+            const saved = localStorage.getItem('ltf_all_users');
+            if(saved) {
+                allUsers = JSON.parse(saved);
+            } else {
+                // Varsayılan kullanıcılar (hepsi 0 XP)
+                allUsers = [
+                    { id: 1, name: "Zinny", xp: 0, role: "Kurucu", activity: 98, weeklyXP: 0, lastDaily: "", lastChest: "", lastHourly: 0, lastRandom: 0, lastChat: 0 },
+                    { id: 2, name: "Chivas", xp: 0, role: "Kurucu Yardımcısı", activity: 95, weeklyXP: 0, lastDaily: "", lastChest: "", lastHourly: 0, lastRandom: 0, lastChat: 0 },
+                    { id: 3, name: "Efe", xp: 0, role: "Moderatör", activity: 92, weeklyXP: 0, lastDaily: "", lastChest: "", lastHourly: 0, lastRandom: 0, lastChat: 0 },
+                    { id: 4, name: "Mert", xp: 0, role: "Geliştirici", activity: 88, weeklyXP: 0, lastDaily: "", lastChest: "", lastHourly: 0, lastRandom: 0, lastChat: 0 },
+                    { id: 5, name: "Selin", xp: 0, role: "Tasarımcı", activity: 85, weeklyXP: 0, lastDaily: "", lastChest: "", lastHourly: 0, lastRandom: 0, lastChat: 0 },
+                    { id: 6, name: "Can", xp: 0, role: "Geliştirici", activity: 82, weeklyXP: 0, lastDaily: "", lastChest: "", lastHourly: 0, lastRandom: 0, lastChat: 0 },
+                    { id: 7, name: "Zeynep", xp: 0, role: "Sosyal Medya", activity: 79, weeklyXP: 0, lastDaily: "", lastChest: "", lastHourly: 0, lastRandom: 0, lastChat: 0 },
+                    { id: 8, name: "Kaan", xp: 0, role: "İçerik Üretici", activity: 75, weeklyXP: 0, lastDaily: "", lastChest: "", lastHourly: 0, lastRandom: 0, lastChat: 0 },
+                    { id: 9, name: "Elif", xp: 0, role: "Destek", activity: 71, weeklyXP: 0, lastDaily: "", lastChest: "", lastHourly: 0, lastRandom: 0, lastChat: 0 },
+                    { id: 10, name: "Ali", xp: 0, role: "Üye", activity: 68, weeklyXP: 0, lastDaily: "", lastChest: "", lastHourly: 0, lastRandom: 0, lastChat: 0 }
+                ];
+                saveUsers();
+            }
+        }
+        
+        function saveUsers() {
+            localStorage.setItem('ltf_all_users', JSON.stringify(allUsers));
+        }
+        
+        // Kullanıcı bul veya oluştur
+        function findOrCreateUser(username) {
+            let user = allUsers.find(u => u.name.toLowerCase() === username.toLowerCase());
+            if(!user) {
+                const newId = allUsers.length + 1;
+                user = {
+                    id: newId,
+                    name: username,
+                    xp: 0,
+                    role: "Üye",
+                    activity: 50,
+                    weeklyXP: 0,
+                    lastDaily: "",
+                    lastChest: "",
+                    lastHourly: 0,
+                    lastRandom: 0,
+                    lastChat: 0
+                };
+                allUsers.push(user);
+                saveUsers();
+            }
+            return user;
+        }
+        
+        // Kullanıcıya XP ekle
+        function addXP(userId, amount, source) {
+            const userIndex = allUsers.findIndex(u => u.id === userId);
+            if(userIndex === -1) return false;
+            
+            let oldXP = allUsers[userIndex].xp;
+            let oldLevel = calculateLevel(oldXP);
+            let newXP = oldXP + amount;
+            let newLevel = calculateLevel(newXP);
+            
+            allUsers[userIndex].xp = newXP;
+            allUsers[userIndex].weeklyXP = (allUsers[userIndex].weeklyXP || 0) + amount;
+            
+            // Toast bildirimi
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, var(--gold), #FFE55C);
+                color: #000;
+                padding: 12px 20px;
+                border-radius: 50px;
+                font-weight: 700;
+                z-index: 1000;
+                animation: floatUp 2s ease forwards;
+                pointer-events: none;
+            `;
+            toast.innerHTML = `✨ ${source} ile +${amount} XP kazandın! ✨`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+            
+            // Seviye atlama kontrolü
+            if(newLevel > oldLevel) {
+                const notification = document.createElement('div');
+                notification.className = 'level-up-notification';
+                notification.innerHTML = `🎉 SEVİYE ATLADIN! ${oldLevel} → ${newLevel} 🎉`;
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+            }
+            
+            saveUsers();
+            updateRanks();
+            renderLeaderboard();
+            updateUserInfo();
+            return true;
+        }
+        
+        function updateRanks() {
+            allUsers.sort((a, b) => b.xp - a.xp);
+            allUsers.forEach((user, idx) => { user.rank = idx + 1; });
+        }
+        
+        function updateUserInfo() {
+            if(currentUser) {
+                document.getElementById('currentUserName').innerHTML = currentUser.name;
+                const level = calculateLevel(currentUser.xp);
+                document.getElementById('userLevel').innerHTML = `Seviye ${level} | ${currentUser.xp} XP`;
+            }
+        }
+        
+        // ============= OTOMATİK GÖREVLER =============
+        function checkDailyLogin() {
+            if(!currentUser) return;
+            const today = new Date().toDateString();
+            if(currentUser.lastDaily !== today) {
+                addXP(currentUser.id, 50, "🌟 Günlük Giriş");
+                currentUser.lastDaily = today;
+                saveUsers();
+                updateMethodStatus('daily', true);
+                return true;
+            }
+            return false;
+        }
+        
+        function checkHourlyBonus() {
+            if(!currentUser) return;
+            const now = Date.now();
+            if(now - (currentUser.lastHourly || 0) >= 60 * 60 * 1000) {
+                addXP(currentUser.id, 25, "⏰ Saatlik Aktiflik");
+                currentUser.lastHourly = now;
+                saveUsers();
+                updateMethodStatus('hourly', true);
+                return true;
+            }
+            return false;
+        }
+        
+        function checkRandomBonus() {
+            if(!currentUser) return;
+            const now = Date.now();
+            if(now - (currentUser.lastRandom || 0) >= 2 * 60 * 60 * 1000) {
+                const randomXP = Math.floor(Math.random() * 26) + 5;
+                addXP(currentUser.id, randomXP, "🎲 Rastgele Bonus");
+                currentUser.lastRandom = now;
+                saveUsers();
+                updateMethodStatus('random', true);
+                return true;
+            }
+            return false;
+        }
+        
+        function checkChatBonus() {
+            if(!currentUser) return;
+            const now = Date.now();
+            if(now - (currentUser.lastChat || 0) >= 30 * 60 * 1000) {
+                const chatXP = Math.floor(Math.random() * 41) + 10;
+                addXP(currentUser.id, chatXP, "💬 Sohbet Aktifliği");
+                currentUser.lastChat = now;
+                saveUsers();
+                updateMethodStatus('chat', true);
+                return true;
+            }
+            return false;
+        }
+        
+        // ============= KUTU SİSTEMİ =============
         let clickCount = 0;
         let isOpen = false;
-        let lastOpenDate = localStorage.getItem('ltf_chest_last_open') || '';
         
         function canOpenChest() {
-            if(!lastOpenDate) return true;
-            const last = new Date(lastOpenDate);
+            if(!currentUser) return false;
+            if(!currentUser.lastChest) return true;
+            const last = new Date(currentUser.lastChest);
             const now = new Date();
             return now.getDate() !== last.getDate() || now.getMonth() !== last.getMonth() || now.getFullYear() !== last.getFullYear();
         }
         
         function createParticles(x, y, xpAmount) {
-            // XP parçacıkları
             for(let i = 0; i < 15; i++) {
                 const particle = document.createElement('div');
-                particle.className = 'xp-particle';
+                particle.style.cssText = `
+                    position: fixed;
+                    left: ${x + (Math.random() - 0.5) * 100}px;
+                    top: ${y + (Math.random() - 0.5) * 100}px;
+                    font-size: ${16 + Math.random() * 20}px;
+                    font-weight: bold;
+                    color: var(--gold);
+                    text-shadow: 0 0 10px rgba(255,215,0,0.8);
+                    pointer-events: none;
+                    z-index: 2000;
+                    animation: floatUp 1.5s ease-out forwards;
+                `;
                 particle.innerHTML = `+${Math.floor(xpAmount / 3)}`;
-                particle.style.left = (x + (Math.random() - 0.5) * 100) + 'px';
-                particle.style.top = (y + (Math.random() - 0.5) * 100) + 'px';
-                particle.style.fontSize = (16 + Math.random() * 20) + 'px';
                 document.body.appendChild(particle);
                 setTimeout(() => particle.remove(), 1500);
             }
-            
-            // Işıltı parçacıkları
             for(let i = 0; i < 30; i++) {
                 const sparkle = document.createElement('div');
-                sparkle.className = 'sparkle-particle';
-                sparkle.style.left = (x + (Math.random() - 0.5) * 150) + 'px';
-                sparkle.style.top = (y + (Math.random() - 0.5) * 150) + 'px';
+                sparkle.style.cssText = `
+                    position: fixed;
+                    left: ${x + (Math.random() - 0.5) * 150}px;
+                    top: ${y + (Math.random() - 0.5) * 150}px;
+                    width: ${2 + Math.random() * 3}px;
+                    height: ${2 + Math.random() * 3}px;
+                    background: var(--gold);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 2000;
+                    animation: sparkle 0.8s ease-out forwards;
+                `;
                 document.body.appendChild(sparkle);
                 setTimeout(() => sparkle.remove(), 800);
             }
@@ -653,47 +903,34 @@
             const chestBox = document.getElementById('chestBox');
             const rewardDisplay = document.getElementById('rewardDisplay');
             
-            // Kapağı aç
             chestLid.classList.add('opening');
             chestBox.classList.add('open');
             
-            // Rastgele XP (150-600 arası)
             const rewardXP = Math.floor(Math.random() * 451) + 150;
             
             setTimeout(() => {
                 isOpen = true;
-                
-                // Kutu pozisyonunu al
                 const chestRect = chestBox.getBoundingClientRect();
-                const centerX = chestRect.left + chestRect.width / 2;
-                const centerY = chestRect.top + chestRect.height / 2;
+                createParticles(chestRect.left + chestRect.width / 2, chestRect.top + chestRect.height / 2, rewardXP);
+                addXP(currentUser.id, rewardXP, "🎁 Günlük Kutu");
                 
-                // Parçacıkları oluştur
-                createParticles(centerX, centerY, rewardXP);
-                
-                // XP ekle
-                addXP(currentUserId, rewardXP, "🎁 Günlük Kutu");
-                
-                // Ödül göster
                 rewardDisplay.innerHTML = `✨ +${rewardXP} XP KAZANDIN! ✨`;
                 rewardDisplay.style.display = 'block';
                 
-                // Kaydet
-                lastOpenDate = new Date().toISOString();
-                localStorage.setItem('ltf_chest_last_open', lastOpenDate);
+                currentUser.lastChest = new Date().toISOString();
+                saveUsers();
                 
-                // 3 saniye sonra ödül yazısını gizle
-                setTimeout(() => {
-                    rewardDisplay.style.display = 'none';
-                }, 3000);
-                
-                // Click counter'ı güncelle
+                setTimeout(() => rewardDisplay.style.display = 'none', 3000);
                 document.getElementById('clickCounter').innerHTML = '🎉 Kutu Açıldı! Yarın tekrar gel! 🎉';
-                
+                updateMethodStatus('chest', true);
             }, 500);
         }
         
         function handleChestClick(e) {
+            if(!currentUser) {
+                alert("Lütfen önce giriş yapın!");
+                return;
+            }
             if(isOpen) return;
             if(!canOpenChest()) {
                 alert("🎁 Bugünkü kutunu zaten açtın! Yarın tekrar dene!");
@@ -701,15 +938,10 @@
             }
             
             clickCount++;
-            const chestLid = document.getElementById('chestLid');
             const chestBox = document.getElementById('chestBox');
-            const clickCounter = document.getElementById('clickCounter');
-            
-            // Tıklama efekti - sallanma
             chestBox.classList.add('shake');
             setTimeout(() => chestBox.classList.remove('shake'), 300);
-            
-            clickCounter.innerHTML = `Kutuya tıkla! (${clickCount}/3)`;
+            document.getElementById('clickCounter').innerHTML = `🔓 Kutuya tıkla! (${clickCount}/3)`;
             
             if(clickCount >= 3) {
                 openChest();
@@ -724,111 +956,49 @@
                 const chestBox = document.getElementById('chestBox');
                 chestLid.classList.remove('opening');
                 chestBox.classList.remove('open');
-                document.getElementById('clickCounter').innerHTML = 'Kutuya tıkla! (0/3)';
+                document.getElementById('clickCounter').innerHTML = '🔒 Kutuya tıkla! (0/3)';
                 document.getElementById('rewardDisplay').style.display = 'none';
             }
         }
         
-        // Seviye hesaplama
-        function calculateLevel(xp) { return Math.floor(xp / 1000) + 1; }
-        function nextLevelXP(xp) { return (Math.floor(xp / 1000) + 1) * 1000; }
-        
-        function showToast(message, xpAmount = null) {
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, var(--gold), #FFE55C);
-                color: #000;
-                padding: 12px 20px;
-                border-radius: 50px;
-                font-weight: 700;
-                z-index: 1000;
-                animation: floatUp 2s ease forwards;
-                pointer-events: none;
-            `;
-            if(xpAmount) {
-                toast.innerHTML = `✨ +${xpAmount} XP ✨<br>${message}`;
-            } else {
-                toast.innerHTML = message;
+        // ============= GÖRÜNÜM =============
+        function updateMethodStatus(method, claimed) {
+            const statusSpan = document.getElementById(`status-${method}`);
+            if(statusSpan) {
+                if(claimed) {
+                    statusSpan.innerHTML = '✓ Alındı';
+                    statusSpan.className = 'method-status claimed';
+                } else {
+                    statusSpan.innerHTML = '⏳ Bekliyor';
+                    statusSpan.className = 'method-status waiting';
+                }
             }
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-        }
-        
-        function addXP(userId, amount, source) {
-            const userIndex = leadersData.findIndex(u => u.id === userId);
-            if(userIndex === -1) return false;
-            
-            let oldXP = leadersData[userIndex].xp;
-            let oldLevel = leadersData[userIndex].level;
-            let newXP = oldXP + amount;
-            let newLevel = calculateLevel(newXP);
-            
-            leadersData[userIndex].xp = newXP;
-            leadersData[userIndex].level = newLevel;
-            leadersData[userIndex].weeklyXP = (leadersData[userIndex].weeklyXP || 0) + amount;
-            
-            showToast(`${source} ile ${amount} XP kazandın!`, amount);
-            
-            if(newLevel > oldLevel) {
-                showToast(`🎉 TEBRİKLER! Seviye ${newLevel}'e yükseldin! 🎉`);
-            }
-            
-            updateRanks();
-            renderLeaderboard();
-            saveToLocalStorage();
-            return true;
-        }
-        
-        function updateRanks() {
-            leadersData.sort((a, b) => b.xp - a.xp);
-            leadersData.forEach((user, idx) => { user.rank = idx + 1; });
-        }
-        
-        function saveToLocalStorage() {
-            localStorage.setItem('ltf_leaderboard', JSON.stringify(leadersData));
-        }
-        
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem('ltf_leaderboard');
-            if(saved) {
-                const parsed = JSON.parse(saved);
-                leadersData.forEach((user, idx) => {
-                    if(parsed[idx]) {
-                        user.xp = parsed[idx].xp;
-                        user.level = parsed[idx].level;
-                        user.weeklyXP = parsed[idx].weeklyXP || 0;
-                    }
-                });
-            }
-            updateRanks();
-        }
-        
-        function getXpPercentage(xp) {
-            const currentLevelXP = (calculateLevel(xp) - 1) * 1000;
-            const xpInCurrentLevel = xp - currentLevelXP;
-            return (xpInCurrentLevel / 1000) * 100;
         }
         
         function renderLeaderCard(user) {
+            const level = calculateLevel(user.xp);
+            const xpPercentage = getXpPercentage(user.xp);
+            const currentLevelXP = getCurrentLevelXP(user.xp);
+            const nextLevelXP = getNextLevelRequiredXP(user.xp);
             const rankClass = user.rank === 1 ? 'top-1' : '';
             const rankColorClass = user.rank === 1 ? 'rank-1' : (user.rank === 2 ? 'rank-2' : (user.rank === 3 ? 'rank-3' : 'rank-other'));
             const medalIcon = user.rank === 1 ? '<i class="fas fa-crown"></i>' : (user.rank === 2 ? '<i class="fas fa-medal"></i>' : (user.rank === 3 ? '<i class="fas fa-medal"></i>' : ''));
+            const isCurrentUser = currentUser && user.id === currentUser.id;
             
             return `
                 <div class="leader-card ${rankClass}">
                     <div class="rank ${rankColorClass}">#${user.rank}</div>
                     <div class="avatar">
-                        <img src="${user.avatar}" alt="${user.name}" onerror="this.src='https://randomuser.me/api/portraits/men/1.jpg'">
+                        <div style="width:55px;height:55px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#FFE55C);display:flex;align-items:center;justify-content:center;">
+                            <span style="font-size:24px;">${user.name.charAt(0).toUpperCase()}</span>
+                        </div>
                         ${medalIcon ? `<div class="medal">${medalIcon}</div>` : ''}
                     </div>
                     <div class="user-info">
                         <div class="user-name">
-                            <h3>${user.name} ${user.id === currentUserId ? '(Sen)' : ''}</h3>
+                            <h3>${user.name} ${isCurrentUser ? '(Sen)' : ''}</h3>
                             <span class="badge">${user.role}</span>
-                            <span class="level-badge"><i class="fas fa-star"></i> Seviye ${user.level}</span>
+                            <span class="level-badge"><i class="fas fa-star"></i> Seviye ${level}</span>
                         </div>
                         <div class="user-stats">
                             <span><i class="fas fa-bolt"></i> %${user.activity} aktiflik</span>
@@ -838,14 +1008,14 @@
                     <div class="xp-section">
                         <div class="xp-label">
                             <span>🎯 ${user.xp.toLocaleString()} XP</span>
-                            <span>📊 ${getXpPercentage(user.xp).toFixed(0)}%</span>
+                            <span>📊 ${xpPercentage.toFixed(0)}%</span>
                         </div>
                         <div class="xp-bar-bg">
-                            <div class="xp-bar-fill" style="width: ${getXpPercentage(user.xp)}%"></div>
+                            <div class="xp-bar-fill" style="width: ${xpPercentage}%"></div>
                         </div>
                         <div class="xp-label" style="margin-top: 5px;">
-                            <span>⬆️ ${nextLevelXP(user.xp) - user.xp} XP kalan</span>
-                            <span>🎯 Seviye ${user.level + 1}</span>
+                            <span>⬆️ ${nextLevelXP - currentLevelXP} XP kalan</span>
+                            <span>🎯 Seviye ${level + 1} (${getRequiredXPForLevel(level)} XP)</span>
                         </div>
                     </div>
                     <div class="points">
@@ -856,43 +1026,91 @@
             `;
         }
         
-        function filterAndSearch() {
-            let filtered = [...leadersData];
-            if(currentSearch) {
-                filtered = filtered.filter(user => user.name.toLowerCase().includes(currentSearch.toLowerCase()));
-            }
-            return filtered;
-        }
-        
         function renderLeaderboard() {
-            const filteredData = filterAndSearch();
+            const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+            let filtered = [...allUsers];
+            if(searchTerm) {
+                filtered = filtered.filter(user => user.name.toLowerCase().includes(searchTerm));
+            }
             const grid = document.getElementById("leaderboardGrid");
-            if(filteredData.length === 0) {
+            if(filtered.length === 0) {
                 grid.innerHTML = `<div style="text-align: center; padding: 60px;"><i class="fas fa-search" style="font-size: 3rem;"></i><h3>Sonuç Bulunamadı</h3></div>`;
                 return;
             }
-            grid.innerHTML = filteredData.map(user => renderLeaderCard(user)).join('');
+            grid.innerHTML = filtered.map(user => renderLeaderCard(user)).join('');
         }
         
         function renderMethods() {
             const methodsGrid = document.getElementById('methodsGrid');
             methodsGrid.innerHTML = `
-                <div class="method-card"><i class="fas fa-calendar-day"></i><h4>Günlük Giriş</h4><p>+50 XP</p></div>
-                <div class="method-card"><i class="fas fa-gift"></i><h4>Günlük Kutu</h4><p>+150-600 XP</p></div>
-                <div class="method-card"><i class="fas fa-clock"></i><h4>Saatlik Aktiflik</h4><p>+25 XP</p></div>
-                <div class="method-card"><i class="fas fa-dice-d6"></i><h4>Rastgele Bonus</h4><p>+5-30 XP</p></div>
-                <div class="method-card"><i class="fas fa-crown"></i><h4>Haftalık Lider</h4><p>+200 XP</p></div>
-                <div class="method-card"><i class="fas fa-comments"></i><h4>Sohbet Aktifliği</h4><p>+10-50 XP</p></div>
+                <div class="method-card"><i class="fas fa-calendar-day"></i><h4>🌟 Günlük Giriş</h4><p>+50 XP</p><div id="status-daily" class="method-status waiting">⏳ Bekliyor</div></div>
+                <div class="method-card"><i class="fas fa-gift"></i><h4>🎁 Günlük Kutu</h4><p>+150-600 XP</p><div id="status-chest" class="method-status waiting">⏳ Bekliyor</div></div>
+                <div class="method-card"><i class="fas fa-clock"></i><h4>⏰ Saatlik Aktiflik</h4><p>+25 XP (Her 1 saat)</p><div id="status-hourly" class="method-status waiting">⏳ Bekliyor</div></div>
+                <div class="method-card"><i class="fas fa-dice-d6"></i><h4>🎲 Rastgele Bonus</h4><p>+5-30 XP (Her 2 saat)</p><div id="status-random" class="method-status waiting">⏳ Bekliyor</div></div>
+                <div class="method-card"><i class="fas fa-comments"></i><h4>💬 Sohbet Aktifliği</h4><p>+10-50 XP (Her 30 dk)</p><div id="status-chat" class="method-status waiting">⏳ Bekliyor</div></div>
             `;
         }
         
-        // Event Listeners
-        document.getElementById("searchInput")?.addEventListener("input", (e) => {
-            currentSearch = e.target.value;
+        function runAllTasks() {
+            if(currentUser) {
+                checkDailyLogin();
+                checkHourlyBonus();
+                checkRandomBonus();
+                checkChatBonus();
+                updateRanks();
+                renderLeaderboard();
+                updateUserInfo();
+            }
+        }
+        
+        // ============= GİRİŞ SİSTEMİ =============
+        function login(username) {
+            if(!username || username.trim() === "") {
+                alert("Lütfen bir kullanıcı adı girin!");
+                return false;
+            }
+            username = username.trim();
+            currentUser = findOrCreateUser(username);
+            localStorage.setItem('ltf_current_user', JSON.stringify({name: currentUser.name, id: currentUser.id}));
+            
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('userInfoBar').style.display = 'flex';
+            updateUserInfo();
+            resetChestDaily();
+            runAllTasks();
             renderLeaderboard();
+            return true;
+        }
+        
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('ltf_current_user');
+            document.getElementById('loginModal').classList.remove('hidden');
+            document.getElementById('userInfoBar').style.display = 'none';
+            clickCount = 0;
+            isOpen = false;
+            renderLeaderboard();
+        }
+        
+        // ============= EVENT LISTENERS =============
+        document.getElementById('loginBtn')?.addEventListener('click', () => {
+            const username = document.getElementById('usernameInput').value;
+            login(username);
         });
         
-        // Hamburger menu
+        document.getElementById('usernameInput')?.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') {
+                const username = document.getElementById('usernameInput').value;
+                login(username);
+            }
+        });
+        
+        document.getElementById('logoutBtn')?.addEventListener('click', logout);
+        document.getElementById('searchInput')?.addEventListener('input', renderLeaderboard);
+        
+        const chestBox = document.getElementById('chestBox');
+        if(chestBox) chestBox.addEventListener('click', handleChestClick);
+        
         const btn = document.getElementById("menuBtn");
         const menu = document.getElementById("sideMenu");
         if(btn && menu) {
@@ -909,24 +1127,37 @@
             });
         }
         
-        // Kutu tıklama
-        const chestBox = document.getElementById('chestBox');
-        if(chestBox) {
-            chestBox.addEventListener('click', handleChestClick);
-        }
-        
-        // Her gün kontrol
         setInterval(() => {
-            resetChestDaily();
-        }, 60000);
+            if(currentUser) {
+                runAllTasks();
+                resetChestDaily();
+            }
+        }, 30000);
         
         // Sayfa yükleme
-        document.addEventListener("DOMContentLoaded", () => {
-            loadFromLocalStorage();
-            renderMethods();
-            renderLeaderboard();
-            resetChestDaily();
-        });
+        loadUsers();
+        renderMethods();
+        updateRanks();
+        renderLeaderboard();
+        
+        const savedUser = localStorage.getItem('ltf_current_user');
+        if(savedUser) {
+            const parsed = JSON.parse(savedUser);
+            const user = allUsers.find(u => u.id === parsed.id || u.name === parsed.name);
+            if(user) {
+                currentUser = user;
+                document.getElementById('loginModal').classList.add('hidden');
+                document.getElementById('userInfoBar').style.display = 'flex';
+                updateUserInfo();
+                resetChestDaily();
+                runAllTasks();
+                renderLeaderboard();
+            } else {
+                document.getElementById('loginModal').classList.remove('hidden');
+            }
+        } else {
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
     </script>
 </body>
 </html>
