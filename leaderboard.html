@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>LTF Liderlik Tablosu | Premium XP Sistemi</title>
+    <title>LTF Liderlik Tablosu | XP & Seviye Sistemi</title>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Normal Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -20,23 +20,23 @@
         :root {
             --bg-dark: #050505;
             --bg-card: #0a0a0a;
-            --gold: #FFD700;
             --dark-red: #8B0000;
-            --gray: #2a2a2a;
-            --light-gray: #3a3a3a;
+            --dark-red-hover: #a52a2a;
+            --red-glow: rgba(139, 0, 0, 0.5);
             --white: #FFFFFF;
-            --dark-gray: #1a1a1a;
+            --gray-border: #1a1a1a;
+            --light-gray: #2a2a2a;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--bg-dark);
             color: var(--white);
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Arka Plan */
+        /* Arka Plan - Koyu Kırmızı Tonlu */
         body::before {
             content: "";
             position: fixed;
@@ -45,7 +45,7 @@
             width: 100%;
             height: 100%;
             background: url('https://i.pinimg.com/originals/4f/4b/4c/4f4b4c6a4f1e6e8e3a2b0c1d2e3f4a5b.jpg') center center/cover no-repeat fixed;
-            filter: brightness(0.15) blur(2px);
+            filter: brightness(0.2) contrast(1.1);
             z-index: -2;
         }
         
@@ -56,8 +56,102 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.98) 100%);
+            background: radial-gradient(circle at 20% 30%, rgba(139,0,0,0.2) 0%, rgba(0,0,0,0.95) 100%);
             z-index: -1;
+        }
+
+        /* Scroll Bar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--dark-red); border-radius: 10px; }
+
+        /* Hamburger Menu */
+        .hamburger {
+            width: 40px;
+            height: 30px;
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+        .hamburger span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background: var(--dark-red);
+            border-radius: 4px;
+            transition: all 0.25s ease;
+        }
+        .hamburger:hover span {
+            background: var(--dark-red-hover);
+        }
+        .hamburger.open .bar1 {
+            transform: translateY(12px) rotate(45deg);
+            background: var(--white);
+        }
+        .hamburger.open .bar2 {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+        .hamburger.open .bar3 {
+            transform: translateY(-12px) rotate(-45deg);
+            background: var(--white);
+        }
+
+        /* Side Menu */
+        .side-menu {
+            width: 280px;
+            height: 100vh;
+            background: rgba(5, 5, 5, 0.98);
+            backdrop-filter: blur(12px);
+            position: fixed;
+            top: 0;
+            left: -300px;
+            z-index: 1000;
+            transition: left 0.3s ease-out;
+            padding: 90px 0 30px;
+            border-right: 1px solid var(--dark-red);
+            box-shadow: 4px 0 25px rgba(0,0,0,0.5);
+        }
+        .side-menu.open { left: 0; }
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 28px;
+            color: var(--white);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-weight: 500;
+        }
+        .menu-link i { width: 24px; color: var(--dark-red); font-size: 1.2rem; }
+        .menu-link:hover {
+            background: rgba(139, 0, 0, 0.1);
+            border-left-color: var(--dark-red);
+            padding-left: 32px;
+        }
+        .menu-link.active {
+            background: rgba(139, 0, 0, 0.15);
+            border-left-color: var(--dark-red);
+            color: var(--dark-red);
+        }
+        .menu-footer {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.7rem;
+            opacity: 0.5;
+            color: var(--white);
         }
 
         /* Login Overlay */
@@ -68,7 +162,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.98);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(12px);
             z-index: 2000;
             display: flex;
             justify-content: center;
@@ -78,24 +172,23 @@
         
         .login-container {
             width: 100%;
-            max-width: 480px;
+            max-width: 450px;
             padding: 20px;
         }
         
         .login-card {
-            background: var(--dark-gray);
-            border-radius: 24px;
-            padding: 45px 40px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 45px 35px;
             text-align: center;
-            border: 1px solid var(--gray);
+            border: 1px solid var(--dark-red);
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
         
         .logo-icon {
             width: 70px;
             height: 70px;
-            background: linear-gradient(135deg, var(--gray), var(--dark-gray));
-            border: 1px solid var(--light-gray);
+            background: linear-gradient(135deg, var(--dark-red), #4a0000);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -106,11 +199,10 @@
         }
         
         .login-card h2 {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
+            font-weight: 600;
             color: var(--white);
             margin-bottom: 10px;
-            letter-spacing: 1px;
         }
         
         .login-subtitle {
@@ -121,33 +213,34 @@
         
         .input-group {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
         
         .input-group i {
             position: absolute;
-            left: 18px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--gray);
-            font-size: 1.1rem;
+            color: var(--dark-red);
+            font-size: 1rem;
             z-index: 1;
         }
         
         .input-group input {
             width: 100%;
-            padding: 14px 20px 14px 48px;
-            background: var(--bg-dark);
-            border: 1px solid var(--gray);
+            padding: 14px 18px 14px 45px;
+            background: #111;
+            border: 1px solid var(--gray-border);
             border-radius: 12px;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
         }
         
         .input-group input:focus {
             outline: none;
-            border-color: var(--white);
+            border-color: var(--dark-red);
             background: #0a0a0a;
         }
         
@@ -169,11 +262,10 @@
             color: rgba(255,255,255,0.4);
             cursor: pointer;
             font-size: 0.9rem;
-            z-index: 2;
         }
         
         .toggle-password:hover {
-            color: var(--white);
+            color: var(--dark-red);
         }
         
         .forgot-link {
@@ -184,30 +276,30 @@
         .forgot-link a {
             color: rgba(255,255,255,0.5);
             text-decoration: none;
-            font-size: 0.8rem;
-            transition: 0.3s;
+            font-size: 0.75rem;
         }
         
         .forgot-link a:hover {
-            color: var(--white);
+            color: var(--dark-red);
         }
         
         .login-btn {
-            background: var(--gray);
+            background: var(--dark-red);
             border: none;
             width: 100%;
             padding: 14px;
             border-radius: 12px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: white;
             cursor: pointer;
             transition: all 0.3s;
             margin-bottom: 20px;
+            font-family: 'Inter', sans-serif;
         }
         
         .login-btn:hover {
-            background: var(--light-gray);
+            background: #a52a2a;
             transform: translateY(-1px);
         }
         
@@ -218,7 +310,7 @@
         }
         
         .signup-link a {
-            color: var(--white);
+            color: var(--dark-red);
             text-decoration: none;
             font-weight: 500;
             margin-left: 5px;
@@ -231,36 +323,31 @@
         
         .error-msg {
             color: #ff6b6b;
-            font-size: 0.8rem;
-            margin-top: 15px;
+            font-size: 0.75rem;
+            margin-top: 12px;
             text-align: center;
         }
         
         /* Ana İçerik */
         .main-content {
             display: none;
-            max-width: 1600px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 80px 20px 30px;
         }
         
         .main-content.visible {
             display: block;
-            animation: fadeIn 0.4s ease;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
+        /* Profil Kartı */
         .profile-card {
             background: rgba(10,10,10,0.9);
             backdrop-filter: blur(10px);
-            border-radius: 24px;
+            border-radius: 20px;
             padding: 20px 30px;
-            margin-bottom: 40px;
-            border: 1px solid var(--gray);
+            margin-bottom: 35px;
+            border: 1px solid var(--dark-red);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -277,23 +364,23 @@
         .avatar-icon {
             width: 55px;
             height: 55px;
-            background: var(--gray);
+            background: var(--dark-red);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             color: var(--white);
         }
         
         .user-info h3 {
-            font-size: 1.3rem;
-            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            font-weight: 600;
             color: var(--white);
         }
         
         .user-info p {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: rgba(255,255,255,0.5);
         }
         
@@ -306,14 +393,14 @@
         .stat-card {
             background: rgba(0,0,0,0.6);
             padding: 10px 18px;
-            border-radius: 16px;
+            border-radius: 12px;
             text-align: center;
-            border-left: 2px solid var(--gray);
+            border-left: 2px solid var(--dark-red);
         }
         
         .stat-card .stat-value {
             font-size: 1.3rem;
-            font-weight: bold;
+            font-weight: 700;
             color: var(--white);
         }
         
@@ -337,167 +424,188 @@
         .progress-fill {
             width: 0%;
             height: 100%;
-            background: var(--gray);
+            background: var(--dark-red);
             border-radius: 10px;
             transition: width 0.5s ease;
         }
         
         .logout-btn {
             background: transparent;
-            border: 1px solid var(--gray);
+            border: 1px solid var(--dark-red);
             padding: 8px 20px;
-            border-radius: 12px;
+            border-radius: 10px;
             color: white;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 500;
+            font-family: 'Inter', sans-serif;
         }
         
         .logout-btn:hover {
-            background: var(--gray);
+            background: var(--dark-red);
         }
         
         .section-title {
-            font-size: 1.3rem;
-            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            font-weight: 600;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
             color: var(--white);
+            border-left: 3px solid var(--dark-red);
+            padding-left: 15px;
         }
         
         .section-title i {
-            color: var(--gray);
+            color: var(--dark-red);
         }
         
         .leaderboard-grid {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 50px;
+            margin-bottom: 45px;
         }
         
         .leader-card {
             background: rgba(10,10,10,0.8);
             backdrop-filter: blur(5px);
-            border-radius: 16px;
+            border-radius: 14px;
             padding: 12px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
             transition: all 0.2s;
-            border: 1px solid var(--gray);
+            border: 1px solid rgba(139,0,0,0.3);
         }
         
         .leader-card:hover {
             transform: translateX(5px);
-            border-color: var(--light-gray);
+            border-color: var(--dark-red);
         }
         
         .rank-badge {
-            width: 38px;
-            height: 38px;
-            background: var(--dark-gray);
+            width: 36px;
+            height: 36px;
+            background: #1a1a1a;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 0.9rem;
             color: var(--white);
         }
         
         .rank-1 .rank-badge {
-            background: #2a2a2a;
-            border: 1px solid #FFD700;
+            background: #8B0000;
             color: #FFD700;
         }
         
         .rank-2 .rank-badge {
-            background: #2a2a2a;
-            border: 1px solid #C0C0C0;
+            background: #8B0000;
             color: #C0C0C0;
         }
         
         .rank-3 .rank-badge {
-            background: #2a2a2a;
-            border: 1px solid #CD7F32;
+            background: #8B0000;
             color: #CD7F32;
+        }
+        
+        .leader-username {
+            flex: 1;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        .leader-level, .leader-xp {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
         }
         
         .tasks-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            gap: 18px;
             margin-top: 20px;
             margin-bottom: 40px;
         }
         
         .task-card {
             background: rgba(10,10,10,0.9);
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 20px;
-            transition: all 0.3s;
-            border: 1px solid var(--gray);
+            transition: all 0.2s;
+            border: 1px solid rgba(139,0,0,0.3);
         }
         
         .task-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--light-gray);
+            transform: translateY(-2px);
+            border-color: var(--dark-red);
         }
         
         .task-icon {
-            font-size: 1.8rem;
-            color: var(--gray);
+            font-size: 1.5rem;
+            color: var(--dark-red);
             margin-bottom: 12px;
         }
         
         .task-card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        
+        .task-desc {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 12px;
         }
         
         .task-reward {
             display: inline-block;
-            background: var(--dark-gray);
+            background: rgba(139,0,0,0.2);
             padding: 4px 12px;
-            border-radius: 12px;
+            border-radius: 20px;
             margin: 12px 0;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--white);
         }
         
         .task-btn {
-            background: var(--gray);
+            background: var(--dark-red);
             border: none;
             padding: 10px;
-            border-radius: 12px;
+            border-radius: 10px;
             color: white;
             font-weight: 500;
             cursor: pointer;
             width: 100%;
             transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
         }
         
         .task-btn:disabled {
-            background: #2a2a2a;
+            background: #331111;
             cursor: not-allowed;
             opacity: 0.6;
         }
         
         .task-btn:not(:disabled):hover {
-            background: var(--light-gray);
+            background: #a52a2a;
         }
         
         .gift-area {
             text-align: center;
             padding: 30px;
             background: rgba(10,10,10,0.8);
-            border-radius: 24px;
+            border-radius: 20px;
             margin-top: 20px;
-            border: 1px solid var(--gray);
+            border: 1px solid rgba(139,0,0,0.3);
         }
         
         .gift-box {
@@ -507,20 +615,20 @@
             position: relative;
             cursor: pointer;
             transform-style: preserve-3d;
-            transition: transform 0.3s;
+            transition: transform 0.2s;
         }
         
         .gift-box:hover {
-            transform: rotateY(8deg) rotateX(3deg);
+            transform: rotateY(5deg) rotateX(3deg);
         }
         
         .gift-face {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            border: 1px solid var(--gray);
-            border-radius: 16px;
+            background: linear-gradient(145deg, #2a1a1a, #1a0a0a);
+            border: 1px solid var(--dark-red);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -532,7 +640,7 @@
         .gift-back { transform: rotateY(180deg) translateZ(110px); }
         .gift-right { transform: rotateY(90deg) translateZ(110px); }
         .gift-left { transform: rotateY(-90deg) translateZ(110px); }
-        .gift-top { transform: rotateX(90deg) translateZ(110px); border-radius: 16px 16px 0 0; }
+        .gift-top { transform: rotateX(90deg) translateZ(110px); border-radius: 14px 14px 0 0; }
         
         .shake {
             animation: shakeAnim 0.3s ease-in-out;
@@ -540,17 +648,16 @@
         
         @keyframes shakeAnim {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-6px) rotateY(3deg); }
-            75% { transform: translateX(6px) rotateY(-3deg); }
+            25% { transform: translateX(-5px) rotateY(2deg); }
+            75% { transform: translateX(5px) rotateY(-2deg); }
         }
         
         .floating-xp {
             position: fixed;
             pointer-events: none;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--white);
-            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-red);
             z-index: 10000;
             animation: floatUp 1s ease-out forwards;
         }
@@ -570,10 +677,32 @@
             .gift-left { transform: rotateY(-90deg) translateZ(80px); }
             .gift-top { transform: rotateX(90deg) translateZ(80px); }
             .login-card { padding: 35px 25px; }
+            .main-content { padding-top: 70px; }
         }
     </style>
 </head>
 <body>
+
+<!-- Hamburger Menu -->
+<button id="menuBtn" class="hamburger" aria-label="Menü">
+    <span class="bar1"></span>
+    <span class="bar2"></span>
+    <span class="bar3"></span>
+</button>
+
+<!-- Side Menu -->
+<nav id="sideMenu" class="side-menu">
+    <div class="menu-items">
+        <a href="index.html" class="menu-link"><i class="fas fa-home"></i> Ana Sayfa</a>
+        <a href="leaderboard.html" class="menu-link active"><i class="fas fa-trophy"></i> Liderlik Tablosu</a>
+        <a href="#" class="menu-link"><i class="fas fa-code-branch"></i> Projelerimiz</a>
+        <a href="#" class="menu-link"><i class="fas fa-users"></i> Sosyal Medya</a>
+        <a href="#" class="menu-link"><i class="fas fa-user-ninja"></i> Takımımız</a>
+        <a href="#" class="menu-link"><i class="fas fa-star"></i> Puanlama</a>
+        <a href="#" class="menu-link"><i class="fas fa-comments"></i> Sohbet</a>
+    </div>
+    <div class="menu-footer"><p>LTF © 2026</p></div>
+</nav>
 
 <!-- Login Overlay -->
 <div id="loginOverlay" class="login-overlay">
@@ -684,15 +813,13 @@
         <button id="logoutBtn" class="logout-btn"><i class="fas fa-power-off"></i> Çıkış</button>
     </div>
     
-    <div class="leaderboard-section">
-        <div class="section-title">
-            <i class="fas fa-trophy"></i>
-            <span>LİDERLİK TABLOSU</span>
-            <i class="fas fa-globe"></i>
-        </div>
-        <div id="leaderboardGrid" class="leaderboard-grid">
-            <div style="text-align: center; padding: 40px;">Yükleniyor...</div>
-        </div>
+    <div class="section-title">
+        <i class="fas fa-trophy"></i>
+        <span>LİDERLİK TABLOSU (İLK 15)</span>
+        <i class="fas fa-globe"></i>
+    </div>
+    <div id="leaderboardGrid" class="leaderboard-grid">
+        <div style="text-align: center; padding: 40px;">Yükleniyor...</div>
     </div>
     
     <div class="section-title">
@@ -702,7 +829,7 @@
     <div id="tasksGrid" class="tasks-grid"></div>
     
     <div class="gift-area">
-        <div class="section-title" style="justify-content: center;">
+        <div class="section-title" style="justify-content: center; border-left: none;">
             <i class="fas fa-gift"></i>
             <span>HEDİYE KUTUSU</span>
         </div>
@@ -713,7 +840,7 @@
             <div class="gift-face gift-left"><i class="fas fa-gem"></i></div>
             <div class="gift-face gift-top"><i class="fas fa-box-open"></i></div>
         </div>
-        <div id="giftCounter" style="margin-top: 20px; color: rgba(255,255,255,0.7); font-size: 0.9rem;">🎁 Kutuyu açmak için 3 kez tıkla!</div>
+        <div id="giftCounter" style="margin-top: 20px; color: rgba(255,255,255,0.7); font-size: 0.85rem;">🎁 Kutuyu açmak için 3 kez tıkla!</div>
     </div>
 </div>
 
@@ -817,10 +944,10 @@
             card.className = `leader-card ${rankClass}`;
             card.innerHTML = `
                 <div class="rank-badge">${rank}</div>
-                <div><i class="fas fa-user-circle" style="font-size: 1.5rem; color: var(--gray);"></i></div>
-                <div style="flex:1; font-weight: 500;">${data.username}</div>
-                <div style="font-size: 0.85rem;">Seviye ${levelInfo.level}</div>
-                <div style="font-size: 0.85rem;">${data.xp} XP</div>
+                <div><i class="fas fa-user-circle" style="font-size: 1.3rem; color: var(--dark-red);"></i></div>
+                <div class="leader-username">${data.username}</div>
+                <div class="leader-level"><i class="fas fa-chart-line"></i> Seviye ${levelInfo.level}</div>
+                <div class="leader-xp"><i class="fas fa-star"></i> ${data.xp} XP</div>
             `;
             container.appendChild(card);
             rank++;
@@ -847,12 +974,12 @@
             card.innerHTML = `
                 <div class="task-icon"><i class="${task.icon}"></i></div>
                 <h3>${task.name}</h3>
-                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">${task.desc}</p>
+                <div class="task-desc">${task.desc}</div>
                 <div class="task-reward"><i class="fas fa-gem"></i> ${task.reward} XP</div>
                 <button class="task-btn" data-task="${task.id}" ${!canDo ? 'disabled' : ''}>
                     ${canDo ? 'Görevi Tamamla' : 'Beklemede'}
                 </button>
-                ${!canDo && lastTime > 0 ? `<div style="font-size:0.65rem; margin-top:6px; color:rgba(255,255,255,0.4);">🕐 ${hoursLeft} saat sonra</div>` : ''}
+                ${!canDo && lastTime > 0 ? `<div style="font-size:0.6rem; margin-top:6px; color:rgba(255,255,255,0.4);">🕐 ${hoursLeft} saat sonra</div>` : ''}
             `;
             container.appendChild(card);
             const btn = card.querySelector("button");
@@ -953,17 +1080,15 @@
                 lastGiftClaim: 0,
                 createdAt: Date.now()
             });
-            document.getElementById("signupMessage").innerHTML = '<span style="color: #4caf50;">✓ Kayıt başarılı! Giriş yapabilirsiniz.</span>';
-            // Kayıt sonrası direkt giriş ekranına dön ve otomatik doldur
+            document.getElementById("signupMessage").innerHTML = '<span style="color: #4caf50;">✓ Kayıt başarılı! Giriş yapılıyor...</span>';
             setTimeout(() => {
                 document.getElementById("signupOverlay").style.display = "none";
                 document.getElementById("loginOverlay").style.display = "flex";
                 document.getElementById("loginUsername").value = username;
                 document.getElementById("loginPassword").value = password;
                 document.getElementById("signupMessage").innerHTML = '';
-                // Otomatik giriş yap
                 handleLogin(username, password);
-            }, 1500);
+            }, 1000);
         } catch (error) {
             document.getElementById("signupMessage").innerHTML = '❌ Bu kullanıcı adı zaten alınmış!';
         }
@@ -990,6 +1115,7 @@
         }
     });
     
+    // Event Listeners
     document.getElementById("doLoginBtn").onclick = () => {
         const username = document.getElementById("loginUsername").value.trim();
         const password = document.getElementById("loginPassword").value;
@@ -1022,6 +1148,7 @@
     document.getElementById("logoutBtn").onclick = async () => await signOut(auth);
     document.getElementById("giftBox").onclick = openGift;
     
+    // Şifre göster/gizle
     document.getElementById("toggleLoginPass").onclick = () => {
         const input = document.getElementById("loginPassword");
         input.type = input.type === "password" ? "text" : "password";
@@ -1035,12 +1162,32 @@
         input.type = input.type === "password" ? "text" : "password";
     };
     
+    // Enter ile giriş
     document.getElementById("loginPassword").addEventListener("keypress", (e) => {
         if (e.key === "Enter") document.getElementById("doLoginBtn").click();
     });
     document.getElementById("signupConfirmPassword").addEventListener("keypress", (e) => {
         if (e.key === "Enter") document.getElementById("doSignupBtn").click();
     });
+    
+    // Hamburger Menu
+    const menuBtn = document.getElementById("menuBtn");
+    const sideMenu = document.getElementById("sideMenu");
+    
+    if(menuBtn && sideMenu) {
+        menuBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            sideMenu.classList.toggle("open");
+            menuBtn.classList.toggle("open");
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                sideMenu.classList.remove('open');
+                menuBtn.classList.remove('open');
+            }
+        });
+    }
     
     setInterval(() => { if (currentUserData) { updateUserUI(); renderTasks(); } }, 60000);
     
