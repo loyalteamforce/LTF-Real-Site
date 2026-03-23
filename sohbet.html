@@ -13,7 +13,6 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
     
     <style>
         * {
@@ -39,10 +38,11 @@
             --danger: #e74c3c;
             --success: #2ecc71;
             --online: #2ecc71;
-            --offline: #7f8c8d;
             --admin: #e74c3c;
             --mod: #3498db;
+            --vip: #9b59b6;
             --member: #2ecc71;
+            --new: #f39c12;
         }
 
         [data-theme="light"] {
@@ -141,7 +141,6 @@
             width: 100%;
         }
 
-        /* SIDEBAR */
         .chat-sidebar {
             width: 280px;
             background: var(--bg-secondary);
@@ -208,7 +207,7 @@
         .profile-info h4 { font-size: 0.9rem; margin-bottom: 2px; }
         .profile-info p { font-size: 0.7rem; color: var(--text-muted); }
 
-        .channels-section, .users-section {
+        .channels-section, .users-section, .top-users-section {
             padding: 15px;
         }
 
@@ -222,7 +221,7 @@
             justify-content: space-between;
         }
 
-        .channel-item, .user-item {
+        .channel-item, .user-item, .top-user-item {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -233,7 +232,7 @@
             margin-bottom: 4px;
         }
 
-        .channel-item:hover, .user-item:hover { background: var(--bg-hover); }
+        .channel-item:hover, .user-item:hover, .top-user-item:hover { background: var(--bg-hover); }
         .channel-item.active { background: var(--accent-glow); color: var(--accent); }
 
         .channel-icon { width: 32px; text-align: center; }
@@ -241,6 +240,21 @@
 
         .user-status { width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
         .user-status.online { background: var(--online); }
+
+        .user-badge {
+            font-size: 0.7rem;
+            margin-left: auto;
+        }
+
+        .user-badge.admin { color: var(--admin); }
+        .user-badge.mod { color: var(--mod); }
+        .user-badge.vip { color: var(--vip); }
+
+        .message-count {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
 
         /* ANA CHAT ALANI */
         .chat-main {
@@ -288,10 +302,25 @@
             gap: 16px;
         }
 
+        .pinned-messages {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .pinned-title {
+            font-size: 0.7rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
         .message-group {
             display: flex;
             gap: 12px;
             animation: fadeInUp 0.2s ease;
+            position: relative;
         }
 
         @keyframes fadeInUp {
@@ -317,7 +346,7 @@
             padding: 10px 14px;
             border-radius: 18px;
             border-bottom-left-radius: 4px;
-            max-width: 70%;
+            max-width: 75%;
         }
 
         .message-group.own .message-content {
@@ -338,11 +367,21 @@
         .message-name {
             font-weight: 600;
             font-size: 0.85rem;
+            cursor: pointer;
         }
 
         .message-name.admin { color: var(--admin); }
         .message-name.mod { color: var(--mod); }
+        .message-name.vip { color: var(--vip); }
         .message-name.member { color: var(--member); }
+        .message-name.new { color: var(--new); }
+
+        .message-badge {
+            font-size: 0.65rem;
+            background: var(--bg-hover);
+            padding: 2px 6px;
+            border-radius: 20px;
+        }
 
         .message-time {
             font-size: 0.65rem;
@@ -355,27 +394,42 @@
             word-break: break-word;
         }
 
-        .message-image {
-            max-width: 250px;
-            max-height: 200px;
-            border-radius: 12px;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: transform 0.2s;
+        .message-text .mention {
+            background: var(--accent-glow);
+            color: var(--accent);
+            padding: 2px 4px;
+            border-radius: 8px;
+            font-weight: 500;
         }
 
-        .message-image:hover {
-            transform: scale(1.02);
-        }
-
-        .upload-progress {
-            display: inline-flex;
-            align-items: center;
+        .message-actions {
+            display: none;
             gap: 8px;
-            background: var(--bg-primary);
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .message-group:hover .message-actions { display: flex; }
+
+        .msg-action {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 12px;
+        }
+
+        .msg-action:hover { color: var(--accent); background: var(--bg-hover); }
+
+        .quote-preview {
+            background: var(--bg-hover);
+            border-left: 3px solid var(--accent);
+            padding: 6px 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            opacity: 0.8;
         }
 
         /* GİRİŞ ALANI */
@@ -387,24 +441,6 @@
             gap: 12px;
             align-items: flex-end;
         }
-
-        .input-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .input-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: all 0.2s;
-        }
-
-        .input-btn:hover { color: var(--accent); background: var(--bg-hover); }
 
         .message-input {
             flex: 1;
@@ -436,14 +472,9 @@
         }
 
         .send-btn:hover { transform: scale(1.05); box-shadow: 0 2px 15px var(--accent-glow); }
-        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Gizli Dosya Input */
-        #fileInput {
-            display: none;
-        }
-
-        /* MODAL */
+        /* ARAMA MODAL */
         .modal {
             position: fixed;
             top: 0;
@@ -463,9 +494,11 @@
             background: var(--bg-secondary);
             border-radius: 24px;
             padding: 25px;
-            max-width: 400px;
+            max-width: 500px;
             width: 90%;
             border: 1px solid var(--border-color);
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .modal-content h3 { margin-bottom: 15px; }
@@ -479,18 +512,19 @@
             margin: 10px 0;
         }
 
+        .search-result {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .search-result:hover { background: var(--bg-hover); }
+
         .modal-buttons {
             display: flex;
             gap: 10px;
             justify-content: flex-end;
             margin-top: 15px;
-        }
-
-        .image-preview {
-            max-width: 100%;
-            max-height: 150px;
-            border-radius: 12px;
-            margin: 10px 0;
         }
 
         .toast {
@@ -525,7 +559,6 @@
 
         @media (max-width: 768px) {
             .message-content { max-width: 85%; }
-            .message-image { max-width: 180px; }
         }
     </style>
 </head>
@@ -587,6 +620,13 @@
                 </div>
             </div>
 
+            <div class="top-users-section">
+                <div class="section-title">
+                    <span><i class="fas fa-trophy"></i> EN AKTİFLER</span>
+                </div>
+                <div id="topUsersList"></div>
+            </div>
+
             <div class="users-section">
                 <div class="section-title">
                     <span><i class="fas fa-users"></i> AKTİF KULLANICILAR</span>
@@ -603,6 +643,7 @@
                     <p id="channelDesc">Her konuda sohbet edin</p>
                 </div>
                 <div class="chat-actions">
+                    <button class="chat-action-btn" id="searchBtn"><i class="fas fa-search"></i></button>
                     <button class="chat-action-btn" id="themeToggleBtn"><i class="fas fa-moon"></i></button>
                     <button class="chat-action-btn" id="mobileSidebarToggle"><i class="fas fa-bars"></i></button>
                 </div>
@@ -615,18 +656,23 @@
             </div>
 
             <div class="message-input-area">
-                <div class="input-actions">
-                    <button class="input-btn" id="emojiBtn"><i class="far fa-smile"></i></button>
-                    <button class="input-btn" id="imageBtn"><i class="fas fa-image"></i></button>
-                </div>
-                <textarea class="message-input" id="messageInput" rows="1" placeholder="Mesajınızı yazın..."></textarea>
+                <textarea class="message-input" id="messageInput" rows="1" placeholder="Mesajınızı yazın... (@kullanıcı ile etiketleyebilirsiniz)"></textarea>
                 <button class="send-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- GİZLİ DOSYA SEÇİCİ -->
-    <input type="file" id="fileInput" accept="image/*">
+    <!-- ARAMA MODAL -->
+    <div id="searchModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-search"></i> Mesaj Ara</h3>
+            <input type="text" class="modal-input" id="searchInput" placeholder="Aranacak kelime...">
+            <div id="searchResults"></div>
+            <div class="modal-buttons">
+                <button class="send-btn" id="closeSearchBtn" style="width: auto; padding: 10px 20px;">Kapat</button>
+            </div>
+        </div>
+    </div>
 
     <!-- PROFİL MODAL -->
     <div id="profileModal" class="modal">
@@ -652,7 +698,7 @@
             </div>
             <div class="modal-buttons">
                 <button class="send-btn" id="saveProfileBtn" style="width: auto; padding: 10px 20px;">Kaydet</button>
-                <button class="input-btn" id="closeProfileBtn">Kapat</button>
+                <button class="chat-action-btn" id="closeProfileBtn">Kapat</button>
             </div>
         </div>
     </div>
@@ -673,7 +719,6 @@
         
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const storage = firebase.storage();
         
         // Kullanıcı bilgileri
         let userId = localStorage.getItem('chat_user_id');
@@ -686,18 +731,19 @@
             id: userId,
             username: localStorage.getItem('chat_username') || 'Misafir',
             avatar: localStorage.getItem('chat_avatar') || '😎',
-            role: 'member'
+            role: localStorage.getItem('chat_role') || 'member',
+            messageCount: 0,
+            joinDate: new Date().toLocaleDateString()
         };
         
         let currentChannel = 'genel';
         let currentTheme = localStorage.getItem('chat_theme') || 'dark';
         let messageListener = null;
-        let isUploading = false;
+        let quoteMessage = null;
         
         const messagesArea = document.getElementById('messagesArea');
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
-        const fileInput = document.getElementById('fileInput');
         
         function applyTheme() {
             document.documentElement.setAttribute('data-theme', currentTheme);
@@ -715,7 +761,8 @@
         function updateProfileUI() {
             document.getElementById('profileAvatar').textContent = currentUser.avatar;
             document.getElementById('profileName').textContent = currentUser.username;
-            document.getElementById('profileRole').textContent = currentUser.role === 'admin' ? 'Admin' : currentUser.role === 'mod' ? 'Moderatör' : 'Üye';
+            const roleText = currentUser.role === 'admin' ? 'Admin' : currentUser.role === 'mod' ? 'Moderatör' : currentUser.role === 'vip' ? 'VIP' : 'Üye';
+            document.getElementById('profileRole').textContent = roleText;
             document.getElementById('modalAvatar').textContent = currentUser.avatar;
             document.getElementById('modalUsername').value = currentUser.username;
             document.getElementById('modalAvatarSelect').value = currentUser.avatar;
@@ -732,78 +779,52 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
         
-        // Resim yükleme ve gönderme
-        async function uploadAndSendImage(file) {
-            if (!file || !file.type.startsWith('image/')) {
-                showToast('Lütfen bir resim dosyası seçin!', true);
-                return;
-            }
-            
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Resim 5MB\'dan küçük olmalı!', true);
-                return;
-            }
-            
-            isUploading = true;
-            sendBtn.disabled = true;
-            
-            // Yükleme durumu göster
-            const loadingMsg = document.createElement('div');
-            loadingMsg.className = 'upload-progress';
-            loadingMsg.innerHTML = '<span class="loading-spinner"></span> Resim yükleniyor...';
-            messagesArea.appendChild(loadingMsg);
-            messagesArea.scrollTop = messagesArea.scrollHeight;
-            
-            try {
-                const fileName = `${Date.now()}_${userId}_${file.name}`;
-                const storageRef = storage.ref(`chat_images/${currentChannel}/${fileName}`);
-                const uploadTask = storageRef.put(file);
-                
-                const snapshot = await uploadTask;
-                const downloadURL = await snapshot.ref.getDownloadURL();
-                
-                // Mesajı gönder
-                const now = new Date();
-                const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-                const messageId = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-                
-                const messageData = {
-                    type: 'image',
-                    imageUrl: downloadURL,
-                    text: file.name,
-                    username: currentUser.username,
-                    avatar: currentUser.avatar,
-                    role: currentUser.role,
-                    time: timeStr,
-                    timestamp: now.getTime(),
-                    userId: userId,
-                    channel: currentChannel
-                };
-                
-                await database.ref(`chat_messages/${currentChannel}/${messageId}`).set(messageData);
-                showToast('Resim gönderildi!');
-                
-            } catch (error) {
-                console.error('Yükleme hatası:', error);
-                showToast('Resim yüklenemedi!', true);
-            } finally {
-                isUploading = false;
-                sendBtn.disabled = false;
-                loadingMsg.remove();
+        function getRoleClass(role) {
+            switch(role) {
+                case 'admin': return 'admin';
+                case 'mod': return 'mod';
+                case 'vip': return 'vip';
+                default: return 'member';
             }
         }
         
-        // Metin mesajı gönderme
-        async function sendTextMessage() {
-            const messageText = messageInput.value.trim();
+        function getRoleBadge(role) {
+            switch(role) {
+                case 'admin': return '<span class="message-badge">👑 Admin</span>';
+                case 'mod': return '<span class="message-badge">🛡️ Mod</span>';
+                case 'vip': return '<span class="message-badge">⭐ VIP</span>';
+                default: return '';
+            }
+        }
+        
+        function formatMessageText(text) {
+            // Mentionları yakala
+            text = text.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
+            // Linkleri tıklanabilir yap
+            text = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color: var(--accent);">$1</a>');
+            return text;
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Mesaj gönderme
+        async function sendMessage() {
+            let messageText = messageInput.value.trim();
             if (!messageText) return;
+            
+            // Mention kontrolü
+            const mentions = messageText.match(/@(\w+)/g);
             
             const now = new Date();
             const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
             const messageId = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
             
             const messageData = {
-                type: 'text',
                 text: messageText,
                 username: currentUser.username,
                 avatar: currentUser.avatar,
@@ -811,11 +832,30 @@
                 time: timeStr,
                 timestamp: now.getTime(),
                 userId: userId,
-                channel: currentChannel
+                channel: currentChannel,
+                mentions: mentions || []
             };
+            
+            if (quoteMessage) {
+                messageData.quote = {
+                    username: quoteMessage.username,
+                    text: quoteMessage.text,
+                    time: quoteMessage.time
+                };
+                quoteMessage = null;
+            }
             
             try {
                 await database.ref(`chat_messages/${currentChannel}/${messageId}`).set(messageData);
+                
+                // Kullanıcı mesaj sayısını güncelle
+                currentUser.messageCount++;
+                await database.ref(`user_stats/${userId}`).set({
+                    username: currentUser.username,
+                    messageCount: currentUser.messageCount,
+                    lastActive: now.getTime()
+                });
+                
                 messageInput.value = '';
                 messageInput.style.height = 'auto';
             } catch (error) {
@@ -823,26 +863,12 @@
             }
         }
         
-        function sendMessage() {
-            if (isUploading) {
-                showToast('Resim yükleniyor, lütfen bekleyin...', true);
-                return;
-            }
-            sendTextMessage();
-        }
-        
-        // Galeriden resim seçme
-        document.getElementById('imageBtn').addEventListener('click', () => {
-            fileInput.click();
-        });
-        
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                uploadAndSendImage(file);
-            }
-            fileInput.value = '';
-        });
+        // Alıntı yapma
+        window.quoteMessage = function(msgData) {
+            quoteMessage = msgData;
+            messageInput.focus();
+            showToast(`Alıntı: @${msgData.username} - "${msgData.text.substring(0, 50)}..."`);
+        };
         
         // Mesajları dinleme
         function loadMessages() {
@@ -868,25 +894,39 @@
             }
             
             messagesArea.innerHTML = messages.map(msg => {
-                let contentHtml = '';
-                if (msg.type === 'image') {
-                    contentHtml = `
-                        <div class="message-text">📷 ${escapeHtml(msg.text || 'Resim')}</div>
-                        <img class="message-image" src="${msg.imageUrl}" alt="Resim" onclick="window.open('${msg.imageUrl}', '_blank')">
-                    `;
-                } else {
-                    contentHtml = `<div class="message-text">${formatMessageText(msg.text)}</div>`;
+                let quoteHtml = '';
+                if (msg.quote) {
+                    quoteHtml = `<div class="quote-preview">
+                        <i class="fas fa-reply"></i> ${escapeHtml(msg.quote.username)}: ${escapeHtml(msg.quote.text.substring(0, 80))}
+                    </div>`;
                 }
                 
                 return `
-                    <div class="message-group ${msg.userId === userId ? 'own' : ''}">
+                    <div class="message-group ${msg.userId === userId ? 'own' : ''}" data-message-id="${msg.id}">
                         <div class="message-avatar">${msg.avatar || '😎'}</div>
                         <div class="message-content">
                             <div class="message-header">
-                                <span class="message-name ${msg.role}">${escapeHtml(msg.username)}</span>
+                                <span class="message-name ${getRoleClass(msg.role)}">${escapeHtml(msg.username)}</span>
+                                ${getRoleBadge(msg.role)}
                                 <span class="message-time">${msg.time}</span>
                             </div>
-                            ${contentHtml}
+                            ${quoteHtml}
+                            <div class="message-text">${formatMessageText(escapeHtml(msg.text))}</div>
+                            <div class="message-actions">
+                                <button class="msg-action" onclick="quoteMessage(${JSON.stringify(msg).replace(/"/g, '&quot;')})">
+                                    <i class="fas fa-reply"></i> Alıntıla
+                                </button>
+                                ${msg.userId === userId ? `
+                                <button class="msg-action" onclick="deleteMessage('${msg.id}')">
+                                    <i class="fas fa-trash"></i> Sil
+                                </button>
+                                ` : ''}
+                                ${currentUser.role === 'admin' || currentUser.role === 'mod' ? `
+                                <button class="msg-action" onclick="pinMessage('${msg.id}')">
+                                    <i class="fas fa-thumbtack"></i> Sabitle
+                                </button>
+                                ` : ''}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -895,17 +935,28 @@
             messagesArea.scrollTop = messagesArea.scrollHeight;
         }
         
-        function formatMessageText(text) {
-            text = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color: var(--accent);">$1</a>');
-            return text;
-        }
+        // Mesaj silme
+        window.deleteMessage = async function(messageId) {
+            if (confirm('Bu mesajı silmek istediğinize emin misiniz?')) {
+                await database.ref(`chat_messages/${currentChannel}/${messageId}`).remove();
+                showToast('Mesaj silindi');
+            }
+        };
         
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        // Mesaj sabitleme
+        window.pinMessage = async function(messageId) {
+            const messageRef = database.ref(`chat_messages/${currentChannel}/${messageId}`);
+            const snapshot = await messageRef.once('value');
+            const msg = snapshot.val();
+            if (msg) {
+                await database.ref(`pinned_messages/${currentChannel}/${messageId}`).set({
+                    ...msg,
+                    pinnedAt: Date.now(),
+                    pinnedBy: currentUser.username
+                });
+                showToast('Mesaj sabitlendi');
+            }
+        };
         
         function changeChannel(channel) {
             currentChannel = channel;
@@ -918,49 +969,125 @@
             });
         }
         
-        function updateOnlineUsers() {
+        // Aktif kullanıcıları ve en aktifleri güncelle
+        async function updateOnlineUsers() {
             const usersRef = database.ref('chat_messages');
+            const statsRef = database.ref('user_stats');
             const oneMinuteAgo = Date.now() - 60000;
             
-            usersRef.once('value', (snapshot) => {
-                const users = new Map();
-                const data = snapshot.val();
-                if (data) {
-                    Object.values(data).forEach(channelMsgs => {
-                        if (channelMsgs && typeof channelMsgs === 'object') {
-                            Object.values(channelMsgs).forEach(msg => {
-                                if (msg.timestamp > oneMinuteAgo && msg.userId) {
-                                    users.set(msg.userId, {
-                                        username: msg.username,
-                                        avatar: msg.avatar,
-                                        role: msg.role
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-                
-                document.getElementById('onlineCount').textContent = users.size;
-                const usersList = document.getElementById('usersList');
-                if (usersList) {
-                    usersList.innerHTML = Array.from(users.values()).map(user => `
-                        <div class="user-item">
-                            <div class="user-status online"></div>
+            const [usersSnap, statsSnap] = await Promise.all([
+                usersRef.once('value'),
+                statsRef.once('value')
+            ]);
+            
+            const users = new Map();
+            const data = usersSnap.val();
+            if (data) {
+                Object.values(data).forEach(channelMsgs => {
+                    if (channelMsgs && typeof channelMsgs === 'object') {
+                        Object.values(channelMsgs).forEach(msg => {
+                            if (msg.timestamp > oneMinuteAgo && msg.userId) {
+                                users.set(msg.userId, {
+                                    username: msg.username,
+                                    avatar: msg.avatar,
+                                    role: msg.role
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+            
+            document.getElementById('onlineCount').textContent = users.size;
+            const usersList = document.getElementById('usersList');
+            if (usersList) {
+                usersList.innerHTML = Array.from(users.values()).map(user => `
+                    <div class="user-item" onclick="mentionUser('${escapeHtml(user.username)}')">
+                        <div class="user-status online"></div>
+                        <span>${escapeHtml(user.username)}</span>
+                        <span class="user-badge ${user.role}">${user.role === 'admin' ? '👑' : user.role === 'mod' ? '🛡️' : ''}</span>
+                    </div>
+                `).join('');
+            }
+            
+            // En aktif kullanıcılar
+            const stats = statsSnap.val();
+            if (stats) {
+                const topUsers = Object.values(stats).sort((a, b) => b.messageCount - a.messageCount).slice(0, 5);
+                const topUsersList = document.getElementById('topUsersList');
+                if (topUsersList) {
+                    topUsersList.innerHTML = topUsers.map(user => `
+                        <div class="top-user-item" onclick="mentionUser('${escapeHtml(user.username)}')">
+                            <i class="fas fa-comment"></i>
                             <span>${escapeHtml(user.username)}</span>
+                            <span class="message-count">${user.messageCount} mesaj</span>
                         </div>
                     `).join('');
-                    
-                    if (users.size === 0) {
-                        usersList.innerHTML = '<div style="text-align:center; opacity:0.5; padding:20px;">Kimse aktif değil</div>';
-                    }
                 }
-            });
+            }
         }
         
+        // Kullanıcı etiketleme
+        window.mentionUser = function(username) {
+            messageInput.value += `@${username} `;
+            messageInput.focus();
+        };
+        
+        // Mesaj arama
+        document.getElementById('searchBtn').addEventListener('click', async () => {
+            const modal = document.getElementById('searchModal');
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            modal.classList.add('open');
+            
+            searchInput.oninput = async () => {
+                const term = searchInput.value.toLowerCase();
+                if (term.length < 2) {
+                    searchResults.innerHTML = '<div style="text-align:center; opacity:0.5;">En az 2 karakter girin</div>';
+                    return;
+                }
+                
+                const messagesRef = database.ref(`chat_messages/${currentChannel}`);
+                const snapshot = await messagesRef.once('value');
+                const data = snapshot.val();
+                if (data) {
+                    const results = Object.entries(data).filter(([id, msg]) => 
+                        msg.text && msg.text.toLowerCase().includes(term)
+                    ).slice(0, 10);
+                    
+                    if (results.length === 0) {
+                        searchResults.innerHTML = '<div style="text-align:center; opacity:0.5;">Sonuç bulunamadı</div>';
+                    } else {
+                        searchResults.innerHTML = results.map(([id, msg]) => `
+                            <div class="search-result" onclick="scrollToMessage('${id}')">
+                                <strong>${escapeHtml(msg.username)}</strong>: ${escapeHtml(msg.text.substring(0, 100))}
+                                <div style="font-size: 0.7rem; opacity: 0.5;">${msg.time}</div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            };
+        });
+        
+        window.scrollToMessage = function(messageId) {
+            const modal = document.getElementById('searchModal');
+            modal.classList.remove('open');
+            const element = document.querySelector(`.message-group[data-message-id="${messageId}"]`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                element.style.background = 'var(--accent-glow)';
+                setTimeout(() => {
+                    element.style.background = '';
+                }, 2000);
+            }
+        };
+        
+        document.getElementById('closeSearchBtn').addEventListener('click', () => {
+            document.getElementById('searchModal').classList.remove('open');
+        });
+        
         function updateUserActivity() {
-            const activityRef = database.ref(`user_activity/${userId}`);
-            activityRef.set({
+            database.ref(`user_activity/${userId}`).set({
                 username: currentUser.username,
                 avatar: currentUser.avatar,
                 role: currentUser.role,
@@ -989,13 +1116,6 @@
             } else {
                 showToast('Kullanıcı adı boş olamaz!', true);
             }
-        });
-        
-        document.getElementById('emojiBtn').addEventListener('click', () => {
-            const emojis = ['😀', '😂', '😍', '🔥', '👍', '🎉', '❤️', '😎', '🚀', '⭐'];
-            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-            messageInput.value += emoji;
-            messageInput.focus();
         });
         
         document.getElementById('mobileSidebarToggle').addEventListener('click', () => {
