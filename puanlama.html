@@ -4,892 +4,360 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LTF - Geri Bildirim & Topluluk</title>
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-    
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --siyah: #0A0A0F;
-            --siyah-2: #1A1A20;
-            --siyah-3: #252530;
-            --altin: #FFD700;
-            --altin-glow: rgba(255, 215, 0, 0.2);
-            --kirmizi: #8B0000;
-            --kirmizi-light: #b30000;
-            --beyaz: #FFFFFF;
-            --mavi: #87CEEB;
-            --yesil: #2ecc71;
-            --turuncu: #e67e22;
-            --mor: #9b59b6;
-            --gri: #3a3a44;
+            --siyah: #0A0A0F; --siyah-2: #1A1A20; --siyah-3: #252530;
+            --altin: #FFD700; --altin-glow: rgba(255,215,0,0.2);
+            --kirmizi: #8B0000; --kirmizi-light: #b30000;
+            --beyaz: #FFFFFF; --mavi: #87CEEB;
+            --yesil: #2ecc71; --turuncu: #e67e22; --mor: #9b59b6; --gri: #3a3a44;
         }
+        body { font-family:'Inter',sans-serif; background:var(--siyah); color:var(--beyaz); line-height:1.6; overflow-x:hidden; min-height:100vh; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--siyah);
-            color: var(--beyaz);
-            line-height: 1.6;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        @keyframes slowDrift {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-            100% { background-position: 0% 0%; }
-        }
-
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @keyframes slowDrift { 0%{background-position:0% 0%} 50%{background-position:100% 100%} 100%{background-position:0% 0%} }
+        @keyframes gradientFlow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes starGlow { 0%{transform:scale(1)} 50%{transform:scale(1.3);text-shadow:0 0 20px var(--altin)} 100%{transform:scale(1)} }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+        @keyframes spin { to{transform:rotate(360deg)} }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+        @keyframes popIn { 0%{transform:scale(0);opacity:0} 70%{transform:scale(1.15)} 100%{transform:scale(1);opacity:1} }
+        @keyframes bounceHeart { 0%,100%{transform:scale(1)} 50%{transform:scale(1.35)} }
+        @keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes notifPop { 0%{transform:translateX(100px);opacity:0} 15%{transform:translateX(-4px);opacity:1} 85%{transform:translateX(0);opacity:1} 100%{transform:translateX(100px);opacity:0} }
+        @keyframes badgePop { 0%{transform:scale(0) rotate(-10deg);opacity:0} 60%{transform:scale(1.2) rotate(3deg)} 100%{transform:scale(1) rotate(0deg);opacity:1} }
 
         body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 40%, rgba(255, 215, 0, 0.03) 0%, transparent 40%),
-                        radial-gradient(circle at 80% 70%, rgba(139, 0, 0, 0.03) 0%, transparent 40%);
-            animation: slowDrift 35s ease-in-out infinite;
-            pointer-events: none;
-            z-index: -1;
+            content:''; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:radial-gradient(circle at 20% 40%,rgba(255,215,0,0.03) 0%,transparent 40%),radial-gradient(circle at 80% 70%,rgba(139,0,0,0.03) 0%,transparent 40%);
+            animation:slowDrift 35s ease-in-out infinite; pointer-events:none; z-index:-1;
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* CONFETTI */
+        #confettiCanvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; }
 
-        @keyframes fadeInLeft {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes fadeInRight {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes starGlow {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); text-shadow: 0 0 10px var(--altin); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-4px); }
-            75% { transform: translateX(4px); }
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        .fade-up { animation: fadeInUp 0.6s ease forwards; }
-        .fade-left { animation: fadeInLeft 0.6s ease forwards; }
-        .fade-right { animation: fadeInRight 0.6s ease forwards; }
-        .scale-in { animation: scaleIn 0.5s ease forwards; }
-
-        /* HAMBURGER MENU */
-        .hamburger {
-            width: 40px;
-            height: 30px;
-            position: fixed;
-            top: 25px;
-            left: 25px;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            cursor: pointer;
-            padding: 5px;
-            z-index: 101;
-            background: rgba(10, 10, 15, 0.8);
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-        }
-
-        .hamburger span {
-            display: block;
-            height: 3px;
-            width: 100%;
-            background: var(--altin);
-            border-radius: 3px;
-            transition: 0.3s;
-        }
-
-        .hamburger.open .bar1 {
-            transform: translateY(12px) rotate(45deg);
-            background: var(--mavi);
-        }
-
-        .hamburger.open .bar2 {
-            opacity: 0;
-        }
-
-        .hamburger.open .bar3 {
-            transform: translateY(-12px) rotate(-45deg);
-            background: var(--mavi);
-        }
+        /* HAMBURGER */
+        .hamburger { width:42px; height:42px; position:fixed; top:20px; left:20px; z-index:101; display:flex; flex-direction:column; justify-content:center; gap:6px; cursor:pointer; padding:8px; background:rgba(10,10,15,0.85); border-radius:10px; backdrop-filter:blur(5px); border:1px solid rgba(255,215,0,0.2); }
+        .hamburger span { display:block; height:2px; width:100%; background:var(--altin); border-radius:3px; transition:0.3s; }
+        .hamburger.open .bar1 { transform:translateY(8px) rotate(45deg); background:var(--mavi); }
+        .hamburger.open .bar2 { opacity:0; }
+        .hamburger.open .bar3 { transform:translateY(-8px) rotate(-45deg); background:var(--mavi); }
 
         /* SIDE MENU */
-        .side-menu {
-            width: 280px;
-            height: 100vh;
-            background: linear-gradient(135deg, var(--siyah-2), var(--siyah));
-            position: fixed;
-            top: 0;
-            left: -300px;
-            z-index: 99;
-            transition: left 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            padding: 90px 0 30px;
-            border-right: 2px solid var(--altin);
-            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .side-menu.open {
-            left: 0;
-        }
-
-        .menu-link {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 14px 25px;
-            color: var(--beyaz);
-            text-decoration: none;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-            margin: 5px 0;
-        }
-
-        .menu-link i {
-            width: 24px;
-            color: var(--altin);
-            font-size: 1.2rem;
-        }
-
-        .menu-link:hover {
-            background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
-            border-left-color: var(--altin);
-            padding-left: 30px;
-        }
-
-        .menu-link.active {
-            background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), transparent);
-            border-left-color: var(--altin);
-            color: var(--altin);
-        }
-
-        .menu-footer {
-            position: absolute;
-            bottom: 30px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 0.75rem;
-            opacity: 0.5;
-        }
-
-        /* Ana İçerik */
-        .main-content {
-            min-height: 100vh;
-            padding: 100px 20px 80px;
-        }
-
-        .container {
-            max-width: 1300px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        /* Başlık */
-        .page-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .page-header h1 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: clamp(2rem, 6vw, 3.5rem);
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--altin), #FFA500, var(--altin));
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: gradientFlow 3s ease infinite;
-            margin-bottom: 15px;
-        }
-
-        .page-header p {
-            color: var(--beyaz);
-            opacity: 0.7;
-            font-size: 1.1rem;
-        }
-
-        /* Grid Yapısı */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 0.8fr;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        @media (max-width: 900px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Kartlar */
-        .card {
-            background: linear-gradient(135deg, var(--siyah-2), var(--siyah));
-            border-radius: 24px;
-            padding: 28px;
-            border: 1px solid rgba(255, 215, 0, 0.15);
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-        }
-
-        .card:hover {
-            transform: translateY(-3px);
-            border-color: var(--altin);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .card-title {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
-        }
-
-        .card-title i {
-            color: var(--altin);
-            font-size: 1.5rem;
-        }
-
-        /* Kullanıcı Bilgi Alanı */
-        .user-info {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 25px;
-        }
-
-        .avatar-selector {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .avatar-option {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--siyah);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .avatar-option:hover {
-            transform: scale(1.1);
-            border-color: var(--altin);
-        }
-
-        .avatar-option.selected {
-            border-color: var(--altin);
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), transparent);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-        }
-
-        .username-input {
-            flex: 1;
-            background: var(--siyah);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 40px;
-            padding: 12px 20px;
-            color: var(--beyaz);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-        }
-
-        .username-input:focus {
-            outline: none;
-            border-color: var(--altin);
-            box-shadow: 0 0 0 2px var(--altin-glow);
-        }
-
-        /* Yıldızlar */
-        .stars {
-            display: flex;
-            gap: 12px;
-            cursor: pointer;
-            margin: 20px 0;
-            justify-content: center;
-        }
-
-        .star {
-            font-size: 2.5rem;
-            color: #444;
-            transition: all 0.15s;
-            cursor: pointer;
-        }
-
-        .star:hover {
-            transform: scale(1.15);
-        }
-
-        .star.active {
-            color: var(--altin);
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-        }
-
-        .rating-value {
-            text-align: center;
-            display: block;
-            font-size: 0.9rem;
-            opacity: 0.7;
-            margin-bottom: 15px;
-        }
-
-        textarea {
-            width: 100%;
-            background: var(--siyah);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 16px;
-            padding: 14px 18px;
-            color: var(--beyaz);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-            resize: vertical;
-            transition: all 0.2s;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: var(--altin);
-            box-shadow: 0 0 0 2px var(--altin-glow);
-        }
-
-        .btn-submit {
-            background: linear-gradient(135deg, var(--altin), #e6c300);
-            color: var(--siyah);
-            border: none;
-            padding: 14px 28px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 20px;
-            width: 100%;
-            transition: all 0.2s;
-        }
-
-        .btn-submit:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
-        }
-
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .cooldown-timer {
-            background: linear-gradient(135deg, var(--kirmizi), #5a0000);
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 15px;
-            text-align: center;
-            font-size: 0.85rem;
-            display: none;
-        }
-
-        .cooldown-timer.show {
-            display: block;
-            animation: pulse 1s infinite;
-        }
-
-        /* İstatistik Kartı */
-        .stats-card {
-            background: linear-gradient(135deg, var(--kirmizi), #5a0000);
-            border: none;
-        }
-
-        .average-score {
-            text-align: center;
-            padding: 15px 0;
-        }
-
-        .big-score {
-            font-size: 5rem;
-            font-weight: 800;
-            color: var(--altin);
-            line-height: 1;
-        }
-
-        .total-votes {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin: 10px 0;
-        }
-
-        .star-display {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin: 15px 0;
-        }
-
-        .star-display i {
-            font-size: 2rem;
-            color: #444;
-        }
-
-        .star-display i.filled {
-            color: var(--altin);
-        }
-
-        .rating-distribution {
-            margin-top: 20px;
-        }
-
-        .dist-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .dist-label {
-            width: 35px;
-            font-size: 0.9rem;
-        }
-
-        .dist-bar {
-            flex: 1;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .dist-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--altin), #FFA500);
-            border-radius: 10px;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        .dist-count {
-            width: 40px;
-            font-size: 0.8rem;
-            text-align: right;
-            opacity: 0.7;
-        }
-
-        /* GERİ BİLDİRİM LİSTESİ - YENİ TASARIM */
-        .feedback-list {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .feedback-item {
-            background: rgba(10, 10, 15, 0.7);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-            transition: all 0.2s;
-            overflow: hidden;
-        }
-
-        .feedback-item:hover {
-            border-color: var(--altin);
-            background: rgba(255, 215, 0, 0.02);
-        }
-
-        .feedback-item.pinned {
-            border-left: 4px solid var(--altin);
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(0,0,0,0.2));
-        }
-
-        .feedback-main {
-            padding: 20px;
-            display: flex;
-            gap: 16px;
-        }
-
-        .feedback-avatar {
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(135deg, var(--siyah), var(--siyah-2));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            flex-shrink: 0;
-            border: 2px solid rgba(255, 215, 0, 0.3);
-        }
-
-        .feedback-content {
-            flex: 1;
-        }
-
-        .feedback-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .feedback-user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .feedback-name {
-            font-weight: 700;
-            color: var(--altin);
-            font-size: 1rem;
-        }
-
-        .feedback-badge {
-            font-size: 0.7rem;
-            background: rgba(255, 215, 0, 0.2);
-            padding: 2px 8px;
-            border-radius: 20px;
-            color: var(--altin);
-        }
-
-        .feedback-stars {
-            color: var(--altin);
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-        }
-
-        .feedback-date {
-            font-size: 0.7rem;
-            opacity: 0.5;
-        }
-
-        .feedback-text {
-            font-size: 0.95rem;
-            opacity: 0.9;
-            margin: 12px 0;
-            line-height: 1.5;
-        }
-
-        .feedback-actions {
-            display: flex;
-            gap: 20px;
-            margin-top: 12px;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 10px;
-            border-radius: 20px;
-            transition: all 0.2s;
-        }
-
-        .action-btn:hover {
-            color: var(--altin);
-            background: rgba(255, 215, 0, 0.1);
-        }
-
-        .action-btn.liked {
-            color: var(--altin);
-        }
-
-        /* YORUMLAR ALANI */
-        .comments-section {
-            background: rgba(0, 0, 0, 0.3);
-            border-top: 1px solid rgba(255, 215, 0, 0.1);
-            padding: 15px 20px 20px 80px;
-            display: none;
-        }
-
-        .comments-section.open {
-            display: block;
-        }
-
-        .comments-list {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .comment-item {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            gap: 12px;
-        }
-
-        .comment-avatar {
-            width: 32px;
-            height: 32px;
-            background: var(--siyah);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            flex-shrink: 0;
-        }
-
-        .comment-content {
-            flex: 1;
-        }
-
-        .comment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 5px;
-        }
-
-        .comment-name {
-            font-weight: 600;
-            color: var(--mavi);
-            font-size: 0.8rem;
-        }
-
-        .comment-time {
-            font-size: 0.65rem;
-            opacity: 0.5;
-        }
-
-        .comment-text {
-            font-size: 0.85rem;
-            opacity: 0.8;
-        }
-
-        .comment-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 6px;
-        }
-
-        .comment-like {
-            background: none;
-            border: none;
-            color: rgba(255,255,255,0.4);
-            font-size: 0.7rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .comment-like.liked {
-            color: var(--altin);
-        }
-
-        .add-comment {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-        }
-
-        .comment-input {
-            flex: 1;
-            background: var(--siyah);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 20px;
-            padding: 10px 15px;
-            color: var(--beyaz);
-            font-size: 0.85rem;
-            resize: none;
-            font-family: inherit;
-        }
-
-        .comment-input:focus {
-            outline: none;
-            border-color: var(--altin);
-        }
-
-        .comment-send {
-            background: var(--altin);
-            color: var(--siyah);
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .comment-send:hover {
-            transform: scale(1.05);
-        }
-
-        .empty-feedback {
-            text-align: center;
-            opacity: 0.5;
-            padding: 40px;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 2px solid var(--siyah);
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: linear-gradient(135deg, var(--siyah-2), var(--siyah));
-            border-left: 4px solid var(--altin);
-            padding: 14px 22px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 200;
-            transform: translateX(400px);
-            transition: transform 0.3s;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        @media (max-width: 768px) {
-            .star { font-size: 1.8rem; }
-            .big-score { font-size: 3rem; }
-            .toast { bottom: 20px; right: 20px; left: 20px; transform: translateY(100px); }
-            .toast.show { transform: translateY(0); }
-            .feedback-main { flex-direction: column; }
-            .comments-section { padding-left: 20px; }
+        .side-menu { width:280px; height:100vh; background:linear-gradient(135deg,var(--siyah-2),var(--siyah)); position:fixed; top:0; left:-300px; z-index:99; transition:left 0.35s cubic-bezier(0.2,0.9,0.4,1.1); padding:90px 0 30px; border-right:2px solid var(--altin); box-shadow:5px 0 30px rgba(0,0,0,0.5); }
+        .side-menu.open { left:0; }
+        .menu-link { display:flex; align-items:center; gap:15px; padding:14px 25px; color:var(--beyaz); text-decoration:none; transition:all 0.2s; border-left:3px solid transparent; margin:5px 0; }
+        .menu-link i { width:24px; color:var(--altin); font-size:1.2rem; }
+        .menu-link:hover { background:linear-gradient(90deg,rgba(255,215,0,0.1),transparent); border-left-color:var(--altin); padding-left:30px; }
+        .menu-link.active { background:linear-gradient(90deg,rgba(255,215,0,0.15),transparent); border-left-color:var(--altin); color:var(--altin); }
+        .menu-footer { position:absolute; bottom:30px; left:0; right:0; text-align:center; font-size:0.75rem; opacity:0.5; }
+
+        /* MAIN */
+        .main-content { min-height:100vh; padding:100px 20px 110px; }
+        .container { max-width:1300px; width:100%; margin:0 auto; }
+        .page-header { text-align:center; margin-bottom:50px; animation:fadeInUp 0.6s ease forwards; }
+        .page-header h1 { font-family:'Montserrat',sans-serif; font-size:clamp(2rem,6vw,3.5rem); font-weight:800; background:linear-gradient(135deg,var(--altin),#FFA500,var(--altin)); background-size:200% auto; -webkit-background-clip:text; background-clip:text; color:transparent; animation:gradientFlow 3s ease infinite; margin-bottom:15px; }
+        .page-header p { color:var(--beyaz); opacity:0.7; font-size:1.1rem; }
+
+        .main-grid { display:grid; grid-template-columns:1fr 0.8fr; gap:30px; margin-bottom:30px; }
+        @media(max-width:900px) { .main-grid { grid-template-columns:1fr; } }
+
+        .card { background:linear-gradient(135deg,var(--siyah-2),var(--siyah)); border-radius:24px; padding:28px; border:1px solid rgba(255,215,0,0.15); transition:all 0.3s; animation:fadeInUp 0.6s ease forwards; }
+        .card:hover { transform:translateY(-3px); border-color:rgba(255,215,0,0.4); box-shadow:0 15px 40px rgba(0,0,0,0.3); }
+        .card-title { font-size:1.3rem; margin-bottom:20px; display:flex; align-items:center; gap:12px; padding-bottom:12px; border-bottom:2px solid rgba(255,215,0,0.25); }
+        .card-title i { color:var(--altin); font-size:1.4rem; }
+
+        .user-info { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:20px; }
+        .avatar-selector { display:flex; gap:8px; flex-wrap:wrap; }
+        .avatar-option { width:44px; height:44px; border-radius:50%; background:var(--siyah); display:flex; align-items:center; justify-content:center; font-size:1.5rem; cursor:pointer; border:2px solid transparent; transition:all 0.2s; }
+        .avatar-option:hover { transform:scale(1.15); border-color:var(--altin); }
+        .avatar-option.selected { border-color:var(--altin); background:linear-gradient(135deg,rgba(255,215,0,0.15),transparent); box-shadow:0 0 12px rgba(255,215,0,0.3); animation:popIn 0.3s ease; }
+        .username-input { flex:1; min-width:140px; background:var(--siyah); border:1px solid rgba(255,215,0,0.3); border-radius:40px; padding:12px 20px; color:var(--beyaz); font-family:'Inter',sans-serif; font-size:0.95rem; transition:all 0.2s; }
+        .username-input:focus { outline:none; border-color:var(--altin); box-shadow:0 0 0 3px var(--altin-glow); }
+
+        .stars-wrapper { margin:15px 0 5px; }
+        .stars-label { font-size:0.8rem; opacity:0.6; margin-bottom:8px; text-align:center; }
+        .stars { display:flex; gap:10px; justify-content:center; }
+        .star { font-size:2.4rem; color:#333; transition:all 0.15s; cursor:pointer; user-select:none; }
+        .star:hover { transform:scale(1.2); }
+        .star.active { color:var(--altin); text-shadow:0 0 15px rgba(255,215,0,0.5); }
+        .rating-labels { display:flex; justify-content:space-between; font-size:0.65rem; opacity:0.5; margin-top:6px; padding:0 4px; }
+        .rating-value { text-align:center; display:block; font-size:0.9rem; margin:10px 0 15px; min-height:20px; transition:all 0.2s; }
+        .rating-value.selected { color:var(--altin); font-weight:600; }
+
+        .textarea-wrapper { position:relative; }
+        textarea { width:100%; background:var(--siyah); border:1px solid rgba(255,215,0,0.3); border-radius:16px; padding:14px 18px 30px; color:var(--beyaz); font-family:'Inter',sans-serif; font-size:0.95rem; resize:vertical; transition:all 0.2s; }
+        textarea:focus { outline:none; border-color:var(--altin); box-shadow:0 0 0 3px var(--altin-glow); }
+        .char-counter { position:absolute; bottom:10px; right:14px; font-size:0.7rem; opacity:0.4; pointer-events:none; transition:color 0.2s; }
+        .char-counter.warn { color:var(--turuncu); opacity:0.8; }
+        .char-counter.over { color:var(--kirmizi-light); opacity:1; }
+
+        .btn-submit { background:linear-gradient(135deg,var(--altin),#e6c300); color:var(--siyah); border:none; padding:14px 28px; border-radius:50px; font-weight:700; font-size:1rem; cursor:pointer; margin-top:18px; width:100%; transition:all 0.25s; font-family:'Inter',sans-serif; }
+        .btn-submit:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 25px rgba(255,215,0,0.4); }
+        .btn-submit:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+        .cooldown-timer { background:linear-gradient(135deg,rgba(139,0,0,0.4),rgba(90,0,0,0.3)); border:1px solid rgba(139,0,0,0.4); border-radius:12px; padding:12px 16px; margin-top:14px; text-align:center; font-size:0.85rem; display:none; }
+        .cooldown-timer.show { display:block; animation:pulse 1.5s ease-in-out infinite; }
+
+        .stats-card { background:linear-gradient(145deg,#1a0505,#0d0d12); border-color:rgba(139,0,0,0.4); }
+        .stats-card:hover { border-color:rgba(139,0,0,0.7); }
+        .average-score { text-align:center; padding:10px 0 20px; }
+        .big-score { font-size:5rem; font-weight:800; color:var(--altin); line-height:1; font-family:'Montserrat',sans-serif; text-shadow:0 0 30px rgba(255,215,0,0.3); }
+        .score-label { font-size:0.75rem; opacity:0.5; margin:4px 0 8px; }
+        .total-votes { font-size:0.9rem; opacity:0.75; margin:8px 0; }
+        .star-display { display:flex; justify-content:center; gap:10px; margin:12px 0; }
+        .star-display i { font-size:1.8rem; color:#333; transition:color 0.3s; }
+        .star-display i.filled { color:var(--altin); }
+        .star-display i.half { color:#997a00; }
+        .rating-distribution { margin-top:20px; }
+        .dist-item { display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+        .dist-label { width:32px; font-size:0.85rem; opacity:0.8; }
+        .dist-bar { flex:1; height:7px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden; }
+        .dist-fill { height:100%; background:linear-gradient(90deg,var(--altin),#FFA500); border-radius:10px; width:0%; transition:width 0.6s cubic-bezier(0.4,0,0.2,1); }
+        .dist-count { width:35px; font-size:0.75rem; text-align:right; opacity:0.6; }
+
+        .filter-bar { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; align-items:center; }
+        .filter-btn { background:var(--siyah); border:1px solid rgba(255,215,0,0.25); color:rgba(255,255,255,0.7); padding:7px 14px; border-radius:30px; cursor:pointer; font-size:0.78rem; font-family:'Inter',sans-serif; transition:all 0.2s; }
+        .filter-btn:hover { border-color:var(--altin); color:var(--altin); }
+        .filter-btn.active { background:rgba(255,215,0,0.15); border-color:var(--altin); color:var(--altin); font-weight:600; }
+        .filter-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+        .feedback-count { font-size:0.8rem; opacity:0.5; }
+        .search-bar { display:flex; align-items:center; gap:8px; background:var(--siyah); border:1px solid rgba(255,215,0,0.2); border-radius:30px; padding:6px 14px; transition:all 0.2s; }
+        .search-bar:focus-within { border-color:var(--altin); }
+        .search-bar i { color:rgba(255,255,255,0.4); font-size:0.8rem; }
+        .search-input { background:none; border:none; color:var(--beyaz); font-family:inherit; font-size:0.8rem; width:130px; outline:none; }
+        .search-input::placeholder { opacity:0.4; }
+
+        .feedback-list { display:flex; flex-direction:column; gap:18px; }
+        .feedback-item { background:rgba(10,10,15,0.7); border-radius:20px; border:1px solid rgba(255,215,0,0.1); transition:all 0.25s; overflow:hidden; animation:fadeInUp 0.4s ease forwards; }
+        .feedback-item:hover { border-color:rgba(255,215,0,0.35); background:rgba(255,215,0,0.02); }
+        .feedback-item.pinned { border-left:4px solid var(--altin); background:linear-gradient(135deg,rgba(255,215,0,0.04),rgba(0,0,0,0.2)); }
+        .feedback-main { padding:18px 20px; display:flex; gap:15px; }
+        .feedback-avatar { width:52px; height:52px; background:linear-gradient(135deg,var(--siyah-3),var(--siyah-2)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.7rem; flex-shrink:0; border:2px solid rgba(255,215,0,0.25); cursor:pointer; transition:transform 0.2s; }
+        .feedback-avatar:hover { transform:scale(1.1); border-color:var(--altin); }
+        .feedback-content { flex:1; min-width:0; }
+        .feedback-header { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+        .feedback-user { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .feedback-name { font-weight:700; color:var(--altin); font-size:0.95rem; cursor:pointer; }
+        .feedback-name:hover { text-decoration:underline; }
+        .feedback-badge { font-size:0.65rem; padding:2px 8px; border-radius:20px; border:1px solid rgba(255,215,0,0.2); background:rgba(255,215,0,0.1); color:var(--altin); }
+        .feedback-badge.popular { border-color:rgba(230,126,34,0.3); background:rgba(230,126,34,0.1); color:var(--turuncu); }
+        .feedback-badge.top { border-color:rgba(46,204,113,0.3); background:rgba(46,204,113,0.1); color:var(--yesil); }
+        .feedback-badge.pinned-badge { border-color:rgba(135,206,235,0.3); background:rgba(135,206,235,0.1); color:var(--mavi); }
+        .feedback-stars { color:var(--altin); font-size:0.8rem; letter-spacing:2px; }
+        .feedback-meta { display:flex; align-items:center; gap:10px; }
+        .feedback-date { font-size:0.7rem; opacity:0.45; }
+        .feedback-text { font-size:0.92rem; opacity:0.88; margin:10px 0; line-height:1.55; word-break:break-word; }
+        .feedback-actions { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
+        .action-btn { background:none; border:none; color:rgba(255,255,255,0.45); cursor:pointer; font-size:0.78rem; display:flex; align-items:center; gap:5px; padding:5px 10px; border-radius:20px; transition:all 0.2s; font-family:'Inter',sans-serif; }
+        .action-btn:hover { color:var(--altin); background:rgba(255,215,0,0.1); }
+        .action-btn.liked { color:var(--altin); }
+        .action-btn.liked i { animation:bounceHeart 0.3s ease; }
+        .action-btn.reported { color:var(--kirmizi-light); }
+        .action-btn.reported:hover { background:rgba(139,0,0,0.1); }
+
+        .comments-section { background:rgba(0,0,0,0.35); border-top:1px solid rgba(255,215,0,0.08); padding:15px 20px 18px; display:none; }
+        .comments-section.open { display:block; }
+        .comments-list { max-height:280px; overflow-y:auto; margin-bottom:14px; display:flex; flex-direction:column; gap:10px; scrollbar-width:thin; scrollbar-color:rgba(255,215,0,0.2) transparent; }
+        .comment-item { background:rgba(0,0,0,0.4); border-radius:12px; padding:10px 14px; display:flex; gap:10px; border:1px solid rgba(255,255,255,0.04); }
+        .comment-avatar { width:30px; height:30px; background:var(--siyah); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0; }
+        .comment-content { flex:1; min-width:0; }
+        .comment-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px; margin-bottom:4px; }
+        .comment-name { font-weight:600; color:var(--mavi); font-size:0.78rem; }
+        .comment-time { font-size:0.65rem; opacity:0.45; }
+        .comment-text { font-size:0.83rem; opacity:0.82; word-break:break-word; }
+        .add-comment { display:flex; gap:8px; align-items:flex-end; }
+        .comment-input { flex:1; background:rgba(0,0,0,0.4); border:1px solid rgba(255,215,0,0.2); border-radius:20px; padding:8px 15px; color:var(--beyaz); font-size:0.83rem; resize:none; font-family:inherit; transition:all 0.2s; max-height:80px; }
+        .comment-input:focus { outline:none; border-color:var(--altin); box-shadow:0 0 0 2px var(--altin-glow); }
+        .comment-send { background:var(--altin); color:var(--siyah); border:none; width:34px; height:34px; border-radius:50%; cursor:pointer; transition:all 0.2s; flex-shrink:0; font-size:0.8rem; }
+        .comment-send:hover { transform:scale(1.1); box-shadow:0 4px 12px rgba(255,215,0,0.3); }
+
+        /* BİLDİRİM ZİLİ */
+        .notif-bell-wrapper { position:fixed; bottom:28px; right:28px; z-index:400; }
+        .notif-bell { width:48px; height:48px; background:linear-gradient(135deg,var(--siyah-2),var(--siyah)); border:1.5px solid rgba(255,215,0,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--altin); font-size:1.2rem; transition:all 0.2s; box-shadow:0 4px 15px rgba(0,0,0,0.3); }
+        .notif-bell:hover { transform:scale(1.08); border-color:var(--altin); }
+        .notif-badge { position:absolute; top:-4px; right:-4px; background:var(--kirmizi-light); color:#fff; font-size:0.6rem; font-weight:700; width:18px; height:18px; border-radius:50%; display:none; align-items:center; justify-content:center; animation:badgePop 0.4s ease; }
+        .notif-badge.show { display:flex; }
+
+        /* BİLDİRİM PANELİ */
+        .notif-panel { position:fixed; bottom:90px; right:28px; width:310px; background:linear-gradient(135deg,var(--siyah-2),var(--siyah)); border:1px solid rgba(255,215,0,0.2); border-radius:20px; z-index:450; display:none; box-shadow:0 20px 50px rgba(0,0,0,0.5); overflow:hidden; }
+        .notif-panel.open { display:block; animation:slideDown 0.25s ease; }
+        .notif-panel-header { display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid rgba(255,215,0,0.1); }
+        .notif-panel-title { font-weight:700; font-size:0.9rem; color:var(--altin); }
+        .notif-clear-btn { background:none; border:none; color:rgba(255,255,255,0.4); font-size:0.72rem; cursor:pointer; font-family:inherit; }
+        .notif-clear-btn:hover { color:var(--beyaz); }
+        .notif-list { max-height:280px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:rgba(255,215,0,0.2) transparent; }
+        .notif-item { display:flex; gap:12px; padding:12px 18px; border-bottom:1px solid rgba(255,255,255,0.04); transition:background 0.15s; }
+        .notif-item:hover { background:rgba(255,215,0,0.04); }
+        .notif-item.unread { background:rgba(255,215,0,0.05); }
+        .notif-item-icon { font-size:1.1rem; flex-shrink:0; margin-top:2px; }
+        .notif-item-msg { font-size:0.8rem; opacity:0.85; line-height:1.4; }
+        .notif-item-time { font-size:0.65rem; opacity:0.4; margin-top:3px; }
+        .notif-empty { text-align:center; padding:30px; font-size:0.85rem; opacity:0.4; }
+
+        /* BİLDİRİM POPUP */
+        .notif-popup { position:fixed; bottom:90px; right:28px; background:linear-gradient(135deg,var(--siyah-2),var(--siyah-3)); border:1px solid rgba(255,215,0,0.35); border-left:4px solid var(--altin); border-radius:16px; padding:14px 18px; display:flex; align-items:flex-start; gap:12px; max-width:310px; z-index:500; box-shadow:0 12px 35px rgba(0,0,0,0.5); opacity:0; pointer-events:none; }
+        .notif-popup.show { animation:notifPop 4.2s ease forwards; pointer-events:auto; }
+        .notif-icon { font-size:1.4rem; flex-shrink:0; margin-top:2px; }
+        .notif-body { flex:1; }
+        .notif-title { font-weight:700; font-size:0.85rem; color:var(--altin); margin-bottom:3px; }
+        .notif-msg { font-size:0.78rem; opacity:0.8; line-height:1.4; }
+        .notif-close { background:none; border:none; color:rgba(255,255,255,0.4); cursor:pointer; font-size:0.8rem; padding:0; flex-shrink:0; }
+        .notif-close:hover { color:var(--beyaz); }
+
+        /* PROFİL MODAL */
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:800; display:none; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px); }
+        .modal-overlay.open { display:flex; }
+        .profile-modal { background:linear-gradient(135deg,var(--siyah-2),var(--siyah)); border:1px solid rgba(255,215,0,0.2); border-radius:24px; width:100%; max-width:520px; max-height:85vh; overflow:hidden; display:flex; flex-direction:column; animation:popIn 0.3s ease; }
+        .profile-header { padding:24px; border-bottom:1px solid rgba(255,215,0,0.1); display:flex; gap:18px; align-items:flex-start; }
+        .profile-big-avatar { width:70px; height:70px; background:var(--siyah-3); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.4rem; border:2px solid rgba(255,215,0,0.3); flex-shrink:0; }
+        .profile-info { flex:1; }
+        .profile-name { font-size:1.2rem; font-weight:700; color:var(--altin); margin-bottom:6px; }
+        .profile-stats-row { display:flex; gap:16px; flex-wrap:wrap; }
+        .profile-stat { font-size:0.78rem; opacity:0.7; }
+        .profile-stat strong { color:var(--beyaz); }
+        .profile-badges { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+        .profile-badge { font-size:0.65rem; padding:3px 10px; border-radius:20px; border:1px solid rgba(255,215,0,0.25); background:rgba(255,215,0,0.1); color:var(--altin); }
+        .profile-badge.blue { border-color:rgba(135,206,235,0.3); background:rgba(135,206,235,0.1); color:var(--mavi); }
+        .profile-badge.green { border-color:rgba(46,204,113,0.3); background:rgba(46,204,113,0.1); color:var(--yesil); }
+        .profile-close { background:none; border:none; color:rgba(255,255,255,0.5); font-size:1.2rem; cursor:pointer; }
+        .profile-close:hover { color:var(--beyaz); }
+        .profile-body { overflow-y:auto; padding:20px 24px; flex:1; }
+        .profile-section-title { font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; opacity:0.5; margin-bottom:12px; }
+        .profile-fb-item { background:rgba(0,0,0,0.3); border:1px solid rgba(255,215,0,0.08); border-radius:14px; padding:12px 16px; margin-bottom:10px; }
+        .profile-fb-meta { display:flex; justify-content:space-between; margin-bottom:6px; }
+        .profile-fb-stars { color:var(--altin); font-size:0.8rem; }
+        .profile-fb-date { font-size:0.7rem; opacity:0.4; }
+        .profile-fb-text { font-size:0.85rem; opacity:0.8; }
+
+        /* BİLDİR MODALİ */
+        .report-modal { background:linear-gradient(135deg,var(--siyah-2),var(--siyah)); border:1px solid rgba(139,0,0,0.4); border-radius:20px; padding:28px; width:100%; max-width:400px; animation:popIn 0.3s ease; }
+        .report-title { font-size:1.1rem; font-weight:700; color:#ff6b6b; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+        .report-options { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+        .report-option { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.08); cursor:pointer; transition:all 0.2s; font-size:0.85rem; }
+        .report-option:hover { border-color:rgba(139,0,0,0.4); background:rgba(139,0,0,0.1); }
+        .report-option input { accent-color:var(--kirmizi-light); }
+        .report-actions { display:flex; gap:10px; justify-content:flex-end; }
+        .report-cancel { background:none; border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.6); padding:8px 18px; border-radius:20px; cursor:pointer; font-family:inherit; font-size:0.85rem; transition:all 0.2s; }
+        .report-cancel:hover { border-color:#fff; color:#fff; }
+        .report-submit { background:var(--kirmizi-light); color:#fff; border:none; padding:8px 18px; border-radius:20px; cursor:pointer; font-family:inherit; font-size:0.85rem; font-weight:600; transition:all 0.2s; }
+        .report-submit:hover { background:#d00000; }
+
+        /* ADMİN PANELİ */
+        .admin-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:900; display:none; align-items:flex-start; justify-content:center; padding:40px 20px; backdrop-filter:blur(6px); overflow-y:auto; }
+        .admin-overlay.open { display:flex; }
+        .admin-modal { background:linear-gradient(135deg,#100005,#0a0a0f); border:1px solid rgba(139,0,0,0.5); border-radius:24px; width:100%; max-width:680px; animation:popIn 0.3s ease; }
+        .admin-header { padding:22px 26px; border-bottom:1px solid rgba(139,0,0,0.3); display:flex; align-items:center; justify-content:space-between; }
+        .admin-title { font-size:1.1rem; font-weight:700; color:#ff6b6b; display:flex; align-items:center; gap:10px; }
+        .admin-close { background:none; border:none; color:rgba(255,255,255,0.5); font-size:1.2rem; cursor:pointer; }
+        .admin-close:hover { color:#fff; }
+        .admin-login { padding:30px; }
+        .admin-input { width:100%; background:var(--siyah); border:1px solid rgba(139,0,0,0.4); border-radius:12px; padding:12px 16px; color:var(--beyaz); font-family:inherit; font-size:0.95rem; margin-bottom:12px; }
+        .admin-input:focus { outline:none; border-color:#ff6b6b; }
+        .admin-login-btn { background:linear-gradient(135deg,var(--kirmizi-light),var(--kirmizi)); color:#fff; border:none; padding:12px 24px; border-radius:30px; font-weight:700; cursor:pointer; font-family:inherit; width:100%; font-size:0.95rem; transition:all 0.2s; }
+        .admin-login-btn:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(139,0,0,0.4); }
+        .admin-body { padding:22px 26px; display:none; }
+        .admin-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+        .admin-tab { background:var(--siyah); border:1px solid rgba(139,0,0,0.3); color:rgba(255,255,255,0.6); padding:7px 16px; border-radius:30px; cursor:pointer; font-size:0.8rem; font-family:inherit; transition:all 0.2s; }
+        .admin-tab:hover, .admin-tab.active { background:rgba(139,0,0,0.2); border-color:#ff6b6b; color:#ff6b6b; }
+        .admin-section { display:none; }
+        .admin-section.active { display:block; }
+        .admin-fb-list { display:flex; flex-direction:column; gap:10px; }
+        .admin-fb-item { background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:14px; display:flex; gap:12px; align-items:flex-start; }
+        .admin-fb-info { flex:1; }
+        .admin-fb-user { font-weight:600; color:var(--altin); font-size:0.85rem; margin-bottom:4px; }
+        .admin-fb-text { font-size:0.82rem; opacity:0.7; margin-bottom:6px; }
+        .admin-fb-actions { display:flex; gap:8px; flex-wrap:wrap; }
+        .admin-action-btn { background:none; border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.6); padding:4px 12px; border-radius:20px; cursor:pointer; font-size:0.72rem; font-family:inherit; transition:all 0.2s; }
+        .admin-action-btn:hover { color:#fff; border-color:#fff; }
+        .admin-action-btn.danger { border-color:rgba(139,0,0,0.4); color:#ff6b6b; }
+        .admin-action-btn.danger:hover { background:rgba(139,0,0,0.2); }
+        .admin-action-btn.success { border-color:rgba(46,204,113,0.4); color:var(--yesil); }
+        .admin-action-btn.success:hover { background:rgba(46,204,113,0.15); }
+        .admin-report-item { background:rgba(139,0,0,0.1); border:1px solid rgba(139,0,0,0.25); border-radius:12px; padding:12px 14px; margin-bottom:10px; }
+        .admin-report-meta { font-size:0.72rem; opacity:0.6; margin-bottom:6px; }
+        .admin-report-text { font-size:0.82rem; opacity:0.8; margin-bottom:8px; }
+        .admin-stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .admin-stat-card { background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:16px; text-align:center; }
+        .admin-stat-num { font-size:2rem; font-weight:800; color:var(--altin); font-family:'Montserrat',sans-serif; }
+        .admin-stat-label { font-size:0.75rem; opacity:0.55; margin-top:4px; }
+
+        /* YARDIMCI */
+        .empty-feedback { text-align:center; opacity:0.5; padding:50px 20px; font-size:0.95rem; }
+        .empty-feedback i { font-size:2rem; display:block; margin-bottom:10px; }
+        .loading-spinner { display:inline-block; width:16px; height:16px; border:2px solid rgba(10,10,15,0.4); border-top-color:transparent; border-radius:50%; animation:spin 0.6s linear infinite; vertical-align:middle; margin-right:6px; }
+
+        /* TOAST */
+        .toast { position:fixed; bottom:90px; right:28px; background:linear-gradient(135deg,var(--siyah-2),var(--siyah)); border-left:4px solid var(--altin); padding:12px 20px; border-radius:16px; display:flex; align-items:center; gap:10px; z-index:300; transform:translateX(420px); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1); box-shadow:0 10px 30px rgba(0,0,0,0.4); max-width:310px; }
+        .toast.show { transform:translateX(0); }
+        .toast i { font-size:1.1rem; flex-shrink:0; }
+
+        @media(max-width:768px) {
+            .star { font-size:2rem; } .big-score { font-size:3.5rem; }
+            .toast { bottom:90px; right:16px; left:16px; max-width:none; transform:translateY(100px); }
+            .toast.show { transform:translateY(0); }
+            .notif-bell-wrapper { right:16px; bottom:16px; }
+            .notif-panel { right:16px; left:16px; width:auto; bottom:80px; }
+            .notif-popup { right:16px; left:16px; max-width:none; bottom:80px; }
+            .feedback-main { flex-direction:column; }
+            .search-input { width:90px; }
+            .admin-stats-grid { grid-template-columns:1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div id="menuBtn" class="hamburger">
-        <span class="bar1"></span>
-        <span class="bar2"></span>
-        <span class="bar3"></span>
+<canvas id="confettiCanvas"></canvas>
+
+<div id="menuBtn" class="hamburger">
+    <span class="bar1"></span><span class="bar2"></span><span class="bar3"></span>
+</div>
+
+<nav id="sideMenu" class="side-menu">
+    <div class="menu-items">
+        <a href="index.html"       class="menu-link"><i class="fas fa-home"></i> Ana Sayfa</a>
+        <a href="leaderboard.html" class="menu-link"><i class="fas fa-trophy"></i> Liderlik Tablosu</a>
+        <a href="proje.html"       class="menu-link"><i class="fas fa-code-branch"></i> Projelerimiz</a>
+        <a href="social.html"      class="menu-link"><i class="fas fa-users"></i> Sosyal Medya</a>
+        <a href="team.html"        class="menu-link"><i class="fas fa-user-ninja"></i> Takımımız</a>
+        <a href="puanlama.html"    class="menu-link active"><i class="fas fa-star"></i> Puanlama</a>
+        <a href="sohbet.html"      class="menu-link"><i class="fas fa-comments"></i> Sohbet</a>
     </div>
+    <div class="menu-footer"><p>Loyal Team Force © 2025</p></div>
+</nav>
 
-    <nav id="sideMenu" class="side-menu">
-        <div class="menu-items">
-            <a href="index.html" class="menu-link"><i class="fas fa-home"></i> Ana Sayfa</a>
-            <a href="leaderboard.html" class="menu-link"><i class="fas fa-trophy"></i> Liderlik Tablosu</a>
-            <a href="proje.html" class="menu-link"><i class="fas fa-code-branch"></i> Projelerimiz</a>
-            <a href="social.html" class="menu-link"><i class="fas fa-users"></i> Sosyal Medya</a>
-            <a href="team.html" class="menu-link"><i class="fas fa-user-ninja"></i> Takımımız</a>
-            <a href="puanlama.html" class="menu-link active"><i class="fas fa-star"></i> Puanlama</a>
-            <a href="sohbet.html" class="menu-link"><i class="fas fa-comments"></i> Sohbet</a>
+<div class="main-content">
+    <div class="container">
+        <div class="page-header">
+            <h1>Geri Bildirim & Topluluk</h1>
+            <p>Deneyiminizi paylaşın, yorumlarla etkileşime geçin</p>
         </div>
-        <div class="menu-footer"><p>Loyal Team Force © 2025</p></div>
-    </nav>
 
-    <div class="main-content">
-        <div class="container">
-            <div class="page-header">
-                <h1>Geri Bildirim & Topluluk</h1>
-                <p>Deneyiminizi paylaşın, yorumlarla etkileşime geçin</p>
-            </div>
-
-            <div class="main-grid">
-                <div class="card fade-left">
-                    <div class="card-title">
-                        <i class="fas fa-star"></i>
-                        <span>Senin Değerlendirmen</span>
+        <div class="main-grid">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-star"></i><span>Senin Değerlendirmen</span></div>
+                <div class="user-info">
+                    <div class="avatar-selector" id="avatarSelector">
+                        <div class="avatar-option" data-avatar="😎">😎</div>
+                        <div class="avatar-option" data-avatar="👨‍💻">👨‍💻</div>
+                        <div class="avatar-option" data-avatar="🎮">🎮</div>
+                        <div class="avatar-option" data-avatar="🔥">🔥</div>
+                        <div class="avatar-option" data-avatar="⭐">⭐</div>
+                        <div class="avatar-option" data-avatar="🚀">🚀</div>
+                        <div class="avatar-option" data-avatar="🐱">🐱</div>
+                        <div class="avatar-option" data-avatar="🎧">🎧</div>
+                        <div class="avatar-option" data-avatar="💪">💪</div>
+                        <div class="avatar-option" data-avatar="🎨">🎨</div>
                     </div>
-                    
-                    <div class="user-info">
-                        <div class="avatar-selector" id="avatarSelector">
-                            <div class="avatar-option" data-avatar="😎">😎</div>
-                            <div class="avatar-option" data-avatar="👨‍💻">👨‍💻</div>
-                            <div class="avatar-option" data-avatar="🎮">🎮</div>
-                            <div class="avatar-option" data-avatar="🔥">🔥</div>
-                            <div class="avatar-option" data-avatar="⭐">⭐</div>
-                            <div class="avatar-option" data-avatar="🚀">🚀</div>
-                            <div class="avatar-option" data-avatar="🐱">🐱</div>
-                            <div class="avatar-option" data-avatar="🎧">🎧</div>
-                            <div class="avatar-option" data-avatar="💪">💪</div>
-                            <div class="avatar-option" data-avatar="🎨">🎨</div>
-                        </div>
-                        <input type="text" class="username-input" id="usernameInput" placeholder="Kullanıcı adınız *" maxlength="25">
-                    </div>
-                    
+                    <input type="text" class="username-input" id="usernameInput" placeholder="Kullanıcı adınız *" maxlength="25">
+                </div>
+                <div class="stars-wrapper">
+                    <div class="stars-label">Puanınızı seçin</div>
                     <div class="stars" id="ratingStars">
                         <i class="far fa-star star" data-value="1"></i>
                         <i class="far fa-star star" data-value="2"></i>
@@ -897,536 +365,747 @@
                         <i class="far fa-star star" data-value="4"></i>
                         <i class="far fa-star star" data-value="5"></i>
                     </div>
-                    <span id="selectedRatingText" class="rating-value">⭐ Puan seçilmedi</span>
-                    
-                    <textarea id="feedbackText" rows="3" placeholder="Geri bildiriminizi yazın... (isteğe bağlı)"></textarea>
-                    
-                    <button class="btn-submit" id="submitBtn">
-                        <i class="fas fa-paper-plane"></i> Gönder
-                    </button>
-                    
-                    <div id="cooldownTimer" class="cooldown-timer">
-                        <i class="fas fa-hourglass-half"></i>
-                        <span id="cooldownText"></span>
-                    </div>
+                    <div class="rating-labels"><span>Çok Kötü</span><span>Kötü</span><span>Orta</span><span>İyi</span><span>Mükemmel</span></div>
                 </div>
-
-                <div class="card stats-card fade-right">
-                    <div class="card-title">
-                        <i class="fas fa-chart-simple"></i>
-                        <span>Topluluk İstatistikleri</span>
-                    </div>
-                    <div class="average-score">
-                        <div class="big-score" id="averageScore">0.00</div>
-                        <div class="total-votes" id="totalVotes">Yükleniyor...</div>
-                        <div class="star-display" id="averageStars">
-                            <i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="rating-distribution" id="ratingDistribution">
-                        <div class="dist-item"><span class="dist-label">5 ★</span><div class="dist-bar"><div class="dist-fill" style="width: 0%"></div></div><span class="dist-count">0</span></div>
-                        <div class="dist-item"><span class="dist-label">4 ★</span><div class="dist-bar"><div class="dist-fill" style="width: 0%"></div></div><span class="dist-count">0</span></div>
-                        <div class="dist-item"><span class="dist-label">3 ★</span><div class="dist-bar"><div class="dist-fill" style="width: 0%"></div></div><span class="dist-count">0</span></div>
-                        <div class="dist-item"><span class="dist-label">2 ★</span><div class="dist-bar"><div class="dist-fill" style="width: 0%"></div></div><span class="dist-count">0</span></div>
-                        <div class="dist-item"><span class="dist-label">1 ★</span><div class="dist-bar"><div class="dist-fill" style="width: 0%"></div></div><span class="dist-count">0</span></div>
-                    </div>
+                <span id="selectedRatingText" class="rating-value">Puan seçilmedi</span>
+                <div class="textarea-wrapper">
+                    <textarea id="feedbackText" rows="3" placeholder="Görüşlerinizi yazın... (max 300 karakter)" maxlength="300"></textarea>
+                    <span class="char-counter" id="charCounter">0 / 300</span>
+                </div>
+                <button class="btn-submit" id="submitBtn"><i class="fas fa-paper-plane"></i> Gönder</button>
+                <div id="cooldownTimer" class="cooldown-timer">
+                    <i class="fas fa-hourglass-half"></i> <span id="cooldownText"></span>
                 </div>
             </div>
 
-            <!-- GERİ BİLDİRİM LİSTESİ -->
-            <div class="card fade-up">
-                <div class="card-title">
-                    <i class="fas fa-comments"></i>
-                    <span>Topluluk Yorumları</span>
+            <div class="card stats-card">
+                <div class="card-title"><i class="fas fa-chart-simple"></i><span>Topluluk İstatistikleri</span></div>
+                <div class="average-score">
+                    <div class="big-score" id="averageScore">—</div>
+                    <div class="score-label">/ 5.00</div>
+                    <div class="total-votes" id="totalVotes">Yükleniyor...</div>
+                    <div class="star-display" id="averageStars">
+                        <i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                    </div>
                 </div>
-                <div id="feedbackList" class="feedback-list">
-                    <div class="empty-feedback"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</div>
+                <div class="rating-distribution">
+                    <div class="dist-item" data-star="5"><span class="dist-label">5 ★</span><div class="dist-bar"><div class="dist-fill"></div></div><span class="dist-count">0</span></div>
+                    <div class="dist-item" data-star="4"><span class="dist-label">4 ★</span><div class="dist-bar"><div class="dist-fill"></div></div><span class="dist-count">0</span></div>
+                    <div class="dist-item" data-star="3"><span class="dist-label">3 ★</span><div class="dist-bar"><div class="dist-fill"></div></div><span class="dist-count">0</span></div>
+                    <div class="dist-item" data-star="2"><span class="dist-label">2 ★</span><div class="dist-bar"><div class="dist-fill"></div></div><span class="dist-count">0</span></div>
+                    <div class="dist-item" data-star="1"><span class="dist-label">1 ★</span><div class="dist-bar"><div class="dist-fill"></div></div><span class="dist-count">0</span></div>
+                </div>
+                <div style="text-align:center;margin-top:20px;">
+                    <button onclick="openAdmin()" style="background:none;border:1px solid rgba(139,0,0,0.3);color:rgba(255,255,255,0.35);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.72rem;font-family:inherit;transition:all 0.2s;" onmouseover="this.style.borderColor='#ff6b6b';this.style.color='#ff6b6b'" onmouseout="this.style.borderColor='rgba(139,0,0,0.3)';this.style.color='rgba(255,255,255,0.35)'">
+                        <i class="fas fa-lock"></i> Admin
+                    </button>
                 </div>
             </div>
         </div>
+
+        <div class="card">
+            <div class="card-title"><i class="fas fa-comments"></i><span>Topluluk Yorumları</span></div>
+            <div class="filter-bar">
+                <button class="filter-btn active" data-sort="top"><i class="fas fa-fire"></i> En Beğenilen</button>
+                <button class="filter-btn" data-sort="new"><i class="fas fa-clock"></i> En Yeni</button>
+                <button class="filter-btn" data-sort="high"><i class="fas fa-star"></i> En Yüksek</button>
+                <button class="filter-btn" data-sort="low"><i class="fas fa-star-half"></i> En Düşük</button>
+                <div class="filter-right">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input class="search-input" id="searchInput" placeholder="Ara..." maxlength="50">
+                    </div>
+                    <span class="feedback-count" id="feedbackCount"></span>
+                </div>
+            </div>
+            <div id="feedbackList" class="feedback-list">
+                <div class="empty-feedback"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div id="toast" class="toast"><i class="fas fa-check-circle"></i><span id="toastMessage"></span></div>
+<!-- TOAST -->
+<div id="toast" class="toast"><i class="fas fa-check-circle"></i><span id="toastMessage"></span></div>
 
-    <script>
-        // ========== FIREBASE KONFIGÜRASYONU ==========
-        const firebaseConfig = {
-            apiKey: "AIzaSyDAi_IqftZcuMmgvjIHlZXlC0hV2KmZA78",
-            authDomain: "ltf-puanlama-9a139.firebaseapp.com",
-            projectId: "ltf-puanlama-9a139",
-            storageBucket: "ltf-puanlama-9a139.firebasestorage.app",
-            messagingSenderId: "158627242883",
-            appId: "1:158627242883:web:09aa2caff119ae9ebc0cb6",
-            measurementId: "G-T1C2ZFV4MC",
-            databaseURL: "https://ltf-puanlama-9a139-default-rtdb.firebaseio.com"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        
-        // Global değişkenler
-        let currentRating = 0;
-        let isSubmitting = false;
-        let selectedAvatar = "😎";
-        let userId = localStorage.getItem('rating_user_id');
-        if (!userId) {
-            userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
-            localStorage.setItem('rating_user_id', userId);
-        }
-        
-        let lastRatingTime = null;
-        let cooldownInterval = null;
-        let openComments = {};
-        
-        // DOM elementleri
-        const stars = document.querySelectorAll('.star');
-        const selectedRatingText = document.getElementById('selectedRatingText');
-        const submitBtn = document.getElementById('submitBtn');
-        const feedbackTextarea = document.getElementById('feedbackText');
-        const usernameInput = document.getElementById('usernameInput');
-        const cooldownTimer = document.getElementById('cooldownTimer');
-        const cooldownText = document.getElementById('cooldownText');
-        
-        // Avatar seçimi
-        const avatarOptions = document.querySelectorAll('.avatar-option');
-        const savedAvatar = localStorage.getItem('rating_avatar');
-        if (savedAvatar) {
-            selectedAvatar = savedAvatar;
-            avatarOptions.forEach(opt => {
-                if (opt.dataset.avatar === savedAvatar) opt.classList.add('selected');
-            });
-        } else {
-            avatarOptions[0].classList.add('selected');
-        }
-        
-        avatarOptions.forEach(opt => {
-            opt.addEventListener('click', () => {
-                avatarOptions.forEach(o => o.classList.remove('selected'));
-                opt.classList.add('selected');
-                selectedAvatar = opt.dataset.avatar;
-                localStorage.setItem('rating_avatar', selectedAvatar);
-            });
+<!-- BİLDİRİM ZİLİ -->
+<div class="notif-bell-wrapper">
+    <div class="notif-bell" id="notifBell" title="Bildirimler">
+        <i class="fas fa-bell"></i>
+        <div class="notif-badge" id="notifBadge">0</div>
+    </div>
+</div>
+
+<!-- BİLDİRİM PANELİ -->
+<div class="notif-panel" id="notifPanel">
+    <div class="notif-panel-header">
+        <span class="notif-panel-title"><i class="fas fa-bell"></i> Bildirimler</span>
+        <button class="notif-clear-btn" id="clearNotifs">Tümünü temizle</button>
+    </div>
+    <div class="notif-list" id="notifList">
+        <div class="notif-empty">Henüz bildirim yok</div>
+    </div>
+</div>
+
+<!-- BİLDİRİM POPUP -->
+<div class="notif-popup" id="notifPopup">
+    <div class="notif-icon" id="notifPopupIcon">🔔</div>
+    <div class="notif-body">
+        <div class="notif-title" id="notifPopupTitle">Bildirim</div>
+        <div class="notif-msg" id="notifPopupMsg"></div>
+    </div>
+    <button class="notif-close" id="notifPopupClose"><i class="fas fa-times"></i></button>
+</div>
+
+<!-- PROFİL MODAL -->
+<div class="modal-overlay" id="profileOverlay">
+    <div class="profile-modal">
+        <div class="profile-header">
+            <div class="profile-big-avatar" id="profileAvatar">😎</div>
+            <div class="profile-info">
+                <div class="profile-name" id="profileName">Kullanıcı</div>
+                <div class="profile-stats-row">
+                    <span class="profile-stat"><strong id="profileFbCount">0</strong> yorum</span>
+                    <span class="profile-stat"><strong id="profileLikeCount">0</strong> beğeni</span>
+                    <span class="profile-stat">Ort. <strong id="profileAvgRating">—</strong> ★</span>
+                </div>
+                <div class="profile-badges" id="profileBadges"></div>
+            </div>
+            <button class="profile-close" onclick="closeProfile()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="profile-body">
+            <div class="profile-section-title">Yorumlar</div>
+            <div id="profileFeedbackList"><div class="empty-feedback" style="padding:20px"><i class="fas fa-spinner fa-spin"></i></div></div>
+        </div>
+    </div>
+</div>
+
+<!-- BİLDİR MODALİ -->
+<div class="modal-overlay" id="reportOverlay">
+    <div class="report-modal">
+        <div class="report-title"><i class="fas fa-flag"></i> İçeriği Bildir</div>
+        <div class="report-options">
+            <label class="report-option"><input type="radio" name="reportReason" value="spam"> 🚫 Spam içerik</label>
+            <label class="report-option"><input type="radio" name="reportReason" value="kufur"> 🤬 Küfür / hakaret</label>
+            <label class="report-option"><input type="radio" name="reportReason" value="uygunsuz"> ⚠️ Uygunsuz içerik</label>
+            <label class="report-option"><input type="radio" name="reportReason" value="yanltici"> ❌ Yanıltıcı bilgi</label>
+        </div>
+        <div class="report-actions">
+            <button class="report-cancel" onclick="closeReport()">İptal</button>
+            <button class="report-submit" id="reportSubmitBtn">Bildir</button>
+        </div>
+    </div>
+</div>
+
+<!-- ADMİN PANELİ -->
+<div class="admin-overlay" id="adminOverlay">
+    <div class="admin-modal">
+        <div class="admin-header">
+            <div class="admin-title"><i class="fas fa-shield-alt"></i> Admin Paneli</div>
+            <button class="admin-close" onclick="closeAdmin()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="admin-login" id="adminLogin">
+            <p style="font-size:0.85rem;opacity:0.6;margin-bottom:16px;">Devam etmek için şifreyi girin:</p>
+            <input type="password" class="admin-input" id="adminPasswordInput" placeholder="Admin şifresi...">
+            <button class="admin-login-btn" id="adminLoginBtn"><i class="fas fa-unlock"></i> Giriş Yap</button>
+        </div>
+        <div class="admin-body" id="adminBody">
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="stats">📊 İstatistik</button>
+                <button class="admin-tab" data-tab="feedbacks">💬 Yorumlar</button>
+                <button class="admin-tab" data-tab="reports">🚩 Bildirimler</button>
+            </div>
+            <div class="admin-section active" id="admin-stats">
+                <div class="admin-stats-grid">
+                    <div class="admin-stat-card"><div class="admin-stat-num" id="aStatFb">—</div><div class="admin-stat-label">Toplam Yorum</div></div>
+                    <div class="admin-stat-card"><div class="admin-stat-num" id="aStatRatings">—</div><div class="admin-stat-label">Toplam Puan</div></div>
+                    <div class="admin-stat-card"><div class="admin-stat-num" id="aStatReports">—</div><div class="admin-stat-label">Bekleyen Bildirim</div></div>
+                    <div class="admin-stat-card"><div class="admin-stat-num" id="aStatAvg">—</div><div class="admin-stat-label">Ortalama Puan</div></div>
+                </div>
+            </div>
+            <div class="admin-section" id="admin-feedbacks">
+                <div class="admin-fb-list" id="adminFbList"><div class="empty-feedback"><i class="fas fa-spinner fa-spin"></i></div></div>
+            </div>
+            <div class="admin-section" id="admin-reports">
+                <div id="adminReportList"><div class="empty-feedback">Bildirim yok ✅</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ================================================================
+// FIREBASE
+// ================================================================
+const firebaseConfig = {
+    apiKey:"AIzaSyDAi_IqftZcuMmgvjIHlZXlC0hV2KmZA78",
+    authDomain:"ltf-puanlama-9a139.firebaseapp.com",
+    projectId:"ltf-puanlama-9a139",
+    storageBucket:"ltf-puanlama-9a139.firebasestorage.app",
+    messagingSenderId:"158627242883",
+    appId:"1:158627242883:web:09aa2caff119ae9ebc0cb6",
+    databaseURL:"https://ltf-puanlama-9a139-default-rtdb.firebaseio.com"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ================================================================
+// KÜFÜR FİLTRESİ
+// ================================================================
+const BAD_WORDS = ['orospu','göt','sikerim','sikiş','amk','yarrak','pezevenk','kaltak','piç','ibne','kahpe','sürtük','kancık'];
+const containsBad = t => t && BAD_WORDS.some(w => t.toLowerCase().includes(w));
+const censor = t => { if(!t) return t; let r=t; BAD_WORDS.forEach(w=>{r=r.replace(new RegExp(w,'gi'),'*'.repeat(w.length));}); return r; };
+
+// ================================================================
+// GLOBAL
+// ================================================================
+let currentRating=0, isSubmitting=false;
+let selectedAvatar = localStorage.getItem('rating_avatar')||'😎';
+let cooldownInterval=null, lastRatingTime=null;
+let currentSort='top', searchQuery='';
+let allFeedbacks=[], allLikesData={}, allCommentsData={};
+let currentReportId=null;
+let notifications = JSON.parse(localStorage.getItem('ltf_notifs')||'[]');
+let unreadCount = parseInt(localStorage.getItem('ltf_notifs_unread')||'0');
+
+let userId = localStorage.getItem('rating_user_id');
+if(!userId){ userId='user_'+Date.now()+'_'+Math.random().toString(36).substr(2,8); localStorage.setItem('rating_user_id',userId); }
+
+const getLiked = ()=>{ try{return new Set(JSON.parse(localStorage.getItem('liked_feedbacks')||'[]'));}catch{return new Set();} };
+const saveLiked = s => localStorage.setItem('liked_feedbacks',JSON.stringify([...s]));
+const getReported = ()=>{ try{return new Set(JSON.parse(localStorage.getItem('reported_feedbacks')||'[]'));}catch{return new Set();} };
+const saveReported = s => localStorage.setItem('reported_feedbacks',JSON.stringify([...s]));
+
+// ================================================================
+// DOM
+// ================================================================
+const starsEls      = document.querySelectorAll('.star');
+const ratingText    = document.getElementById('selectedRatingText');
+const submitBtn     = document.getElementById('submitBtn');
+const feedbackTA    = document.getElementById('feedbackText');
+const usernameInput = document.getElementById('usernameInput');
+const cooldownTimer = document.getElementById('cooldownTimer');
+const cooldownText  = document.getElementById('cooldownText');
+const charCounter   = document.getElementById('charCounter');
+
+// ================================================================
+// AVATAR & USERNAME
+// ================================================================
+document.querySelectorAll('.avatar-option').forEach(opt=>{
+    if(opt.dataset.avatar===selectedAvatar) opt.classList.add('selected');
+    opt.addEventListener('click',()=>{
+        document.querySelectorAll('.avatar-option').forEach(o=>o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selectedAvatar=opt.dataset.avatar;
+        localStorage.setItem('rating_avatar',selectedAvatar);
+    });
+});
+const sv=localStorage.getItem('rating_username'); if(sv) usernameInput.value=sv;
+usernameInput.addEventListener('input',()=>{ if(usernameInput.value.trim()) localStorage.setItem('rating_username',usernameInput.value.trim()); });
+
+// ================================================================
+// YILDIZLAR
+// ================================================================
+const ratingMsgs=['','Çok Kötü 😞','Kötü 😐','Orta 🙂','İyi 😊','Mükemmel 🤩'];
+function highlightStars(v){ starsEls.forEach(s=>{ const n=parseInt(s.dataset.value); s.className=n<=v?'fas fa-star star active':'far fa-star star'; }); }
+starsEls.forEach(star=>{
+    star.addEventListener('mouseenter',()=>highlightStars(parseInt(star.dataset.value)));
+    star.addEventListener('mouseleave',()=>highlightStars(currentRating));
+    star.addEventListener('click',()=>{
+        currentRating=parseInt(star.dataset.value);
+        highlightStars(currentRating);
+        ratingText.textContent=ratingMsgs[currentRating];
+        ratingText.className='rating-value selected';
+        star.style.animation='starGlow 0.35s ease';
+        setTimeout(()=>star.style.animation='',350);
+    });
+});
+
+feedbackTA.addEventListener('input',()=>{
+    const l=feedbackTA.value.length,m=300;
+    charCounter.textContent=`${l} / ${m}`;
+    charCounter.className='char-counter'+(l>m*0.9?(l>=m?' over':' warn'):'');
+});
+
+// ================================================================
+// COOLDOWN
+// ================================================================
+async function checkCooldown(){
+    const snap=await db.ref('user_cooldowns/'+userId).once('value');
+    const d=snap.val();
+    if(d&&d.lastRatingTime){ const left=6*3600000-(Date.now()-d.lastRatingTime); if(left>0){lastRatingTime=d.lastRatingTime;startCooldownTimer();return true;} }
+    return false;
+}
+function startCooldownTimer(){
+    if(cooldownInterval) clearInterval(cooldownInterval);
+    cooldownTimer.classList.add('show'); submitBtn.disabled=true;
+    function tick(){
+        const left=(lastRatingTime+6*3600000)-Date.now();
+        if(left<=0){clearInterval(cooldownInterval);cooldownTimer.classList.remove('show');submitBtn.disabled=false;return;}
+        const h=Math.floor(left/3600000),m=Math.floor((left%3600000)/60000),s=Math.floor((left%60000)/1000);
+        cooldownText.textContent=`⏰ Bir sonraki: ${h} saat ${m} dk ${s} sn`;
+    }
+    tick(); cooldownInterval=setInterval(tick,1000);
+}
+
+// ================================================================
+// KONFETİ
+// ================================================================
+function launchConfetti(){
+    const canvas=document.getElementById('confettiCanvas'),ctx=canvas.getContext('2d');
+    canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+    const cols=['#FFD700','#FFA500','#FF6B6B','#87CEEB','#2ECC71','#9B59B6','#E67E22'];
+    const pieces=Array.from({length:130},()=>({
+        x:Math.random()*canvas.width, y:-20-Math.random()*120,
+        r:Math.random()*8+3, color:cols[Math.floor(Math.random()*cols.length)],
+        vx:(Math.random()-0.5)*4, vy:Math.random()*4+2,
+        spin:Math.random()*0.2-0.1, angle:Math.random()*Math.PI*2,
+        shape:Math.random()>0.5?'rect':'circle', opacity:1
+    }));
+    let f=0;
+    function draw(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        let alive=false;
+        pieces.forEach(p=>{
+            p.x+=p.vx; p.y+=p.vy; p.angle+=p.spin; p.vy+=0.06;
+            if(p.y<canvas.height+20) alive=true;
+            if(p.y>canvas.height*0.7) p.opacity=Math.max(0,p.opacity-0.02);
+            ctx.save(); ctx.globalAlpha=p.opacity; ctx.translate(p.x,p.y); ctx.rotate(p.angle); ctx.fillStyle=p.color;
+            if(p.shape==='rect') ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);
+            else { ctx.beginPath(); ctx.arc(0,0,p.r/2,0,Math.PI*2); ctx.fill(); }
+            ctx.restore();
         });
-        
-        const savedUsername = localStorage.getItem('rating_username');
-        if (savedUsername) usernameInput.value = savedUsername;
-        usernameInput.addEventListener('change', () => {
-            if (usernameInput.value.trim()) {
-                localStorage.setItem('rating_username', usernameInput.value.trim());
-            }
+        if(alive&&f<220){f++;requestAnimationFrame(draw);}
+        else ctx.clearRect(0,0,canvas.width,canvas.height);
+    }
+    draw();
+}
+
+// ================================================================
+// BİLDİRİM SİSTEMİ
+// ================================================================
+function addNotif(icon,title,msg){
+    const n={icon,title,msg,time:fmtTime(new Date()),timestamp:Date.now(),unread:true};
+    notifications.unshift(n);
+    if(notifications.length>30) notifications.pop();
+    localStorage.setItem('ltf_notifs',JSON.stringify(notifications));
+    unreadCount++;
+    localStorage.setItem('ltf_notifs_unread',unreadCount);
+    updateNotifBadge(); renderNotifPanel(); showNotifPopup(icon,title,msg);
+}
+function showNotifPopup(icon,title,msg){
+    const popup=document.getElementById('notifPopup');
+    document.getElementById('notifPopupIcon').textContent=icon;
+    document.getElementById('notifPopupTitle').textContent=title;
+    document.getElementById('notifPopupMsg').textContent=msg;
+    popup.classList.remove('show'); void popup.offsetWidth; popup.classList.add('show');
+    setTimeout(()=>popup.classList.remove('show'),4500);
+}
+function updateNotifBadge(){
+    const b=document.getElementById('notifBadge');
+    if(unreadCount>0){b.textContent=unreadCount>9?'9+':unreadCount;b.classList.add('show');}
+    else b.classList.remove('show');
+}
+function renderNotifPanel(){
+    const list=document.getElementById('notifList');
+    if(!notifications.length){list.innerHTML='<div class="notif-empty">Henüz bildirim yok 🔕</div>';return;}
+    list.innerHTML=notifications.slice(0,15).map(n=>`
+        <div class="notif-item${n.unread?' unread':''}">
+            <div class="notif-item-icon">${n.icon}</div>
+            <div class="notif-item-text">
+                <div class="notif-item-msg"><strong>${esc(n.title)}</strong> — ${esc(n.msg)}</div>
+                <div class="notif-item-time">${n.time}</div>
+            </div>
+        </div>`).join('');
+}
+document.getElementById('notifBell').addEventListener('click',()=>{
+    const p=document.getElementById('notifPanel');
+    p.classList.toggle('open');
+    if(p.classList.contains('open')){
+        unreadCount=0; localStorage.setItem('ltf_notifs_unread','0');
+        notifications.forEach(n=>n.unread=false);
+        localStorage.setItem('ltf_notifs',JSON.stringify(notifications));
+        updateNotifBadge(); renderNotifPanel();
+    }
+});
+document.getElementById('clearNotifs').addEventListener('click',()=>{
+    notifications=[]; unreadCount=0;
+    localStorage.setItem('ltf_notifs','[]'); localStorage.setItem('ltf_notifs_unread','0');
+    updateNotifBadge(); renderNotifPanel();
+});
+document.getElementById('notifPopupClose').addEventListener('click',()=>document.getElementById('notifPopup').classList.remove('show'));
+
+// Kendi feedbacklerine yorum gelince bildir
+function watchMyComments(){
+    const ids=JSON.parse(localStorage.getItem('my_feedback_ids')||'[]');
+    ids.forEach(id=>{
+        db.ref(`feedback_comments/${id}`).on('child_added',snap=>{
+            const c=snap.val();
+            if(c&&c.userId!==userId) addNotif('💬','Yorum geldi!',`${c.username||'Biri'} yorumuna yanıt verdi.`);
         });
-        
-        stars.forEach(star => {
-            star.addEventListener('mouseenter', function() { highlightStars(parseInt(this.dataset.value)); });
-            star.addEventListener('mouseleave', function() { highlightStars(currentRating); });
-            star.addEventListener('click', function() {
-                currentRating = parseInt(this.dataset.value);
-                highlightStars(currentRating);
-                selectedRatingText.textContent = `⭐ ${currentRating} / 5 yıldız`;
-                this.style.animation = 'starGlow 0.3s ease';
-                setTimeout(() => this.style.animation = '', 300);
-            });
-        });
-        
-        function highlightStars(rating) {
-            stars.forEach(star => {
-                const value = parseInt(star.dataset.value);
-                if (value <= rating) star.className = 'fas fa-star star active';
-                else star.className = 'far fa-star star';
-            });
-        }
-        
-        async function checkCooldown() {
-            const cooldownRef = database.ref('user_cooldowns/' + userId);
-            const snapshot = await cooldownRef.once('value');
-            const data = snapshot.val();
-            if (data && data.lastRatingTime) {
-                const lastTime = data.lastRatingTime;
-                const now = Date.now();
-                const sixHours = 6 * 60 * 60 * 1000;
-                const timeLeft = sixHours - (now - lastTime);
-                if (timeLeft > 0) {
-                    lastRatingTime = lastTime;
-                    startCooldownTimer(timeLeft);
-                    return true;
-                }
-            }
-            return false;
-        }
-        
-        function startCooldownTimer(msLeft) {
-            cooldownTimer.classList.add('show');
-            submitBtn.disabled = true;
-            if (cooldownInterval) clearInterval(cooldownInterval);
-            
-            function updateTimer() {
-                const now = Date.now();
-                const remaining = (lastRatingTime + (6 * 60 * 60 * 1000)) - now;
-                if (remaining <= 0) {
-                    clearInterval(cooldownInterval);
-                    cooldownTimer.classList.remove('show');
-                    submitBtn.disabled = false;
-                } else {
-                    const hours = Math.floor(remaining / (60 * 60 * 1000));
-                    const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
-                    const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
-                    cooldownText.textContent = `⏰ Bir sonraki puanlamanız ${hours} saat ${minutes} dakika ${seconds} saniye sonra`;
-                }
-            }
-            updateTimer();
-            cooldownInterval = setInterval(updateTimer, 1000);
-        }
-        
-        // Verileri yükle
-        function loadData() {
-            const ratingsRef = database.ref('ratings');
-            const feedbacksRef = database.ref('feedbacks');
-            const commentsRef = database.ref('feedback_comments');
-            const likesRef = database.ref('feedback_likes');
-            
-            ratingsRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data && typeof data === 'object') {
-                    const ratingsArray = Object.values(data);
-                    const numbers = ratingsArray.map(r => typeof r === 'number' ? r : r.rating);
-                    updateAverageScore(numbers);
-                    updateDistribution(numbers);
-                } else {
-                    updateAverageScore([]);
-                    updateDistribution([]);
-                }
-            });
-            
-            feedbacksRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data && typeof data === 'object') {
-                    const feedbacksArray = Object.values(data);
-                    feedbacksArray.sort((a, b) => b.timestamp - a.timestamp);
-                    
-                    // Yorumları ve beğenileri al
-                    commentsRef.once('value', (commentsSnap) => {
-                        const commentsData = commentsSnap.val() || {};
-                        likesRef.once('value', (likesSnap) => {
-                            const likesData = likesSnap.val() || {};
-                            updateFeedbackList(feedbacksArray, commentsData, likesData);
-                        });
-                    });
-                } else {
-                    updateFeedbackList([], {}, {});
-                }
-            });
-        }
-        
-        function updateAverageScore(ratingsArray) {
-            const avgScoreEl = document.getElementById('averageScore');
-            const totalVotesEl = document.getElementById('totalVotes');
-            const avgStarsEl = document.getElementById('averageStars');
-            
-            if (!ratingsArray || ratingsArray.length === 0) {
-                avgScoreEl.textContent = '0.00';
-                totalVotesEl.textContent = '0 kişi puanladı';
-                avgStarsEl.innerHTML = '<i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>';
-                return;
-            }
-            
-            const sum = ratingsArray.reduce((a, b) => a + b, 0);
-            const avg = sum / ratingsArray.length;
-            avgScoreEl.textContent = avg.toFixed(2);
-            totalVotesEl.textContent = `${ratingsArray.length} kişi puanladı`;
-            
-            const fullStars = Math.round(avg);
-            avgStarsEl.innerHTML = '';
-            for (let i = 1; i <= 5; i++) {
-                if (i <= fullStars) avgStarsEl.innerHTML += '<i class="fas fa-star filled"></i>';
-                else avgStarsEl.innerHTML += '<i class="far fa-star"></i>';
-            }
-        }
-        
-        function updateDistribution(ratingsArray) {
-            const counts = {1:0,2:0,3:0,4:0,5:0};
-            ratingsArray.forEach(r => { if (r >= 1 && r <= 5) counts[r]++; });
-            const total = ratingsArray.length;
-            
-            for (let i = 1; i <= 5; i++) {
-                const percent = total > 0 ? (counts[i] / total) * 100 : 0;
-                const fillEl = document.querySelector(`.dist-item:nth-child(${6-i}) .dist-fill`);
-                const countEl = document.querySelector(`.dist-item:nth-child(${6-i}) .dist-count`);
-                if (fillEl) fillEl.style.width = percent + '%';
-                if (countEl) countEl.textContent = counts[i];
-            }
-        }
-        
-        function updateFeedbackList(feedbacksArray, commentsData, likesData) {
-            const feedbackListDiv = document.getElementById('feedbackList');
-            if (!feedbacksArray || feedbacksArray.length === 0) {
-                feedbackListDiv.innerHTML = '<div class="empty-feedback"><i class="fas fa-inbox"></i> Henüz geri bildirim yok. İlk sen paylaş!</div>';
-                return;
-            }
-            
-            // En çok beğenilenleri üste al (popüler)
-            const feedbacksWithLikes = feedbacksArray.map(fb => {
-                const fbId = fb.id || Object.keys(fb)[0];
-                const likeCount = likesData[fb.feedbackId] ? Object.keys(likesData[fb.feedbackId]).length : 0;
-                const comments = commentsData[fb.feedbackId] ? Object.values(commentsData[fb.feedbackId]) : [];
-                return { ...fb, likeCount, comments, feedbackId: fb.feedbackId };
-            });
-            
-            feedbacksWithLikes.sort((a, b) => b.likeCount - a.likeCount);
-            const recent = feedbacksWithLikes.slice(0, 15);
-            
-            feedbackListDiv.innerHTML = recent.map((fb, index) => `
-                <div class="feedback-item ${fb.pinned ? 'pinned' : ''}" data-feedback-id="${fb.feedbackId || index}">
-                    <div class="feedback-main">
-                        <div class="feedback-avatar">${fb.avatar || '😎'}</div>
-                        <div class="feedback-content">
-                            <div class="feedback-header">
-                                <div class="feedback-user">
-                                    <span class="feedback-name">${escapeHtml(fb.username || 'Anonim')}</span>
-                                    ${fb.likeCount > 5 ? '<span class="feedback-badge"><i class="fas fa-fire"></i> Popüler</span>' : ''}
-                                    ${fb.pinned ? '<span class="feedback-badge"><i class="fas fa-thumbtack"></i> Sabitlendi</span>' : ''}
-                                    <div class="feedback-stars">${'★'.repeat(fb.rating)}${'☆'.repeat(5 - fb.rating)}</div>
-                                </div>
-                                <div class="feedback-date">${fb.date}</div>
-                            </div>
-                            <div class="feedback-text">${escapeHtml(fb.text || 'Geri bildirim yazılmamış')}</div>
-                            <div class="feedback-actions">
-                                <button class="action-btn like-feedback" data-id="${fb.feedbackId || index}">
-                                    <i class="fas fa-heart"></i> <span class="like-count">${fb.likeCount || 0}</span>
-                                </button>
-                                <button class="action-btn comment-toggle" data-id="${fb.feedbackId || index}">
-                                    <i class="fas fa-comment"></i> ${fb.comments ? fb.comments.length : 0} Yorum
-                                </button>
-                            </div>
+    });
+}
+function saveMyFbId(id){
+    const ids=JSON.parse(localStorage.getItem('my_feedback_ids')||'[]');
+    if(!ids.includes(id)){ids.push(id);localStorage.setItem('my_feedback_ids',JSON.stringify(ids));}
+}
+
+// ================================================================
+// PROFİL
+// ================================================================
+window.openProfile=function(username,avatar){
+    document.getElementById('profileAvatar').textContent=avatar||'😎';
+    document.getElementById('profileName').textContent=username;
+    document.getElementById('profileOverlay').classList.add('open');
+    const uFbs=allFeedbacks.filter(fb=>fb.username===username);
+    const totalLikes=uFbs.reduce((s,fb)=>{const l=allLikesData[fb.feedbackId]||{};return s+Object.keys(l).length;},0);
+    const avgR=uFbs.length?(uFbs.reduce((s,f)=>s+f.rating,0)/uFbs.length).toFixed(1):'—';
+    document.getElementById('profileFbCount').textContent=uFbs.length;
+    document.getElementById('profileLikeCount').textContent=totalLikes;
+    document.getElementById('profileAvgRating').textContent=avgR;
+    const badges=[];
+    if(uFbs.length>=1) badges.push({t:'🌟 İlk Yorum',c:''});
+    if(uFbs.length>=5) badges.push({t:'✍️ Aktif',c:'blue'});
+    if(uFbs.length>=10) badges.push({t:'🏆 Veteran',c:'green'});
+    if(totalLikes>=10) badges.push({t:'❤️ Sevilen',c:'green'});
+    if(parseFloat(avgR)>=4.5) badges.push({t:'⭐ Olumlu',c:''});
+    document.getElementById('profileBadges').innerHTML=badges.map(b=>`<span class="profile-badge ${b.c}">${b.t}</span>`).join('');
+    const sorted=[...uFbs].sort((a,b)=>b.timestamp-a.timestamp);
+    document.getElementById('profileFeedbackList').innerHTML=sorted.length
+        ?sorted.map(fb=>`<div class="profile-fb-item"><div class="profile-fb-meta"><span class="profile-fb-stars">${'★'.repeat(fb.rating)}${'☆'.repeat(5-fb.rating)}</span><span class="profile-fb-date">${fb.date}</span></div><div class="profile-fb-text">${esc(fb.text||'(Yorum yok)')}</div></div>`).join('')
+        :'<div class="empty-feedback" style="padding:20px">Henüz yorum yok</div>';
+};
+window.closeProfile=function(){ document.getElementById('profileOverlay').classList.remove('open'); };
+document.getElementById('profileOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeProfile();});
+
+// ================================================================
+// PAYLAŞ
+// ================================================================
+window.shareFeedback=function(id){
+    const url=`${location.href.split('#')[0]}#fb-${id}`;
+    if(navigator.clipboard) navigator.clipboard.writeText(url).then(()=>showToast('🔗 Link kopyalandı!'));
+    else{ const ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('🔗 Link kopyalandı!'); }
+};
+window.addEventListener('load',()=>{
+    const hash=location.hash;
+    if(hash&&hash.startsWith('#fb-')){
+        setTimeout(()=>{ const el=document.getElementById(hash.slice(1)); if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.borderColor='var(--altin)';} },1500);
+    }
+});
+
+// ================================================================
+// BİLDİR
+// ================================================================
+window.openReport=function(id){ currentReportId=id; document.querySelectorAll('input[name="reportReason"]').forEach(r=>r.checked=false); document.getElementById('reportOverlay').classList.add('open'); };
+window.closeReport=function(){ document.getElementById('reportOverlay').classList.remove('open'); currentReportId=null; };
+document.getElementById('reportOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeReport();});
+document.getElementById('reportSubmitBtn').addEventListener('click',async()=>{
+    const reason=document.querySelector('input[name="reportReason"]:checked');
+    if(!reason){showToast('Lütfen bir sebep seçin!',true);return;}
+    if(!currentReportId) return;
+    const rep=getReported();
+    if(rep.has(currentReportId)){showToast('Bu yorumu zaten bildirdiniz!',true);closeReport();return;}
+    try{
+        await db.ref(`reports/${currentReportId}_${Date.now()}`).set({feedbackId:currentReportId,reason:reason.value,reportedBy:userId,timestamp:Date.now()});
+        rep.add(currentReportId); saveReported(rep);
+        showToast('Bildiriminiz iletildi, teşekkürler!'); closeReport(); renderFeedbacks();
+    }catch{showToast('Hata oluştu!',true);}
+});
+
+// ================================================================
+// ADMİN
+// ================================================================
+const ADMIN_PW='ltf2025admin'; // DEĞİŞTİR!
+window.openAdmin=function(){ document.getElementById('adminOverlay').classList.add('open'); };
+window.closeAdmin=function(){
+    document.getElementById('adminOverlay').classList.remove('open');
+    document.getElementById('adminBody').style.display='none';
+    document.getElementById('adminLogin').style.display='block';
+    document.getElementById('adminPasswordInput').value='';
+};
+document.getElementById('adminOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAdmin();});
+document.getElementById('adminLoginBtn').addEventListener('click',()=>{
+    if(document.getElementById('adminPasswordInput').value===ADMIN_PW){
+        document.getElementById('adminLogin').style.display='none';
+        document.getElementById('adminBody').style.display='block';
+        loadAdminData();
+    } else {
+        showToast('Hatalı şifre!',true);
+        document.getElementById('adminPasswordInput').style.animation='shake 0.4s ease';
+        setTimeout(()=>document.getElementById('adminPasswordInput').style.animation='',400);
+    }
+});
+document.getElementById('adminPasswordInput').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('adminLoginBtn').click(); });
+document.querySelectorAll('.admin-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+        document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+        document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('admin-'+tab.dataset.tab).classList.add('active');
+    });
+});
+
+function loadAdminData(){
+    document.getElementById('aStatFb').textContent=allFeedbacks.length;
+    db.ref('ratings').once('value',s=>{
+        const nums=Object.values(s.val()||{}).map(v=>typeof v==='number'?v:v.rating).filter(Number.isFinite);
+        document.getElementById('aStatRatings').textContent=nums.length;
+        document.getElementById('aStatAvg').textContent=nums.length?(nums.reduce((a,b)=>a+b,0)/nums.length).toFixed(2):'—';
+    });
+    db.ref('reports').once('value',s=>{
+        const r=s.val()||{};
+        document.getElementById('aStatReports').textContent=Object.keys(r).length;
+        const repList=document.getElementById('adminReportList');
+        const reports=Object.values(r);
+        repList.innerHTML=reports.length
+            ?reports.map(rep=>{ const fb=allFeedbacks.find(f=>f.feedbackId===rep.feedbackId); return `<div class="admin-report-item"><div class="admin-report-meta">Sebep: <strong>${esc(rep.reason)}</strong> · ${fmtTime(new Date(rep.timestamp))}</div><div class="admin-report-text">${fb?`"${esc((fb.text||'').slice(0,80))}" — ${esc(fb.username)}`:'Yorum bulunamadı'}</div><div class="admin-fb-actions">${fb?`<button class="admin-action-btn danger" onclick="adminDelete('${rep.feedbackId}')">🗑️ Yorumu Sil</button>`:''}  <button class="admin-action-btn" onclick="adminDismiss('${rep.feedbackId}')">✅ Yoksay</button></div></div>`; }).join('')
+            :'<div class="empty-feedback">Bildirim yok ✅</div>';
+    });
+    const sorted=[...allFeedbacks].sort((a,b)=>b.timestamp-a.timestamp);
+    document.getElementById('adminFbList').innerHTML=sorted.length
+        ?sorted.slice(0,30).map(fb=>`<div class="admin-fb-item"><div style="font-size:1.5rem;flex-shrink:0;">${esc(fb.avatar||'😎')}</div><div class="admin-fb-info"><div class="admin-fb-user">${esc(fb.username||'Anonim')} · ${'★'.repeat(fb.rating)} · ${fb.date}</div><div class="admin-fb-text">${esc((fb.text||'(boş)').slice(0,120))}</div><div class="admin-fb-actions"><button class="admin-action-btn success" onclick="adminPin('${fb.feedbackId}',${!fb.pinned})">${fb.pinned?'📌 Sabiti Kaldır':'📌 Sabitle'}</button><button class="admin-action-btn danger" onclick="adminDelete('${fb.feedbackId}')">🗑️ Sil</button></div></div></div>`).join('')
+        :'<div class="empty-feedback">Yorum yok</div>';
+}
+window.adminDelete=async function(id){ if(!confirm('Bu yorumu silmek istediğinizden emin misiniz?')) return; await db.ref('feedbacks/'+id).remove(); await db.ref('ratings/'+id).remove(); showToast('Yorum silindi!'); loadAdminData(); };
+window.adminPin=async function(id,pin){ await db.ref('feedbacks/'+id+'/pinned').set(pin); showToast(pin?'📌 Sabitlendi!':'📌 Sabit kaldırıldı!'); loadAdminData(); };
+window.adminDismiss=async function(fbId){ const snap=await db.ref('reports').orderByChild('feedbackId').equalTo(fbId).once('value'); const u={}; snap.forEach(s=>{u[s.key]=null;}); await db.ref('reports').update(u); showToast('Bildirim yoksayıldı!'); loadAdminData(); };
+
+// ================================================================
+// VERİ YÜKLEME
+// ================================================================
+function loadData(){
+    db.ref('ratings').on('value',snap=>{
+        const nums=snap.val()?Object.values(snap.val()).map(r=>typeof r==='number'?r:r.rating).filter(Number.isFinite):[];
+        updateAvg(nums); updateDist(nums);
+    });
+    db.ref('feedbacks').on('value',snap=>{ allFeedbacks=snap.val()?Object.values(snap.val()):[]; renderFeedbacks(); });
+    db.ref('feedback_likes').on('value',snap=>{ allLikesData=snap.val()||{}; renderFeedbacks(); });
+    db.ref('feedback_comments').on('value',snap=>{ allCommentsData=snap.val()||{}; renderFeedbacks(); });
+}
+
+function updateAvg(arr){
+    const avgEl=document.getElementById('averageScore'),vEl=document.getElementById('totalVotes'),sEl=document.getElementById('averageStars');
+    if(!arr.length){avgEl.textContent='—';vEl.textContent='Henüz puan yok';sEl.innerHTML='<i class="far fa-star"></i>'.repeat(5);return;}
+    const avg=arr.reduce((a,b)=>a+b,0)/arr.length;
+    avgEl.textContent=avg.toFixed(2); vEl.textContent=`${arr.length} kişi puanladı`;
+    let h=''; for(let i=1;i<=5;i++){ if(avg>=i)h+='<i class="fas fa-star filled"></i>'; else if(avg>=i-0.5)h+='<i class="fas fa-star-half-alt half"></i>'; else h+='<i class="far fa-star"></i>'; }
+    sEl.innerHTML=h;
+}
+function updateDist(arr){
+    const c={1:0,2:0,3:0,4:0,5:0}; arr.forEach(r=>{if(c[r]!==undefined)c[r]++;});
+    const t=arr.length||1;
+    document.querySelectorAll('.dist-item[data-star]').forEach(item=>{
+        const s=parseInt(item.dataset.star);
+        item.querySelector('.dist-fill').style.width=((c[s]/t)*100)+'%';
+        item.querySelector('.dist-count').textContent=c[s];
+    });
+}
+
+// ================================================================
+// RENDER
+// ================================================================
+function renderFeedbacks(){
+    const likedSet=getLiked(), repSet=getReported();
+    const enriched=allFeedbacks.map(fb=>{
+        if(!fb||!fb.feedbackId) return null;
+        const id=fb.feedbackId;
+        const likeCount=allLikesData[id]?Object.keys(allLikesData[id]).length:0;
+        const comments=allCommentsData[id]?Object.values(allCommentsData[id]):[];
+        return {...fb,likeCount,comments};
+    }).filter(Boolean);
+
+    const sorted=[...enriched];
+    if(currentSort==='top') sorted.sort((a,b)=>b.likeCount-a.likeCount);
+    if(currentSort==='new') sorted.sort((a,b)=>b.timestamp-a.timestamp);
+    if(currentSort==='high') sorted.sort((a,b)=>b.rating-a.rating);
+    if(currentSort==='low') sorted.sort((a,b)=>a.rating-b.rating);
+    sorted.sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
+
+    const q=searchQuery.toLowerCase().trim();
+    const filtered=q?sorted.filter(fb=>(fb.username||'').toLowerCase().includes(q)||(fb.text||'').toLowerCase().includes(q)):sorted;
+
+    document.getElementById('feedbackCount').textContent=`${filtered.length} yorum`;
+    const listEl=document.getElementById('feedbackList');
+    if(!filtered.length){
+        listEl.innerHTML=`<div class="empty-feedback"><i class="${q?'fas fa-search':'fas fa-inbox'}"></i>${q?'Arama sonucu bulunamadı':'Henüz geri bildirim yok. İlk sen paylaş!'}</div>`;
+        return;
+    }
+
+    const topId=filtered[0]&&filtered[0].likeCount>0?filtered[0].feedbackId:null;
+
+    listEl.innerHTML=filtered.slice(0,20).map(fb=>{
+        const id=fb.feedbackId;
+        const liked=likedSet.has(id), reported=repSet.has(id);
+        const isTop=id===topId&&fb.likeCount>2, isHot=fb.likeCount>=5;
+        const stars='★'.repeat(fb.rating)+'☆'.repeat(5-fb.rating);
+        const txt=censor(fb.text||'');
+        const ua=escA(fb.username||'Anonim'), av=escA(fb.avatar||'😎');
+        return `
+        <div class="feedback-item${fb.pinned?' pinned':''}" id="fb-${id}">
+            <div class="feedback-main">
+                <div class="feedback-avatar" onclick="openProfile('${ua}','${av}')" title="Profili gör">${esc(fb.avatar||'😎')}</div>
+                <div class="feedback-content">
+                    <div class="feedback-header">
+                        <div class="feedback-user">
+                            <span class="feedback-name" onclick="openProfile('${ua}','${av}')">${esc(fb.username||'Anonim')}</span>
+                            ${isTop?'<span class="feedback-badge top"><i class="fas fa-crown"></i> En İyi</span>':''}
+                            ${isHot&&!isTop?'<span class="feedback-badge popular"><i class="fas fa-fire"></i> Popüler</span>':''}
+                            ${fb.pinned?'<span class="feedback-badge pinned-badge"><i class="fas fa-thumbtack"></i> Sabitlendi</span>':''}
+                        </div>
+                        <div class="feedback-meta">
+                            <span class="feedback-stars">${stars}</span>
+                            <span class="feedback-date">${esc(fb.date||'')}</span>
                         </div>
                     </div>
-                    <div class="comments-section" id="comments-${fb.feedbackId || index}">
-                        <div class="comments-list" id="comments-list-${fb.feedbackId || index}">
-                            ${renderComments(fb.comments)}
-                        </div>
-                        <div class="add-comment">
-                            <textarea class="comment-input" id="comment-input-${fb.feedbackId || index}" rows="1" placeholder="Yorum yaz..."></textarea>
-                            <button class="comment-send" onclick="addComment('${fb.feedbackId || index}')">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
+                    ${txt?`<div class="feedback-text">${esc(txt)}</div>`:''}
+                    <div class="feedback-actions">
+                        <button class="action-btn like-btn${liked?' liked':''}" data-id="${id}">
+                            <i class="${liked?'fas':'far'} fa-heart"></i> <span class="like-count">${fb.likeCount}</span>
+                        </button>
+                        <button class="action-btn toggle-comments-btn" data-id="${id}">
+                            <i class="fas fa-comment"></i> ${fb.comments.length} Yorum
+                        </button>
+                        <button class="action-btn" onclick="shareFeedback('${id}')">
+                            <i class="fas fa-share-alt"></i> Paylaş
+                        </button>
+                        <button class="action-btn${reported?' reported':''}" onclick="${reported?'void(0)':`openReport('${id}')`}">
+                            <i class="fas fa-flag"></i> ${reported?'Bildirildi':'Bildir'}
+                        </button>
                     </div>
                 </div>
-            `).join('');
-            
-            // Yorum toggle eventleri
-            document.querySelectorAll('.comment-toggle').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const id = btn.dataset.id;
-                    const commentsDiv = document.getElementById(`comments-${id}`);
-                    if (commentsDiv) {
-                        commentsDiv.classList.toggle('open');
-                    }
-                });
-            });
-            
-            // Beğeni eventleri
-            document.querySelectorAll('.like-feedback').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const id = btn.dataset.id;
-                    toggleLike(id, btn);
-                });
-            });
-        }
-        
-        function renderComments(comments) {
-            if (!comments || comments.length === 0) {
-                return '<div style="text-align:center; opacity:0.5; padding:10px;">Henüz yorum yok</div>';
-            }
-            return comments.map(c => `
-                <div class="comment-item">
-                    <div class="comment-avatar">${c.avatar || '😎'}</div>
-                    <div class="comment-content">
-                        <div class="comment-header">
-                            <span class="comment-name">${escapeHtml(c.username)}</span>
-                            <span class="comment-time">${c.time || c.date}</span>
-                        </div>
-                        <div class="comment-text">${escapeHtml(c.text)}</div>
-                    </div>
+            </div>
+            <div class="comments-section" id="cs-${id}">
+                <div class="comments-list" id="cl-${id}">${renderComments(fb.comments)}</div>
+                <div class="add-comment">
+                    <textarea class="comment-input" id="ci-${id}" rows="1" placeholder="Yorum yaz..."></textarea>
+                    <button class="comment-send" onclick="addComment('${id}')"><i class="fas fa-paper-plane"></i></button>
                 </div>
-            `).join('');
-        }
-        
-        async function toggleLike(feedbackId, btnElement) {
-            const likeRef = database.ref(`feedback_likes/${feedbackId}/${userId}`);
-            const snapshot = await likeRef.once('value');
-            
-            if (snapshot.exists()) {
-                await likeRef.remove();
-                btnElement.classList.remove('liked');
-                showToast('Beğeni geri alındı');
-            } else {
-                await likeRef.set({ userId, timestamp: Date.now() });
-                btnElement.classList.add('liked');
-                showToast('Beğenildi!');
-            }
-            
-            // Beğeni sayısını güncelle
-            const likesCountRef = database.ref(`feedback_likes/${feedbackId}`);
-            likesCountRef.once('value', (snap) => {
-                const count = snap.val() ? Object.keys(snap.val()).length : 0;
-                const countSpan = btnElement.querySelector('.like-count');
-                if (countSpan) countSpan.textContent = count;
-            });
-        }
-        
-        window.addComment = async function(feedbackId) {
-            const input = document.getElementById(`comment-input-${feedbackId}`);
-            const commentText = input.value.trim();
-            if (!commentText) {
-                showToast('Yorum yazın!', true);
-                return;
-            }
-            
-            const username = usernameInput.value.trim() || 'Anonim';
-            const now = new Date();
-            const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-            const commentId = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-            
-            const commentData = {
-                text: commentText,
-                username: username,
-                avatar: selectedAvatar,
-                time: timeStr,
-                timestamp: now.getTime(),
-                userId: userId
-            };
-            
-            try {
-                await database.ref(`feedback_comments/${feedbackId}/${commentId}`).set(commentData);
-                input.value = '';
-                showToast('Yorum eklendi!');
-                
-                // Yorum listesini güncelle
-                const commentsRef = database.ref(`feedback_comments/${feedbackId}`);
-                commentsRef.once('value', (snap) => {
-                    const comments = snap.val() ? Object.values(snap.val()) : [];
-                    const commentsList = document.getElementById(`comments-list-${feedbackId}`);
-                    if (commentsList) {
-                        commentsList.innerHTML = renderComments(comments);
-                    }
-                });
-            } catch (error) {
-                showToast('Yorum eklenemedi!', true);
-            }
-        };
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            const icon = toast.querySelector('i');
-            toastMessage.textContent = message;
-            icon.className = isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
-            toast.style.borderLeftColor = isError ? 'var(--kirmizi)' : 'var(--altin)';
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-        
-        async function submitToFirebase(rating, feedbackText, username, avatar) {
-            const now = new Date();
-            const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-            const feedbackId = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-            
-            const feedbackData = { 
-                rating, 
-                text: feedbackText || '', 
-                date: dateStr, 
-                timestamp: now.getTime(), 
-                username, 
-                avatar,
-                feedbackId: feedbackId
-            };
-            const ratingData = { rating, timestamp: now.getTime() };
-            const cooldownData = { lastRatingTime: now.getTime(), userId: userId };
-            
-            try {
-                await database.ref('feedbacks/' + feedbackId).set(feedbackData);
-                await database.ref('ratings/' + feedbackId).set(ratingData);
-                await database.ref('user_cooldowns/' + userId).set(cooldownData);
-                return true;
-            } catch (error) {
-                console.error('Firebase hatası:', error);
-                return false;
-            }
-        }
-        
-        submitBtn.addEventListener('click', async () => {
-            if (isSubmitting) return;
-            
-            const username = usernameInput.value.trim();
-            if (username === "") {
-                showToast('Lütfen kullanıcı adınızı girin!', true);
-                usernameInput.style.animation = 'shake 0.4s ease';
-                setTimeout(() => usernameInput.style.animation = '', 400);
-                return;
-            }
-            
-            if (currentRating === 0) {
-                showToast('Lütfen bir puan seçin!', true);
-                document.querySelector('.stars').style.animation = 'shake 0.4s ease';
-                setTimeout(() => document.querySelector('.stars').style.animation = '', 400);
-                return;
-            }
-            
-            const onCooldown = await checkCooldown();
-            if (onCooldown) {
-                showToast('6 saatte bir puanlama yapabilirsiniz!', true);
-                return;
-            }
-            
-            isSubmitting = true;
-            submitBtn.innerHTML = '<span class="loading-spinner"></span> Gönderiliyor...';
-            submitBtn.disabled = true;
-            
-            const success = await submitToFirebase(currentRating, feedbackTextarea.value.trim(), username, selectedAvatar);
-            
-            if (success) {
-                showToast('Geri bildiriminiz için teşekkürler! 🎉');
-                currentRating = 0;
-                highlightStars(0);
-                selectedRatingText.textContent = '⭐ Puan seçilmedi';
-                feedbackTextarea.value = '';
-                lastRatingTime = Date.now();
-                startCooldownTimer(6 * 60 * 60 * 1000);
-            } else {
-                showToast('Bir hata oluştu. Lütfen tekrar deneyin.', true);
-            }
-            
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Gönder';
-            submitBtn.disabled = false;
-            isSubmitting = false;
+            </div>
+        </div>`;
+    }).join('');
+
+    document.querySelectorAll('.like-btn').forEach(btn=>btn.addEventListener('click',()=>toggleLike(btn.dataset.id,btn)));
+    document.querySelectorAll('.toggle-comments-btn').forEach(btn=>btn.addEventListener('click',()=>document.getElementById('cs-'+btn.dataset.id)?.classList.toggle('open')));
+}
+
+function renderComments(comments){
+    if(!comments||!comments.length) return '<div style="text-align:center;opacity:0.4;padding:10px;font-size:0.8rem;">Henüz yorum yok</div>';
+    return [...comments].sort((a,b)=>(a.timestamp||0)-(b.timestamp||0)).map(c=>`
+        <div class="comment-item">
+            <div class="comment-avatar">${esc(c.avatar||'😎')}</div>
+            <div class="comment-content">
+                <div class="comment-header"><span class="comment-name">${esc(c.username||'Anonim')}</span><span class="comment-time">${esc(c.time||c.date||'')}</span></div>
+                <div class="comment-text">${esc(censor(c.text||''))}</div>
+            </div>
+        </div>`).join('');
+}
+
+window.addComment=async function(fbId){
+    const input=document.getElementById('ci-'+fbId); if(!input) return;
+    const text=input.value.trim();
+    if(!text){showToast('Yorum boş olamaz!',true);return;}
+    if(text.length>200){showToast('Yorum çok uzun! (max 200)',true);return;}
+    if(containsBad(text)){showToast('⚠️ Uygunsuz kelime tespit edildi!',true);return;}
+    const now=new Date(), cid=Date.now()+'_'+Math.random().toString(36).substr(2,6);
+    try{
+        await db.ref(`feedback_comments/${fbId}/${cid}`).set({
+            text, username:usernameInput.value.trim()||'Anonim', avatar:selectedAvatar,
+            time:`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
+            timestamp:now.getTime(), userId
         });
-        
-        const btn = document.getElementById("menuBtn");
-        const menu = document.getElementById("sideMenu");
-        btn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            menu.classList.toggle("open");
-            btn.classList.toggle("open");
-        });
-        document.addEventListener('click', (e) => {
-            if (!menu.contains(e.target) && !btn.contains(e.target)) {
-                menu.classList.remove('open');
-                btn.classList.remove('open');
-            }
-        });
-        
-        loadData();
-        highlightStars(0);
-        checkCooldown();
-    </script>
+        input.value=''; showToast('✅ Yorum eklendi!');
+    }catch{showToast('Yorum eklenemedi!',true);}
+};
+
+document.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey&&e.target.classList.contains('comment-input')){e.preventDefault();addComment(e.target.id.replace('ci-',''));} });
+
+async function toggleLike(fbId,btnEl){
+    const s=getLiked(), ref=db.ref(`feedback_likes/${fbId}/${userId}`);
+    const snap=await ref.once('value');
+    if(snap.exists()){await ref.remove();s.delete(fbId);showToast('Beğeni geri alındı');}
+    else{await ref.set({userId,timestamp:Date.now()});s.add(fbId);showToast('❤️ Beğenildi!');}
+    saveLiked(s);
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+        document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active'); currentSort=btn.dataset.sort; renderFeedbacks();
+    });
+});
+document.getElementById('searchInput').addEventListener('input',e=>{searchQuery=e.target.value;renderFeedbacks();});
+
+// ================================================================
+// GÖNDER
+// ================================================================
+submitBtn.addEventListener('click',async()=>{
+    if(isSubmitting) return;
+    const username=usernameInput.value.trim();
+    if(!username){showToast('Lütfen kullanıcı adınızı girin!',true);usernameInput.style.animation='shake 0.4s ease';setTimeout(()=>usernameInput.style.animation='',400);return;}
+    if(!currentRating){showToast('Lütfen bir puan seçin!',true);document.querySelector('.stars').style.animation='shake 0.4s ease';setTimeout(()=>document.querySelector('.stars').style.animation='',400);return;}
+    const text=feedbackTA.value.trim();
+    if(text.length>300){showToast('Metin çok uzun!',true);return;}
+    if(containsBad(text)){showToast('⚠️ Uygunsuz kelime tespit edildi!',true);return;}
+    const onCd=await checkCooldown(); if(onCd){showToast('6 saatte bir puanlama yapabilirsiniz!',true);return;}
+
+    isSubmitting=true; submitBtn.innerHTML='<span class="loading-spinner"></span> Gönderiliyor...'; submitBtn.disabled=true;
+    try{
+        const now=new Date(), fid=Date.now()+'_'+Math.random().toString(36).substr(2,6);
+        const ds=`${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        await db.ref('feedbacks/'+fid).set({rating:currentRating,text,date:ds,timestamp:now.getTime(),username,avatar:selectedAvatar,feedbackId:fid,userId});
+        await db.ref('ratings/'+fid).set({rating:currentRating,timestamp:now.getTime()});
+        await db.ref('user_cooldowns/'+userId).set({lastRatingTime:now.getTime(),userId});
+        saveMyFbId(fid); watchMyComments();
+
+        launchConfetti();
+        showToast('Geri bildiriminiz için teşekkürler! 🎉');
+        addNotif('🎉','Puan gönderildi!',`${currentRating} yıldız verdiniz. Teşekkürler!`);
+
+        currentRating=0; highlightStars(0);
+        ratingText.textContent='Puan seçilmedi'; ratingText.className='rating-value';
+        feedbackTA.value=''; charCounter.textContent='0 / 300'; charCounter.className='char-counter';
+        lastRatingTime=now.getTime(); startCooldownTimer();
+    }catch(err){ showToast('Bir hata oluştu!',true); console.error(err); }
+    finally{ submitBtn.innerHTML='<i class="fas fa-paper-plane"></i> Gönder'; submitBtn.disabled=false; isSubmitting=false; }
+});
+
+// ================================================================
+// YARDIMCILAR
+// ================================================================
+let _toastT=null;
+function showToast(msg,isErr=false){
+    const t=document.getElementById('toast');
+    document.getElementById('toastMessage').textContent=msg;
+    const ic=t.querySelector('i');
+    ic.className=isErr?'fas fa-exclamation-circle':'fas fa-check-circle';
+    ic.style.color=isErr?'var(--kirmizi-light)':'var(--altin)';
+    t.style.borderLeftColor=isErr?'var(--kirmizi-light)':'var(--altin)';
+    t.classList.add('show'); if(_toastT)clearTimeout(_toastT); _toastT=setTimeout(()=>t.classList.remove('show'),3000);
+}
+function esc(t){ if(typeof t!=='string')return String(t??''); return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+function escA(t){ return String(t??'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function fmtTime(d){ if(!(d instanceof Date)||isNaN(d))return ''; return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} · ${d.getDate()}/${d.getMonth()+1}`; }
+
+// ================================================================
+// HAMBURGER
+// ================================================================
+const menuBtn=document.getElementById('menuBtn'), sideMenu=document.getElementById('sideMenu');
+menuBtn.addEventListener('click',e=>{ e.stopPropagation(); sideMenu.classList.toggle('open'); menuBtn.classList.toggle('open'); });
+document.addEventListener('click',e=>{
+    if(!sideMenu.contains(e.target)&&!menuBtn.contains(e.target)){sideMenu.classList.remove('open');menuBtn.classList.remove('open');}
+    const np=document.getElementById('notifPanel');
+    if(!np.contains(e.target)&&!document.getElementById('notifBell').contains(e.target)) np.classList.remove('open');
+});
+
+// ================================================================
+// BAŞLAT
+// ================================================================
+loadData();
+highlightStars(0);
+checkCooldown();
+watchMyComments();
+updateNotifBadge();
+renderNotifPanel();
+</script>
 </body>
 </html>
