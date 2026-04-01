@@ -37,13 +37,87 @@
   --shadow-lg: 0 8px 48px rgba(0,0,0,0.55);
 }
 
-html,body{height:100%;overflow:hidden;}
-body{
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  position:fixed;inset:0;
-  -webkit-font-smoothing:antialiased;
+/* Bu kısmı GÜNCELLEYİN */
+html, body {
+    height: 100%;
+    overflow: hidden;
+    position: relative;  /* fixed yerine relative */
+    -webkit-overflow-scrolling: touch;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    /* position:fixed; inset:0;  BU SATIRI KALDIRIN veya yorum yapın */
+    -webkit-font-smoothing: antialiased;
+}
+
+/* SHELL için düzenleme */
+.shell {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;  /* vh kullan */
+    height: -webkit-fill-available; /* Mobil için önemli */
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    overflow: hidden; /* Taşmayı engelle */
+}
+
+/* Input alanı için iyileştirme */
+.input-area {
+    flex-shrink: 0;
+    padding: 10px 18px 14px;
+    background: var(--bg-2);
+    border-top: 1px solid var(--border);
+    position: relative;
+    /* iOS güvenli alan desteği */
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+}
+
+/* Mobil özel düzenlemeler */
+@media (max-width: 600px) {
+    .hdr {
+        padding: 0 14px 0 66px;
+    }
+    .msgs {
+        padding: 12px;
+        padding-bottom: 8px;
+    }
+    .input-area {
+        padding: 8px 12px;
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+    .ep {
+        right: 10px;
+        width: calc(100vw - 20px);
+        bottom: 72px; /* Input alanının üstünde kalsın */
+    }
+    .toast {
+        right: 10px;
+        bottom: 76px;
+    }
+    
+    /* Mobilde textarea daha iyi görünsün */
+    textarea.txt {
+        font-size: 16px; /* iOS zoom sorununu engeller */
+    }
+}
+
+/* Klavye açıldığında daha iyi görünüm için */
+@media (max-width: 768px) {
+    .shell {
+        height: -webkit-fill-available;
+    }
+    
+    /* Mesaj alanı scroll olsun */
+    .msgs {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 
 /* subtle grain */
@@ -722,6 +796,32 @@ firebase.initializeApp({
 });
 const db=firebase.database();
 const CH='genel';
+
+// Mobil cihazlarda viewport height'ı düzeltmek için
+function setViewportHeight() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    
+    const shell = document.querySelector('.shell');
+    if (shell) {
+        shell.style.height = `calc(var(--vh, 1vh) * 100)`;
+    }
+}
+
+// Sayfa yüklendiğinde ve yeniden boyutlandırıldığında çalıştır
+window.addEventListener('resize', setViewportHeight);
+window.addEventListener('orientationchange', setViewportHeight);
+setViewportHeight();
+
+// Input focus olduğunda scroll yap
+const msgInput = document.getElementById('msgInput');
+if (msgInput) {
+    msgInput.addEventListener('focus', () => {
+        setTimeout(() => {
+            msgInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+    });
+}
 
 /* ── USER ── */
 let uid=localStorage.getItem('ltf_uid');
