@@ -45,8 +45,10 @@
 
         /* ===== ANIMATIONS ===== */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.93); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.88); } to { opacity: 1; transform: scale(1); } }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes shimmer {
             0% { background-position: -200% center; }
@@ -54,19 +56,67 @@
         }
         @keyframes pulseGlow {
             0%, 100% { box-shadow: 0 0 0 0 var(--sari-glow); }
-            50% { box-shadow: 0 0 20px 4px var(--sari-glow); }
-        }
-        @keyframes countUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            50% { box-shadow: 0 0 28px 8px var(--sari-glow); }
         }
         @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.88) translateY(20px); }
+            from { opacity: 0; transform: scale(0.85) translateY(30px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
-        @keyframes overlayIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes floatY {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes borderPulse {
+            0%, 100% { border-color: rgba(255,215,0,0.08); }
+            50% { border-color: rgba(255,215,0,0.4); box-shadow: 0 0 20px rgba(255,215,0,0.08); }
+        }
+        @keyframes scanLine {
+            0% { top: -5%; opacity: 0; }
+            5% { opacity: 0.5; }
+            95% { opacity: 0.5; }
+            100% { top: 105%; opacity: 0; }
+        }
+        @keyframes particleRise {
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.8; }
+            100% { transform: translateY(-100px) translateX(var(--dx, 0px)) scale(0); opacity: 0; }
+        }
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: translateY(50px) scale(0.92); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes menuLinkIn {
+            from { opacity: 0; transform: translateX(-18px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes heroBadgePop {
+            0% { opacity: 0; transform: scale(0.6) translateY(12px); }
+            70% { transform: scale(1.08) translateY(-2px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes ringExpand {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(1.9); opacity: 0; }
+        }
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+        @keyframes typeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes statIn {
+            from { opacity: 0; transform: translateY(40px) rotateX(15deg); }
+            to { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
+        @keyframes lineGrow {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+        @keyframes badgeSlide {
+            from { opacity: 0; transform: translateX(10px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         /* ===== LOADER ===== */
@@ -141,25 +191,18 @@
         }
         .side-menu.open { left: 0; }
 
-        .menu-logo {
-            padding: 28px 24px 20px;
-            border-bottom: 1px solid rgba(255,215,0,0.1);
-            display: flex; align-items: center; gap: 12px;
+        .menu-top-spacer {
+            height: 70px;
+            border-bottom: 1px solid rgba(255,215,0,0.08);
+            display: flex; align-items: center;
+            padding: 0 24px;
         }
-        .menu-logo-icon {
-            width: 38px; height: 38px;
-            background: var(--sari);
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .menu-logo-icon span {
+        .menu-top-spacer span {
             font-family: 'Rajdhani', sans-serif;
-            font-weight: 700; font-size: 1rem;
-            color: var(--siyah);
+            font-size: 0.7rem; letter-spacing: 3px;
+            color: rgba(255,215,0,0.4);
+            text-transform: uppercase;
         }
-        .menu-logo-text { font-family: 'Rajdhani', sans-serif; }
-        .menu-logo-text strong { display: block; font-size: 1rem; color: var(--sari); letter-spacing: 1px; }
-        .menu-logo-text span { font-size: 0.75rem; opacity: 0.5; letter-spacing: 0.5px; }
 
         .menu-items { padding: 16px 0; flex: 1; }
 
@@ -168,12 +211,20 @@
             padding: 12px 24px;
             color: rgba(240,240,255,0.7);
             text-decoration: none;
-            transition: all 0.2s;
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
             border-left: 3px solid transparent;
             font-size: 0.95rem;
             font-weight: 500;
             position: relative;
+            opacity: 0;
+            animation: menuLinkIn 0.4s forwards;
         }
+        .side-menu.open .menu-link:nth-child(1) { animation-delay: 0.06s; }
+        .side-menu.open .menu-link:nth-child(2) { animation-delay: 0.12s; }
+        .side-menu.open .menu-link:nth-child(3) { animation-delay: 0.18s; }
+        .side-menu.open .menu-link:nth-child(4) { animation-delay: 0.24s; }
+        .side-menu.open .menu-link:nth-child(5) { animation-delay: 0.30s; }
+        .side-menu.open .menu-link:nth-child(6) { animation-delay: 0.36s; }
         .menu-link .link-icon {
             width: 32px; height: 32px;
             border-radius: 8px;
@@ -231,7 +282,7 @@
             letter-spacing: 2px;
             color: var(--sari);
             margin-bottom: 20px;
-            animation: fadeInUp 0.6s both;
+            animation: fadeInUp 0.6s 0.2s both;
         }
         .hero-badge i { font-size: 0.7rem; }
 
@@ -239,34 +290,35 @@
             font-family: 'Rajdhani', sans-serif;
             font-size: clamp(3rem, 10vw, 5.5rem);
             font-weight: 700;
-            letter-spacing: 4px;
+            letter-spacing: 6px;
             line-height: 1;
             margin-bottom: 12px;
-            animation: fadeInUp 0.6s 0.1s both;
             background: linear-gradient(135deg, var(--sari) 0%, #FFF5AA 50%, var(--sari) 100%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: fadeInUp 0.6s 0.1s both, shimmer 3s linear infinite;
+            animation: fadeInUp 0.7s 0.4s both, shimmer 3s 1s linear infinite;
         }
 
         .team-hero p {
             font-size: 1.05rem;
             color: rgba(240,240,255,0.6);
             margin-bottom: 30px;
-            animation: fadeInUp 0.6s 0.2s both;
+            animation: fadeInUp 0.7s 0.55s both;
         }
 
         .hero-stats {
             display: flex; gap: 30px; justify-content: center; flex-wrap: wrap;
-            animation: fadeInUp 0.6s 0.3s both;
+            animation: fadeInUp 0.7s 0.7s both;
         }
         .hero-stat {
             display: flex; align-items: center; gap: 8px;
             font-size: 0.85rem;
             color: rgba(240,240,255,0.55);
+            transition: color 0.3s;
         }
+        .hero-stat:hover { color: var(--beyaz); }
         .hero-stat i { color: var(--sari); font-size: 0.8rem; }
 
         /* ===== STATS COUNTER ===== */
@@ -287,15 +339,29 @@
             border: 1px solid rgba(255,215,0,0.12);
             position: relative; overflow: hidden;
             transition: border-color 0.3s, transform 0.3s;
+            animation: statIn 0.7s both;
         }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.25s; }
+        .stat-card:nth-child(3) { animation-delay: 0.4s; }
+        /* Animated border */
+        .stat-card { animation: statIn 0.7s both, borderPulse 3s infinite; }
         .stat-card::before {
             content: '';
             position: absolute; top: 0; left: 0; right: 0; height: 2px;
             background: linear-gradient(90deg, transparent, var(--sari), transparent);
             opacity: 0; transition: opacity 0.3s;
         }
-        .stat-card:hover { border-color: rgba(255,215,0,0.3); transform: translateY(-2px); }
+        /* Sweep effect on hover */
+        .stat-card::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,215,0,0.05) 0%, transparent 60%);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .stat-card:hover { border-color: rgba(255,215,0,0.4); transform: translateY(-4px) scale(1.02); }
         .stat-card:hover::before { opacity: 1; }
+        .stat-card:hover::after { opacity: 1; }
         .stat-card .icon {
             font-size: 1.3rem; color: var(--sari); margin-bottom: 10px; opacity: 0.8;
         }
@@ -439,29 +505,44 @@
             padding: 28px 20px 20px;
             text-align: center;
             border: 1px solid rgba(255,215,0,0.08);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             position: relative; overflow: hidden;
-            animation: scaleIn 0.5s both;
+            animation: cardEntrance 0.6s both;
         }
+        .team-member:nth-child(1)  { animation-delay: 0.05s; }
+        .team-member:nth-child(2)  { animation-delay: 0.10s; }
+        .team-member:nth-child(3)  { animation-delay: 0.15s; }
+        .team-member:nth-child(4)  { animation-delay: 0.20s; }
+        .team-member:nth-child(5)  { animation-delay: 0.25s; }
+        .team-member:nth-child(6)  { animation-delay: 0.30s; }
+        .team-member:nth-child(7)  { animation-delay: 0.35s; }
+        .team-member:nth-child(8)  { animation-delay: 0.40s; }
+        .team-member:nth-child(9)  { animation-delay: 0.45s; }
+        .team-member:nth-child(10) { animation-delay: 0.50s; }
+        .team-member:nth-child(11) { animation-delay: 0.55s; }
+        .team-member:nth-child(12) { animation-delay: 0.60s; }
+        .team-member:nth-child(n+13) { animation-delay: 0.65s; }
+        /* Top shimmer sweeps in on hover */
         .team-member::before {
             content: '';
-            position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.4), transparent);
-            opacity: 0; transition: opacity 0.3s;
+            position: absolute; top: 0; left: -100%;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--sari), transparent);
+            transition: left 0.5s ease;
         }
         .team-member::after {
             content: '';
             position: absolute; inset: 0;
-            background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,215,0,0.04) 0%, transparent 70%);
-            opacity: 0; transition: opacity 0.3s;
+            background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(255,215,0,0.06) 0%, transparent 70%);
+            opacity: 0; transition: opacity 0.35s;
         }
         .team-member:hover {
-            transform: translateY(-6px);
-            border-color: rgba(255,215,0,0.25);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,215,0,0.1);
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(255,215,0,0.3);
+            box-shadow: 0 24px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,215,0,0.12), 0 0 30px rgba(255,215,0,0.05);
         }
-        .team-member:hover::before { opacity: 1; }
+        .team-member:hover::before { left: 0; }
         .team-member:hover::after { opacity: 1; }
 
         /* Category badge on card */
@@ -472,11 +553,13 @@
             letter-spacing: 1.5px;
             padding: 3px 9px;
             border-radius: 100px;
+            animation: badgeSlide 0.5s 0.8s both;
         }
         .card-badge.founder {
             background: rgba(255,215,0,0.15);
             border: 1px solid rgba(255,215,0,0.4);
             color: var(--sari);
+            animation: badgeSlide 0.5s 0.8s both;
         }
         .card-badge.member {
             background: rgba(255,255,255,0.05);
@@ -484,27 +567,45 @@
             color: rgba(240,240,255,0.4);
         }
 
+        /* Profile image with ring pulse for founders */
         .member-image {
             width: 90px; height: 90px;
             margin: 0 auto 16px;
             border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid rgba(255,215,0,0.3);
+            overflow: visible;
             background: var(--gri);
-            transition: border-color 0.3s, transform 0.3s;
+            transition: transform 0.35s;
             position: relative; z-index: 1;
         }
-        .team-member:hover .member-image {
-            border-color: var(--sari);
-            transform: scale(1.05);
-        }
-        .member-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .member-image img,
         .member-image.no-image {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            overflow: hidden;
             display: flex; align-items: center; justify-content: center;
+            border: 2px solid rgba(255,215,0,0.3);
+            transition: border-color 0.3s;
+        }
+        .member-image img { object-fit: cover; display: block; border: 2px solid rgba(255,215,0,0.3); border-radius: 50%; }
+        .member-image.no-image {
             font-family: 'Rajdhani', sans-serif;
             font-size: 2rem; font-weight: 700;
-            color: var(--sari);
+            color: var(--sari); background: var(--gri);
         }
+        /* Expanding ring on hover */
+        .member-image::after {
+            content: '';
+            position: absolute; inset: -4px;
+            border-radius: 50%;
+            border: 2px solid var(--sari);
+            opacity: 0;
+            transform: scale(0.85);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .team-member:hover .member-image { transform: scale(1.08); }
+        .team-member:hover .member-image::after { opacity: 0.5; transform: scale(1); }
+        .team-member:hover .member-image img,
+        .team-member:hover .member-image.no-image { border-color: var(--sari); }
 
         .team-member h3 {
             font-family: 'Rajdhani', sans-serif;
@@ -513,7 +614,9 @@
             margin-bottom: 4px;
             letter-spacing: 0.5px;
             position: relative; z-index: 1;
+            transition: color 0.3s;
         }
+        .team-member:hover h3 { color: var(--sari); }
         .member-role {
             font-size: 0.78rem;
             color: rgba(240,240,255,0.45);
@@ -532,14 +635,14 @@
             display: flex; align-items: center; justify-content: center;
             color: rgba(240,240,255,0.5);
             font-size: 0.85rem;
-            transition: all 0.2s;
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
             text-decoration: none;
         }
         .member-social a:hover {
             background: rgba(255,215,0,0.15);
             border-color: rgba(255,215,0,0.4);
             color: var(--sari);
-            transform: scale(1.1);
+            transform: scale(1.15) rotate(-5deg);
         }
 
         /* ===== MODAL ===== */
@@ -777,6 +880,7 @@
     <!-- LOADER -->
     <div class="loader-wrapper" id="loader">
         <div class="loader"></div>
+        <div class="loader-text">LTF YÜKLENIYOR</div>
     </div>
 
     <!-- HAMBURGER -->
@@ -791,11 +895,8 @@
 
     <!-- SIDE MENU -->
     <nav id="sideMenu" class="side-menu" aria-label="Ana Navigasyon">
-        <div class="menu-logo">
-            <div class="menu-logo-text">
-                <strong>LOYAL TEAM</strong>
-                <span>FORCE</span>
-            </div>
+        <div class="menu-top-spacer">
+            <span>NAVIGASYON</span>
         </div>
         <div class="menu-items">
             <a href="index.html" class="menu-link">
@@ -821,10 +922,6 @@
             <a href="puanlama.html" class="menu-link">
                 <div class="link-icon"><i class="fas fa-star"></i></div>
                 Puanlama
-            </a>
-            <a href="sohbet.html" class="menu-link">
-                <div class="link-icon"><i class="fas fa-message"></i></div>
-                Sohbet
             </a>
         </div>
         <div class="menu-footer">LTF © 2025 — Tüm Haklar Saklı</div>
@@ -1360,7 +1457,7 @@
             <div class="team-member" data-category="member" data-name="Ekeo" data-role="Kurucu Yardımcısı" data-instagram="servet.888" data-instagram-url="https://instagram.com/servet.888" data-age="18" data-about="Yazılım geliştirme ve kod optimizasyonu konularında çalışır." data-skills="Yazılım Geliştirme, Kod Optimizasyonu" data-joined="2023">
                 <span class="card-badge member">ÜYE</span>
                 <div class="member-image">
-                    <img src="ltflogo.jpg" alt="Ekeo" onerror="this.parentElement.classList.add('no-image');this.style.display='none';this.parentElement.innerHTML='E'">
+                    <img src="ekeopfp.jpeg" alt="Ekeo" onerror="this.parentElement.classList.add('no-image');this.style.display='none';this.parentElement.innerHTML='E'">
                 </div>
                 <h3>Ekeo</h3>
                 <p class="member-role">Kurucu Yardımcısı</p>
@@ -1427,6 +1524,14 @@
             menuBtn.classList.toggle('open', isOpen);
             menuOverlay.classList.toggle('visible', isOpen);
             document.body.style.overflow = isOpen ? 'hidden' : '';
+            // Re-trigger link animations on open
+            if (isOpen) {
+                sideMenu.querySelectorAll('.menu-link').forEach(link => {
+                    link.style.animation = 'none';
+                    link.offsetHeight; // reflow
+                    link.style.animation = '';
+                });
+            }
         }
         function closeMenu() {
             sideMenu.classList.remove('open');
@@ -1440,7 +1545,7 @@
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 
         // ===== STAT COUNTER ANIMATION =====
-        function animateCounter(el, target, duration = 1200) {
+        function animateCounter(el, target, duration = 1400) {
             const start = performance.now();
             const update = (now) => {
                 const elapsed = now - start;
@@ -1452,17 +1557,29 @@
             requestAnimationFrame(update);
         }
 
-        const observer = new IntersectionObserver((entries) => {
+        const counterObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const el = entry.target;
-                    animateCounter(el, parseInt(el.dataset.target));
-                    observer.unobserve(el);
+                    animateCounter(entry.target, parseInt(entry.target.dataset.target));
+                    counterObserver.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.5 });
+        document.querySelectorAll('.number[data-target]').forEach(el => counterObserver.observe(el));
 
-        document.querySelectorAll('.number[data-target]').forEach(el => observer.observe(el));
+        // ===== CARD SCROLL REVEAL =====
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                    cardObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.team-member').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            cardObserver.observe(el);
+        });
 
         // ===== FILTER + SEARCH =====
         let currentFilter = 'all';
@@ -1487,7 +1604,6 @@
             noResults.style.display = visible === 0 ? 'block' : 'none';
         }
 
-        // Filter buttons
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -1497,7 +1613,6 @@
             });
         });
 
-        // Search input
         const searchInput = document.getElementById('searchInput');
         const searchClear = document.getElementById('searchClear');
 
@@ -1514,7 +1629,6 @@
             searchInput.focus();
         });
 
-        // Init count
         applyFilters();
 
         // ===== MODAL =====
@@ -1525,16 +1639,14 @@
 
         function openModal(m) {
             const name = m.dataset.name;
-            const imgEl = m.querySelector('.member-image img');
             const profileDiv = document.getElementById('modalProfileImg');
-            const modalImg = document.getElementById('modalImg');
+            const imgEl = m.querySelector('.member-image img');
 
-            // Photo
             profileDiv.classList.remove('no-image');
             profileDiv.innerHTML = '<img id="modalImg" src="" alt="">';
             const newImg = profileDiv.querySelector('img');
             newImg.alt = name;
-            if (imgEl && imgEl.src) {
+            if (imgEl && imgEl.src && !imgEl.src.includes('data:')) {
                 newImg.src = imgEl.src;
                 newImg.onerror = () => {
                     profileDiv.classList.add('no-image');
