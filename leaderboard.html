@@ -19,7 +19,7 @@ firebase.initializeApp({
   messagingSenderId:"663809997700",
   appId:"1:663809997700:web:6c2de46ddf0167f5b23bd1"
 });
-const DB=firebase.database();
+const DB = firebase.database();
 </script>
 <style>
 :root{
@@ -27,6 +27,7 @@ const DB=firebase.database();
   --border:rgba(255,255,255,.07);
   --blue:#3b82f6;--purple:#8b5cf6;--gold:#f59e0b;
   --silver:#94a3b8;--bronze:#cd7f32;--green:#10b981;--red:#ef4444;
+  --pink:#ec4899;--cyan:#06b6d4;
   --text:#eef2ff;--muted:#4a5568;
   --font:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;
   --menu-w:272px;
@@ -36,94 +37,32 @@ body{background:var(--bg);font-family:var(--font);min-height:100vh;color:var(--t
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,.03)1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.03)1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
 body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;background:radial-gradient(circle,rgba(59,130,246,.06)0%,transparent 60%);pointer-events:none;z-index:0;}
 
-/* ════════════════════════════════
-   HAMBURGER — sabit sol üst
-════════════════════════════════ */
-.ham-btn{
-  position:fixed;top:14px;left:14px;z-index:2000;
-  width:40px;height:40px;
-  background:rgba(8,11,18,.92);
-  border:1px solid rgba(59,130,246,.3);
-  border-radius:11px;cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-  transition:all .28s;box-shadow:0 3px 14px rgba(0,0,0,.5);
-  backdrop-filter:blur(12px);flex-shrink:0;
-}
+/* HAM BTN */
+.ham-btn{position:fixed;top:14px;left:14px;z-index:2000;width:40px;height:40px;background:rgba(8,11,18,.92);border:1px solid rgba(59,130,246,.3);border-radius:11px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:all .28s;box-shadow:0 3px 14px rgba(0,0,0,.5);backdrop-filter:blur(12px);}
 .ham-btn:hover{border-color:rgba(59,130,246,.6);background:rgba(59,130,246,.1);}
-.ham-btn .bar{width:17px;height:2px;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:999px;transition:all .3s cubic-bezier(.4,0,.2,1);transform-origin:center;display:block;}
+.ham-btn .bar{width:17px;height:2px;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:999px;transition:all .3s cubic-bezier(.4,0,.2,1);display:block;}
 .ham-btn.open .bar:nth-child(1){transform:translateY(7px) rotate(45deg);}
 .ham-btn.open .bar:nth-child(2){opacity:0;transform:scaleX(0);}
 .ham-btn.open .bar:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-
-/* ════════════════════════════════
-   OVERLAY
-════════════════════════════════ */
 .menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:1500;opacity:0;pointer-events:none;transition:opacity .3s;}
 .menu-overlay.open{opacity:1;pointer-events:all;}
 
-/* ════════════════════════════════
-   SIDE MENU — soldan girer
-   Hamburger butonu menü DIŞINDA,
-   menü üzerine çakışmaz
-════════════════════════════════ */
-.side-nav{
-  position:fixed;top:0;left:calc(-1 * var(--menu-w) - 30px);
-  width:var(--menu-w);height:100vh;
-  background:var(--surface);
-  border-right:1px solid var(--border);
-  z-index:1600;
-  display:flex;flex-direction:column;
-  transition:left .36s cubic-bezier(.4,0,.2,1);
-  box-shadow:16px 0 48px rgba(0,0,0,.65);
-  overflow-y:auto;
-}
+/* SIDE NAV */
+.side-nav{position:fixed;top:0;left:calc(-1*var(--menu-w) - 30px);width:var(--menu-w);height:100vh;background:var(--surface);border-right:1px solid var(--border);z-index:1600;display:flex;flex-direction:column;transition:left .36s cubic-bezier(.4,0,.2,1);box-shadow:16px 0 48px rgba(0,0,0,.65);overflow-y:auto;}
 .side-nav::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--purple));}
 .side-nav.open{left:0;}
-
-/* Menü başlığı: hamburger alanının (40+14+8=62px) sağından başlar */
-.nav-header{
-  display:flex;align-items:center;gap:10px;
-  padding:0 16px;
-  height:68px;          /* hamburger buton yüksekliği (14+40+14) ile aynı */
-  padding-left:62px;    /* buton genişliği + sol boşluk + iç boşluk */
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;
-}
-.nav-header .n-logo-ico{
-  width:30px;height:30px;
-  background:linear-gradient(135deg,var(--blue),var(--purple));
-  border-radius:9px;display:flex;align-items:center;justify-content:center;
-  font-size:.85rem;box-shadow:0 3px 10px rgba(59,130,246,.3);flex-shrink:0;
-}
-.nav-header .n-logo-txt{
-  font-weight:800;font-size:.95rem;
-  background:linear-gradient(135deg,#fff,#60a5fa);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-}
-
-/* Kullanıcı mini kartı */
-.n-ucard{
-  margin:10px 12px 4px;
-  background:rgba(0,0,0,.28);border:1px solid var(--border);
-  border-radius:13px;padding:11px;
-  display:none;align-items:center;gap:10px;
-}
+.nav-header{display:flex;align-items:center;gap:10px;padding:0 16px;height:68px;padding-left:62px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.nav-header .n-logo-ico{width:30px;height:30px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.85rem;box-shadow:0 3px 10px rgba(59,130,246,.3);}
+.nav-header .n-logo-txt{font-weight:800;font-size:.95rem;background:linear-gradient(135deg,#fff,#60a5fa);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.n-ucard{margin:10px 12px 4px;background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:13px;padding:11px;display:none;align-items:center;gap:10px;}
 .n-ucard.show{display:flex;}
-.n-avi{width:36px;height:36px;border-radius:50%;background:linear-gradient(145deg,#1e2430,#0f1319);border:2px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0;}
+.n-avi{width:36px;height:36px;border-radius:50%;background:linear-gradient(145deg,#1e2430,#0f1319);border:2px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center;font-size:1.15rem;}
 .n-uinfo .un{font-weight:700;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:156px;}
 .n-uinfo .ur{font-size:.65rem;color:var(--blue);font-weight:700;font-family:var(--mono);}
 .n-uinfo .ul{font-size:.62rem;color:var(--muted);}
-
-/* Nav body */
 .nav-body{padding:8px 10px;flex:1;display:flex;flex-direction:column;gap:2px;}
 .nav-sec-lbl{font-size:.58rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:6px 10px 2px;}
-.nav-link,.nav-action{
-  display:flex;align-items:center;gap:9px;
-  padding:9px 11px;border-radius:10px;
-  text-decoration:none;color:var(--muted);
-  font-size:.83rem;font-weight:600;transition:all .18s;
-  background:none;border:none;cursor:pointer;font-family:var(--font);width:100%;text-align:left;
-}
+.nav-link,.nav-action{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;text-decoration:none;color:var(--muted);font-size:.83rem;font-weight:600;transition:all .18s;background:none;border:none;cursor:pointer;font-family:var(--font);width:100%;text-align:left;}
 .nav-link:hover,.nav-action:hover{color:var(--text);background:rgba(255,255,255,.05);}
 .nav-link.cur{color:var(--blue);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.18);}
 .nav-link i,.nav-action i{width:15px;text-align:center;font-size:.83rem;}
@@ -132,11 +71,9 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .nav-div{height:1px;background:var(--border);margin:5px 10px;}
 .nav-foot{padding:11px 16px;border-top:1px solid var(--border);font-size:.67rem;color:var(--muted);text-align:center;}
 
-/* ════════════════════════════════
-   AUTH
-════════════════════════════════ */
+/* AUTH */
 #authScreen{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px;}
-.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:30px 24px;width:100%;max-width:400px;position:relative;box-shadow:0 40px 80px rgba(0,0,0,.6),inset 0 0 0 1px rgba(59,130,246,.08);}
+.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:30px 24px;width:100%;max-width:400px;position:relative;box-shadow:0 40px 80px rgba(0,0,0,.6);}
 .auth-box::before{content:'';position:absolute;top:-1px;left:20%;right:20%;height:2px;background:linear-gradient(90deg,transparent,var(--blue),var(--purple),transparent);border-radius:999px;}
 .auth-logo{text-align:center;margin-bottom:22px;}
 .auth-logo .aico{width:54px;height:54px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.55rem;margin:0 auto 10px;box-shadow:0 10px 24px rgba(59,130,246,.4);}
@@ -158,12 +95,11 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .avo.sel{border-color:var(--blue);background:rgba(59,130,246,.14);box-shadow:0 0 12px rgba(59,130,246,.25);}
 .btn-main{width:100%;padding:11px;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;border-radius:10px;color:#fff;font-family:var(--font);font-size:.89rem;font-weight:700;cursor:pointer;transition:all .28s;box-shadow:0 6px 16px rgba(59,130,246,.38);margin-top:6px;}
 .btn-main:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(59,130,246,.48);}
+.btn-main:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 .auth-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:.76rem;border-radius:9px;padding:8px 12px;margin-bottom:11px;display:none;}
 .auth-load{text-align:center;color:var(--muted);font-size:.77rem;padding:8px;display:none;}
 
-/* ════════════════════════════════
-   APP LAYOUT
-════════════════════════════════ */
+/* APP */
 #app{display:none;position:relative;z-index:1;}
 .app-layout{display:grid;grid-template-columns:248px 1fr;min-height:100vh;}
 .sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:18px 11px;position:sticky;top:0;height:100vh;overflow-y:auto;}
@@ -197,9 +133,7 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .logout-btn{margin-top:auto;width:100%;display:flex;align-items:center;gap:8px;padding:8px 9px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.14);color:#ef4444;font-family:var(--font);font-size:.79rem;border-radius:9px;cursor:pointer;transition:all .18s;}
 .logout-btn:hover{background:rgba(239,68,68,.11);}
 
-/* ════════════════════════════════
-   MAIN
-════════════════════════════════ */
+/* MAIN */
 .main{padding:22px 22px 40px;overflow-y:auto;}
 .panel{display:none;}
 .panel.active{display:block;}
@@ -210,11 +144,8 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 @keyframes pdot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.75);}}
 .fb-badge{display:inline-flex;align-items:center;gap:4px;font-size:.63rem;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(16,185,129,.13);color:var(--green);border:1px solid rgba(16,185,129,.22);}
 
-/* ════════════════════════════════
-   LEADERBOARD CARD
-════════════════════════════════ */
+/* LB CARD */
 .lb-card{background:var(--surface);border:1px solid var(--border);border-radius:22px;overflow:hidden;box-shadow:0 16px 42px rgba(0,0,0,.38);}
-
 /* Podium */
 .podium{padding:18px 12px 12px;background:linear-gradient(180deg,rgba(59,130,246,.04)0%,transparent 100%);border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:center;gap:8px;}
 .ps{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:transform .28s;}
@@ -231,7 +162,6 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .ps-2 .ps-bar{height:40px;background:linear-gradient(180deg,rgba(148,163,184,.16),rgba(148,163,184,.05));color:var(--silver);}
 .ps-1 .ps-bar{height:62px;background:linear-gradient(180deg,rgba(245,158,11,.16),rgba(245,158,11,.05));color:var(--gold);}
 .ps-3 .ps-bar{height:28px;background:linear-gradient(180deg,rgba(205,127,50,.16),rgba(205,127,50,.05));color:var(--bronze);}
-
 /* Toolbar */
 .lb-toolbar{padding:9px 13px;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
 .sw{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:40px;padding:6px 12px;transition:all .28s;flex:1;min-width:110px;}
@@ -241,10 +171,8 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .sw input::placeholder{color:var(--muted);}
 .srt-btn{padding:6px 11px;background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:40px;color:var(--muted);font-family:var(--font);font-size:.71rem;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap;}
 .srt-btn.active,.srt-btn:hover{border-color:rgba(59,130,246,.4);color:var(--blue);background:rgba(59,130,246,.07);}
-
-/* Table head */
+/* LB Head */
 .lb-head{display:grid;grid-template-columns:54px 44px 1fr 76px 108px 84px;padding:8px 13px;background:rgba(0,0,0,.28);border-bottom:1px solid rgba(255,255,255,.04);font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);}
-
 /* Rows */
 .lb-rows{padding:5px 7px 11px;display:flex;flex-direction:column;gap:3px;}
 .row{display:grid;grid-template-columns:54px 44px 1fr 76px 108px 84px;align-items:center;padding:10px 7px;border-radius:12px;background:rgba(255,255,255,.018);cursor:pointer;transition:all .26s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;animation:fadeUp .36s ease backwards;}
@@ -258,22 +186,20 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .row.r2:hover,.row.r3:hover{transform:translateX(4px);}
 .row.me{border:1px solid rgba(59,130,246,.26)!important;background:rgba(59,130,246,.05)!important;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(11px);}to{opacity:1;transform:translateY(0);}}
-
-/* 15 dışı kendi satırı */
-.rank-dots{text-align:center;color:var(--muted);padding:3px 0 5px;letter-spacing:4px;display:none;font-size:.95rem;}
-.rank-dots.show{display:block;}
-.rank-sep{display:none;text-align:center;font-size:.64rem;font-weight:700;color:var(--blue);letter-spacing:.1em;padding:4px 13px;margin:2px 7px 0;background:rgba(59,130,246,.06);border-radius:7px;}
-.rank-sep.show{display:block;}
-.my-row{display:none;grid-template-columns:54px 44px 1fr 76px 108px 84px;align-items:center;margin:3px 7px 4px;padding:10px 7px;border-radius:12px;background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(139,92,246,.07));border:1px solid rgba(59,130,246,.26);cursor:pointer;transition:all .26s;position:relative;overflow:hidden;}
-.my-row::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--purple));}
-.my-row.show{display:grid;}
-.my-row:hover{transform:translateX(4px);box-shadow:0 4px 15px rgba(59,130,246,.16);}
+/* Kendi sıra — 15 altındakiler için */
+.my-row-wrap{display:none;margin:0 7px 4px;}
+.my-row-wrap.show{display:block;}
+.rank-dots-sep{text-align:center;padding:8px 0 4px;color:var(--muted);letter-spacing:4px;font-size:.9rem;}
+.rank-sep-label{text-align:center;font-size:.63rem;font-weight:700;color:var(--blue);letter-spacing:.1em;padding:4px 13px;margin-bottom:3px;background:rgba(59,130,246,.06);border-radius:7px;}
+.my-own-row{display:grid;grid-template-columns:54px 44px 1fr 76px 108px 84px;align-items:center;padding:10px 7px;border-radius:12px;background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(139,92,246,.07));border:1px solid rgba(59,130,246,.3);cursor:pointer;transition:all .26s;position:relative;overflow:hidden;}
+.my-own-row::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--purple));}
+.my-own-row:hover{transform:translateX(4px);box-shadow:0 4px 15px rgba(59,130,246,.18);}
+/* Banner */
 .rank-banner{display:none;align-items:center;gap:7px;padding:9px 13px;background:linear-gradient(135deg,rgba(59,130,246,.07),rgba(139,92,246,.04));border-top:1px solid rgba(59,130,246,.12);font-size:.76rem;font-weight:600;flex-wrap:wrap;}
 .rank-banner.show{display:flex;}
 .rb-rank{font-family:var(--mono);font-size:.98rem;font-weight:800;color:var(--blue);}
 .rb-xp{color:var(--muted);font-size:.68rem;}
 .rb-need{margin-left:auto;color:var(--gold);font-weight:700;font-size:.72rem;}
-
 /* Row cells */
 .rnum{font-weight:800;font-size:.9rem;font-family:var(--mono);}
 .rn1{color:var(--gold);text-shadow:0 0 11px rgba(245,158,11,.5);}
@@ -282,8 +208,8 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .rnx{color:var(--muted);}
 .rnme{color:var(--blue);}
 .avi-cell{width:34px;height:34px;background:linear-gradient(145deg,#1e2430,#0f1319);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;border:1px solid rgba(255,255,255,.07);transition:all .26s;flex-shrink:0;}
-.row:hover .avi-cell,.my-row:hover .avi-cell{border-color:var(--blue);transform:scale(1.1) rotate(7deg);box-shadow:0 0 9px rgba(59,130,246,.28);}
-.row.r1 .avi-cell{border-color:rgba(245,158,11,.38);box-shadow:0 0 13px rgba(245,158,11,.14);}
+.row:hover .avi-cell,.my-own-row:hover .avi-cell{border-color:var(--blue);transform:scale(1.1) rotate(7deg);}
+.row.r1 .avi-cell{border-color:rgba(245,158,11,.38);}
 .pinfo{display:flex;flex-direction:column;gap:1px;min-width:0;}
 .pname{font-weight:700;font-size:.83rem;display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .me-tag{background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(139,92,246,.2));border:1px solid rgba(59,130,246,.28);color:#60a5fa;font-size:.49rem;font-weight:800;padding:1px 5px;border-radius:999px;flex-shrink:0;}
@@ -296,25 +222,24 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .teq{color:var(--muted);}
 .lb-foot{padding:9px 13px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:.66rem;color:var(--muted);flex-wrap:wrap;gap:5px;}
 
-/* XP Boost banner */
+/* TASKS */
 .boost-bar{background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(239,68,68,.07));border:1px solid rgba(245,158,11,.28);border-radius:11px;padding:9px 13px;margin-bottom:14px;display:none;align-items:center;gap:9px;font-size:.78rem;font-weight:600;}
 .boost-bar.show{display:flex;}
 .b-timer{font-family:var(--mono);color:var(--gold);font-weight:800;}
-
-/* ════════════════════════════════
-   TASKS
-════════════════════════════════ */
+.cat-filter-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;}
 .tasks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:11px;}
 .tc{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:15px;position:relative;overflow:hidden;transition:all .28s;}
 .tc:hover{border-color:rgba(59,130,246,.28);transform:translateY(-2px);box-shadow:0 11px 26px rgba(0,0,0,.38);}
-.tc.done{opacity:.48;pointer-events:none;}
-.tc.done::after{content:'✓ TAMAMLANDI';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(16,185,129,.12);color:var(--green);font-weight:800;font-size:.78rem;letter-spacing:.08em;border-radius:15px;}
+.tc.done{opacity:.5;pointer-events:none;}
+.tc.done::after{content:'✓ TAMAMLANDI';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(16,185,129,.1);color:var(--green);font-weight:800;font-size:.78rem;letter-spacing:.08em;border-radius:15px;}
 .tc-badge{font-size:.56rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;padding:2px 7px;border-radius:999px;display:inline-block;margin-bottom:5px;}
 .tb-daily{background:rgba(59,130,246,.14);color:var(--blue);}
+.tb-weekly{background:rgba(239,68,68,.14);color:var(--red);}
 .tb-oneshot{background:rgba(139,92,246,.14);color:var(--purple);}
 .tb-social{background:rgba(16,185,129,.14);color:var(--green);}
 .tb-special{background:rgba(245,158,11,.14);color:var(--gold);}
-.tb-weekly{background:rgba(239,68,68,.14);color:var(--red);}
+.tb-fun{background:rgba(236,72,153,.14);color:var(--pink);}
+.tb-challenge{background:rgba(6,182,212,.14);color:var(--cyan);}
 .t-ico{font-size:1.75rem;margin-bottom:7px;}
 .t-title{font-weight:700;font-size:.86rem;margin-bottom:3px;}
 .t-desc{color:var(--muted);font-size:.7rem;margin-bottom:11px;line-height:1.5;}
@@ -327,11 +252,9 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .sd{flex:1;height:6px;background:rgba(255,255,255,.055);border-radius:999px;transition:all .38s;}
 .sd.done{background:linear-gradient(90deg,var(--blue),var(--purple));}
 
-/* ════════════════════════════════
-   SHOP
-════════════════════════════════ */
+/* SHOP */
 .shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(174px,1fr));gap:11px;}
-.shop-c{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:15px;text-align:center;transition:all .28s;cursor:pointer;}
+.shop-c{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:15px;text-align:center;transition:all .28s;}
 .shop-c:hover{border-color:rgba(245,158,11,.28);transform:translateY(-2px);box-shadow:0 11px 26px rgba(0,0,0,.38);}
 .shop-c.owned{border-color:rgba(16,185,129,.28);background:rgba(16,185,129,.04);}
 .sh-ico{font-size:2rem;margin-bottom:8px;}
@@ -342,9 +265,7 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .sh-btn:hover{opacity:.84;}
 .sh-btn.owned{background:rgba(16,185,129,.17);color:var(--green);cursor:default;}
 
-/* ════════════════════════════════
-   PROFILE
-════════════════════════════════ */
+/* PROFILE */
 .prof-hero{background:var(--surface);border:1px solid var(--border);border-radius:21px;padding:22px;margin-bottom:13px;position:relative;overflow:hidden;text-align:center;}
 .prof-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:65px;background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(139,92,246,.08));}
 .p-big-avi{width:75px;height:75px;border-radius:50%;background:linear-gradient(145deg,#1e2430,#0f1319);border:3px solid rgba(59,130,246,.38);display:flex;align-items:center;justify-content:center;font-size:2.4rem;margin:0 auto 11px;position:relative;z-index:1;box-shadow:0 9px 24px rgba(59,130,246,.15);}
@@ -361,9 +282,7 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .psv{font-size:1.1rem;font-weight:800;font-family:var(--mono);background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent;}
 .psl{font-size:.57rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.05em;}
 
-/* ════════════════════════════════
-   STATS
-════════════════════════════════ */
+/* STATS */
 .big-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:11px;margin-bottom:16px;}
 .bg-c{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:17px;text-align:center;}
 .bgv{font-size:1.7rem;font-weight:800;font-family:var(--mono);background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:4px;}
@@ -380,9 +299,7 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .hi-amt.gain{color:var(--green);}
 .hi-amt.spend{color:var(--red);}
 
-/* ════════════════════════════════
-   TOAST & MODALS
-════════════════════════════════ */
+/* TOAST & MODALS */
 #tw{position:fixed;bottom:17px;right:17px;z-index:3000;display:flex;flex-direction:column;gap:6px;}
 .toast{background:var(--surf2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:9px;min-width:230px;max-width:300px;animation:tIn .36s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 22px rgba(0,0,0,.48);}
 .toast.success{border-color:rgba(16,185,129,.28);}
@@ -391,13 +308,11 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .t-ic{font-size:1.1rem;}
 .t-tx{font-size:.79rem;font-weight:600;flex:1;}
 @keyframes tIn{from{opacity:0;transform:translateX(32px) scale(.9);}to{opacity:1;transform:translateX(0) scale(1);}}
-
 #lvlUpModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);z-index:2500;align-items:center;justify-content:center;padding:20px;}
 .lup-card{background:linear-gradient(145deg,#0f1219,#0a0d14);border:1px solid rgba(245,158,11,.28);border-radius:25px;padding:32px 24px;text-align:center;max-width:320px;width:100%;animation:lPop .46s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 48px rgba(245,158,11,.15);}
 @keyframes lPop{from{opacity:0;transform:scale(.7);}to{opacity:1;transform:scale(1);}}
 .lup-ico{font-size:3.4rem;margin-bottom:11px;animation:boun .6s ease infinite alternate;}
 @keyframes boun{from{transform:translateY(0);}to{transform:translateY(-8px);}}
-
 #playerModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(13px);z-index:2500;align-items:center;justify-content:center;padding:20px;}
 .pm-card{background:linear-gradient(145deg,#0f1219,#0a0d14);border:1px solid rgba(255,255,255,.07);border-radius:24px;max-width:340px;width:100%;padding:24px 18px;text-align:center;position:relative;animation:mPop .36s cubic-bezier(.34,1.56,.64,1);}
 @keyframes mPop{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
@@ -406,49 +321,42 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 .bdg-item{background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:9px;padding:5px 9px;font-size:.88rem;}
 .empty-state{text-align:center;padding:48px 14px;color:var(--muted);font-size:.79rem;}
 .empty-state i{font-size:2rem;display:block;margin-bottom:8px;opacity:.33;}
+
+/* Overlay quiz/bilmece */
+.quiz-ov{position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(13px);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.quiz-box{background:var(--surface);border:1px solid var(--border);border-radius:21px;padding:24px;max-width:360px;width:100%;text-align:center;}
+
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(59,130,246,.18);border-radius:999px;}
 
-/* ════════════════════════════════
-   RESPONSIVE
-════════════════════════════════ */
 @media(max-width:900px){
   .app-layout{grid-template-columns:1fr;}
   .sidebar{height:auto;position:static;}
   .main{padding:13px 11px 28px;}
   .lb-head{grid-template-columns:46px 38px 1fr 70px 78px;}
   .lb-head span:nth-child(6){display:none;}
-  .row,.my-row{grid-template-columns:46px 38px 1fr 70px 78px;}
+  .row,.my-own-row{grid-template-columns:46px 38px 1fr 70px 78px;}
   .ctrend{display:none;}
 }
 @media(max-width:520px){
   .lb-head{grid-template-columns:40px 34px 1fr 70px;}
   .lb-head span:nth-child(5){display:none;}
-  .row,.my-row{grid-template-columns:40px 34px 1fr 70px;}
+  .row,.my-own-row{grid-template-columns:40px 34px 1fr 70px;}
   .clvl{display:none;}
 }
 </style>
 </head>
 <body>
 
-<!-- HAMBURGER — menü dışında, her zaman görünür -->
-<button class="ham-btn" id="hamBtn">
-  <span class="bar"></span>
-  <span class="bar"></span>
-  <span class="bar"></span>
-</button>
-
+<button class="ham-btn" id="hamBtn"><span class="bar"></span><span class="bar"></span><span class="bar"></span></button>
 <div class="menu-overlay" id="menuOverlay"></div>
 
-<!-- SIDE MENU (SOL) -->
 <nav class="side-nav" id="sideNav">
-  <!-- Header: hamburger butonunun sağından başlar -->
   <div class="nav-header">
     <div class="n-logo-ico">🏆</div>
     <span class="n-logo-txt">ProLeague</span>
   </div>
-
   <div class="n-ucard" id="nUCard">
     <div class="n-avi" id="nAvi">👤</div>
     <div class="n-uinfo">
@@ -457,20 +365,19 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
       <div class="ul" id="nLvl">Lv 1 · Acemi</div>
     </div>
   </div>
-
   <div class="nav-body">
     <div class="nav-sec-lbl">Site Sayfaları</div>
-    <a href="index.html"       class="nav-link"><i class="fas fa-house"></i> Ana Sayfa</a>
+    <a href="index.html" class="nav-link"><i class="fas fa-house"></i> Ana Sayfa</a>
     <a href="leaderboard.html" class="nav-link cur"><i class="fas fa-trophy"></i> Liderlik Tablosu</a>
-    <a href="proje.html"       class="nav-link"><i class="fas fa-diagram-project"></i> Projelerimiz</a>
-    <a href="social.html"      class="nav-link"><i class="fas fa-share-nodes"></i> Sosyal Medya</a>
-    <a href="team.html"        class="nav-link"><i class="fas fa-users"></i> Takımımız</a>
-    <a href="puanlama.html"    class="nav-link"><i class="fas fa-star"></i> Puanlama</a>
-    <a href="sohbet.html"      class="nav-link"><i class="fas fa-message"></i> Sohbet <span class="nlb new">YENİ</span></a>
+    <a href="proje.html" class="nav-link"><i class="fas fa-diagram-project"></i> Projelerimiz</a>
+    <a href="social.html" class="nav-link"><i class="fas fa-share-nodes"></i> Sosyal Medya</a>
+    <a href="team.html" class="nav-link"><i class="fas fa-users"></i> Takımımız</a>
+    <a href="puanlama.html" class="nav-link"><i class="fas fa-star"></i> Puanlama</a>
+    <a href="sohbet.html" class="nav-link"><i class="fas fa-message"></i> Sohbet <span class="nlb new">YENİ</span></a>
     <div class="nav-div"></div>
     <div class="nav-sec-lbl">Uygulama</div>
     <button class="nav-action" onclick="goPanel('leaderboard')"><i class="fas fa-list-ol"></i> Sıralama</button>
-    <button class="nav-action" onclick="goPanel('tasks')"><i class="fas fa-tasks"></i> Görevler <span class="nlb" id="nTaskBdg" style="margin-left:auto">0</span></button>
+    <button class="nav-action" onclick="goPanel('tasks')"><i class="fas fa-tasks"></i> Görevler <span class="nlb" id="nTaskBdg">0</span></button>
     <button class="nav-action" onclick="goPanel('shop')"><i class="fas fa-store"></i> Dükkan</button>
     <button class="nav-action" onclick="goPanel('profile')"><i class="fas fa-user"></i> Profilim</button>
     <button class="nav-action" onclick="goPanel('stats')"><i class="fas fa-chart-bar"></i> İstatistikler</button>
@@ -493,15 +400,15 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
     <div class="auth-err" id="aErr"></div>
     <div class="auth-load" id="aLoad">🔄 Yükleniyor...</div>
     <div id="loginForm">
-      <div class="fg"><label>Kullanıcı Adı</label><div class="iw"><input type="text" id="lUser" placeholder="Kullanıcı adınız" autocomplete="username"><i class="fas fa-user"></i></div></div>
-      <div class="fg"><label>Şifre</label><div class="iw"><input type="password" id="lPass" placeholder="••••••••" autocomplete="current-password"><i class="fas fa-lock"></i></div></div>
-      <button class="btn-main" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Giriş Yap</button>
+      <div class="fg"><label>Kullanıcı Adı</label><div class="iw"><i class="fas fa-user"></i><input type="text" id="lUser" placeholder="Kullanıcı adınız" autocomplete="username"></div></div>
+      <div class="fg"><label>Şifre</label><div class="iw"><i class="fas fa-lock"></i><input type="password" id="lPass" placeholder="••••••••" autocomplete="current-password"></div></div>
+      <button class="btn-main" id="loginBtn" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Giriş Yap</button>
     </div>
     <div id="regForm" style="display:none">
-      <div class="fg"><label>Kullanıcı Adı</label><div class="iw"><input type="text" id="rUser" placeholder="Benzersiz kullanıcı adı" autocomplete="username"><i class="fas fa-user"></i></div></div>
-      <div class="fg"><label>Şifre</label><div class="iw"><input type="password" id="rPass" placeholder="En az 4 karakter" autocomplete="new-password"><i class="fas fa-lock"></i></div></div>
+      <div class="fg"><label>Kullanıcı Adı</label><div class="iw"><i class="fas fa-user"></i><input type="text" id="rUser" placeholder="Benzersiz kullanıcı adı" autocomplete="username"></div></div>
+      <div class="fg"><label>Şifre</label><div class="iw"><i class="fas fa-lock"></i><input type="password" id="rPass" placeholder="En az 4 karakter" autocomplete="new-password"></div></div>
       <div class="fg"><label>Avatar Seç</label><div class="avo-wrap" id="aviPick"></div></div>
-      <button class="btn-main" onclick="doRegister()"><i class="fas fa-user-plus"></i> Kayıt Ol</button>
+      <button class="btn-main" id="regBtn" onclick="doRegister()"><i class="fas fa-user-plus"></i> Kayıt Ol</button>
     </div>
   </div>
 </div>
@@ -538,7 +445,6 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
     </aside>
 
     <main class="main">
-
       <!-- LEADERBOARD -->
       <div class="panel active" id="panel-leaderboard">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;flex-wrap:wrap;gap:6px;">
@@ -548,10 +454,7 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
             <span class="fb-badge"><i class="fas fa-database"></i> Firebase</span>
           </div>
         </div>
-        <div class="pg-sub">
-          Gerçek zamanlı · Tüm cihazlarda senkronize
-          <span id="syncTime" style="opacity:.45;font-size:.63rem;"></span>
-        </div>
+        <div class="pg-sub">Gerçek zamanlı · Tüm cihazlarda senkronize <span id="syncTime" style="opacity:.45;font-size:.63rem;"></span></div>
         <div class="lb-card">
           <div class="podium" id="podium"></div>
           <div class="lb-toolbar">
@@ -562,9 +465,12 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
           </div>
           <div class="lb-head"><span># SIRA</span><span></span><span>OYUNCU</span><span>SEVİYE</span><span>XP</span><span>DEĞİŞİM</span></div>
           <div class="lb-rows" id="lbRows"></div>
-          <div class="rank-dots" id="rankDots">• • •</div>
-          <div class="rank-sep" id="rankSep">SENİN KONUMUN</div>
-          <div class="my-row" id="myRow" onclick="openSelfModal()"></div>
+          <!-- Sadece 15 dışında kalanlara gösterilir -->
+          <div class="my-row-wrap" id="myRowWrap">
+            <div class="rank-dots-sep">• • •</div>
+            <div class="rank-sep-label">SENİN KONUMUN</div>
+            <div class="my-own-row" id="myOwnRow" onclick="openSelfModal()"></div>
+          </div>
           <div class="rank-banner" id="rankBanner">
             <i class="fas fa-user" style="color:var(--blue)"></i>
             <span>Senin sıran:</span>
@@ -573,7 +479,7 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
             <span class="rb-need" id="rbNeed"></span>
           </div>
           <div class="lb-foot">
-            <span><i class="fas fa-users"></i> Toplam: <strong id="totalP">0</strong> oyuncu</span>
+            <span><i class="fas fa-users"></i> Toplam: <strong id="totalP">0</strong> oyuncu · Tabloda: <strong>İlk 15</strong></span>
             <span id="myRankInfo" style="color:var(--blue);font-weight:700;"></span>
           </div>
         </div>
@@ -584,8 +490,7 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
         <div class="pg-title"><i class="fas fa-tasks"></i> Görevler</div>
         <div class="pg-sub">XP kazan, seviye atla, sıralamada yüksel!</div>
         <div class="boost-bar" id="boostBar">
-          <span>⚡</span>
-          <span style="flex:1">XP Boost aktif — tüm kazanımlar <strong>2×</strong></span>
+          <span>⚡</span><span style="flex:1">XP Boost aktif — tüm kazanımlar <strong>2×</strong></span>
           <span class="b-timer" id="boostTimer">60:00</span>
         </div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:14px;margin-bottom:14px;">
@@ -594,8 +499,9 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
             <span style="font-family:var(--mono);color:var(--gold);font-weight:800;font-size:.88rem;" id="streakCnt">0 gün</span>
           </div>
           <div class="streak-bar" id="streakBar"></div>
-          <div style="font-size:.68rem;color:var(--muted);">7 gün üst üste → +500 XP • 14 gün → +1200 XP • 30 gün → +3000 XP!</div>
+          <div style="font-size:.68rem;color:var(--muted);">7 gün → +500XP · 14 gün → +1200XP · 30 gün → +3000XP!</div>
         </div>
+        <div class="cat-filter-bar" id="catFilterBar"></div>
         <div class="tasks-grid" id="tasksGrid"></div>
       </div>
 
@@ -669,298 +575,317 @@ body::after{content:'';position:fixed;top:-40%;left:-20%;width:80%;height:80%;ba
 
 <script>
 'use strict';
+/* ═══════════════════ SABİTLER ═══════════════════ */
+const LB_LIMIT = 15; // Tabloda gösterilecek max kişi
 
-/* ═══════════════════════════════════════
-   SABITLER
-═══════════════════════════════════════ */
-const AVATARS=['🐺','🌙','🌊','🐉','🐦','👊','💧','🔥','🐆','🏹','❄️','⚡','🌿','🍃','👑','🦊','🦅','🐻','🦁','🎯'];
-const TITLES=[{m:1,n:'Acemi'},{m:3,n:'Savaşçı'},{m:5,n:'Asker'},{m:8,n:'Şövalye'},{m:12,n:'Kahraman'},{m:16,n:'Şampiyon'},{m:20,n:'Efsane'},{m:25,n:'Titan'},{m:30,n:'İlahi'},{m:40,n:'Ölümsüz'},{m:50,n:'Tanrı'}];
+const AVATARS = ['🐺','🌙','🌊','🐉','🐦','👊','💧','🔥','🐆','🏹','❄️','⚡','🌿','🍃','👑','🦊','🦅','🐻','🦁','🎯','🌸','🎭','🦋','🏔️','🌈','🎪','🦄','🐯','🌺','🎸'];
+const TITLES = [{m:1,n:'Acemi'},{m:3,n:'Savaşçı'},{m:5,n:'Asker'},{m:8,n:'Şövalye'},{m:12,n:'Kahraman'},{m:16,n:'Şampiyon'},{m:20,n:'Efsane'},{m:25,n:'Titan'},{m:30,n:'İlahi'},{m:40,n:'Ölümsüz'},{m:50,n:'Tanrı'}];
 
-const SHOP_ITEMS=[
-  {id:'badge_fire',  ico:'🔥',name:'Alev Rozeti',   desc:'Profiline alev efekti',    price:200},
-  {id:'badge_star',  ico:'⭐',name:'Yıldız Rozeti', desc:'Altın yıldız rozeti',      price:350},
-  {id:'badge_crown', ico:'👑',name:'Taç Rozeti',    desc:'Kral tacı – nadir',        price:800},
-  {id:'badge_dragon',ico:'🐲',name:'Ejder Rozeti',  desc:'Efsane ejder rozeti',      price:1500},
-  {id:'frame_gold',  ico:'🏅',name:'Altın Çerçeve', desc:'Avatarına altın çerçeve',  price:500},
-  {id:'frame_neon',  ico:'💠',name:'Neon Çerçeve',  desc:'Parlayan neon çerçeve',    price:700},
-  {id:'xp_boost',    ico:'⚡',name:'XP Boost x2',  desc:'1 saat boyunca XP 2 katı', price:300},
-  {id:'title_dark',  ico:'🌑',name:'Karanlık Unvan',desc:'"Karanlık" özel unvanı',   price:600},
-  {id:'title_legend',ico:'🌟',name:'Efsane Unvanı', desc:'"Efsane" özel unvanı',    price:1200}
+const SHOP_ITEMS = [
+  {id:'badge_fire',  ico:'🔥',name:'Alev Rozeti',    desc:'Profiline alev efekti',      price:200},
+  {id:'badge_star',  ico:'⭐',name:'Yıldız Rozeti',  desc:'Altın yıldız rozeti',        price:350},
+  {id:'badge_crown', ico:'👑',name:'Taç Rozeti',     desc:'Kral tacı – nadir',          price:800},
+  {id:'badge_dragon',ico:'🐲',name:'Ejder Rozeti',   desc:'Efsane ejder rozeti',        price:1500},
+  {id:'badge_ninja', ico:'🥷',name:'Ninja Rozeti',   desc:'Gizli savaşçı unvanı',      price:400},
+  {id:'badge_robot', ico:'🤖',name:'Robot Rozeti',   desc:'Teknoloji ustası',           price:450},
+  {id:'badge_ghost', ico:'👻',name:'Hayalet Rozeti', desc:'Görünmez güç',               price:550},
+  {id:'badge_alien', ico:'👽',name:'Uzaylı Rozeti',  desc:'Başka boyuttan geldin',      price:900},
+  {id:'frame_gold',  ico:'🏅',name:'Altın Çerçeve',  desc:'Avatarına altın çerçeve',    price:500},
+  {id:'frame_neon',  ico:'💠',name:'Neon Çerçeve',   desc:'Parlayan neon çerçeve',      price:700},
+  {id:'xp_boost',    ico:'⚡',name:'XP Boost x2',   desc:'1 saat boyunca XP 2 katı',   price:300},
+  {id:'xp_boost2',   ico:'🚀',name:'XP Boost 3s',   desc:'3 saat boyunca XP 2 katı',   price:750},
+  {id:'title_dark',  ico:'🌑',name:'Karanlık Unvan', desc:'"Karanlık" özel unvanı',     price:600},
+  {id:'title_legend',ico:'🌟',name:'Efsane Unvanı',  desc:'"Efsane" özel unvanı',      price:1200},
+  {id:'title_chaos', ico:'🌀',name:'Kaos Unvanı',    desc:'"Kaos" özel unvanı',         price:1800},
+  {id:'coin_pack',   ico:'💰',name:'Coin Paketi',    desc:'+500 bonus coin',            price:1000},
 ];
 
-/* 30+ görev */
-const TASKS=[
-  /* === GÜNLÜK === */
-  {id:'dl_login',    ico:'📅',title:'Günlük Giriş',       desc:'Bugün giriş yap',                        xp:50,  coins:10, cat:'daily',  daily:true},
-  {id:'dl_quiz',     ico:'🧠',title:'Günlük Quiz',         desc:'Soruyu doğru yanıtla',                   xp:80,  coins:15, cat:'daily',  daily:true, quiz:true},
-  {id:'dl_lb3',      ico:'👀',title:'Tabloyu İncele',      desc:'Liderlik tablosunda 3 tıklama yap',      xp:30,  coins:5,  cat:'daily',  daily:true, req:'click3'},
-  {id:'dl_shop',     ico:'🛍️',title:'Dükkanı Ziyaret Et', desc:'Dükkan sekmesini aç',                    xp:25,  coins:4,  cat:'daily',  daily:true, req:'shopvisit'},
-  {id:'dl_profile',  ico:'🪪',title:'Profilini Kontrol Et',desc:'Profil sekmesini aç',                    xp:20,  coins:3,  cat:'daily',  daily:true, req:'profilevisit'},
-  /* === HAFTALIK === */
-  {id:'wk_quiz3',    ico:'🎓',title:'Haftalık Quiz x3',    desc:'Bu hafta 3 quiz tamamla',                xp:200, coins:40, cat:'weekly', weekly:true},
-  {id:'wk_login5',   ico:'📆',title:'Haftalık 5 Giriş',   desc:'Bu hafta 5 gün giriş yap',               xp:180, coins:35, cat:'weekly', weekly:true},
-  /* === SEVİYE (tek seferlik) === */
-  {id:'os_lv3',      ico:'📈',title:'Seviye 3',            desc:'3. seviyeye ulaş',                       xp:100, coins:20, cat:'oneshot',oneshot:true},
-  {id:'os_lv5',      ico:'📈',title:'Seviye 5',            desc:'5. seviyeye ulaş',                       xp:200, coins:40, cat:'oneshot',oneshot:true},
-  {id:'os_lv10',     ico:'🚀',title:'Seviye 10',           desc:'10. seviyeye ulaş',                      xp:500, coins:100,cat:'oneshot',oneshot:true},
-  {id:'os_lv15',     ico:'💫',title:'Seviye 15',           desc:'15. seviyeye ulaş',                      xp:800, coins:160,cat:'oneshot',oneshot:true},
-  {id:'os_lv20',     ico:'🌠',title:'Seviye 20',           desc:'20. seviyeye ulaş',                      xp:1500,coins:300,cat:'oneshot',oneshot:true},
-  {id:'os_lv30',     ico:'🌌',title:'Seviye 30',           desc:'30. seviyeye ulaş',                      xp:3000,coins:600,cat:'oneshot',oneshot:true},
-  /* === SIRALAMA (tek seferlik) === */
-  {id:'os_top15',    ico:'📋',title:'Tabloya Gir',         desc:'Liderlik tablosuna gir (ilk 15)',         xp:150, coins:30, cat:'oneshot',oneshot:true},
-  {id:'os_top10',    ico:'🏆',title:"İlk 10'a Gir",        desc:"İlk 10'a gir",                           xp:300, coins:60, cat:'oneshot',oneshot:true},
-  {id:'os_top5',     ico:'🎖️',title:"İlk 5'e Gir",         desc:"İlk 5'e gir",                           xp:600, coins:120,cat:'oneshot',oneshot:true},
-  {id:'os_top3',     ico:'🥇',title:'Podyuma Çık',         desc:"İlk 3'e gir",                           xp:1000,coins:200,cat:'oneshot',oneshot:true},
-  {id:'os_rank1',    ico:'👑',title:'Birinci Ol',          desc:'1. sıraya çık',                          xp:2000,coins:500,cat:'oneshot',oneshot:true},
-  /* === SOSYAL (tek seferlik) === */
-  {id:'os_click10',  ico:'👆',title:'10 Tıklama',          desc:'Oyuncu satırlarına 10 kez tıkla',        xp:30,  coins:5,  cat:'social', oneshot:true},
-  {id:'os_click50',  ico:'👆',title:'50 Tıklama',          desc:'Oyuncu satırlarına 50 kez tıkla',        xp:80,  coins:15, cat:'social', oneshot:true},
-  {id:'os_click100', ico:'🖱️',title:'100 Tıklama',         desc:'Oyuncu satırlarına 100 kez tıkla',       xp:150, coins:30, cat:'social', oneshot:true},
-  {id:'os_click250', ico:'🖱️',title:'250 Tıklama',         desc:'Oyuncu satırlarına 250 kez tıkla',       xp:300, coins:60, cat:'social', oneshot:true},
-  {id:'os_buy1',     ico:'🛒',title:'İlk Alışveriş',       desc:'Dükkanından bir şey satın al',           xp:80,  coins:0,  cat:'social', oneshot:true},
-  {id:'os_buy3',     ico:'🛒',title:'3 Dükkan Öğesi',      desc:'3 dükkan öğesi satın al',                xp:200, coins:0,  cat:'social', oneshot:true},
-  {id:'os_buy5',     ico:'🏪',title:'Koleksiyoncu',        desc:'5 dükkan öğesi satın al',                xp:500, coins:0,  cat:'social', oneshot:true},
-  {id:'os_chavi',    ico:'🎨',title:'Avatar Değiştir',     desc:'Profilinden avatarını değiştir',         xp:40,  coins:8,  cat:'social', oneshot:true},
-  /* === ÖZEL / ZOR === */
-  {id:'sp_str7',     ico:'🌟',title:'7 Günlük Seri',       desc:'7 gün üst üste giriş yap',               xp:500, coins:100,cat:'special',oneshot:true},
-  {id:'sp_str14',    ico:'💎',title:'14 Günlük Seri',      desc:'14 gün üst üste giriş yap',              xp:1200,coins:240,cat:'special',oneshot:true},
-  {id:'sp_str30',    ico:'🔱',title:'30 Günlük Seri',      desc:'30 gün üst üste giriş yap',              xp:3000,coins:600,cat:'special',oneshot:true},
-  {id:'sp_quiz5',    ico:'🎓',title:'Quiz Ustası',         desc:'5 günlük quiz tamamla',                   xp:400, coins:80, cat:'special',oneshot:true},
-  {id:'sp_quiz20',   ico:'🏅',title:'Quiz Şampiyonu',      desc:'20 günlük quiz tamamla',                  xp:1500,coins:300,cat:'special',oneshot:true},
-  {id:'sp_allshop',  ico:'💼',title:'Tam Koleksiyon',      desc:'Tüm dükkan öğelerini satın al',           xp:2000,coins:0,  cat:'special',oneshot:true},
+/* ═══ GÖREVLER ═══ */
+const TASKS = [
+  /* GÜNLÜK */
+  {id:'dl_login',    ico:'📅',title:'Günlük Giriş',          desc:'Bugün giriş yap',                          xp:50,  coins:10, cat:'daily',  daily:true},
+  {id:'dl_quiz',     ico:'🧠',title:'Günlük Quiz',            desc:'Quiz sorusunu doğru yanıtla',              xp:80,  coins:15, cat:'daily',  daily:true, quiz:true},
+  {id:'dl_riddle',   ico:'🔮',title:'Günlük Bilmece',         desc:'Bilmeceyi çöz',                            xp:100, coins:20, cat:'daily',  daily:true, riddle:true},
+  {id:'dl_lucky',    ico:'🎲',title:'Şans Çarkı',             desc:'Günlük şans çarkını çevir',                xp:0,   coins:0,  cat:'daily',  daily:true, req:'lucky'},
+  {id:'dl_lb3',      ico:'👀',title:'Tabloyu İncele',         desc:'Liderlik tablosunda 3 tıklama yap',        xp:30,  coins:5,  cat:'daily',  daily:true, req:'click3'},
+  {id:'dl_shop',     ico:'🛍️',title:'Dükkanı Ziyaret',       desc:'Dükkan sekmesini aç',                      xp:25,  coins:4,  cat:'daily',  daily:true, req:'shopvisit'},
+  {id:'dl_profile',  ico:'🪪',title:'Profili Kontrol Et',    desc:'Profil sekmesini aç',                      xp:20,  coins:3,  cat:'daily',  daily:true, req:'profilevisit'},
+  {id:'dl_stats',    ico:'📊',title:'İstatistiklere Bak',    desc:'İstatistikler sekmesini aç',                xp:15,  coins:2,  cat:'daily',  daily:true, req:'statsvisit'},
+  {id:'dl_podium',   ico:'🏅',title:'Podyumu İncele',        desc:'Podyumdaki 3 oyuncuya tıkla',              xp:35,  coins:6,  cat:'daily',  daily:true, req:'podium3'},
+  {id:'dl_search',   ico:'🔍',title:'Arama Yap',             desc:'Arama kutusuna bir şey yaz',                xp:20,  coins:3,  cat:'daily',  daily:true, req:'dosearch'},
+  /* HAFTALIK */
+  {id:'wk_quiz3',    ico:'🎓',title:'Haftalık Quiz x3',       desc:'Bu hafta 3 quiz tamamla',                  xp:200, coins:40, cat:'weekly', weekly:true},
+  {id:'wk_quiz7',    ico:'🏫',title:'Haftalık Quiz x7',       desc:'Bu hafta 7 quiz tamamla',                  xp:500, coins:100,cat:'weekly', weekly:true},
+  {id:'wk_login5',   ico:'📆',title:'Haftalık 5 Giriş',      desc:'Bu hafta 5 gün giriş yap',                 xp:180, coins:35, cat:'weekly', weekly:true},
+  {id:'wk_riddle3',  ico:'🔮',title:'Haftalık 3 Bilmece',    desc:'Bu hafta 3 bilmece çöz',                   xp:250, coins:50, cat:'weekly', weekly:true},
+  {id:'wk_tasks10',  ico:'✅',title:'Haftalık 10 Görev',      desc:'Bu hafta 10 görev tamamla',                xp:300, coins:60, cat:'weekly', weekly:true},
+  {id:'wk_shop2',    ico:'🛒',title:'Haftalık 2 Alışveriş',  desc:'Bu hafta 2 kez alışveriş yap',             xp:150, coins:30, cat:'weekly', weekly:true},
+  /* TEK SEFERLİK — Seviye */
+  {id:'os_lv3',      ico:'📈',title:'Seviye 3',               desc:'3. seviyeye ulaş',                         xp:100, coins:20, cat:'oneshot',oneshot:true},
+  {id:'os_lv5',      ico:'📈',title:'Seviye 5',               desc:'5. seviyeye ulaş',                         xp:200, coins:40, cat:'oneshot',oneshot:true},
+  {id:'os_lv10',     ico:'🚀',title:'Seviye 10',              desc:'10. seviyeye ulaş',                        xp:500, coins:100,cat:'oneshot',oneshot:true},
+  {id:'os_lv15',     ico:'💫',title:'Seviye 15',              desc:'15. seviyeye ulaş',                        xp:800, coins:160,cat:'oneshot',oneshot:true},
+  {id:'os_lv20',     ico:'🌠',title:'Seviye 20',              desc:'20. seviyeye ulaş',                        xp:1500,coins:300,cat:'oneshot',oneshot:true},
+  {id:'os_lv25',     ico:'🌟',title:'Seviye 25',              desc:'25. seviyeye ulaş',                        xp:2000,coins:400,cat:'oneshot',oneshot:true},
+  {id:'os_lv30',     ico:'🌌',title:'Seviye 30',              desc:'30. seviyeye ulaş',                        xp:3000,coins:600,cat:'oneshot',oneshot:true},
+  {id:'os_lv40',     ico:'🔥',title:'Seviye 40',              desc:'40. seviyeye ulaş',                        xp:5000,coins:1000,cat:'special',oneshot:true},
+  {id:'os_lv50',     ico:'👑',title:'Seviye 50 — TANRI',      desc:'50. seviyeye ulaş',                        xp:10000,coins:2000,cat:'special',oneshot:true},
+  /* TEK SEFERLİK — Sıralama */
+  {id:'os_top15',    ico:'📋',title:'Tabloya Gir',            desc:'İlk 15\'e gir',                            xp:150, coins:30, cat:'oneshot',oneshot:true},
+  {id:'os_top10',    ico:'🏆',title:"İlk 10'a Gir",           desc:"İlk 10'a gir",                             xp:300, coins:60, cat:'oneshot',oneshot:true},
+  {id:'os_top5',     ico:'🎖️',title:"İlk 5'e Gir",            desc:"İlk 5'e gir",                             xp:600, coins:120,cat:'oneshot',oneshot:true},
+  {id:'os_top3',     ico:'🥇',title:'Podyuma Çık',            desc:"İlk 3'e gir",                             xp:1000,coins:200,cat:'oneshot',oneshot:true},
+  {id:'os_rank1',    ico:'👑',title:'Birinci Ol',             desc:'1. sıraya çık',                            xp:2000,coins:500,cat:'oneshot',oneshot:true},
+  /* SOSYAL */
+  {id:'os_click10',  ico:'👆',title:'10 Tıklama',             desc:'Oyunculara 10 kez tıkla',                  xp:30,  coins:5,  cat:'social', oneshot:true},
+  {id:'os_click50',  ico:'👆',title:'50 Tıklama',             desc:'Oyunculara 50 kez tıkla',                  xp:80,  coins:15, cat:'social', oneshot:true},
+  {id:'os_click100', ico:'🖱️',title:'100 Tıklama',            desc:'100 kez tıkla',                            xp:150, coins:30, cat:'social', oneshot:true},
+  {id:'os_click250', ico:'🖱️',title:'250 Tıklama',            desc:'250 kez tıkla',                            xp:300, coins:60, cat:'social', oneshot:true},
+  {id:'os_click500', ico:'🔁',title:'500 Tıklama',            desc:'500 kez tıkla',                            xp:600, coins:120,cat:'social', oneshot:true},
+  {id:'os_buy1',     ico:'🛒',title:'İlk Alışveriş',          desc:'Dükkanından bir şey satın al',             xp:80,  coins:0,  cat:'social', oneshot:true},
+  {id:'os_buy3',     ico:'🛒',title:'3 Dükkan Öğesi',         desc:'3 dükkan öğesi satın al',                  xp:200, coins:0,  cat:'social', oneshot:true},
+  {id:'os_buy5',     ico:'🏪',title:'Koleksiyoncu',           desc:'5 dükkan öğesi satın al',                  xp:500, coins:0,  cat:'social', oneshot:true},
+  {id:'os_chavi',    ico:'🎨',title:'Avatar Değiştir',        desc:'Profilinden avatarını değiştir',           xp:40,  coins:8,  cat:'social', oneshot:true},
+  {id:'os_allsort',  ico:'🔀',title:'Sıralama Ustası',        desc:'3 farklı sıralama modunu kullan',          xp:60,  coins:10, cat:'social', oneshot:true},
+  /* ÖZEL */
+  {id:'sp_str3',     ico:'🔆',title:'3 Günlük Seri',          desc:'3 gün üst üste giriş yap',                 xp:100, coins:20, cat:'special',oneshot:true},
+  {id:'sp_str7',     ico:'🌟',title:'7 Günlük Seri',          desc:'7 gün üst üste giriş yap',                 xp:500, coins:100,cat:'special',oneshot:true},
+  {id:'sp_str14',    ico:'💎',title:'14 Günlük Seri',         desc:'14 gün üst üste giriş yap',                xp:1200,coins:240,cat:'special',oneshot:true},
+  {id:'sp_str30',    ico:'🔱',title:'30 Günlük Seri',         desc:'30 gün üst üste giriş yap',                xp:3000,coins:600,cat:'special',oneshot:true},
+  {id:'sp_str60',    ico:'💠',title:'60 Günlük Seri',         desc:'60 gün üst üste giriş yap',                xp:8000,coins:1600,cat:'special',oneshot:true},
+  {id:'sp_quiz5',    ico:'🎓',title:'Quiz Ustası',             desc:'5 quiz tamamla',                           xp:400, coins:80, cat:'special',oneshot:true},
+  {id:'sp_quiz20',   ico:'🏅',title:'Quiz Şampiyonu',          desc:'20 quiz tamamla',                          xp:1500,coins:300,cat:'special',oneshot:true},
+  {id:'sp_quiz50',   ico:'🧬',title:'Quiz Efsanesi',           desc:'50 quiz tamamla',                          xp:5000,coins:1000,cat:'special',oneshot:true},
+  {id:'sp_riddle10', ico:'🔮',title:'Bilmece Ustası',          desc:'10 bilmece çöz',                           xp:600, coins:120,cat:'special',oneshot:true},
+  {id:'sp_riddle25', ico:'🧿',title:'Bilmece Efsanesi',        desc:'25 bilmece çöz',                           xp:2000,coins:400,cat:'special',oneshot:true},
+  {id:'sp_allshop',  ico:'💼',title:'Tam Koleksiyon',          desc:'Tüm dükkan öğelerini satın al',            xp:2000,coins:0,  cat:'special',oneshot:true},
+  {id:'sp_tasks20',  ico:'📋',title:'20 Görev Ustası',         desc:'Toplam 20 görev tamamla',                  xp:600, coins:120,cat:'special',oneshot:true},
+  {id:'sp_tasks50',  ico:'📋',title:'50 Görev Efsanesi',       desc:'Toplam 50 görev tamamla',                  xp:2000,coins:400,cat:'special',oneshot:true},
+  {id:'sp_xpk',      ico:'💥',title:'10.000 XP Kulübü',       desc:'Toplam 10.000 XP kazan',                   xp:500, coins:100,cat:'special',oneshot:true},
+  {id:'sp_xp50k',    ico:'🌊',title:'50.000 XP Kulübü',       desc:'Toplam 50.000 XP kazan',                   xp:2000,coins:400,cat:'special',oneshot:true},
+  {id:'sp_coins500', ico:'💰',title:'Zengin',                  desc:'500 coin biriktir',                        xp:200, coins:0,  cat:'special',oneshot:true},
+  {id:'sp_coins2k',  ico:'💎',title:'Hazinedar',               desc:'2000 coin biriktir',                       xp:800, coins:0,  cat:'special',oneshot:true},
+  {id:'sp_coins5k',  ico:'🏦',title:'Milyoner',                desc:'5000 coin biriktir',                       xp:2000,coins:0,  cat:'special',oneshot:true},
+  /* EĞLENCELİ */
+  {id:'fn_midnight', ico:'🌙',title:'Gece Kuşu',               desc:'Gece 00:00–04:00 arası giriş yap',        xp:150, coins:30, cat:'fun',    oneshot:true},
+  {id:'fn_earlybird',ico:'🌅',title:'Erken Kuş',               desc:'Sabah 06:00–08:00 arası giriş yap',       xp:120, coins:25, cat:'fun',    oneshot:true},
+  {id:'fn_weekend',  ico:'🎉',title:'Hafta Sonu Savaşçısı',    desc:'Cumartesi veya Pazar giriş yap',          xp:80,  coins:15, cat:'fun',    oneshot:true},
+  {id:'fn_friday',   ico:'🎊',title:'Cuma Havası',             desc:'Cuma günü giriş yap',                     xp:60,  coins:10, cat:'fun',    oneshot:true},
+  {id:'fn_monday',   ico:'😤',title:'Pazartesi Savaşçısı',     desc:'Pazartesi günü giriş yap',                xp:70,  coins:12, cat:'fun',    oneshot:true},
+  {id:'fn_allavi',   ico:'🎭',title:'Avatar Koleksiyonu',       desc:'5 farklı avatar dene',                    xp:200, coins:40, cat:'fun',    oneshot:true},
+  {id:'fn_lucky777', ico:'🎰',title:'Lucky 777',               desc:'Şans çarkını 3 kez çevir',                xp:100, coins:20, cat:'fun',    oneshot:true},
+  {id:'fn_nightquiz',ico:'🌙',title:'Gece Quizi',              desc:'Gece 22:00 sonrası quiz çöz',             xp:200, coins:40, cat:'fun',    oneshot:true},
+  {id:'fn_fastclick',ico:'⚡',title:'Hızlı Tıklayıcı',        desc:'10 saniyede 5 oyuncuya tıkla',            xp:75,  coins:15, cat:'fun',    oneshot:true},
+  {id:'fn_explorer', ico:'🗺️',title:'Kaşif',                  desc:'Tüm sekmeleri gez',                       xp:100, coins:20, cat:'fun',    oneshot:true},
+  {id:'fn_comeback', ico:'💪',title:'Geri Dönüş',              desc:'3+ günlük aradan sonra tekrar giriş yap', xp:200, coins:40, cat:'fun',    oneshot:true},
+  {id:'fn_shopspy',  ico:'👁️',title:'Dükkan Casusu',           desc:'Tüm dükkan öğelerini incele',             xp:50,  coins:10, cat:'fun',    oneshot:true},
+  {id:'fn_namecheck',ico:'🔎',title:'Meraklı',                 desc:'Kendi adını arama kutusuna yaz',           xp:40,  coins:8,  cat:'fun',    oneshot:true},
+  /* MEYDAN OKUMA */
+  {id:'ch_grind',    ico:'⚔️',title:'Grind Modu',              desc:'Tek oturumda 1000 XP kazan',              xp:500, coins:100,cat:'challenge',oneshot:true},
+  {id:'ch_noquit',   ico:'🛡️',title:'Vazgeçme!',              desc:'Aynı günde 5 farklı görev tamamla',       xp:300, coins:60, cat:'challenge',oneshot:true},
+  {id:'ch_perfect',  ico:'💯',title:'Mükemmel Gün',            desc:'Tüm günlük görevleri tamamla',            xp:500, coins:100,cat:'challenge',daily:true},
+  {id:'ch_speed3',   ico:'🏃',title:'Hız Yarışı',              desc:'3 quiz sorusunu art arda doğru cevapla',  xp:400, coins:80, cat:'challenge',oneshot:true},
+  {id:'ch_quizking', ico:'🧠',title:'Quiz Kralı',              desc:'5 quiz sorusunu art arda doğru cevapla',  xp:600, coins:120,cat:'challenge',oneshot:true},
+  {id:'ch_richbuy',  ico:'🤑',title:'Büyük Harcama',           desc:'Tek alışverişte 500+ coin harca',         xp:300, coins:0,  cat:'challenge',oneshot:true},
+  {id:'ch_loyal',    ico:'🎗️',title:'Sadık Üye',              desc:'10 gün boyunca her gün giriş yap',        xp:700, coins:140,cat:'challenge',oneshot:true},
+  {id:'ch_topcoin',  ico:'💸',title:'Para Babası',             desc:'Tek günde 100 coin kazan',                xp:300, coins:0,  cat:'challenge',oneshot:true},
+  {id:'ch_coinmaster',ico:'🪙',title:'Coin Ustası',            desc:'Toplam 50 coin harca',                    xp:200, coins:50, cat:'challenge',oneshot:true},
 ];
 
-const QUIZZES=[
-  {q:'Kaç renk gökkuşağında bulunur?',          o:['5','6','7','8'],              a:2},
-  {q:'Dünyanın en büyük kıtası hangisi?',       o:['Afrika','Asya','Amerika','Avrupa'],a:1},
-  {q:'Su kaç derecede kaynar?',                 o:['90°','95°','100°','110°'],    a:2},
-  {q:"Türkiye'nin başkenti neresidir?",         o:['İstanbul','İzmir','Ankara','Bursa'],a:2},
-  {q:'Pi sayısı yaklaşık nedir?',               o:['2.14','3.14','4.14','5.14'], a:1},
-  {q:'Güneş sistemimizdeki en büyük gezegen?',  o:['Satürn','Mars','Jüpiter','Neptün'],a:2},
-  {q:'HTML ne için kullanılır?',                o:['Stil','Programlama','Yapı','Veritabanı'],a:2},
-  {q:'Dünyanın en uzun nehri hangisidir?',      o:['Amazon','Nil','Yangtze','Volga'],a:1},
-  {q:'1 kilobyte kaç bayttır?',                 o:['512','1000','1024','2048'],   a:2},
-  {q:'En hafif element hangisidir?',            o:['Helyum','Hidrojen','Lityum','Oksijen'],a:1},
-  {q:'Işık hızı saniyede yaklaşık kaç km?',     o:['100.000','200.000','300.000','400.000'],a:2},
-  {q:'DNA\'nın açılımı nedir?',                 o:['Digital Network A','Deoxyribonucleic Acid','Data Nucleic Arm','Dual Nucleic Acid'],a:1},
-  {q:'Osmanlı İmparatorluğu hangi yıl kuruldu?',o:['1299','1453','1071','1683'],  a:0},
-  {q:"JavaScript'i kim yarattı?",               o:['James Gosling','Brendan Eich','Guido van Rossum','Dennis Ritchie'],a:1},
-  {q:'Ay\'a ilk ayak basan insan kimdir?',      o:['Yuri Gagarin','Buzz Aldrin','Neil Armstrong','Alan Shepard'],a:2},
+const QUIZZES = [
+  {q:'Kaç renk gökkuşağında bulunur?',                   o:['5','6','7','8'],                         a:2},
+  {q:'Dünyanın en büyük kıtası hangisi?',                o:['Afrika','Asya','Amerika','Avrupa'],      a:1},
+  {q:'Su kaç derecede kaynar?',                          o:['90°','95°','100°','110°'],               a:2},
+  {q:"Türkiye'nin başkenti neresidir?",                  o:['İstanbul','İzmir','Ankara','Bursa'],     a:2},
+  {q:'Pi sayısı yaklaşık nedir?',                        o:['2.14','3.14','4.14','5.14'],             a:1},
+  {q:'Güneş sistemimizdeki en büyük gezegen?',           o:['Satürn','Mars','Jüpiter','Neptün'],      a:2},
+  {q:'HTML ne için kullanılır?',                         o:['Stil','Programlama','Yapı','Veritabanı'],a:2},
+  {q:'Dünyanın en uzun nehri hangisidir?',               o:['Amazon','Nil','Yangtze','Volga'],        a:1},
+  {q:'1 kilobyte kaç bayttır?',                          o:['512','1000','1024','2048'],              a:2},
+  {q:'En hafif element hangisidir?',                     o:['Helyum','Hidrojen','Lityum','Oksijen'],  a:1},
+  {q:'Işık hızı saniyede yaklaşık kaç km?',              o:['100.000','200.000','300.000','400.000'], a:2},
+  {q:"JavaScript'i kim yarattı?",                        o:['James Gosling','Brendan Eich','Guido van Rossum','Dennis Ritchie'],a:1},
+  {q:'Osmanlı İmparatorluğu hangi yıl kuruldu?',         o:['1299','1453','1071','1683'],             a:0},
+  {q:"Ay'a ilk ayak basan insan kimdir?",                o:['Yuri Gagarin','Buzz Aldrin','Neil Armstrong','Alan Shepard'],a:2},
+  {q:'Hangi element altının sembolüdür?',                o:['Gl','Ag','Au','Gd'],                    a:2},
+  {q:'Python ne zaman yaratıldı?',                       o:['1985','1989','1991','1995'],             a:2},
+  {q:'Dünyanın en yüksek dağı hangisidir?',              o:['K2','Mont Blanc','Everest','Kilimanjaro'],a:2},
+  {q:'Bir yılda kaç gün vardır?',                        o:['355','360','365','370'],                 a:2},
+  {q:'Hangi ülke en fazla nüfusa sahiptir?',             o:['ABD','Hindistan','Çin','Endonezya'],     a:1},
+  {q:'CSS ne için kullanılır?',                          o:['Veritabanı','Yapı','Stil','Sunucu'],     a:2},
+  {q:'1 GB kaç MB\'dir?',                                o:['512','1000','1024','2048'],              a:2},
+  {q:'Güneş\'e en yakın gezegen hangisidir?',            o:['Venüs','Mars','Merkür','Dünya'],         a:2},
+  {q:'DNA çift sarmal yapısını kim keşfetti?',           o:['Einstein','Watson ve Crick','Darwin','Pasteur'],a:1},
+  {q:'Hangi ülkenin bayrağında ay-yıldız vardır?',       o:['Yunanistan','Türkiye','İtalya','Fransa'],a:1},
+  {q:'React.js\'i kim geliştirdi?',                      o:['Google','Microsoft','Meta (Facebook)','Twitter'],a:2},
 ];
 
-/* ═══════════════════════════════════════
-   YARDIMCILAR — hash, session
-═══════════════════════════════════════ */
-/* Basit hash: şifre Firebase'e hash olarak gider
-   → başka cihazdan aynı hash ile doğrulama yapılır */
-function hashPass(s){
-  let h=5381;
-  for(let i=0;i<s.length;i++) h=((h<<5)+h)+s.charCodeAt(i);
-  return'ph_'+(h>>>0).toString(16);
-}
+const RIDDLES = [
+  {q:'Ne kadar doldurulursa o kadar hafifler?',               a:'balon'},
+  {q:'Kuyruğu var ama hayvan değil, uçar ama kuş değil?',    a:'uçurtma'},
+  {q:'Konuşmaz ama her şeyi söyler, hareketsizdir ama her yerde?',a:'kitap'},
+  {q:'Sabah dört, öğlen iki, akşam üç ayaklı olan nedir?',   a:'insan'},
+  {q:'Görünmez ama hissedilir, tutulmaz ama taşınır?',        a:'rüzgar'},
+  {q:'Koşar ama ayağı yok, akar ama suya benzemez?',         a:'zaman'},
+  {q:'İçi boş dışı da, yine de sesi var?',                   a:'boş kap'},
+  {q:'Hem sıcak hem soğuk, hem aydınlık hem karanlık?',       a:'güneş'},
+  {q:'Benim var ama kullanamam, sende var ama göremem?',      a:'isim'},
+  {q:'Ne çok nem sever ne kuru hava, ama aralıksız büyür?',  a:'ağaç'},
+];
 
-const LS_SESS='pl_sess_v5';
-function getSession(){try{return JSON.parse(localStorage.getItem(LS_SESS));}catch{return null;}}
-function setSession(u){localStorage.setItem(LS_SESS,JSON.stringify(u));}
-function clearSession(){localStorage.removeItem(LS_SESS);}
+/* ═══════════════════ YARDIMCILAR ═══════════════════ */
+function hashPass(s){ let h=5381; for(let i=0;i<s.length;i++) h=((h<<5)+h)+s.charCodeAt(i); return 'ph_'+(h>>>0).toString(16); }
+const LS = 'pl_sess_v7';
+function getSession(){ try{return JSON.parse(localStorage.getItem(LS));}catch{return null;} }
+function setSession(u){ localStorage.setItem(LS, JSON.stringify(u)); }
+function clearSession(){ localStorage.removeItem(LS); }
 
-/* ═══════════════════════════════════════
-   FIREBASE CRUD
-   /pl_users/<username>  → tüm oyuncu verisi
-   passHash de buraya kaydedilir → çoklu cihaz
-═══════════════════════════════════════ */
-async function fbGetAll(){
-  try{const s=await DB.ref('pl_users').once('value');return s.val()||{};}
-  catch(e){console.error('fbGetAll:',e);return{};}
-}
-async function fbGetOne(u){
-  try{const s=await DB.ref('pl_users/'+u).once('value');return s.val();}
-  catch(e){console.error('fbGetOne:',e);return null;}
-}
-async function fbSet(u,data){
-  try{await DB.ref('pl_users/'+u).set(data);}
-  catch(e){console.error('fbSet:',e);}
-}
+async function fbGetAll(){ try{const s=await DB.ref('pl_users').once('value');return s.val()||{};}catch(e){return{};} }
+async function fbGetOne(u){ try{const s=await DB.ref('pl_users/'+u).once('value');return s.val();}catch{return null;} }
+async function fbSet(u,d){ try{await DB.ref('pl_users/'+u).set(d);}catch(e){console.error(e);} }
 
-/* ═══════════════════════════════════════
-   CACHE (realtime listener günceller)
-═══════════════════════════════════════ */
-let _cache={};
-const getCache=()=>_cache;
-const setCache=d=>{_cache=d||{};};
+let _cache = {};
+const getCache = () => _cache;
+const setCache = d => { _cache = d||{}; };
 
-/* ═══════════════════════════════════════
-   XP / LEVEL
-═══════════════════════════════════════ */
-const getTitle=lvl=>{let t=TITLES[0].n;for(const e of TITLES)if(lvl>=e.m)t=e.n;return t;};
-function calcLevel(xp){
-  let level=1,req=150,rem=xp;
-  while(rem>=req){rem-=req;level++;req=Math.floor(150+(level-1)*50);}
-  return{level,inLevel:xp-getXpForLevel(level),needed:req};
-}
-function getXpForLevel(t){let tot=0,req=150;for(let l=1;l<t;l++){tot+=req;req=Math.floor(150+l*50);}return tot;}
+/* XP/Level */
+const getTitle = lvl => { let t=TITLES[0].n; for(const e of TITLES) if(lvl>=e.m) t=e.n; return t; };
+function calcLevel(xp){ let level=1,req=150,rem=xp; while(rem>=req){rem-=req;level++;req=Math.floor(150+(level-1)*50);} return{level,inLevel:xp-getXpForLevel(level),needed:req}; }
+function getXpForLevel(t){ let tot=0,req=150; for(let l=1;l<t;l++){tot+=req;req=Math.floor(150+l*50);} return tot; }
 
-/* ═══════════════════════════════════════
-   XP BOOST
-═══════════════════════════════════════ */
-let boostEnd=0,boostTick=null;
-const isBoost=()=>Date.now()<boostEnd;
-const applyBoost=xp=>isBoost()?xp*2:xp;
+/* Boost */
+let boostEnd=0, boostTick=null;
+const isBoost = () => Date.now() < boostEnd;
+const applyBoost = xp => isBoost() ? xp*2 : xp;
 function activateBoost(ms){
-  boostEnd=Date.now()+ms;
+  boostEnd = Date.now()+ms;
   document.getElementById('boostBar').classList.add('show');
   clearInterval(boostTick);
-  boostTick=setInterval(()=>{
-    const r=boostEnd-Date.now();
+  boostTick = setInterval(()=>{
+    const r = boostEnd-Date.now();
     if(r<=0){clearInterval(boostTick);document.getElementById('boostBar').classList.remove('show');return;}
     const m=Math.floor(r/60000),s=Math.floor((r%60000)/1000);
     document.getElementById('boostTimer').textContent=`${m}:${String(s).padStart(2,'0')}`;
   },1000);
 }
 
-/* ═══════════════════════════════════════
-   SORT
-═══════════════════════════════════════ */
-let sortMode='xp';
+/* Sort */
+let sortMode = 'xp';
+let sortUsedModes = new Set(['xp']);
 function setSort(m){
-  sortMode=m;
+  sortMode=m; sortUsedModes.add(m);
   ['xp','level','coins'].forEach(s=>{
     const b=document.getElementById('s'+s.charAt(0).toUpperCase()+s.slice(1));
-    if(b)b.classList.toggle('active',s===m);
+    if(b) b.classList.toggle('active',s===m);
   });
+  if(sortUsedModes.size>=3){
+    const u=getUser(); if(u&&!u.tasks['os_allsort']){
+      u.tasks['os_allsort']=true; awardXP(u,60,'Sıralama Ustası!'); awardCoins(u,10);
+      saveUser(u); toast('🔀 Sıralama Ustası görevi!','success');
+    }
+  }
   renderLB(document.getElementById('searchInp')?.value||'');
 }
 
-/* ═══════════════════════════════════════
-   HAMBURGER
-═══════════════════════════════════════ */
-const menuOpen=()=>{
-  document.getElementById('sideNav').classList.add('open');
-  document.getElementById('menuOverlay').classList.add('open');
-  document.getElementById('hamBtn').classList.add('open');
-  document.body.style.overflow='hidden';
-};
-const menuClose=()=>{
-  document.getElementById('sideNav').classList.remove('open');
-  document.getElementById('menuOverlay').classList.remove('open');
-  document.getElementById('hamBtn').classList.remove('open');
-  document.body.style.overflow='';
-};
-const goPanel=(n)=>{showPanel(n,null);menuClose();};
+/* Hamburger */
+const menuOpen = () => { document.getElementById('sideNav').classList.add('open'); document.getElementById('menuOverlay').classList.add('open'); document.getElementById('hamBtn').classList.add('open'); document.body.style.overflow='hidden'; };
+const menuClose = () => { document.getElementById('sideNav').classList.remove('open'); document.getElementById('menuOverlay').classList.remove('open'); document.getElementById('hamBtn').classList.remove('open'); document.body.style.overflow=''; };
+const goPanel = n => { showPanel(n,null); menuClose(); };
 
-/* ═══════════════════════════════════════
-   DOM READY
-═══════════════════════════════════════ */
-let CU=null;
-let selAvi=AVATARS[0];
-let fbListener=null;
-let sessionClickCount=0;
+/* Task filter */
+let taskFilter = 'all';
 
-document.addEventListener('DOMContentLoaded',async()=>{
-  document.getElementById('hamBtn').addEventListener('click',()=>
-    document.getElementById('sideNav').classList.contains('open')?menuClose():menuOpen()
-  );
-  document.getElementById('menuOverlay').addEventListener('click',menuClose);
-  document.getElementById('playerModal').addEventListener('click',e=>{if(e.target===document.getElementById('playerModal'))closePM();});
-  document.getElementById('lvlUpModal').addEventListener('click',e=>{if(e.target===document.getElementById('lvlUpModal'))closeLvlUp();});
-  document.getElementById('lPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-  document.getElementById('rPass').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
-  document.getElementById('searchInp').addEventListener('input',e=>renderLB(e.target.value));
+/* ═══ STATE ═══ */
+let CU=null, selAvi=AVATARS[0], fbListener=null;
+let sessionClickCount=0, podiumClicks=0;
+let fastClickTimes=[], avisChanged=new Set();
+let consecutiveCorrect=0, sessionGrindXP=0, dailyCoinEarned=0;
+let tabsVisited = new Set();
+let shopScrolled = false;
 
-  buildAviPicker('aviPick',v=>{selAvi=v;});
+/* ═══ DOM READY ═══ */
+document.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('hamBtn').addEventListener('click', ()=> document.getElementById('sideNav').classList.contains('open')?menuClose():menuOpen());
+  document.getElementById('menuOverlay').addEventListener('click', menuClose);
+  document.getElementById('playerModal').addEventListener('click', e=>{ if(e.target===document.getElementById('playerModal')) closePM(); });
+  document.getElementById('lvlUpModal').addEventListener('click', e=>{ if(e.target===document.getElementById('lvlUpModal')) closeLvlUp(); });
+  document.getElementById('lPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+  document.getElementById('rPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doRegister(); });
+  document.getElementById('searchInp').addEventListener('input', e=>{
+    renderLB(e.target.value);
+    if(e.target.value.length>0 && CU){
+      const u=getUser(); const today=new Date().toDateString();
+      if(u){
+        const dk='dl_search_'+today;
+        if(!u.tasks[dk]){u.tasks[dk]=true;awardXP(u,20,'Arama yaptı');awardCoins(u,3);saveUser(u);toast('🔍 Arama görevi!','success');updateSidebar();renderTasks();}
+        /* Kendi adını arama */
+        if(e.target.value.toLowerCase()===CU.toLowerCase()&&!u.tasks['fn_namecheck']){
+          u.tasks['fn_namecheck']=true;awardXP(u,40,'Kendini aradı!');awardCoins(u,8);saveUser(u);toast('🔎 Meraklı görevi!','success');
+        }
+      }
+    }
+  });
+
+  buildAviPicker('aviPick', v=>{ selAvi=v; });
   buildAviChange('aviChange');
+  buildCatFilters();
 
-  /* Oturum geri yükle */
-  const sess=getSession();
+  /* Session restore */
+  const sess = getSession();
   if(sess){
-    showLoad(true);
-    const fbU=await fbGetOne(sess);
-    showLoad(false);
-    if(fbU){CU=sess;await boot();return;}
-    clearSession();
+    setLoad(true);
+    const fbU = await fbGetOne(sess);
+    if(fbU){ CU=sess; await boot(); return; }
+    clearSession(); setLoad(false);
   }
-  await seedDemo();
 });
 
-const showLoad=v=>{document.getElementById('aLoad').style.display=v?'block':'none';};
+function setLoad(v){ document.getElementById('aLoad').style.display=v?'block':'none'; }
+function showErr(msg){ const e=document.getElementById('aErr'); e.textContent=msg; e.style.display='block'; }
+function hideErr(){ document.getElementById('aErr').style.display='none'; }
 
 function buildAviPicker(cid,cb){
-  const c=document.getElementById(cid);if(!c)return;c.innerHTML='';
-  AVATARS.forEach((a,i)=>{
-    const d=document.createElement('div');
-    d.className='avo'+(i===0?' sel':'');d.textContent=a;
-    d.onclick=()=>{c.querySelectorAll('.avo').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');cb(a);};
-    c.appendChild(d);
-  });
+  const c=document.getElementById(cid); if(!c) return; c.innerHTML='';
+  AVATARS.forEach((a,i)=>{ const d=document.createElement('div'); d.className='avo'+(i===0?' sel':''); d.textContent=a; d.onclick=()=>{c.querySelectorAll('.avo').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');cb(a);}; c.appendChild(d); });
 }
 function buildAviChange(cid){
-  const c=document.getElementById(cid);if(!c)return;c.innerHTML='';
-  AVATARS.forEach(a=>{
-    const d=document.createElement('div');d.className='ac-item';d.textContent=a;
-    d.onclick=()=>changeAvatar(a);c.appendChild(d);
-  });
+  const c=document.getElementById(cid); if(!c) return; c.innerHTML='';
+  AVATARS.forEach(a=>{ const d=document.createElement('div'); d.className='ac-item'; d.textContent=a; d.onclick=()=>changeAvatar(a); c.appendChild(d); });
 }
-
-/* ═══════════════════════════════════════
-   DEMO SEED (sadece DB boşsa)
-═══════════════════════════════════════ */
-async function seedDemo(){
-  const ex=await fbGetAll();
-  if(Object.keys(ex).length>0)return;
-  const demos=[
-    {u:'EfsaneKurt', p:'demo123',a:'🐺',xp:12450,coins:800},
-    {u:'GeceAvcisi', p:'demo123',a:'🌙',xp:10820,coins:650},
-    {u:'KizilEjder', p:'demo123',a:'🐉',xp:8720, coins:500},
-    {u:'BeyazKarga', p:'demo123',a:'🐦',xp:7650, coins:400},
-    {u:'DemirYumruk',p:'demo123',a:'👊',xp:6540, coins:300},
-    {u:'SessizSu',   p:'demo123',a:'💧',xp:5430, coins:250},
-    {u:'AlevKral',   p:'demo123',a:'🔥',xp:4320, coins:200},
-    {u:'KaraPanter', p:'demo123',a:'🐆',xp:3890, coins:180},
-    {u:'GumushOk',   p:'demo123',a:'🏹',xp:3210, coins:150},
-    {u:'BuzKralice', p:'demo123',a:'❄️',xp:2870, coins:120},
-    {u:'Yildirim',   p:'demo123',a:'⚡',xp:2450, coins:100},
-    {u:'ToprakAna',  p:'demo123',a:'🌿',xp:1980, coins:80},
-    {u:'Ruzgar',     p:'demo123',a:'🍃',xp:1560, coins:60},
-    {u:'Kagan',      p:'demo123',a:'👑',xp:1240, coins:40},
-    {u:'GolgeSavas', p:'demo123',a:'🦊',xp:980,  coins:25},
+function buildCatFilters(){
+  const cats=[
+    {id:'all',lbl:'🎯 Tümü'},{id:'daily',lbl:'📅 Günlük'},{id:'weekly',lbl:'📆 Haftalık'},
+    {id:'oneshot',lbl:'⭐ Tek Seferlik'},{id:'social',lbl:'🤝 Sosyal'},{id:'special',lbl:'🏆 Özel'},
+    {id:'fun',lbl:'🎮 Eğlenceli'},{id:'challenge',lbl:'🔥 Meydan Okuma'}
   ];
-  const now=new Date().toISOString();
-  for(const d of demos){
-    await fbSet(d.u,{
-      passHash:hashPass(d.p),   /* ← şifre hash olarak Firebase'de */
-      avatar:d.a,xp:d.xp,coins:d.coins,
-      tasks:{},ownedItems:[],streak:0,lastLogin:'',history:[],
-      clickCount:0,quizCount:0,weeklyQuiz:0,weeklyLogin:0,weekStr:'',
-      shopVisited:false,profileVisited:false,createdAt:now,prevRank:null
-    });
-  }
+  const bar=document.getElementById('catFilterBar'); if(!bar) return;
+  bar.innerHTML=cats.map(c=>`<button class="srt-btn${c.id==='all'?' active':''}" onclick="filterTasks('${c.id}',this)">${c.lbl}</button>`).join('');
+}
+function filterTasks(cat,btn){
+  taskFilter=cat;
+  document.querySelectorAll('#catFilterBar .srt-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderTasks();
 }
 
-/* ═══════════════════════════════════════
-   AUTH
-   passHash Firebase'de → çoklu cihaz çalışır
-═══════════════════════════════════════ */
+/* ═══ AUTH ═══ */
 function switchTab(tab){
-  document.querySelectorAll('.auth-tab').forEach((t,i)=>
-    t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1))
-  );
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
   document.getElementById('loginForm').style.display=tab==='login'?'block':'none';
   document.getElementById('regForm').style.display=tab==='register'?'block':'none';
-  document.getElementById('aErr').style.display='none';
+  hideErr();
 }
-const showErr=msg=>{const e=document.getElementById('aErr');e.textContent=msg;e.style.display='block';};
 
 async function doLogin(){
   const user=document.getElementById('lUser').value.trim();
   const pass=document.getElementById('lPass').value;
   if(!user||!pass){showErr('Lütfen tüm alanları doldur.');return;}
-  showLoad(true);
-  const fbU=await fbGetOne(user);
-  showLoad(false);
-  if(!fbU){showErr('Kullanıcı bulunamadı.');return;}
-  /* passHash Firebase'de — herhangi cihazdan doğrulanabilir */
-  if(fbU.passHash!==hashPass(pass)){showErr('Şifre hatalı.');return;}
-  CU=user;setSession(user);await boot();
+  const btn=document.getElementById('loginBtn'); btn.disabled=true; btn.textContent='⏳ Yükleniyor...';
+  setLoad(true); hideErr();
+  const fbU = await fbGetOne(user);
+  if(!fbU){setLoad(false);btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Giriş Yap';showErr('Kullanıcı bulunamadı.');return;}
+  if(fbU.passHash!==hashPass(pass)){setLoad(false);btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Giriş Yap';showErr('Şifre hatalı.');return;}
+  CU=user; setSession(user); await boot();
 }
 
 async function doRegister(){
@@ -969,160 +894,171 @@ async function doRegister(){
   if(!user||!pass){showErr('Lütfen tüm alanları doldur.');return;}
   if(user.length<3){showErr('Kullanıcı adı en az 3 karakter.');return;}
   if(pass.length<4){showErr('Şifre en az 4 karakter.');return;}
-  showLoad(true);
-  const ex=await fbGetOne(user);
-  showLoad(false);
-  if(ex){showErr('Bu kullanıcı adı alınmış.');return;}
+  const btn=document.getElementById('regBtn'); btn.disabled=true; btn.textContent='⏳ Yükleniyor...';
+  setLoad(true); hideErr();
+  const ex = await fbGetOne(user);
+  if(ex){setLoad(false);btn.disabled=false;btn.innerHTML='<i class="fas fa-user-plus"></i> Kayıt Ol';showErr('Bu kullanıcı adı alınmış.');return;}
   const now=new Date().toISOString();
   const ud={
-    passHash:hashPass(pass),   /* ← şifre Firebase'e hash olarak */
-    avatar:selAvi,xp:100,coins:50,
-    tasks:{},ownedItems:[],streak:0,lastLogin:'',
+    passHash:hashPass(pass), avatar:selAvi, xp:100, coins:50,
+    tasks:{}, ownedItems:[], streak:0, lastLogin:'',
     history:[{type:'gain',action:'Hoş geldin bonusu!',amount:100,time:now}],
-    clickCount:0,quizCount:0,weeklyQuiz:0,weeklyLogin:0,weekStr:'',
-    shopVisited:false,profileVisited:false,createdAt:now,prevRank:null
+    clickCount:0, quizCount:0, riddleCount:0, luckyCount:0,
+    weeklyQuiz:0, weeklyLogin:0, weeklyRiddle:0, weeklyShop:0, weekStr:'',
+    prevRank:null, createdAt:now
   };
-  await fbSet(user,ud);
-  CU=user;setSession(user);await boot();
-  toast('🎉 Hoş geldin! 100 XP hediye!','success');
+  await fbSet(user, ud);
+  CU=user; setSession(user); await boot();
+  setTimeout(()=>toast('🎉 Hoş geldin! 100 XP hediye!','success'), 300);
 }
 
 function doLogout(){
-  if(fbListener){DB.ref('pl_users').off('value',fbListener);fbListener=null;}
-  clearSession();CU=null;
+  if(fbListener){ DB.ref('pl_users').off('value',fbListener); fbListener=null; }
+  clearSession(); CU=null;
   document.getElementById('app').style.display='none';
   document.getElementById('authScreen').style.display='flex';
+  /* Reset state */
+  sessionClickCount=0; podiumClicks=0; fastClickTimes=[]; avisChanged=new Set();
+  consecutiveCorrect=0; sessionGrindXP=0; dailyCoinEarned=0; tabsVisited=new Set(); sortUsedModes=new Set(['xp']);
 }
 
-/* ═══════════════════════════════════════
-   BOOT (giriş sonrası)
-═══════════════════════════════════════ */
+/* ═══ BOOT — giriş/kayıt sonrası hemen yükle ═══ */
 async function boot(){
-  document.getElementById('authScreen').style.display='none';
-  document.getElementById('app').style.display='block';
-
-  /* Tüm kullanıcıları çek ve cache'e koy */
-  const all=await fbGetAll();
+  /* 1. Önce Firebase'den veriyi çek */
+  const all = await fbGetAll();
   setCache(all);
 
-  checkDailyLogin();
-  checkAutoTasks();
-  updateSidebar();updateMenuUser();
-  renderLB();renderTasks();renderShop();renderProfile();renderStats();
+  /* 2. Auth gizle, app göster */
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('app').style.display='block';
+  setLoad(false);
+  const btn1=document.getElementById('loginBtn'); if(btn1){btn1.disabled=false;btn1.innerHTML='<i class="fas fa-sign-in-alt"></i> Giriş Yap';}
+  const btn2=document.getElementById('regBtn'); if(btn2){btn2.disabled=false;btn2.innerHTML='<i class="fas fa-user-plus"></i> Kayıt Ol';}
 
-  /* Realtime listener — herhangi cihazdan değişince herkese yansır */
-  if(fbListener){DB.ref('pl_users').off('value',fbListener);}
-  fbListener=DB.ref('pl_users').on('value',snap=>{
-    setCache(snap.val()||{});
+  /* 3. Günlük kontroller */
+  checkDailyLogin();
+  checkTimeBasedTasks();
+  checkAutoTasks();
+
+  /* 4. UI'yi doldur — cache hazır olduğu için hepsi anında görünür */
+  updateSidebar();
+  updateMenuUser();
+  renderLB();
+  renderTasks();
+  renderShop();
+  renderProfile();
+  renderStats();
+
+  /* 5. Realtime listener */
+  if(fbListener){ DB.ref('pl_users').off('value',fbListener); }
+  fbListener = DB.ref('pl_users').on('value', snap=>{
+    const nd=snap.val()||{}; setCache(nd);
+    updateSidebar(); updateMenuUser();
     renderLB(document.getElementById('searchInp')?.value||'');
-    updateSidebar();updateMenuUser();
+    const ap=document.querySelector('.panel.active');
+    if(ap){ const n=ap.id.replace('panel-',''); if(n==='tasks')renderTasks(); if(n==='profile')renderProfile(); if(n==='stats')renderStats(); }
     setSyncTime();
   });
   setSyncTime();
 }
 
-/* ═══════════════════════════════════════
-   KULLANICI YARDIMCILARI
-═══════════════════════════════════════ */
-const getUser=()=>getCache()[CU]||null;
-async function saveUser(data){
-  _cache[CU]=data;       /* anında cache güncelle */
-  await fbSet(CU,data);  /* Firebase'e yaz */
-}
+/* ═══ KULLANICI ═══ */
+const getUser = () => getCache()[CU] || null;
+async function saveUser(data){ _cache[CU]=data; await fbSet(CU,data); }
 
-/* ═══════════════════════════════════════
-   GÜNLÜK / HAFTALIK GİRİŞ
-═══════════════════════════════════════ */
-function wKey(){const d=new Date();return`${d.getFullYear()}_W${Math.floor((d.getDate()-1)/7)}`;}
+/* ═══ GÜNLÜK GİRİŞ ═══ */
+function wKey(){ const d=new Date(); return`${d.getFullYear()}_W${Math.floor((d.getDate()-1)/7)}`; }
 
 function checkDailyLogin(){
-  const u=getUser();if(!u)return;
+  const u=getUser(); if(!u) return;
   const today=new Date().toDateString();
-  if(u.lastLogin===today)return;
+  if(u.lastLogin===today) return;
   const yest=new Date(Date.now()-86400000).toDateString();
-  u.streak=(u.lastLogin===yest)?((u.streak||0)+1):1;
-  u.lastLogin=today;
-
-  /* Günlük giriş XP */
+  /* Geri dönüş */
+  if(u.lastLogin){ const d=Math.floor((Date.now()-new Date(u.lastLogin).getTime())/86400000); if(d>=3&&!u.tasks['fn_comeback']){u.tasks['fn_comeback']=true;awardXP(u,200,'Geri dönüş!');awardCoins(u,40);setTimeout(()=>toast('💪 Geri Dönüş görevi! +200 XP','success'),1000);} }
+  u.streak = (u.lastLogin===yest) ? (u.streak||0)+1 : 1;
+  u.lastLogin = today;
   const dk='dl_login_'+today;
-  if(!u.tasks[dk]){u.tasks[dk]=true;awardXP(u,50,'Günlük giriş');awardCoins(u,10);}
-
-  /* Haftalık giriş sayacı */
+  if(!u.tasks[dk]){ u.tasks[dk]=true; awardXP(u,50,'Günlük giriş'); awardCoins(u,10); }
   const wk=wKey();
-  if(u.weekStr!==wk){u.weekStr=wk;u.weeklyLogin=0;u.weeklyQuiz=0;}
+  if(u.weekStr!==wk){ u.weekStr=wk; u.weeklyLogin=0; u.weeklyQuiz=0; u.weeklyRiddle=0; u.weeklyShop=0; }
   u.weeklyLogin=(u.weeklyLogin||0)+1;
-
-  /* Haftalık 5 giriş */
   const wlk='wk_login5_'+wk;
-  if(u.weeklyLogin>=5&&!u.tasks[wlk]){u.tasks[wlk]=true;awardXP(u,180,'Haftalık 5 giriş!');awardCoins(u,35);setTimeout(()=>toast('📆 Haftalık 5 giriş görevi!','success'),1200);}
-
-  /* Seri bonusları */
+  if(u.weeklyLogin>=5&&!u.tasks[wlk]){ u.tasks[wlk]=true; awardXP(u,180,'Haftalık 5 giriş!'); awardCoins(u,35); setTimeout(()=>toast('📆 Haftalık 5 giriş görevi!','success'),1200); }
+  /* Seri */
+  if(u.streak>=3&&!u.tasks['sp_str3']){u.tasks['sp_str3']=true;awardXP(u,100,'3 günlük seri!');awardCoins(u,20);}
   if(u.streak>=7&&!u.tasks['sp_str7']){u.tasks['sp_str7']=true;awardXP(u,500,'7 günlük seri!');awardCoins(u,100);setTimeout(()=>toast('🌟 7 günlük seri! +500 XP','success'),1500);}
-  if(u.streak>=14&&!u.tasks['sp_str14']){u.tasks['sp_str14']=true;awardXP(u,1200,'14 günlük seri!');awardCoins(u,240);setTimeout(()=>toast('💎 14 günlük seri! +1200 XP','success'),2000);}
-  if(u.streak>=30&&!u.tasks['sp_str30']){u.tasks['sp_str30']=true;awardXP(u,3000,'30 günlük seri!');awardCoins(u,600);setTimeout(()=>toast('🔱 30 günlük seri! +3000 XP','success'),2500);}
-
+  if(u.streak>=14&&!u.tasks['sp_str14']){u.tasks['sp_str14']=true;awardXP(u,1200,'14 günlük seri!');awardCoins(u,240);}
+  if(u.streak>=30&&!u.tasks['sp_str30']){u.tasks['sp_str30']=true;awardXP(u,3000,'30 günlük seri!');awardCoins(u,600);}
+  if(u.streak>=10&&!u.tasks['ch_loyal']){u.tasks['ch_loyal']=true;awardXP(u,700,'Sadık Üye: 10 gün!');awardCoins(u,140);setTimeout(()=>toast('🎗️ Sadık Üye görevi!','success'),2000);}
+  /* Gün adı */
+  const day=new Date().getDay();
+  if(day===5&&!u.tasks['fn_friday']){u.tasks['fn_friday']=true;awardXP(u,60,'Cuma Havası!');awardCoins(u,10);}
+  if(day===1&&!u.tasks['fn_monday']){u.tasks['fn_monday']=true;awardXP(u,70,'Pazartesi Savaşçısı!');awardCoins(u,12);}
+  if((day===0||day===6)&&!u.tasks['fn_weekend']){u.tasks['fn_weekend']=true;awardXP(u,80,'Hafta Sonu!');awardCoins(u,15);}
   saveUser(u);
 }
 
-/* ═══════════════════════════════════════
-   OTO GÖREVLER (sıra/seviye tabanlı)
-═══════════════════════════════════════ */
-function checkAutoTasks(){
-  const u=getUser();if(!u)return;
-  const all=sortedAll(getCache());
-  const myRank=all.findIndex(r=>r.username===CU)+1;
-  const{level}=calcLevel(u.xp);
-  let changed=false;
-  const chk=(id,cond,xp,coins,msg)=>{
-    if(cond&&!u.tasks[id]){u.tasks[id]=true;awardXP(u,xp,msg);awardCoins(u,coins);toast(`✨ ${msg}`,'success');changed=true;}
-  };
-  chk('os_lv3',level>=3,100,20,"Seviye 3!");
-  chk('os_lv5',level>=5,200,40,"Seviye 5!");
-  chk('os_lv10',level>=10,500,100,"Seviye 10!");
-  chk('os_lv15',level>=15,800,160,"Seviye 15!");
-  chk('os_lv20',level>=20,1500,300,"Seviye 20!");
-  chk('os_lv30',level>=30,3000,600,"Seviye 30!");
-  chk('os_top15',myRank>0&&myRank<=15,150,30,"Liderlik tablosuna girdin!");
-  chk('os_top10',myRank>0&&myRank<=10,300,60,"İlk 10'a girdin!");
-  chk('os_top5',myRank>0&&myRank<=5,600,120,"İlk 5'e girdin!");
-  chk('os_top3',myRank>0&&myRank<=3,1000,200,"Podyuma çıktın!");
-  chk('os_rank1',myRank===1,2000,500,"1. oldun! Efsane!");
-  chk('os_buy3',(u.ownedItems||[]).length>=3,200,0,"3 dükkan öğesi aldın!");
-  chk('os_buy5',(u.ownedItems||[]).length>=5,500,0,"Koleksiyoncu: 5 öğe!");
-  chk('sp_allshop',(u.ownedItems||[]).length>=SHOP_ITEMS.length,2000,0,"Tam koleksiyon!");
-  if(changed)saveUser(u);
+function checkTimeBasedTasks(){
+  const u=getUser(); if(!u) return;
+  const h=new Date().getHours(); let ch=false;
+  if(h>=0&&h<4&&!u.tasks['fn_midnight']){u.tasks['fn_midnight']=true;awardXP(u,150,'Gece Kuşu!');awardCoins(u,30);toast('🌙 Gece Kuşu görevi! +150 XP','success');ch=true;}
+  if(h>=6&&h<8&&!u.tasks['fn_earlybird']){u.tasks['fn_earlybird']=true;awardXP(u,120,'Erken Kuş!');awardCoins(u,25);toast('🌅 Erken Kuş görevi! +120 XP','success');ch=true;}
+  if(ch) saveUser(u);
 }
 
-/* ═══════════════════════════════════════
-   XP / COIN / HISTORY
-═══════════════════════════════════════ */
-function addHist(u,type,action,amount){
-  if(!u.history)u.history=[];
-  u.history.unshift({type,action,amount,time:new Date().toISOString()});
-  if(u.history.length>50)u.history=u.history.slice(0,50);
+function checkAutoTasks(){
+  const u=getUser(); if(!u) return;
+  const all=sortedAll(getCache()); const myRank=all.findIndex(r=>r.username===CU)+1;
+  const{level}=calcLevel(u.xp); let changed=false;
+  const chk=(id,cond,xp,coins,msg)=>{ if(cond&&!u.tasks[id]){u.tasks[id]=true;awardXP(u,xp,msg);awardCoins(u,coins);toast(`✨ ${msg}`,'success');changed=true;} };
+  /* Seviye */
+  chk('os_lv3',level>=3,100,20,'Seviye 3!'); chk('os_lv5',level>=5,200,40,'Seviye 5!'); chk('os_lv10',level>=10,500,100,'Seviye 10!');
+  chk('os_lv15',level>=15,800,160,'Seviye 15!'); chk('os_lv20',level>=20,1500,300,'Seviye 20!'); chk('os_lv25',level>=25,2000,400,'Seviye 25!');
+  chk('os_lv30',level>=30,3000,600,'Seviye 30!'); chk('os_lv40',level>=40,5000,1000,'Seviye 40!'); chk('os_lv50',level>=50,10000,2000,'Seviye 50 — TANRI!');
+  /* Sıralama */
+  chk('os_top15',myRank>0&&myRank<=15,150,30,"İlk 15'e girdin!"); chk('os_top10',myRank>0&&myRank<=10,300,60,"İlk 10'a girdin!");
+  chk('os_top5',myRank>0&&myRank<=5,600,120,"İlk 5'e girdin!"); chk('os_top3',myRank>0&&myRank<=3,1000,200,'Podyuma çıktın!'); chk('os_rank1',myRank===1,2000,500,'1. oldun!');
+  /* Dükkan */
+  chk('os_buy3',(u.ownedItems||[]).length>=3,200,0,'3 dükkan öğesi!'); chk('os_buy5',(u.ownedItems||[]).length>=5,500,0,'5 dükkan öğesi!');
+  chk('sp_allshop',(u.ownedItems||[]).length>=SHOP_ITEMS.length,2000,0,'Tam Koleksiyon!');
+  /* XP/Coin */
+  chk('sp_xpk',u.xp>=10000,500,100,'10.000 XP Kulübü!'); chk('sp_xp50k',u.xp>=50000,2000,400,'50.000 XP Kulübü!');
+  chk('sp_coins500',(u.coins||0)>=500,200,0,'500 coin biriktirdin!'); chk('sp_coins2k',(u.coins||0)>=2000,800,0,'2000 coin — Hazinedar!'); chk('sp_coins5k',(u.coins||0)>=5000,2000,0,'5000 coin — Milyoner!');
+  /* Bilmece */
+  chk('sp_riddle10',(u.riddleCount||0)>=10,600,120,'Bilmece Ustası!'); chk('sp_riddle25',(u.riddleCount||0)>=25,2000,400,'Bilmece Efsanesi!');
+  /* Görev sayısı */
+  const td=Object.keys(u.tasks||{}).length; chk('sp_tasks20',td>=20,600,120,'20 görev tamamladın!'); chk('sp_tasks50',td>=50,2000,400,'50 görev Efsanesi!');
+  /* Kaşif */
+  const allTabs=['leaderboard','tasks','shop','profile','stats'];
+  if(allTabs.every(t=>tabsVisited.has(t))&&!u.tasks['fn_explorer']){ u.tasks['fn_explorer']=true; awardXP(u,100,'Kaşif: Tüm sekmeler!'); awardCoins(u,20); toast('🗺️ Kaşif görevi!','success'); changed=true; }
+  if(changed) saveUser(u);
 }
+
+/* ═══ XP/COIN ═══ */
+function addHist(u,type,action,amount){ if(!u.history)u.history=[]; u.history.unshift({type,action,amount,time:new Date().toISOString()}); if(u.history.length>50)u.history=u.history.slice(0,50); }
+
 function awardXP(u,raw,reason){
   const amt=applyBoost(raw);
   const{level:before}=calcLevel(u.xp);
-  u.xp=(u.xp||0)+amt;
+  u.xp=(u.xp||0)+amt; sessionGrindXP+=amt;
   addHist(u,'gain',reason+(isBoost()?' ⚡2×':''),amt);
   const{level:after}=calcLevel(u.xp);
-  if(after>before)setTimeout(()=>showLvlUp(after),800);
+  if(after>before) setTimeout(()=>showLvlUp(after),800);
+  /* Grind */
+  if(sessionGrindXP>=1000&&u&&!u.tasks['ch_grind']){ u.tasks['ch_grind']=true; addHist(u,'gain','Grind Modu: 1000 XP!',500); u.xp+=500; sessionGrindXP=0; toast('⚔️ Grind Modu görevi! +500 XP','success'); }
 }
-const awardCoins=(u,n)=>{u.coins=(u.coins||0)+n;};
-function showLvlUp(lvl){
-  document.getElementById('lupNum').textContent=lvl;
-  document.getElementById('lupTitle').textContent=getTitle(lvl);
-  document.getElementById('lvlUpModal').style.display='flex';
-  updateSidebar();checkAutoTasks();
+function awardCoins(u,n){
+  u.coins=(u.coins||0)+n; dailyCoinEarned+=n;
+  if(dailyCoinEarned>=100&&u&&!u.tasks['ch_topcoin']){ u.tasks['ch_topcoin']=true; awardXP(u,300,'Para Babası!'); toast('💸 Para Babası görevi!','success'); }
 }
-const closeLvlUp=()=>{document.getElementById('lvlUpModal').style.display='none';};
 
-/* ═══════════════════════════════════════
-   SIDEBAR + MENÜ KULLANICI
-═══════════════════════════════════════ */
+function showLvlUp(lvl){ document.getElementById('lupNum').textContent=lvl; document.getElementById('lupTitle').textContent=getTitle(lvl); document.getElementById('lvlUpModal').style.display='flex'; updateSidebar(); checkAutoTasks(); }
+const closeLvlUp = () => { document.getElementById('lvlUpModal').style.display='none'; };
+
+/* ═══ SIDEBAR / MENÜ ═══ */
 function updateSidebar(){
-  const u=getUser();if(!u)return;
+  const u=getUser(); if(!u) return;
   const{level,inLevel,needed}=calcLevel(u.xp);
   const pct=Math.min(100,(inLevel/needed)*100);
   document.getElementById('sbAvi').textContent=u.avatar||'👤';
@@ -1135,62 +1071,59 @@ function updateSidebar(){
   const myR=sortedAll(getCache()).findIndex(r=>r.username===CU)+1;
   document.getElementById('sbRank').textContent=myR>0?`#${myR}`:'#—';
   /* Görev rozeti */
-  const today=new Date().toDateString();
-  let pend=0;
-  TASKS.forEach(t=>{
-    if(t.daily&&!u.tasks[t.id+'_'+today])pend++;
-    if(t.weekly&&!u.tasks[t.id+'_'+wKey()])pend++;
-    if(t.oneshot&&!u.tasks[t.id])pend++;
-  });
-  ['taskBdg','nTaskBdg'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=pend;});
+  const today=new Date().toDateString(); const wk=wKey(); let pend=0;
+  TASKS.forEach(t=>{ const k=t.daily?t.id+'_'+today:t.weekly?t.id+'_'+wk:t.id; if(!u.tasks[k]) pend++; });
+  ['taskBdg','nTaskBdg'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=pend; });
 }
 function updateMenuUser(){
-  const u=getUser();if(!u)return;
-  const{level}=calcLevel(u.xp);
-  const myR=sortedAll(getCache()).findIndex(r=>r.username===CU)+1;
+  const u=getUser(); if(!u) return;
+  const{level}=calcLevel(u.xp); const myR=sortedAll(getCache()).findIndex(r=>r.username===CU)+1;
   document.getElementById('nAvi').textContent=u.avatar||'👤';
   document.getElementById('nName').textContent=CU;
   document.getElementById('nRank').textContent=`Sıra: #${myR}`;
   document.getElementById('nLvl').textContent=`${getTitle(level)} · Lv ${level}`;
   document.getElementById('nUCard').classList.add('show');
 }
-const setSyncTime=()=>{
-  const t=new Date();
-  const el=document.getElementById('syncTime');
-  if(el)el.textContent=`Güncellendi: ${t.getHours()}:${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}`;
-};
+const setSyncTime = () => { const t=new Date(); const el=document.getElementById('syncTime'); if(el) el.textContent=`Güncellendi: ${t.getHours()}:${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}`; };
 
-/* ═══════════════════════════════════════
-   SIRALAMA HESAPLAMASİ
-═══════════════════════════════════════ */
+/* ═══ SIRALAMA ═══ */
 function sortedAll(users){
   return Object.entries(users)
     .map(([un,d])=>({username:un,xp:d.xp||0,avatar:d.avatar||'👤',coins:d.coins||0,ownedItems:d.ownedItems||[],prevRank:d.prevRank||null}))
     .sort((a,b)=>sortMode==='coins'?b.coins-a.coins:sortMode==='level'?calcLevel(b.xp).level-calcLevel(a.xp).level:b.xp-a.xp)
     .map((p,i)=>({...p,rank:i+1,level:calcLevel(p.xp).level}));
 }
-const top15=users=>sortedAll(users).slice(0,15);
 
-/* ═══════════════════════════════════════
-   LEADERBOARD RENDER
-═══════════════════════════════════════ */
+/* ═══ LEADERBOARD RENDER ═══
+   Tabloda MAX 15 kişi gösterilir.
+   Kullanıcı 15 dışındaysa kendi satırı "• • •" altında ayrıca gösterilir. */
 function renderLB(filter=''){
   const users=getCache();
-  if(!Object.keys(users).length)return;
-  const t15=top15(users);
+  if(!Object.keys(users).length) return;
   const all=sortedAll(users);
-  document.getElementById('totalP').textContent=Object.keys(users).length;
-  renderPodium(t15);
+  const totalCount=all.length;
+  document.getElementById('totalP').textContent=totalCount;
+
+  /* Podyum: her zaman top 3 */
+  renderPodium(all.slice(0,3));
+
   const myFull=all.find(r=>r.username===CU);
   const myRank=myFull?myFull.rank:null;
-  const inTop=myRank!==null&&myRank<=15;
-  let list=filter.trim()?t15.filter(p=>p.username.toLowerCase().includes(filter.toLowerCase())):t15;
-  if(!list.length){
+
+  /* Tabloda gösterilecek liste: ilk 15 */
+  let displayList = all.slice(0, LB_LIMIT);
+
+  /* Filtre uygulanıyorsa tüm listede ara */
+  if(filter.trim()){
+    displayList = all.filter(p=>p.username.toLowerCase().includes(filter.toLowerCase()));
+  }
+
+  if(!displayList.length){
     document.getElementById('lbRows').innerHTML='<div class="empty-state"><i class="fas fa-user-slash"></i>Oyuncu bulunamadı</div>';
   } else {
-    document.getElementById('lbRows').innerHTML=list.map((p,idx)=>{
+    document.getElementById('lbRows').innerHTML = displayList.map((p,idx)=>{
       const isMe=p.username===CU;
-      const rnC=p.rank===1?'rn1':p.rank===2?'rn2':p.rank===3?'rn3':'rnx';
+      const rnC=p.rank===1?'rn1':p.rank===2?'rn2':p.rank===3?'rn3':isMe?'rnme':'rnx';
       const rowC='row'+(p.rank<=3?' r'+p.rank:'')+(isMe?' me':'');
       const medal=p.rank===1?'🥇':p.rank===2?'🥈':p.rank===3?'🥉':'';
       return `<div class="${rowC}" style="animation-delay:${idx*.028}s" onclick="rowClick(${esc(p)})">
@@ -1206,60 +1139,88 @@ function renderLB(filter=''){
       </div>`;
     }).join('');
   }
-  /* 15 dışı kendi kartı */
-  const dots=document.getElementById('rankDots');
-  const sep=document.getElementById('rankSep');
-  const myRow=document.getElementById('myRow');
+
+  /* Kendi satırı — sadece 15 dışındaysa ve filtre yoksa göster */
+  const myRowWrap=document.getElementById('myRowWrap');
   const banner=document.getElementById('rankBanner');
   const mri=document.getElementById('myRankInfo');
-  if(!filter&&myRank&&!inTop&&myFull){
-    dots.classList.add('show');sep.classList.add('show');myRow.classList.add('show');banner.classList.add('show');
-    myRow.innerHTML=`<div class="rnum rnme">#${myRank}</div><div class="avi-cell">${myFull.avatar}</div><div class="pinfo"><div class="pname">${CU} <span class="me-tag">SEN</span></div><div class="ptitle">${getTitle(myFull.level)}</div></div><div class="clvl">Lv ${myFull.level}</div><div class="cxp">${myFull.xp.toLocaleString()} XP</div><div class="ctrend">${trendH(myFull)}</div>`;
-    const r15=all[14];
-    const need=r15?Math.max(0,r15.xp-myFull.xp+1):0;
+  const inTop = myRank && myRank <= LB_LIMIT;
+
+  if(!filter.trim() && myFull && !inTop){
+    /* Kullanıcı 15 dışında — kendi satırını göster */
+    myRowWrap.classList.add('show');
+    banner.classList.add('show');
+    document.getElementById('myOwnRow').innerHTML=buildRowCells(myFull, true);
     document.getElementById('rbRank').textContent=`#${myRank}`;
     document.getElementById('rbXp').textContent=`${myFull.xp.toLocaleString()} XP`;
-    document.getElementById('rbNeed').textContent=need>0?`🏆 İlk 15 için: +${need.toLocaleString()} XP`:'';
-    mri.textContent=`Sıran: #${myRank} (${Object.keys(users).length} oyuncuda)`;
+    const p15=all[LB_LIMIT-1];
+    const needXp=p15?Math.max(0,p15.xp-myFull.xp+1):0;
+    document.getElementById('rbNeed').textContent=needXp>0?`🏆 İlk 15 için: +${needXp.toLocaleString()} XP`:'';
+    mri.textContent=`Senin sıran: #${myRank} / ${totalCount} oyuncu`;
+  } else if(!filter.trim() && myFull && inTop){
+    myRowWrap.classList.remove('show');
+    banner.classList.add('show');
+    document.getElementById('rbRank').textContent=`#${myRank}`;
+    document.getElementById('rbXp').textContent=`${myFull.xp.toLocaleString()} XP`;
+    const above=all[myRank-2];
+    const need=above?Math.max(0,above.xp-myFull.xp+1):0;
+    document.getElementById('rbNeed').textContent=need>0?`▲ Üste geçmek için: +${need.toLocaleString()} XP`:'👑 Birinciliğin!';
+    mri.textContent=`Sıran: #${myRank} / ${totalCount} oyuncu`;
   } else {
-    dots.classList.remove('show');sep.classList.remove('show');myRow.classList.remove('show');banner.classList.remove('show');
-    if(myRank)mri.textContent=`Sıran: #${myRank}`;
+    myRowWrap.classList.remove('show');
+    if(myFull){ banner.classList.add('show'); document.getElementById('rbRank').textContent=`#${myRank}`; document.getElementById('rbXp').textContent=`${myFull.xp.toLocaleString()} XP`; document.getElementById('rbNeed').textContent=''; mri.textContent=`Sıran: #${myRank}`; }
+    else banner.classList.remove('show');
   }
 }
 
-function renderPodium(t15){
-  const pod=document.getElementById('podium');
-  if(t15.length<3){pod.innerHTML='';return;}
-  const ord=[{p:t15[1],cl:'ps-2',m:'🥈'},{p:t15[0],cl:'ps-1',m:'🥇'},{p:t15[2],cl:'ps-3',m:'🥉'}];
-  pod.innerHTML=ord.map(({p,cl,m})=>`<div class="ps ${cl}" onclick="rowClick(${esc(p)})"><div class="ps-aw"><div class="ps-avi">${p.avatar}</div><div class="ps-medal">${m}</div></div><div class="ps-name">${p.username}</div><div class="ps-xp">${p.xp.toLocaleString()} XP</div><div class="ps-bar">${p.rank}</div></div>`).join('');
+function buildRowCells(p, isMe){
+  const rnC=p.rank===1?'rn1':p.rank===2?'rn2':p.rank===3?'rn3':isMe?'rnme':'rnx';
+  const medal=p.rank===1?'🥇':p.rank===2?'🥈':p.rank===3?'🥉':'';
+  return `<div class="rnum ${rnC}">#${p.rank}${medal}</div>
+    <div class="avi-cell">${p.avatar}</div>
+    <div class="pinfo"><div class="pname">${p.username}${isMe?'<span class="me-tag">SEN</span>':''}</div><div class="ptitle">${getTitle(p.level)}</div></div>
+    <div class="clvl">Lv ${p.level}</div>
+    <div class="cxp">${p.xp.toLocaleString()} XP</div>
+    <div class="ctrend">${trendH(p)}</div>`;
 }
-const trendH=p=>{
-  if(!p.prevRank||p.prevRank===p.rank)return'<span class="ctrend teq">—</span>';
-  if(p.prevRank>p.rank)return`<span class="ctrend tup">▲${p.prevRank-p.rank}</span>`;
-  return`<span class="ctrend tdn">▼${p.rank-p.prevRank}</span>`;
-};
-const esc=p=>JSON.stringify(p).replace(/"/g,'&quot;');
 
-/* ═══════════════════════════════════════
-   ROW CLICK
-═══════════════════════════════════════ */
-function rowClick(p){
-  const u=getUser();if(!u)return;
-  u.clickCount=(u.clickCount||0)+1;
-  sessionClickCount++;
-  const today=new Date().toDateString();
-  /* Günlük 3 tıklama görevi */
-  if(sessionClickCount>=3&&!u.tasks['dl_lb3_'+today]){u.tasks['dl_lb3_'+today]=true;awardXP(u,30,'Tabloyu inceledi');awardCoins(u,5);toast('👀 Tabloyu inceleme görevi!','success');}
-  /* Tıklama milestone'ları */
-  const ck=u.clickCount;
-  const clk=(id,cond,xp,coins,msg)=>{if(cond&&!u.tasks[id]){u.tasks[id]=true;awardXP(u,xp,msg);awardCoins(u,coins);toast(`👆 ${msg}`,'success');}};
-  clk('os_click10',ck>=10,30,5,'10 tıklama!');
-  clk('os_click50',ck>=50,80,15,'50 tıklama!');
-  clk('os_click100',ck>=100,150,30,'100 tıklama!');
-  clk('os_click250',ck>=250,300,60,'250 tıklama!');
-  saveUser(u);updateSidebar();openPM(p);
+function renderPodium(top3){
+  const pod=document.getElementById('podium');
+  if(top3.length<3){pod.innerHTML='';return;}
+  const ord=[{p:top3[1],cl:'ps-2',m:'🥈'},{p:top3[0],cl:'ps-1',m:'🥇'},{p:top3[2],cl:'ps-3',m:'🥉'}];
+  pod.innerHTML=ord.map(({p,cl,m})=>`<div class="ps ${cl}" onclick="podiumClick(${esc(p)})"><div class="ps-aw"><div class="ps-avi">${p.avatar}</div><div class="ps-medal">${m}</div></div><div class="ps-name">${p.username}</div><div class="ps-xp">${p.xp.toLocaleString()} XP</div><div class="ps-bar">${p.rank}</div></div>`).join('');
 }
-const openSelfModal=()=>{const me=sortedAll(getCache()).find(r=>r.username===CU);if(me)openPM(me);};
+
+function podiumClick(p){
+  rowClick(p); podiumClicks++;
+  const u=getUser(); if(!u) return;
+  const today=new Date().toDateString(); const k='dl_podium_'+today;
+  if(podiumClicks>=3&&!u.tasks[k]){ u.tasks[k]=true; awardXP(u,35,'Podyumu inceledi'); awardCoins(u,6); saveUser(u); toast('🏅 Podyumu inceleme görevi!','success'); updateSidebar(); renderTasks(); }
+}
+
+const trendH = p => {
+  if(!p.prevRank||p.prevRank===p.rank) return '<span class="ctrend teq">—</span>';
+  if(p.prevRank>p.rank) return `<span class="ctrend tup">▲${p.prevRank-p.rank}</span>`;
+  return `<span class="ctrend tdn">▼${p.rank-p.prevRank}</span>`;
+};
+const esc = p => JSON.stringify(p).replace(/"/g,'&quot;');
+
+/* ═══ ROW CLICK ═══ */
+function rowClick(p){
+  const u=getUser(); if(!u) return;
+  u.clickCount=(u.clickCount||0)+1; sessionClickCount++;
+  /* Hız tıklama */
+  const now=Date.now(); fastClickTimes.push(now); fastClickTimes=fastClickTimes.filter(t=>now-t<10000);
+  if(fastClickTimes.length>=5&&!u.tasks['fn_fastclick']){ u.tasks['fn_fastclick']=true; awardXP(u,75,'Hızlı Tıklayıcı!'); awardCoins(u,15); toast('⚡ Hızlı Tıklayıcı görevi!','success'); }
+  const today=new Date().toDateString();
+  if(sessionClickCount>=3&&!u.tasks['dl_lb3_'+today]){ u.tasks['dl_lb3_'+today]=true; awardXP(u,30,'Tabloyu inceledi'); awardCoins(u,5); toast('👀 Tablo inceleme görevi!','success'); }
+  const ck=u.clickCount;
+  const clk=(id,c,xp,coins,msg)=>{ if(c&&!u.tasks[id]){u.tasks[id]=true;awardXP(u,xp,msg);awardCoins(u,coins);toast(`👆 ${msg}`,'success');} };
+  clk('os_click10',ck>=10,30,5,'10 tıklama!'); clk('os_click50',ck>=50,80,15,'50 tıklama!');
+  clk('os_click100',ck>=100,150,30,'100 tıklama!'); clk('os_click250',ck>=250,300,60,'250 tıklama!'); clk('os_click500',ck>=500,600,120,'500 tıklama!');
+  saveUser(u); updateSidebar(); openPM(p);
+}
+const openSelfModal = () => { const me=sortedAll(getCache()).find(r=>r.username===CU); if(me) openPM(me); };
 function openPM(p){
   document.getElementById('pmAvi').textContent=p.avatar;
   document.getElementById('pmName').textContent=p.username;
@@ -1274,134 +1235,237 @@ function openPM(p){
   document.getElementById('pmBadges').innerHTML=items.length?items.map(id=>{const s=SHOP_ITEMS.find(x=>x.id===id);return s?`<div class="bdg-item">${s.ico}</div>`:''}).join(''):'<span style="color:var(--muted);font-size:.71rem;">Rozet yok</span>';
   document.getElementById('playerModal').style.display='flex';
 }
-const closePM=()=>{document.getElementById('playerModal').style.display='none';};
+const closePM = () => { document.getElementById('playerModal').style.display='none'; };
 
-/* ═══════════════════════════════════════
-   TASKS RENDER
-═══════════════════════════════════════ */
-const catLbl={daily:'Günlük',weekly:'Haftalık',oneshot:'Tek Seferlik',social:'Sosyal',special:'Özel'};
-const catCls={daily:'tb-daily',weekly:'tb-weekly',oneshot:'tb-oneshot',social:'tb-social',special:'tb-special'};
+/* ═══ TASKS ═══ */
+const catLbl={daily:'Günlük',weekly:'Haftalık',oneshot:'Tek Seferlik',social:'Sosyal',special:'Özel',fun:'Eğlenceli',challenge:'Meydan Okuma'};
+const catCls={daily:'tb-daily',weekly:'tb-weekly',oneshot:'tb-oneshot',social:'tb-social',special:'tb-special',fun:'tb-fun',challenge:'tb-challenge'};
 
 function renderTasks(){
-  const u=getUser();if(!u)return;
-  const today=new Date().toDateString();
-  const wk=wKey();
+  const u=getUser(); if(!u) return;
+  const today=new Date().toDateString(); const wk=wKey();
   document.getElementById('streakBar').innerHTML=Array.from({length:7},(_,i)=>`<div class="sd${i<(u.streak||0)?' done':''}"></div>`).join('');
   document.getElementById('streakCnt').textContent=`${u.streak||0} gün`;
-  document.getElementById('tasksGrid').innerHTML=TASKS.map(t=>{
+  let tasks=TASKS;
+  if(taskFilter!=='all') tasks=TASKS.filter(t=>t.cat===taskFilter);
+  document.getElementById('tasksGrid').innerHTML=tasks.map(t=>{
     const key=t.daily?t.id+'_'+today:t.weekly?t.id+'_'+wk:t.id;
     const done=!!u.tasks[key];
     let desc=t.desc;
     if(t.id==='dl_lb3'&&!done)desc=`3 tıklama yap (${Math.min(sessionClickCount,3)}/3)`;
-    if(t.id==='sp_quiz20')desc=`20 quiz tamamla (${u.quizCount||0}/20)`;
-    if(t.id==='sp_quiz5')desc=`5 quiz tamamla (${Math.min(u.quizCount||0,5)}/5)`;
-    if(t.id==='os_buy3')desc=`3 öğe satın al (${Math.min((u.ownedItems||[]).length,3)}/3)`;
-    if(t.id==='os_buy5')desc=`5 öğe satın al (${Math.min((u.ownedItems||[]).length,5)}/5)`;
-    if(t.id==='sp_allshop')desc=`Tüm öğeleri al (${(u.ownedItems||[]).length}/${SHOP_ITEMS.length})`;
+    if(t.id==='sp_quiz5')desc=`5 quiz (${Math.min(u.quizCount||0,5)}/5)`;
+    if(t.id==='sp_quiz20')desc=`20 quiz (${Math.min(u.quizCount||0,20)}/20)`;
+    if(t.id==='sp_quiz50')desc=`50 quiz (${Math.min(u.quizCount||0,50)}/50)`;
+    if(t.id==='sp_riddle10')desc=`10 bilmece (${Math.min(u.riddleCount||0,10)}/10)`;
+    if(t.id==='sp_riddle25')desc=`25 bilmece (${Math.min(u.riddleCount||0,25)}/25)`;
     if(t.id==='wk_quiz3')desc=`Bu hafta 3 quiz (${Math.min(u.weeklyQuiz||0,3)}/3)`;
+    if(t.id==='wk_quiz7')desc=`Bu hafta 7 quiz (${Math.min(u.weeklyQuiz||0,7)}/7)`;
+    if(t.id==='wk_riddle3')desc=`Bu hafta 3 bilmece (${Math.min(u.weeklyRiddle||0,3)}/3)`;
     if(t.id==='wk_login5')desc=`Bu hafta 5 giriş (${Math.min(u.weeklyLogin||0,5)}/5)`;
-    if(t.id.startsWith('sp_str')){
-      const need=parseInt(t.id.replace('sp_str',''));
-      desc=`${need} gün seri (${Math.min(u.streak||0,need)}/${need})`;
-    }
+    if(t.id==='wk_shop2')desc=`Bu hafta 2 alışveriş (${Math.min(u.weeklyShop||0,2)}/2)`;
+    if(t.id==='os_buy3')desc=`3 öğe al (${Math.min((u.ownedItems||[]).length,3)}/3)`;
+    if(t.id==='os_buy5')desc=`5 öğe al (${Math.min((u.ownedItems||[]).length,5)}/5)`;
+    if(t.id==='sp_allshop')desc=`Tüm öğeleri al (${(u.ownedItems||[]).length}/${SHOP_ITEMS.length})`;
+    if(t.id==='sp_xpk')desc=`10.000 XP (${Math.min(u.xp,10000).toLocaleString()}/10.000)`;
+    if(t.id==='sp_xp50k')desc=`50.000 XP (${Math.min(u.xp,50000).toLocaleString()}/50.000)`;
+    if(t.id==='sp_coins500')desc=`500 coin (${Math.min(u.coins||0,500)}/500)`;
+    if(t.id==='sp_coins2k')desc=`2000 coin (${Math.min(u.coins||0,2000)}/2000)`;
+    if(t.id==='sp_coins5k')desc=`5000 coin (${Math.min(u.coins||0,5000)}/5000)`;
+    if(t.id==='sp_tasks20'){const td=Object.keys(u.tasks||{}).length;desc=`20 görev tamamla (${Math.min(td,20)}/20)`;}
+    if(t.id==='sp_tasks50'){const td=Object.keys(u.tasks||{}).length;desc=`50 görev tamamla (${Math.min(td,50)}/50)`;}
+    if(t.id.startsWith('sp_str')){const n=parseInt(t.id.replace('sp_str',''));if(!isNaN(n))desc=`${n} gün seri (${Math.min(u.streak||0,n)}/${n})`;}
+    if(t.id.startsWith('os_click')){const n=parseInt(t.id.replace('os_click',''));if(!isNaN(n))desc=`${n} tıklama (${Math.min(u.clickCount||0,n)}/${n})`;}
+    if(t.id==='fn_allavi')desc=`5 farklı avatar dene (${Math.min(avisChanged.size,5)}/5)`;
+    if(t.id==='fn_lucky777')desc=`Şans çarkı 3 kez (${Math.min(u.luckyCount||0,3)}/3)`;
+    if(t.id==='ch_grind')desc=`Bu oturumda 1000 XP (${Math.min(sessionGrindXP,1000)}/1000)`;
+    if(t.id==='ch_speed3')desc=`Art arda 3 doğru quiz (${Math.min(consecutiveCorrect,3)}/3)`;
+    if(t.id==='ch_quizking')desc=`Art arda 5 doğru quiz (${Math.min(consecutiveCorrect,5)}/5)`;
+    if(t.id==='ch_noquit'){const td=countTodayDone(u,today);desc=`Bugün 5 farklı görev (${Math.min(td,5)}/5)`;}
+    if(t.id==='ch_perfect'){const dl=TASKS.filter(x=>x.daily).filter(x=>u.tasks[x.id+'_'+today]).length;const tot=TASKS.filter(x=>x.daily).length;desc=`Tüm günlük görevler (${dl}/${tot})`;}
+    if(t.id==='wk_tasks10'){const wt=TASKS.filter(x=>!x.weekly).filter(x=>{ const k=x.daily?x.id+'_'+today:x.id; return u.tasks[k]; }).length;desc=`Bu hafta 10 görev (${Math.min(wt,10)}/10)`;}
     return `<div class="tc${done?' done':''}">
       <span class="tc-badge ${catCls[t.cat]||'tb-daily'}">${catLbl[t.cat]||'Günlük'}</span>
       <div class="t-ico">${t.ico}</div>
       <div class="t-title">${t.title}</div>
       <div class="t-desc">${desc}</div>
       <div class="t-rew">
-        <span class="xp-pill">+${t.xp} XP</span>
+        <span class="xp-pill">+${t.xp>0?t.xp:'?'} XP</span>
         ${t.coins>0?`<span class="coin-pill">+${t.coins}🪙</span>`:''}
       </div>
-      <button class="t-btn" onclick="doTask('${t.id}')">${done?'✓ Tamamlandı':'Görevi Tamamla'}</button>
+      <button class="t-btn" onclick="doTask('${t.id}')">${done?'✓ Tamamlandı':'Görevi Yap'}</button>
     </div>`;
   }).join('');
 }
 
+function countTodayDone(u,today){
+  return TASKS.filter(t=>t.daily).filter(t=>u.tasks[t.id+'_'+today]).length
+    + TASKS.filter(t=>!t.daily&&!t.weekly&&t.oneshot&&u.tasks[t.id]).length;
+}
+
 function doTask(id){
-  const u=getUser();if(!u)return;
-  const today=new Date().toDateString();
-  const wk=wKey();
-  const task=TASKS.find(t=>t.id===id);if(!task)return;
+  const u=getUser(); if(!u) return;
+  const today=new Date().toDateString(); const wk=wKey();
+  const task=TASKS.find(t=>t.id===id); if(!task) return;
   const key=task.daily?id+'_'+today:task.weekly?id+'_'+wk:id;
   if(u.tasks[key]){toast('Bu görev zaten tamamlandı!','info');return;}
   /* Özel tetikleyiciler */
   if(task.quiz){showQuiz(task,key);return;}
+  if(task.riddle){showRiddle(task,key);return;}
+  if(task.req==='lucky'){doLucky(u,today);return;}
   if(task.req==='click3'){if(sessionClickCount<3){toast(`Tablodan ${3-sessionClickCount} tıklama daha yap!`,'info');return;}}
-  if(task.req==='shopvisit'){showPanel('shop',null);toast('Dükkan açılıyor...','info');return;}
-  if(task.req==='profilevisit'){showPanel('profile',null);toast('Profil açılıyor...','info');return;}
+  if(task.req==='shopvisit'){showPanel('shop',null);return;}
+  if(task.req==='profilevisit'){showPanel('profile',null);return;}
+  if(task.req==='statsvisit'){showPanel('stats',null);return;}
+  if(task.req==='podium3'){toast('Podyumdaki 3 oyuncuya tıkla!','info');showPanel('leaderboard',null);return;}
+  if(task.req==='dosearch'){toast('Arama kutusuna bir şey yazarak tamamla!','info');document.getElementById('searchInp')?.focus();return;}
   if(id==='os_chavi'){showPanel('profile',null);toast('Profilden avatar değiştir!','info');return;}
-  u.tasks[key]=true;awardXP(u,task.xp,task.title);awardCoins(u,task.coins);
-  saveUser(u);toast(`✅ ${task.title} +${task.xp}XP`,'success');
-  updateSidebar();renderTasks();checkAutoTasks();renderStats();
+  if(id==='fn_allavi'){if(avisChanged.size<5){toast(`${5-avisChanged.size} farklı avatar daha dene!`,'info');showPanel('profile',null);return;}}
+  if(id==='fn_lucky777'){if((u.luckyCount||0)<3){toast(`${3-(u.luckyCount||0)} kez daha şans çarkı çevir!`,'info');return;}}
+  if(id==='fn_explorer'){toast('Tüm sekmeleri gezerek tamamlanır!','info');return;}
+  if(id==='fn_shopspy'){showPanel('shop',null);u.tasks[id]=true;awardXP(u,50,'Dükkan Casusu!');awardCoins(u,10);saveUser(u);toast('👁️ Dükkan Casusu görevi!','success');updateSidebar();renderTasks();return;}
+  if(id==='fn_namecheck'){toast('Kendi adını arama kutusuna yazarak tamamla!','info');document.getElementById('searchInp')?.focus();return;}
+  if(id==='ch_noquit'){const td=countTodayDone(u,today);if(td<5){toast(`Bugün ${5-td} görev daha tamamla!`,'info');return;}}
+  if(id==='ch_perfect'){const dl=TASKS.filter(t=>t.daily).filter(t=>u.tasks[t.id+'_'+today]).length;const tot=TASKS.filter(t=>t.daily).length;if(dl<tot){toast(`${tot-dl} günlük görev daha tamamla!`,'info');return;}}
+  if(id==='wk_tasks10'){const wt=TASKS.filter(x=>!x.weekly).filter(x=>{const k=x.daily?x.id+'_'+today:x.id;return u.tasks[k];}).length;if(wt<10){toast(`Bu hafta ${10-wt} görev daha tamamla!`,'info');return;}}
+  if(id==='ch_richbuy'){toast('Dükkandan 500+ coin değerinde bir öğe al!','info');showPanel('shop',null);return;}
+  if(id==='ch_coinmaster'){toast('Görevler tamamlandıkça otomatik verilir!','info');return;}
+  if(id==='ch_toprank'){toast('Sıralamada ilerleyerek otomatik tamamlanır!','info');return;}
+  if(id==='os_allsort'){toast('3 farklı sıralama butonunu dene (XP, Seviye, Coin)!','info');showPanel('leaderboard',null);return;}
+  if(id==='fn_midnight'){const h=new Date().getHours();if(h<0||h>=4){toast('Bu görev gece 00:00–04:00 arası!','info');return;}}
+  if(id==='fn_earlybird'){const h=new Date().getHours();if(h<6||h>=8){toast('Bu görev sabah 06:00–08:00 arası!','info');return;}}
+  if(id==='fn_nightquiz'){toast('Gece 22:00 sonrası quiz çözerek tamamlanır!','info');return;}
+  if(id==='fn_comeback'){toast('3+ günlük aradan sonra giriş yaparak tamamlanır!','info');return;}
+  if(id==='fn_fastclick'){toast('Tabloda 10 saniye içinde 5 farklı oyuncuya tıkla!','info');showPanel('leaderboard',null);return;}
+  /* Normal görev */
+  u.tasks[key]=true; awardXP(u,task.xp,task.title); awardCoins(u,task.coins);
+  saveUser(u); toast(`✅ ${task.title} +${task.xp}XP`,'success');
+  updateSidebar(); renderTasks(); checkAutoTasks(); renderStats();
 }
 
-/* ═══════════════════════════════════════
-   QUIZ
-═══════════════════════════════════════ */
-function showQuiz(task,key){
-  const q=QUIZZES[Math.floor(Math.random()*QUIZZES.length)];
-  const d=document.createElement('div');
-  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(13px);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px;';
-  d.innerHTML=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:21px;padding:24px;max-width:345px;width:100%;text-align:center;"><div style="font-size:1.75rem;margin-bottom:11px;">🧠</div><h3 style="font-weight:700;margin-bottom:17px;font-size:.95rem;">${q.q}</h3><div style="display:flex;flex-direction:column;gap:7px;">${q.o.map((o,i)=>`<button onclick="ansQ(this,${i},${q.a},'${key}',${task.xp},${task.coins})" style="padding:9px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--font);font-size:.84rem;cursor:pointer;" onmouseover="this.style.background='rgba(59,130,246,.14)'" onmouseout="this.style.background='rgba(255,255,255,.05)'">${o}</button>`).join('')}</div><button onclick="this.closest('div[style]').remove()" style="margin-top:11px;background:none;border:none;color:var(--muted);font-family:var(--font);cursor:pointer;font-size:.74rem;">İptal</button></div>`;
-  document.body.appendChild(d);
+/* ŞANS ÇARKI */
+function doLucky(u,today){
+  const prizes=[{ico:'🎉',label:'+50 XP',xp:50,coins:0},{ico:'💰',label:'+30 Coin',xp:0,coins:30},{ico:'⚡',label:'+100 XP',xp:100,coins:0},{ico:'🪙',label:'+50 Coin',xp:0,coins:50},{ico:'🎊',label:'+25 XP +25🪙',xp:25,coins:25},{ico:'💎',label:'+200 XP',xp:200,coins:0},{ico:'🎁',label:'+75 Coin',xp:0,coins:75},{ico:'🌟',label:'+150 XP +20🪙',xp:150,coins:20}];
+  const prize=prizes[Math.floor(Math.random()*prizes.length)];
+  u.luckyCount=(u.luckyCount||0)+1;
+  u.tasks['dl_lucky_'+today]=true;
+  if(prize.xp>0) awardXP(u,prize.xp,'Şans Çarkı');
+  if(prize.coins>0) awardCoins(u,prize.coins);
+  if(u.luckyCount>=3&&!u.tasks['fn_lucky777']){ u.tasks['fn_lucky777']=true; awardXP(u,100,'Lucky 777!'); awardCoins(u,20); toast('🎰 Lucky 777 görevi!','success'); }
+  saveUser(u); toast(`${prize.ico} Şans Çarkı: ${prize.label}!`,'success'); updateSidebar(); renderTasks(); renderStats();
 }
-function ansQ(btn,chosen,correct,key,xp,coins){
-  const ov=btn.closest('div[style*="position:fixed"]');
-  const u=getUser();if(!u)return;
+
+/* QUIZ */
+function showQuiz(task,key){
+  const h=new Date().getHours(); const isNight=h>=22;
+  const q=QUIZZES[Math.floor(Math.random()*QUIZZES.length)];
+  const ov=document.createElement('div'); ov.className='quiz-ov';
+  ov.innerHTML=`<div class="quiz-box">
+    ${isNight?'<div style="font-size:.63rem;font-weight:700;color:#6366f1;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.22);border-radius:999px;padding:3px 10px;display:inline-block;margin-bottom:8px;">🌙 GECE QUİZİ</div>':''}
+    <div style="font-size:1.75rem;margin-bottom:11px;">🧠</div>
+    <h3 style="font-weight:700;margin-bottom:17px;font-size:.93rem;">${q.q}</h3>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      ${q.o.map((o,i)=>`<button onclick="ansQ(this,${i},${q.a},'${key}',${task.xp},${task.coins},${isNight})" style="padding:9px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--font);font-size:.84rem;cursor:pointer;transition:background .18s;" onmouseover="this.style.background='rgba(59,130,246,.14)'" onmouseout="this.style.background='rgba(255,255,255,.05)'">${o}</button>`).join('')}
+    </div>
+    <button onclick="this.closest('.quiz-ov').remove()" style="margin-top:11px;background:none;border:none;color:var(--muted);font-family:var(--font);cursor:pointer;font-size:.74rem;">İptal</button>
+  </div>`;
+  document.body.appendChild(ov);
+}
+function ansQ(btn,chosen,correct,key,xp,coins,isNight){
+  const ov=btn.closest('.quiz-ov'); const u=getUser(); if(!u) return;
   if(chosen===correct){
     btn.style.cssText+=';background:rgba(16,185,129,.26);border-color:rgba(16,185,129,.48);color:#10b981;';
-    u.tasks[key]=true;
-    u.quizCount=(u.quizCount||0)+1;
-    const wk=wKey();
-    if(u.weekStr!==wk){u.weekStr=wk;u.weeklyQuiz=0;}
+    u.tasks[key]=true; u.quizCount=(u.quizCount||0)+1; consecutiveCorrect++;
+    const wk=wKey(); if(u.weekStr!==wk){u.weekStr=wk;u.weeklyQuiz=0;}
     u.weeklyQuiz=(u.weeklyQuiz||0)+1;
-    /* Haftalık 3 quiz */
-    const wqk='wk_quiz3_'+wk;
-    if(u.weeklyQuiz>=3&&!u.tasks[wqk]){u.tasks[wqk]=true;awardXP(u,200,'Haftalık 3 quiz!');awardCoins(u,40);toast('🎓 Haftalık 3 quiz görevi!','success');}
-    /* Quiz milestone'ları */
-    if(u.quizCount>=5&&!u.tasks['sp_quiz5']){u.tasks['sp_quiz5']=true;awardXP(u,400,'Quiz Ustası: 5 quiz!');awardCoins(u,80);toast('🎓 Quiz Ustası görevi!','success');}
-    if(u.quizCount>=20&&!u.tasks['sp_quiz20']){u.tasks['sp_quiz20']=true;awardXP(u,1500,'Quiz Şampiyonu: 20 quiz!');awardCoins(u,300);toast('🏅 Quiz Şampiyonu görevi!','success');}
-    awardXP(u,xp,'Günlük Quiz');awardCoins(u,coins);
-    saveUser(u);toast(`🧠 Doğru! +${xp}XP`,'success');
-    updateSidebar();renderTasks();renderStats();
-    setTimeout(()=>ov.remove(),880);
+    const wqk='wk_quiz3_'+wk; if(u.weeklyQuiz>=3&&!u.tasks[wqk]){u.tasks[wqk]=true;awardXP(u,200,'Haftalık 3 quiz!');awardCoins(u,40);toast('🎓 Haftalık 3 quiz görevi!','success');}
+    const wq7k='wk_quiz7_'+wk; if(u.weeklyQuiz>=7&&!u.tasks[wq7k]){u.tasks[wq7k]=true;awardXP(u,500,'Haftalık 7 quiz!');awardCoins(u,100);toast('🏫 Haftalık 7 quiz görevi!','success');}
+    if(isNight&&!u.tasks['fn_nightquiz']){u.tasks['fn_nightquiz']=true;awardXP(u,200,'Gece Quizi!');awardCoins(u,40);toast('🌙 Gece Quizi görevi!','success');}
+    if(consecutiveCorrect>=3&&!u.tasks['ch_speed3']){u.tasks['ch_speed3']=true;awardXP(u,400,'Hız Yarışı: 3 art arda!');awardCoins(u,80);toast('🏃 Hız Yarışı görevi!','success');}
+    if(consecutiveCorrect>=5&&!u.tasks['ch_quizking']){u.tasks['ch_quizking']=true;awardXP(u,600,'Quiz Kralı: 5 art arda!');awardCoins(u,120);toast('🧠 Quiz Kralı görevi!','success');}
+    if(u.quizCount>=5&&!u.tasks['sp_quiz5']){u.tasks['sp_quiz5']=true;awardXP(u,400,'Quiz Ustası: 5 quiz!');awardCoins(u,80);}
+    if(u.quizCount>=20&&!u.tasks['sp_quiz20']){u.tasks['sp_quiz20']=true;awardXP(u,1500,'Quiz Şampiyonu: 20 quiz!');awardCoins(u,300);}
+    if(u.quizCount>=50&&!u.tasks['sp_quiz50']){u.tasks['sp_quiz50']=true;awardXP(u,5000,'Quiz Efsanesi: 50 quiz!');awardCoins(u,1000);}
+    awardXP(u,xp,'Günlük Quiz'); awardCoins(u,coins);
+    saveUser(u); toast(`🧠 Doğru! +${xp}XP`,'success');
+    updateSidebar(); renderTasks(); renderStats(); checkAutoTasks();
+    setTimeout(()=>ov&&ov.remove(),880);
   } else {
+    consecutiveCorrect=0;
     btn.style.cssText+=';background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.38);color:#ef4444;';
-    toast('❌ Yanlış! Tekrar dene.','error');setTimeout(()=>ov.remove(),1050);
+    toast('❌ Yanlış! Tekrar dene.','error');
+    setTimeout(()=>ov&&ov.remove(),1050);
   }
 }
 
-/* ═══════════════════════════════════════
-   SHOP
-═══════════════════════════════════════ */
+/* BİLMECE */
+function showRiddle(task,key){
+  const r=RIDDLES[Math.floor(Math.random()*RIDDLES.length)];
+  const ov=document.createElement('div'); ov.className='quiz-ov';
+  ov.innerHTML=`<div class="quiz-box" style="border-color:rgba(139,92,246,.28);">
+    <div style="font-size:1.8rem;margin-bottom:8px;">🔮</div>
+    <div style="font-size:.63rem;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;">BİLMECE</div>
+    <p style="font-weight:600;font-size:.93rem;margin-bottom:20px;line-height:1.6;">${r.q}</p>
+    <div style="display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:14px;">
+      <input id="riddleAns" type="text" placeholder="Cevabınızı yazın..." style="flex:1;background:none;border:none;color:var(--text);font-family:var(--font);font-size:.85rem;outline:none;">
+      <button onclick="checkRiddle('${r.a}','${key}',${task.xp},${task.coins},this)" style="padding:6px 14px;background:linear-gradient(135deg,var(--purple),var(--blue));border:none;border-radius:8px;color:#fff;font-family:var(--font);font-size:.76rem;font-weight:700;cursor:pointer;">Kontrol</button>
+    </div>
+    <button onclick="this.closest('.quiz-ov').remove()" style="background:none;border:none;color:var(--muted);font-family:var(--font);cursor:pointer;font-size:.74rem;">Pas Geç</button>
+  </div>`;
+  document.body.appendChild(ov);
+  setTimeout(()=>{ const inp=ov.querySelector('#riddleAns'); if(inp){inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter'){const btn=ov.querySelector('button[onclick^="checkRiddle"]');if(btn)btn.click();}});} },100);
+}
+function checkRiddle(answer,key,xp,coins,btn){
+  const ov=btn.closest('.quiz-ov'); const inp=ov?ov.querySelector('#riddleAns'):null;
+  if(!inp) return;
+  const val=inp.value.trim().toLowerCase(); const cor=answer.toLowerCase();
+  const u=getUser(); if(!u) return;
+  if(val===cor||(cor.includes(val)&&val.length>2)){
+    u.tasks[key]=true; u.riddleCount=(u.riddleCount||0)+1;
+    const wk=wKey(); if(u.weekStr!==wk){u.weekStr=wk;u.weeklyRiddle=0;}
+    u.weeklyRiddle=(u.weeklyRiddle||0)+1;
+    const wrk='wk_riddle3_'+wk; if(u.weeklyRiddle>=3&&!u.tasks[wrk]){u.tasks[wrk]=true;awardXP(u,250,'Haftalık 3 bilmece!');awardCoins(u,50);toast('🔮 Haftalık 3 bilmece görevi!','success');}
+    awardXP(u,xp,'Günlük Bilmece'); awardCoins(u,coins);
+    saveUser(u); toast(`🔮 Doğru! "${answer}" +${xp}XP`,'success');
+    updateSidebar(); renderTasks(); renderStats(); checkAutoTasks();
+    setTimeout(()=>ov&&ov.remove(),880);
+  } else {
+    toast(`❌ Yanlış! İpucu: "${answer.charAt(0).toUpperCase()}...",'error`);
+  }
+}
+
+/* SHOP */
 function renderShop(){
-  const u=getUser();if(!u)return;
+  const u=getUser(); if(!u) return;
   document.getElementById('shopGrid').innerHTML=SHOP_ITEMS.map(item=>{
     const owned=(u.ownedItems||[]).includes(item.id);
     return `<div class="shop-c${owned?' owned':''}"><div class="sh-ico">${item.ico}</div><div class="sh-name">${item.name}</div><div class="sh-desc">${item.desc}</div><div class="sh-price">${item.price} 🪙</div><br><button class="sh-btn${owned?' owned':''}" onclick="buyItem('${item.id}')">${owned?'✓ Sahipsin':'Satın Al'}</button></div>`;
   }).join('');
+  /* Dükkan Casusu */
+  if(!shopScrolled){ shopScrolled=true; const u2=getUser(); if(u2&&!u2.tasks['fn_shopspy']){/* sadece ziyarette değil tamamen ayrı tetik */} }
 }
 function buyItem(id){
-  const u=getUser();if(!u)return;
-  const item=SHOP_ITEMS.find(x=>x.id===id);if(!item)return;
+  const u=getUser(); if(!u) return;
+  const item=SHOP_ITEMS.find(x=>x.id===id); if(!item) return;
   if((u.ownedItems||[]).includes(id)){toast('Bu öğeye zaten sahipsin!','info');return;}
   if((u.coins||0)<item.price){toast(`Yeterli coin yok! Gerekli: ${item.price}🪙`,'error');return;}
-  u.coins-=item.price;if(!u.ownedItems)u.ownedItems=[];u.ownedItems.push(id);
+  if(item.price>=500&&!u.tasks['ch_richbuy']){u.tasks['ch_richbuy']=true;awardXP(u,300,'Büyük Harcama!');toast('🤑 Büyük Harcama görevi!','success');}
+  u.coins-=item.price; if(!u.ownedItems)u.ownedItems=[]; u.ownedItems.push(id);
   addHist(u,'spend',`${item.name} satın alındı`,item.price);
+  const wk=wKey(); if(u.weekStr!==wk){u.weekStr=wk;u.weeklyShop=0;}
+  u.weeklyShop=(u.weeklyShop||0)+1;
+  const wshk='wk_shop2_'+wk; if(u.weeklyShop>=2&&!u.tasks[wshk]){u.tasks[wshk]=true;awardXP(u,150,'Haftalık 2 alışveriş!');awardCoins(u,30);toast('🛒 Haftalık alışveriş görevi!','success');}
   if(!u.tasks['os_buy1']){u.tasks['os_buy1']=true;awardXP(u,80,'İlk alışveriş!');toast('🛒 İlk alışveriş görevi!','success');}
-  if(id==='xp_boost')activateBoost(60*60*1000);
-  saveUser(u);toast(`✅ ${item.name} satın alındı!`,'success');
-  updateSidebar();renderShop();renderStats();renderProfile();checkAutoTasks();
+  if(id==='xp_boost') activateBoost(60*60*1000);
+  if(id==='xp_boost2') activateBoost(3*60*60*1000);
+  if(id==='coin_pack'){u.coins+=500;addHist(u,'gain','Coin Paketi',500);}
+  saveUser(u); toast(`✅ ${item.name} satın alındı!`,'success');
+  updateSidebar(); renderShop(); renderStats(); renderProfile(); checkAutoTasks();
 }
 
-/* ═══════════════════════════════════════
-   PROFILE
-═══════════════════════════════════════ */
+/* PROFILE */
 function renderProfile(){
-  const u=getUser();if(!u)return;
-  const{level}=calcLevel(u.xp);
-  const myR=sortedAll(getCache()).findIndex(r=>r.username===CU)+1;
+  const u=getUser(); if(!u) return;
+  const{level}=calcLevel(u.xp); const myR=sortedAll(getCache()).findIndex(r=>r.username===CU)+1;
   document.getElementById('profAvi').textContent=u.avatar||'👤';
   document.getElementById('profName').textContent=CU;
   document.getElementById('profTitle').textContent=getTitle(level);
@@ -1418,30 +1482,26 @@ function renderProfile(){
     <div class="psi"><div class="psv">${(u.ownedItems||[]).length}</div><div class="psl">Sahip Olunan</div></div>`;
 }
 function changeAvatar(emoji){
-  const u=getUser();if(!u)return;u.avatar=emoji;
+  const u=getUser(); if(!u) return; u.avatar=emoji; avisChanged.add(emoji);
   if(!u.tasks['os_chavi']){u.tasks['os_chavi']=true;awardXP(u,40,'Avatar değiştirdi');awardCoins(u,8);toast('🎨 Avatar değiştirme görevi!','success');}
-  saveUser(u);updateSidebar();updateMenuUser();renderProfile();toast(`Avatar: ${emoji}`,'info');
+  if(avisChanged.size>=5&&!u.tasks['fn_allavi']){u.tasks['fn_allavi']=true;awardXP(u,200,'5 farklı avatar!');awardCoins(u,40);toast('🎭 Avatar Koleksiyonu görevi!','success');}
+  saveUser(u); updateSidebar(); updateMenuUser(); renderProfile(); toast(`Avatar: ${emoji}`,'info');
 }
 async function resetMyData(){
-  if(!confirm('İlerlemenizi sıfırlamak istediğinizden emin misiniz?'))return;
-  const u=getUser();if(!u)return;
-  const nd={passHash:u.passHash,avatar:u.avatar,xp:100,coins:50,tasks:{},ownedItems:[],streak:0,lastLogin:'',history:[{type:'gain',action:'Yeniden başlangıç',amount:100,time:new Date().toISOString()}],clickCount:0,quizCount:0,weeklyQuiz:0,weeklyLogin:0,weekStr:'',shopVisited:false,profileVisited:false,createdAt:u.createdAt,prevRank:null};
-  await saveUser(nd);
-  sessionClickCount=0;
-  updateSidebar();renderLB();renderProfile();renderStats();renderShop();renderTasks();
+  if(!confirm('İlerlemenizi sıfırlamak istediğinizden emin misiniz?')) return;
+  const u=getUser(); if(!u) return;
+  const nd={passHash:u.passHash,avatar:u.avatar,xp:100,coins:50,tasks:{},ownedItems:[],streak:0,lastLogin:'',history:[{type:'gain',action:'Yeniden başlangıç',amount:100,time:new Date().toISOString()}],clickCount:0,quizCount:0,riddleCount:0,luckyCount:0,weeklyQuiz:0,weeklyLogin:0,weeklyRiddle:0,weeklyShop:0,weekStr:'',prevRank:null,createdAt:u.createdAt};
+  await saveUser(nd); sessionClickCount=0; sessionGrindXP=0; consecutiveCorrect=0; avisChanged.clear();
+  updateSidebar(); renderLB(); renderProfile(); renderStats(); renderShop(); renderTasks();
   toast('🔄 İlerleme sıfırlandı!','info');
 }
 
-/* ═══════════════════════════════════════
-   STATS
-═══════════════════════════════════════ */
+/* STATS */
 function renderStats(){
-  const u=getUser();if(!u)return;
-  const{level}=calcLevel(u.xp);
-  const myR=sortedAll(getCache()).findIndex(r=>r.username===CU)+1;
-  const today=new Date().toDateString();
-  const wk=wKey();
-  let done=0;TASKS.forEach(t=>{const k=t.daily?t.id+'_'+today:t.weekly?t.id+'_'+wk:t.id;if(u.tasks[k])done++;});
+  const u=getUser(); if(!u) return;
+  const{level}=calcLevel(u.xp); const myR=sortedAll(getCache()).findIndex(r=>r.username===CU)+1;
+  const today=new Date().toDateString(); const wk=wKey();
+  let done=0; TASKS.forEach(t=>{const k=t.daily?t.id+'_'+today:t.weekly?t.id+'_'+wk:t.id;if(u.tasks[k])done++;});
   document.getElementById('bigGrid').innerHTML=`
     <div class="bg-c"><div class="bgv">${u.xp.toLocaleString()}</div><div class="bgl">Toplam XP</div></div>
     <div class="bg-c"><div class="bgv">Lv ${level}</div><div class="bgl">Seviye</div></div>
@@ -1451,51 +1511,44 @@ function renderStats(){
     <div class="bg-c"><div class="bgv">${done}</div><div class="bgl">Görev Tamamlandı</div></div>
     <div class="bg-c"><div class="bgv">${(u.ownedItems||[]).length}</div><div class="bgl">Sahip Olunan</div></div>
     <div class="bg-c"><div class="bgv">${u.clickCount||0}</div><div class="bgl">Tıklama</div></div>
-    <div class="bg-c"><div class="bgv">${u.quizCount||0}</div><div class="bgl">Quiz</div></div>`;
+    <div class="bg-c"><div class="bgv">${u.quizCount||0}</div><div class="bgl">Quiz</div></div>
+    <div class="bg-c"><div class="bgv">${u.riddleCount||0}</div><div class="bgl">Bilmece</div></div>
+    <div class="bg-c"><div class="bgv">${u.luckyCount||0}</div><div class="bgl">Şans Çarkı</div></div>`;
   const hist=(u.history||[]).slice(0,30);
   document.getElementById('histList').innerHTML=hist.length
     ?hist.map(h=>{const d=new Date(h.time);const f=`${d.getDate()}/${d.getMonth()+1} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;return`<div class="hi"><div class="hi-ico ${h.type}"><i class="fas fa-${h.type==='gain'?'arrow-up':'arrow-down'}"></i></div><div class="hi-info"><div class="hi-act">${h.action}</div><div class="hi-t">${f}</div></div><div class="hi-amt ${h.type}">${h.type==='gain'?'+':'−'}${h.amount}</div></div>`;}).join('')
     :'<div class="empty-state"><i class="fas fa-history"></i>Henüz işlem yok</div>';
 }
 
-/* ═══════════════════════════════════════
-   PANELS
-═══════════════════════════════════════ */
+/* PANELS */
 function showPanel(name,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-  if(btn)btn.classList.add('active');
-  if(name==='tasks')renderTasks();
+  document.getElementById('panel-'+name)?.classList.add('active');
+  if(btn) btn.classList.add('active');
+  tabsVisited.add(name);
+  const u=getUser(); const today=new Date().toDateString(); const wk=wKey();
+  if(name==='tasks') renderTasks();
   if(name==='shop'){
     renderShop();
-    /* Dükkan ziyareti günlük görevi */
-    const u=getUser();if(u){
-      const today=new Date().toDateString();
-      const k='dl_shop_'+today;
-      if(!u.tasks[k]){u.tasks[k]=true;awardXP(u,25,'Dükkan ziyareti');awardCoins(u,4);saveUser(u);toast('🛍️ Dükkan ziyareti görevi!','success');updateSidebar();renderTasks();}
-    }
+    if(u){ const k='dl_shop_'+today; if(!u.tasks[k]){u.tasks[k]=true;awardXP(u,25,'Dükkan ziyareti');awardCoins(u,4);saveUser(u);toast('🛍️ Dükkan ziyareti görevi!','success');updateSidebar();} }
   }
   if(name==='profile'){
     renderProfile();
-    /* Profil ziyareti günlük görevi */
-    const u=getUser();if(u){
-      const today=new Date().toDateString();
-      const k='dl_profile_'+today;
-      if(!u.tasks[k]){u.tasks[k]=true;awardXP(u,20,'Profil ziyareti');awardCoins(u,3);saveUser(u);toast('🪪 Profil ziyareti görevi!','success');updateSidebar();renderTasks();}
-    }
+    if(u){ const k='dl_profile_'+today; if(!u.tasks[k]){u.tasks[k]=true;awardXP(u,20,'Profil ziyareti');awardCoins(u,3);saveUser(u);toast('🪪 Profil ziyareti görevi!','success');updateSidebar();} }
   }
-  if(name==='stats'){updateSidebar();renderStats();}
-  if(name==='leaderboard')renderLB();
+  if(name==='stats'){
+    updateSidebar(); renderStats();
+    if(u){ const k='dl_stats_'+today; if(!u.tasks[k]){u.tasks[k]=true;awardXP(u,15,'İstatistik ziyareti');awardCoins(u,2);saveUser(u);toast('📊 İstatistik görevi!','success');updateSidebar();} }
+  }
+  if(name==='leaderboard') renderLB();
+  if(u){ checkAutoTasks(); }
 }
 
-/* ═══════════════════════════════════════
-   TOAST
-═══════════════════════════════════════ */
+/* TOAST */
 function toast(msg,type='info'){
   const ic={success:'✅',error:'❌',info:'ℹ️'};
-  const el=document.createElement('div');
-  el.className=`toast ${type}`;
+  const el=document.createElement('div'); el.className=`toast ${type}`;
   el.innerHTML=`<span class="t-ic">${ic[type]||'ℹ️'}</span><span class="t-tx">${msg}</span>`;
   document.getElementById('tw').appendChild(el);
   setTimeout(()=>el.remove(),3400);
