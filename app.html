@@ -10,6 +10,16 @@
 </head>
 <body>
 
+<div id="appLoading">
+  <div class="crest-wrap">
+    <div class="ring"></div>
+    <img class="crest-img" id="loaderLogo" src="" alt="Loyal Elite Force">
+    <div class="sweep"></div>
+  </div>
+  <div class="brand"><h1>LOYAL ELITE FORCE</h1></div>
+</div>
+<div id="appError" style="display:none;"></div>
+
 <div class="app-shell" id="appShell" style="display:none;">
 
   <!-- ===================== SIDEBAR ===================== -->
@@ -62,9 +72,10 @@
         </div>
         <div class="pc-number"><span id="pointsNum">0</span><span class="pc-pt">pt</span></div>
         <div class="pc-bottom">
-          <div class="pc-strip"></div>
-          <div class="pc-strip"></div>
-          <div class="pc-strip short"></div>
+          <div class="pc-holder">
+            <div class="pc-holder-lbl">Kart Sahibi</div>
+            <div class="pc-holder-name" id="pcHolderName">—</div>
+          </div>
         </div>
       </div>
 
@@ -121,6 +132,35 @@
             </form>
             <div class="msg" id="stealMsg"></div>
             <div class="claim-note" id="stealCooldownNote"></div>
+
+            <div class="shop-item" style="margin-top:10px;">
+              <div class="info">
+                <div class="t">Kumar Oyna</div>
+                <div class="d">Puan riske at · %50 şans · kazanırsan ikiye katlar</div>
+              </div>
+              <button class="btn" id="openGamblePicker" style="width:auto;">Oyna</button>
+            </div>
+            <form id="gambleForm" style="display:none; margin-top:10px;">
+              <div class="field">
+                <label>Riske Atılacak Miktar</label>
+                <input type="text" inputmode="numeric" id="gambleAmount" placeholder="örn: 5000" required>
+              </div>
+              <button class="btn" type="submit">Riske At</button>
+            </form>
+            <div class="msg" id="gambleMsg"></div>
+
+            <div class="shop-item" style="margin-top:10px;">
+              <div class="info">
+                <div class="t">Unvan Satın Al</div>
+                <div class="d">Kıdemli Üye: 20.000 puan · Uzman Üye: 40.000 puan</div>
+              </div>
+              <button class="btn" id="openRankPicker" style="width:auto;">Satın Al</button>
+            </div>
+            <div class="class-picker" id="rankPicker" style="display:none;">
+              <button class="btn" data-rank="Kıdemli Üye" style="width:auto;">Kıdemli Üye</button>
+              <button class="btn" data-rank="Uzman Üye" style="width:auto;">Uzman Üye</button>
+            </div>
+            <div class="msg" id="rankMsg"></div>
           </div>
         </div>
       </div>
@@ -161,6 +201,7 @@
             <span id="profRank">—</span>
           </div>
           <div id="profStats"></div>
+          <div id="profOaa" style="margin-top:20px;"></div>
         </div>
       </div>
     </section>
@@ -179,6 +220,7 @@
       <span id="modalRank">—</span>
     </div>
     <div id="modalStats"></div>
+    <div id="modalOaa" style="margin-top:20px;"></div>
   </div>
 </div>
 
@@ -191,12 +233,13 @@
   const CLASSES = ['A','B','C','D'];
   const STAT_DEFS = [
     ['stat_akilli', 'Akıllı'],
-    ['stat_guclu', 'Güçlü'],
     ['stat_strateji', 'Strateji'],
     ['stat_agresiflik', 'Agresiflik'],
     ['stat_beceriklilik', 'Beceriklilik'],
   ];
   const GRADE_WIDTH = { 'F':10, 'E':25, 'D':40, 'C':55, 'B':70, 'A':85, 'A+':100 };
+  const GRADE_ORDER = ['F','E','D','C','B','A','A+'];
+  const STAT_ABBR = { 'Akıllı':'AKL', 'Strateji':'STR', 'Agresiflik':'AGR', 'Beceriklilik':'BEC' };
   let activeClass = 'A';
 
   const appShell = document.getElementById('appShell');
@@ -231,7 +274,10 @@
     if(!session){ window.location.href = 'login.html'; return; }
     currentUser = session.user;
 
-    const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+    const [{ data: profile }] = await Promise.all([
+      supabase.from('profiles').select('*').eq('id', currentUser.id).single(),
+      loadAllProfiles()
+    ]);
     currentProfile = profile;
     activeClass = profile?.class || 'A';
 
@@ -239,16 +285,16 @@
     document.getElementById('meMeta').textContent = `Sınıf ${profile?.class || '-'} · ${profile?.points ?? 0} puan`;
     document.getElementById('meAvatar').innerHTML = avatarHtml(profile);
 
+    document.getElementById('appLoading').style.display = 'none';
     appShell.style.display = 'flex';
 
-    await loadAllProfiles();
     renderClassTabs();
     renderClassMembers();
     renderPoints();
     renderShop();
     renderOwnProfile();
     updateTaskFormVisibility();
-    await loadTasks();
+    loadTasks();
   }
 
   async function refreshMyProfile(){
@@ -321,6 +367,43 @@
     }).join('');
   }
 
+  function overallGrade(profile){
+    const idxs = STAT_DEFS.map(([key]) => {
+      const g = profile?.[key] || 'C';
+      const i = GRADE_ORDER.indexOf(g);
+      return i === -1 ? 3 : i;
+    });
+    const avg = Math.round(idxs.reduce((a,b) => a+b, 0) / idxs.length);
+    return GRADE_ORDER[Math.max(0, Math.min(GRADE_ORDER.length-1, avg))];
+  }
+
+  function oaaCardHtml(profile){
+    const badges = STAT_DEFS.map(([key, label], i) => {
+      const grade = profile?.[key] || 'C';
+      return `
+        <div class="oaa-badge oaa-b${i}">
+          <div class="oaa-badge-grade">${grade}</div>
+          <div class="oaa-badge-lbl">${STAT_ABBR[label] || label.slice(0,3).toUpperCase()}</div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="oaa-card">
+        <div class="oaa-photo">${avatarHtml(profile)}</div>
+        <div class="oaa-id">Sınıf ${profile?.class || '-'}</div>
+        <div class="oaa-name">${escapeHtml(profile?.username || '—')}</div>
+        <div class="oaa-wrap">
+          ${badges}
+          <div class="oaa-center">
+            <div class="oaa-center-grade">${overallGrade(profile)}</div>
+            <div class="oaa-center-lbl">GENEL</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   function openProfileModal(id){
     const p = allProfiles.find(x => x.id === id);
     if(!p) return;
@@ -329,6 +412,7 @@
     document.getElementById('modalClass').textContent = 'Sınıf ' + p.class;
     document.getElementById('modalRank').textContent = p.rank || 'Üye';
     document.getElementById('modalStats').innerHTML = statsHtml(p);
+    document.getElementById('modalOaa').innerHTML = oaaCardHtml(p);
     profileModal.classList.add('show');
   }
 
@@ -339,6 +423,7 @@
     document.getElementById('profClass').textContent = 'Sınıf ' + (currentProfile?.class || '-');
     document.getElementById('profRank').textContent = currentProfile?.rank || 'Üye';
     document.getElementById('profStats').innerHTML = statsHtml(currentProfile);
+    document.getElementById('profOaa').innerHTML = oaaCardHtml(currentProfile);
   }
 
   document.getElementById('avatarFile').addEventListener('change', async (e) => {
@@ -362,6 +447,7 @@
   // ---------- POINTS ----------
   function renderPoints(){
     document.getElementById('pointsNum').textContent = (currentProfile?.points ?? 0).toLocaleString('tr-TR');
+    document.getElementById('pcHolderName').textContent = currentProfile?.username || '—';
     const claimBtn = document.getElementById('claimBtn');
     const note = document.getElementById('claimNote');
     const last = currentProfile?.last_claim_at ? new Date(currentProfile.last_claim_at) : null;
@@ -490,6 +576,55 @@
     renderClassMembers();
   });
 
+  // ---------- SHOP: GAMBLE ----------
+  document.getElementById('openGamblePicker').addEventListener('click', () => {
+    const form = document.getElementById('gambleForm');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  });
+
+  document.getElementById('gambleForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('gambleMsg');
+    msg.className = 'msg'; msg.textContent = '';
+    const amount = parseInt(document.getElementById('gambleAmount').value.replace(/[.,\s]/g, ''), 10);
+
+    if(!amount || amount <= 0){
+      msg.classList.add('error'); msg.textContent = 'Geçerli bir miktar gir (örn: 5000).'; return;
+    }
+
+    const { data, error } = await supabase.rpc('gamble_points', { amount });
+    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+
+    const result = Array.isArray(data) ? data[0] : data;
+    msg.classList.add(result.won ? 'ok' : 'error');
+    msg.textContent = result.won ? `Kazandın! +${amount} puan.` : `Kaybettin. -${amount} puan.`;
+
+    document.getElementById('gambleForm').reset();
+    document.getElementById('gambleForm').style.display = 'none';
+    await refreshMyProfile();
+  });
+
+  // ---------- SHOP: RANK TITLE ----------
+  document.getElementById('openRankPicker').addEventListener('click', () => {
+    const picker = document.getElementById('rankPicker');
+    picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
+  });
+
+  document.querySelectorAll('#rankPicker [data-rank]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const msg = document.getElementById('rankMsg');
+      msg.className = 'msg'; msg.textContent = '';
+      const { error } = await supabase.rpc('buy_rank_title', { target_rank: btn.dataset.rank });
+      if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+      msg.classList.add('ok'); msg.textContent = `Yeni unvanın: ${btn.dataset.rank}`;
+      document.getElementById('rankPicker').style.display = 'none';
+      await refreshMyProfile();
+      await loadAllProfiles();
+      renderClassMembers();
+      renderOwnProfile();
+    });
+  });
+
   // ---------- TASKS ----------
   async function loadTasks(){
     const list = document.getElementById('taskList');
@@ -586,8 +721,23 @@
 
   // ---------- BOOT ----------
   (async function boot(){
-    setupRealtime();
-    await loadSession();
+    document.getElementById('loaderLogo').src = document.querySelector('.sidebar-brand img').src;
+    try {
+      setupRealtime();
+      await loadSession();
+    } catch (err) {
+      console.error(err);
+      document.getElementById('appLoading').style.display = 'none';
+      const box = document.getElementById('appError');
+      box.style.display = 'flex';
+      box.innerHTML = `
+        <div>
+          <div style="font-size:16px; margin-bottom:10px;">Bir şeyler ters gitti.</div>
+          <div style="font-size:12px; opacity:0.8;">${(err && err.message) ? err.message : err}</div>
+          <div style="margin-top:16px;"><a href="login.html" style="color:#dfe1e4;">Girişe dön</a></div>
+        </div>
+      `;
+    }
   })();
 </script>
 </body>
