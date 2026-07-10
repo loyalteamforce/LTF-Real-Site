@@ -382,17 +382,27 @@
       const grade = profile?.[key] || 'C';
       return `
         <div class="oaa-badge oaa-b${i}">
-          <div class="oaa-badge-grade">${grade}</div>
-          <div class="oaa-badge-lbl">${STAT_ABBR[label] || label.slice(0,3).toUpperCase()}</div>
+          <div class="oaa-badge-inner">
+            <div class="oaa-badge-grade">${grade}</div>
+            <div class="oaa-badge-lbl">${STAT_ABBR[label] || label.slice(0,3).toUpperCase()}</div>
+          </div>
         </div>
       `;
     }).join('');
 
     return `
-      <div class="oaa-card">
-        <div class="oaa-photo">${avatarHtml(profile)}</div>
-        <div class="oaa-id">Sınıf ${profile?.class || '-'}</div>
-        <div class="oaa-name">${escapeHtml(profile?.username || '—')}</div>
+      <div class="oaa-phone">
+        <div class="oaa-notch"></div>
+        <div class="oaa-title">Genel Yetenek</div>
+        <div class="oaa-subtitle">LOYAL ELITE FORCE KARNESİ</div>
+
+        <div class="oaa-photo-frame">${avatarHtml(profile)}</div>
+
+        <div class="oaa-id-pill">
+          <div class="oaa-id-class">Sınıf ${profile?.class || '-'}</div>
+          <div class="oaa-id-name">${escapeHtml(profile?.username || '—')}</div>
+        </div>
+
         <div class="oaa-wrap">
           ${badges}
           <div class="oaa-center">
