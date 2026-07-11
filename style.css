@@ -129,7 +129,7 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
   display:grid; grid-template-columns: 1fr 1.35fr; gap: 22px; }
 @media (max-width: 800px){ main.content{ grid-template-columns: 1fr; } }
 
-.panel{ background: var(--panel); border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+.panel{ background: var(--panel); border:1px solid var(--line); border-radius:10px; overflow:hidden; max-width:100%; }
 .panel-head{ padding: 16px 20px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; }
 .panel-head h2{ font-size:14px; letter-spacing:3px; color:var(--silver-1); font-weight:700; }
 .panel-head .count{ font-size:11px; color:var(--ink-dim); letter-spacing:1px; }
@@ -176,7 +176,7 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 .empty{ padding: 20px 8px; text-align:center; color:var(--ink-dim); font-size:13px; letter-spacing:0.5px; }
 
 /* ===================== APP LAYOUT (sidebar) ===================== */
-.app-shell{ display:flex; min-height:100vh; }
+.app-shell{ display:flex; min-height:100vh; max-width:100%; overflow-x:hidden; }
 
 .sidebar{ width: 240px; flex-shrink:0; background: var(--panel); border-right:1px solid var(--line);
   display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
@@ -292,7 +292,9 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
 @media (max-width: 700px){ .grid-2{ grid-template-columns:1fr; } }
 
-.shop-item{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px; border:1px solid var(--line); border-radius:10px; margin-bottom:10px; background:#0c0d0f; }
+.shop-item{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 12px; padding:14px; border:1px solid var(--line); border-radius:10px; margin-bottom:10px; background:#0c0d0f; max-width:100%; }
+.shop-item .info{ min-width:0; flex:1 1 180px; }
+.shop-item .info .t, .shop-item .info .d{ overflow-wrap:break-word; }
 .shop-item .info .t{ font-size:14px; font-weight:600; color:var(--ink); }
 .shop-item .info .d{ font-size:11.5px; color:var(--ink-dim); margin-top:2px; }
 .shop-item button{ padding:8px 14px; border:none; border-radius:6px; background: linear-gradient(120deg, var(--silver-3), var(--silver-2));
