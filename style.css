@@ -167,7 +167,7 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
   display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--silver-1); }
 .task-check.done{ background: var(--silver-2); color:#0a0a0a; border-color: var(--silver-2); }
 .task-main{ flex:1; min-width:0; }
-.task-title{ font-size:14.5px; font-weight:500; color:var(--ink); }
+.task-title{ font-size:14.5px; font-weight:500; color:var(--ink); overflow-wrap:break-word; word-break:break-word; }
 .task-title.done{ text-decoration: line-through; color: var(--ink-dim); }
 .task-meta{ font-size:11px; color:var(--ink-dim); margin-top:2px; letter-spacing:0.5px; }
 .task-del{ background:none; border:none; color:var(--ink-dim); cursor:pointer; font-size:16px; padding:4px 6px; }
@@ -292,15 +292,16 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
 @media (max-width: 700px){ .grid-2{ grid-template-columns:1fr; } }
 
-.shop-item{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 12px; padding:14px; border:1px solid var(--line); border-radius:10px; margin-bottom:10px; background:#0c0d0f; max-width:100%; }
+.shop-item{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 12px; padding:14px; border:1px solid var(--line); border-radius:10px; margin-bottom:10px; background:#0c0d0f; max-width:100%; min-width:0; }
 .shop-item .info{ min-width:0; flex:1 1 180px; }
-.shop-item .info .t, .shop-item .info .d{ overflow-wrap:break-word; }
+.shop-item .t, .shop-item .d{ overflow-wrap:break-word; word-break:break-word; min-width:0; }
 .shop-item .info .t{ font-size:14px; font-weight:600; color:var(--ink); }
 .shop-item .info .d{ font-size:11.5px; color:var(--ink-dim); margin-top:2px; }
 .shop-item button{ padding:8px 14px; border:none; border-radius:6px; background: linear-gradient(120deg, var(--silver-3), var(--silver-2));
   color:#0a0a0a; font-weight:700; letter-spacing:1px; cursor:pointer; font-family:'Rajdhani',sans-serif; font-size:12.5px; white-space:nowrap; }
 .shop-item button:disabled{ opacity:0.4; cursor:not-allowed; }
-.exam-participant-list{ max-height:140px; overflow-y:auto; }
+.exam-participant-list{ max-height:140px; overflow-y:auto; overflow-x:hidden; }
+.exam-participant-list label{ overflow-wrap:break-word; word-break:break-word; min-width:0; }
 
 .class-picker{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
 .class-picker button{ padding:7px 16px; }
@@ -357,12 +358,12 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 
 .oaa-id-pill{
   display:inline-flex; flex-direction:column; align-items:center; gap:2px;
-  padding:8px 22px; border-radius:30px;
+  padding:8px 22px; border-radius:30px; max-width:100%;
   background: rgba(255,255,255,0.04); border:1px solid var(--line);
   margin-bottom:22px;
 }
 .oaa-id-class{ font-size:9px; letter-spacing:2px; color:var(--ink-dim); text-transform:uppercase; }
-.oaa-id-name{ font-family:'Cinzel Decorative', serif; font-size:14px; letter-spacing:1px; color:var(--silver-1); text-transform:uppercase; }
+.oaa-id-name{ font-family:'Cinzel Decorative', serif; font-size:14px; letter-spacing:1px; color:var(--silver-1); text-transform:uppercase; overflow-wrap:break-word; word-break:break-word; max-width:100%; }
 
 .oaa-wrap{ position:relative; width:170px; height:150px; margin:0 auto; }
 .oaa-center{

@@ -324,6 +324,12 @@
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('view-' + btn.dataset.view).classList.add('active');
+
+      const view = btn.dataset.view;
+      if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); renderClassRanking(); loadClassWall(); }
+      if(view === 'exams'){ loadExams(); }
+      if(view === 'tasks'){ loadTasks(); }
+      if(view === 'points'){ refreshMyProfile(); }
     });
   });
 
