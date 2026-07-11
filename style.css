@@ -298,6 +298,7 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 .shop-item button{ padding:8px 14px; border:none; border-radius:6px; background: linear-gradient(120deg, var(--silver-3), var(--silver-2));
   color:#0a0a0a; font-weight:700; letter-spacing:1px; cursor:pointer; font-family:'Rajdhani',sans-serif; font-size:12.5px; white-space:nowrap; }
 .shop-item button:disabled{ opacity:0.4; cursor:not-allowed; }
+.exam-participant-list{ max-height:140px; overflow-y:auto; }
 
 .class-picker{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
 .class-picker button{ padding:7px 16px; }

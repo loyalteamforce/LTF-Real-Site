@@ -40,6 +40,7 @@
     <nav class="sidebar-nav">
       <button class="nav-btn active" data-view="classes">Sınıflar</button>
       <button class="nav-btn" data-view="points">Puanlar &amp; Dükkan</button>
+      <button class="nav-btn" data-view="exams">Sınavlar</button>
       <button class="nav-btn" data-view="tasks">Görevler</button>
       <button class="nav-btn" data-view="profile">Profilim</button>
     </nav>
@@ -53,8 +54,51 @@
     <!-- CLASSES VIEW -->
     <section class="view active" id="view-classes">
       <div class="section-title">SINIFLAR</div>
+
+      <div class="panel" style="margin-bottom:18px;">
+        <div class="panel-head"><h2>SINIF SIRALAMASI</h2></div>
+        <div class="panel-body" id="classRanking"><div class="empty">Yükleniyor...</div></div>
+      </div>
+
       <div class="class-tabs" id="classTabs"></div>
       <div class="member-grid" id="classMembers"></div>
+    </section>
+
+    <!-- EXAMS VIEW -->
+    <section class="view" id="view-exams">
+      <div class="section-title">SINAVLAR</div>
+
+      <div class="panel" id="examCreatePanel" style="display:none; margin-bottom:18px;">
+        <div class="panel-head"><h2>YENİ SINAV OLUŞTUR</h2></div>
+        <div class="panel-body">
+          <form id="examCreateForm">
+            <div class="field">
+              <label>Sınav Başlığı</label>
+              <input type="text" id="examTitle" required>
+            </div>
+            <div class="field">
+              <label>Katılım Ücreti (puan)</label>
+              <input type="text" inputmode="numeric" id="examCost" placeholder="örn: 5000" required>
+            </div>
+            <div class="field" style="display:flex; align-items:center; gap:8px;">
+              <input type="checkbox" id="examDemote" style="width:auto;">
+              <label style="margin:0;">Kaybedenler sınıf düşürsün (koruma puanı yoksa)</label>
+            </div>
+            <button class="btn" type="submit">Sınavı Oluştur</button>
+            <div class="msg" id="examCreateMsg"></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>AÇIK SINAVLAR</h2></div>
+        <div class="panel-body" id="openExams"><div class="empty">Yükleniyor...</div></div>
+      </div>
+
+      <div class="panel" style="margin-top:18px;">
+        <div class="panel-head"><h2>SONUÇLANAN SINAVLAR</h2></div>
+        <div class="panel-body" id="closedExams"><div class="empty">Yükleniyor...</div></div>
+      </div>
     </section>
 
     <!-- POINTS + SHOP VIEW -->
@@ -161,6 +205,15 @@
               <button class="btn" data-rank="Uzman Üye" style="width:auto;">Uzman Üye</button>
             </div>
             <div class="msg" id="rankMsg"></div>
+
+            <div class="shop-item" style="margin-top:10px;">
+              <div class="info">
+                <div class="t">Koruma Puanı</div>
+                <div class="d">30.000 puan · Sınavda düşme cezasından korur · sende: <span id="myProtectionCount">0</span></div>
+              </div>
+              <button class="btn" id="buyProtectionBtn" style="width:auto;">Satın Al</button>
+            </div>
+            <div class="msg" id="protectionMsg"></div>
           </div>
         </div>
       </div>
@@ -290,11 +343,15 @@
 
     renderClassTabs();
     renderClassMembers();
+    renderClassRanking();
     renderPoints();
     renderShop();
+    renderProtection();
     renderOwnProfile();
     updateTaskFormVisibility();
+    updateExamCreateVisibility();
     loadTasks();
+    loadExams();
   }
 
   async function refreshMyProfile(){
@@ -304,6 +361,7 @@
     document.getElementById('meAvatar').innerHTML = avatarHtml(profile);
     renderPoints();
     renderShop();
+    renderProtection();
     renderOwnProfile();
   }
 
@@ -347,6 +405,19 @@
     grid.querySelectorAll('.member-card').forEach(card => {
       card.addEventListener('click', () => openProfileModal(card.dataset.id));
     });
+  }
+
+  async function renderClassRanking(){
+    const box = document.getElementById('classRanking');
+    const { data, error } = await supabase.from('class_points').select('*').order('points', { ascending: false });
+    if(error || !data){ box.innerHTML = '<div class="empty">Yüklenemedi.</div>'; return; }
+    box.innerHTML = data.map((c, i) => `
+      <div class="member-row">
+        <div class="avatar" style="border-radius:8px; font-size:11px;">#${i+1}</div>
+        <div class="member-name">Sınıf ${c.class}</div>
+        <div class="rank-badge">${(c.points ?? 0).toLocaleString('tr-TR')} puan</div>
+      </div>
+    `).join('');
   }
 
   // ---------- PROFILE MODAL (others) ----------
@@ -635,6 +706,138 @@
     });
   });
 
+  // ---------- SHOP: PROTECTION POINTS ----------
+  function renderProtection(){
+    document.getElementById('myProtectionCount').textContent = currentProfile?.protection_points ?? 0;
+  }
+
+  document.getElementById('buyProtectionBtn').addEventListener('click', async () => {
+    const msg = document.getElementById('protectionMsg');
+    msg.className = 'msg'; msg.textContent = '';
+    const { error } = await supabase.rpc('buy_protection_point');
+    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+    msg.classList.add('ok'); msg.textContent = 'Koruma puanı alındı.';
+    await refreshMyProfile();
+  });
+
+  // ---------- EXAMS ----------
+  function updateExamCreateVisibility(){
+    document.getElementById('examCreatePanel').style.display = currentProfile?.rank === 'Yönetici' ? 'block' : 'none';
+  }
+
+  document.getElementById('examCreateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('examCreateMsg');
+    msg.className = 'msg'; msg.textContent = '';
+    const title = document.getElementById('examTitle').value.trim();
+    const cost = parseInt(document.getElementById('examCost').value.replace(/[.,\s]/g, ''), 10);
+    const demote = document.getElementById('examDemote').checked;
+
+    if(!cost || cost < 0){
+      msg.classList.add('error'); msg.textContent = 'Geçerli bir ücret gir.'; return;
+    }
+
+    const { error } = await supabase.rpc('create_exam', { p_title: title, p_entry_cost: cost, p_demote_losers: demote });
+    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+    msg.classList.add('ok'); msg.textContent = 'Sınav oluşturuldu.';
+    document.getElementById('examCreateForm').reset();
+    await loadExams();
+  });
+
+  async function loadExams(){
+    const { data: exams, error } = await supabase.from('exams').select('*').order('created_at', { ascending: false });
+    const openBox = document.getElementById('openExams');
+    const closedBox = document.getElementById('closedExams');
+    if(error || !exams){
+      openBox.innerHTML = '<div class="empty">Yüklenemedi.</div>';
+      closedBox.innerHTML = '<div class="empty">Yüklenemedi.</div>';
+      return;
+    }
+
+    const { data: participants } = await supabase.from('exam_participants').select('*, profiles(username)');
+    const partByExam = {};
+    (participants || []).forEach(p => {
+      (partByExam[p.exam_id] = partByExam[p.exam_id] || []).push(p);
+    });
+
+    const open = exams.filter(e => e.status === 'open');
+    const closed = exams.filter(e => e.status === 'resolved');
+
+    const isAdmin = currentProfile?.rank === 'Yönetici';
+
+    openBox.innerHTML = open.length === 0 ? '<div class="empty">Açık sınav yok.</div>' : open.map(ex => {
+      const plist = partByExam[ex.id] || [];
+      const joined = plist.some(p => p.user_id === currentUser.id);
+      const adminBlock = isAdmin ? `
+        <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--line);">
+          <div style="font-size:11px; color:var(--ink-dim); margin-bottom:6px;">Kazananları seç ve sonuçlandır:</div>
+          <div class="exam-participant-list">
+            ${plist.map(p => `
+              <label style="display:flex; align-items:center; gap:6px; font-size:13px; margin-bottom:4px;">
+                <input type="checkbox" class="winner-check" data-exam="${ex.id}" data-user="${p.user_id}" style="width:auto;">
+                ${escapeHtml(p.profiles?.username || '—')}
+              </label>
+            `).join('') || '<div style="font-size:12px; color:var(--ink-dim);">Henüz katılan yok.</div>'}
+          </div>
+          <button class="btn resolve-exam-btn" data-exam="${ex.id}" style="margin-top:8px;">Sonuçlandır</button>
+        </div>
+      ` : '';
+
+      return `
+        <div class="shop-item" style="flex-direction:column; align-items:stretch; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+            <div class="info">
+              <div class="t">${escapeHtml(ex.title)}</div>
+              <div class="d">${ex.entry_cost.toLocaleString('tr-TR')} puan giriş · ${plist.length} katılımcı ${ex.demote_losers ? '· kaybedenler sınıf düşer' : ''}</div>
+            </div>
+            ${joined
+              ? '<span class="rank-badge">Katıldın</span>'
+              : `<button class="btn join-exam-btn" data-exam="${ex.id}" style="width:auto;">Katıl</button>`}
+          </div>
+          ${adminBlock}
+        </div>
+      `;
+    }).join('');
+
+    closedBox.innerHTML = closed.length === 0 ? '<div class="empty">Henüz sonuçlanan sınav yok.</div>' : closed.map(ex => {
+      const plist = partByExam[ex.id] || [];
+      const winners = plist.filter(p => p.is_winner).map(p => p.profiles?.username).filter(Boolean);
+      const demoted = plist.filter(p => p.demoted).map(p => p.profiles?.username).filter(Boolean);
+      const protectedUsers = plist.filter(p => p.protected).map(p => p.profiles?.username).filter(Boolean);
+      return `
+        <div class="shop-item" style="flex-direction:column; align-items:stretch; gap:4px;">
+          <div class="t">${escapeHtml(ex.title)}</div>
+          <div class="d">Kazananlar: ${winners.length ? escapeHtml(winners.join(', ')) : '—'}</div>
+          ${demoted.length ? `<div class="d" style="color:var(--danger);">Sınıfı düşenler: ${escapeHtml(demoted.join(', '))}</div>` : ''}
+          ${protectedUsers.length ? `<div class="d">Koruma puanıyla kurtulanlar: ${escapeHtml(protectedUsers.join(', '))}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    document.querySelectorAll('.join-exam-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const { error } = await supabase.rpc('join_exam', { p_exam_id: btn.dataset.exam });
+        if(error){ alert(error.message); return; }
+        await refreshMyProfile();
+        await loadExams();
+      });
+    });
+
+    document.querySelectorAll('.resolve-exam-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const examId = btn.dataset.exam;
+        const winnerIds = Array.from(document.querySelectorAll(`.winner-check[data-exam="${examId}"]:checked`))
+          .map(el => el.dataset.user);
+        const { error } = await supabase.rpc('resolve_exam', { p_exam_id: examId, winner_ids: winnerIds });
+        if(error){ alert(error.message); return; }
+        await loadExams();
+        await loadAllProfiles();
+        await renderClassRanking();
+        renderClassMembers();
+      });
+    });
+  }
+
   // ---------- TASKS ----------
   async function loadTasks(){
     const list = document.getElementById('taskList');
@@ -726,6 +929,15 @@
         renderClassTabs();
         renderClassMembers();
       })
+      .subscribe();
+    supabase.channel('public:class_points')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'class_points' }, () => { if(currentUser) renderClassRanking(); })
+      .subscribe();
+    supabase.channel('public:exams')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'exams' }, () => { if(currentUser) loadExams(); })
+      .subscribe();
+    supabase.channel('public:exam_participants')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'exam_participants' }, () => { if(currentUser) loadExams(); })
       .subscribe();
   }
 
