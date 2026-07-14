@@ -203,7 +203,15 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 .view{ display:none; }
 .view.active{ display:block; }
 
-.section-title{ font-size:14px; letter-spacing:3px; color:var(--silver-1); font-weight:700; margin-bottom:16px; }
+.section-title{ font-size:14px; letter-spacing:3px; color:var(--silver-1); font-weight:700; margin-bottom:6px; }
+.section-sub{ font-size:12.5px; color:var(--ink-dim); line-height:1.6; margin-bottom:18px; max-width:560px; }
+
+.guide-list{ display:flex; flex-direction:column; gap:14px; }
+.guide-item{ display:flex; gap:14px; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; }
+.guide-num{ flex-shrink:0; width:28px; height:28px; border-radius:50%; background:var(--panel-2); border:1px solid var(--silver-3);
+  display:flex; align-items:center; justify-content:center; font-family:'Cinzel Decorative',serif; font-weight:700; font-size:13px; color:var(--silver-1); }
+.guide-title{ font-size:14.5px; font-weight:700; color:var(--ink); margin-bottom:4px; }
+.guide-text{ font-size:13px; color:var(--ink-dim); line-height:1.6; }
 
 /* class tabs */
 .class-tabs{ display:flex; gap:8px; margin-bottom:18px; }

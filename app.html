@@ -43,6 +43,7 @@
       <button class="nav-btn" data-view="exams">Sınavlar</button>
       <button class="nav-btn" data-view="tasks">Görevler</button>
       <button class="nav-btn" data-view="profile">Profilim</button>
+      <button class="nav-btn" data-view="guide">Nasıl Çalışır?</button>
     </nav>
 
     <button class="logout-btn" id="logoutBtn">Çıkış</button>
@@ -54,6 +55,7 @@
     <!-- CLASSES VIEW -->
     <section class="view active" id="view-classes">
       <div class="section-title">SINIFLAR</div>
+      <div class="section-sub">Herkes bir sınıfa (A/B/C/D) dahildir, sınıf başına en fazla 25 kişi var. Kendi sınıfının duvarına yazabilir, diğer sınıfları sadece görebilirsin.</div>
 
       <div class="panel" style="margin-bottom:18px;">
         <div class="panel-head"><h2>SINIF SIRALAMASI</h2></div>
@@ -82,6 +84,7 @@
     <!-- EXAMS VIEW -->
     <section class="view" id="view-exams">
       <div class="section-title">SINAVLAR</div>
+      <div class="section-sub">Yönetici puan karşılığında bir sınav açar, üyeler puan ödeyerek katılır. Kazananlar tüm havuzu paylaşır; bazı sınavlarda kaybedenler bir alt sınıfa düşebilir.</div>
 
       <div class="panel" id="examCreatePanel" style="display:none; margin-bottom:18px;">
         <div class="panel-head"><h2>YENİ SINAV OLUŞTUR</h2></div>
@@ -119,6 +122,7 @@
     <!-- POINTS + SHOP VIEW -->
     <section class="view" id="view-points">
       <div class="section-title">PUANLAR</div>
+      <div class="section-sub">30 günde bir 10.000 puan alırsın, görev tamamlayarak da kazanırsın. Puanını birine gönderebilir veya dükkanda harcayabilirsin.</div>
 
       <div class="points-card">
         <div class="pc-texture"></div>
@@ -237,6 +241,7 @@
     <!-- TASKS VIEW -->
     <section class="view" id="view-tasks">
       <div class="section-title">GÖREVLER</div>
+      <div class="section-sub">Yönetici sana bir görev atar. Tamamladığında işaretlersin, karşılığında 100 puan kazanırsın.</div>
       <div class="panel">
         <div class="panel-head">
           <h2>GÖREV LİSTESİ</h2>
@@ -257,6 +262,7 @@
     <!-- OWN PROFILE VIEW -->
     <section class="view" id="view-profile">
       <div class="section-title">PROFİLİM</div>
+      <div class="section-sub">Fotoğrafın, sınıfın, rütbenin ve yönetici tarafından belirlenen becerilerin burada görünür.</div>
       <div class="panel" style="max-width:380px;">
         <div class="panel-body" style="text-align:center;">
           <div class="modal-avatar" id="profAvatar" style="margin:0 auto 14px;">—</div>
@@ -274,7 +280,84 @@
       </div>
     </section>
 
+    <!-- GUIDE VIEW -->
+    <section class="view" id="view-guide">
+      <div class="section-title">NASIL ÇALIŞIR?</div>
+      <div class="section-sub">Siteyi ilk kez kullanıyorsan buradan başla — sistemin tamamı özetlendi.</div>
+
+      <div class="guide-list">
+        <div class="guide-item">
+          <div class="guide-num">1</div>
+          <div>
+            <div class="guide-title">Sınıflar</div>
+            <div class="guide-text">Kayıt olunca otomatik olarak A, B, C veya D sınıflarından birine rastgele atanırsın. Her sınıfta en fazla 25 kişi olabilir. Sınıflar sekmesinden kimin hangi sınıfta olduğunu görebilir, isimlere tıklayıp profillerini inceleyebilirsin.</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-num">2</div>
+          <div>
+            <div class="guide-title">Puan Kazanma</div>
+            <div class="guide-text">Üç yolla puan kazanırsın: (1) her 30 günde bir "30 Günlük Ödül" butonuyla 10.000 puan, (2) yönetici sana bir görev atadığında tamamlayarak 100 puan, (3) bir sınavı kazanarak.</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-num">3</div>
+          <div>
+            <div class="guide-title">Dükkan — Puanını Harcama</div>
+            <div class="guide-text">Puanlar &amp; Dükkan sekmesinde puanını şunlara harcayabilirsin: başka bir sınıfa geçiş (50.000 puan, en fazla 3 kere), birinin puanını çalmaya çalışma, kumar oynama, özel bir unvan satın alma, veya "koruma puanı" satın alma (sınavda sınıf düşmekten korur).</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-num">4</div>
+          <div>
+            <div class="guide-title">Puan Gönderme</div>
+            <div class="guide-text">Aynı sekmede bir kullanıcı adı yazıp istediğin miktarda puanı doğrudan birine gönderebilirsin.</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-num">5</div>
+          <div>
+            <div class="guide-title">Sınavlar</div>
+            <div class="guide-text">Yönetici bir sınav açar (bir katılım ücreti belirler). Katılan herkesin ödediği puan bir havuzda toplanır. Sınav bitince yönetici kazananları seçer, havuzdaki tüm puan kazananlara paylaşılır. Bazı sınavlarda kaybedenler bir alt sınıfa düşer — ama "koruma puanın" varsa bundan korunursun.</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-num">6</div>
+          <div>
+            <div class="guide-title">Profil ve Beceriler</div>
+            <div class="guide-text">Profilim sekmesinden fotoğraf yükleyebilirsin. Akıllı, Strateji, Agresiflik ve Beceriklilik gibi dereceler (harf notu: A+'dan F'ye) yönetici tarafından elle belirlenir, bunlar profil kartında görünür.</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-num">7</div>
+          <div>
+            <div class="guide-title">Sınıf Puanı ve Sıralama</div>
+            <div class="guide-text">Kişisel puanından ayrı olarak, sınıfının da kolektif bir puanı vardır (görev tamamladıkça sınıfına da puan eklenir). Sınıflar sekmesinin en üstünde hangi sınıfın önde olduğunu görebilirsin.</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-num">8</div>
+          <div>
+            <div class="guide-title">Sınıf Duvarı</div>
+            <div class="guide-text">Her sınıfın kendi mesaj panosu var. Sadece kendi sınıfının üyeleri o duvara yazabilir, ama herkes okuyabilir.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
+</div>
+
+<!-- ===================== WELCOME MODAL ===================== -->
+<div class="modal-backdrop" id="welcomeModal">
+  <div class="modal-card" style="max-width:420px; text-align:left;">
+    <img class="auth-crest" id="welcomeLogo" src="" alt="" style="margin:0 auto 14px; display:block;">
+    <h1 style="text-align:center; font-size:17px; letter-spacing:3px; color:var(--silver-1); font-family:'Cinzel Decorative',serif;">LOYAL ELITE FORCE'A HOŞ GELDİN</h1>
+    <p style="font-size:13.5px; color:var(--ink-dim); line-height:1.7; margin-top:14px;">
+      Bir sınıfa (A/B/C/D) dahilsin. Puan kazanıp harcayabilir, sınıflar arasında geçiş yapabilir, görev tamamlayabilir ve sınavlara katılabilirsin. Detaylı anlatım için her zaman sol menüden <strong style="color:var(--silver-1);">"Nasıl Çalışır?"</strong> sayfasına bakabilirsin.
+    </p>
+    <button class="btn" id="closeWelcomeBtn" style="margin-top:18px;">Anladım, Başlayalım</button>
+  </div>
 </div>
 
 <!-- ===================== PROFILE MODAL (others) ===================== -->
@@ -374,6 +457,10 @@
     updateExamCreateVisibility();
     loadTasks();
     loadExams();
+
+    if(!localStorage.getItem('lef_welcome_seen_' + currentUser.id)){
+      document.getElementById('welcomeModal').classList.add('show');
+    }
   }
 
   async function refreshMyProfile(){
@@ -497,6 +584,11 @@
   // ---------- PROFILE MODAL (others) ----------
   const profileModal = document.getElementById('profileModal');
   document.getElementById('closeModal').addEventListener('click', () => profileModal.classList.remove('show'));
+
+  document.getElementById('closeWelcomeBtn').addEventListener('click', () => {
+    document.getElementById('welcomeModal').classList.remove('show');
+    if(currentUser) localStorage.setItem('lef_welcome_seen_' + currentUser.id, '1');
+  });
   profileModal.addEventListener('click', (e) => { if(e.target === profileModal) profileModal.classList.remove('show'); });
 
   function statsHtml(profile){
@@ -1021,6 +1113,7 @@
   // ---------- BOOT ----------
   (async function boot(){
     document.getElementById('loaderLogo').src = document.querySelector('.sidebar-brand img').src;
+    document.getElementById('welcomeLogo').src = document.querySelector('.sidebar-brand img').src;
     try {
       setupRealtime();
       await loadSession();
