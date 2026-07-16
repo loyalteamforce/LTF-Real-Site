@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <link rel="icon" type="image/x-icon" href="/LTF-Real-Site/favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="/LTF-Real-Site/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/LTF-Real-Site/favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/LTF-Real-Site/apple-touch-icon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Loyal Elite Force</title>
@@ -48,6 +44,7 @@
       <button class="nav-btn" data-view="tasks">Görevler</button>
       <button class="nav-btn" data-view="profile">Profilim</button>
       <button class="nav-btn" data-view="guide">Nasıl Çalışır?</button>
+      <button class="nav-btn" data-view="trailer">Fragman</button>
     </nav>
 
     <button class="logout-btn" id="logoutBtn">Çıkış</button>
@@ -126,7 +123,7 @@
     <!-- POINTS + SHOP VIEW -->
     <section class="view" id="view-points">
       <div class="section-title">PUANLAR</div>
-      <div class="section-sub">30 günde bir 10.000 puan alırsın, görev tamamlayarak da kazanırsın. Puanını birine gönderebilir veya dükkanda harcayabilirsin.</div>
+      <div class="section-sub">30 günde bir 100.000 puan alırsın, görev tamamlayarak da kazanırsın. Puanını birine gönderebilir veya dükkanda harcayabilirsin.</div>
 
       <div class="points-card">
         <div class="pc-texture"></div>
@@ -147,7 +144,7 @@
       </div>
 
       <div style="max-width:420px; text-align:center; margin: 14px auto 0;">
-        <button class="btn claim-btn" id="claimBtn">30 Günlük Ödülü Al (+10.000)</button>
+        <button class="btn claim-btn" id="claimBtn">30 Günlük Ödülü Al (+100.000)</button>
         <div class="claim-note" id="claimNote"></div>
       </div>
 
@@ -176,7 +173,7 @@
             <div class="shop-item">
               <div class="info">
                 <div class="t">Sınıf Değiştir</div>
-                <div class="d">50.000 puan · <span id="changesLeft">3</span> hak kaldı</div>
+                <div class="d">500.000 puan · <span id="changesLeft">3</span> hak kaldı</div>
               </div>
               <button class="btn" id="openClassPicker" style="width:auto;">Satın Al</button>
             </div>
@@ -186,7 +183,7 @@
             <div class="shop-item" style="margin-top:10px;">
               <div class="info">
                 <div class="t">Puan Çal</div>
-                <div class="d">Deneme: 2.000 puan · %50 şans · başarırsan hedefin %15'i</div>
+                <div class="d">Deneme: 20.000 puan · %50 şans · başarırsan hedefin %15'i</div>
               </div>
               <button class="btn" id="openStealPicker" style="width:auto;">Saldır</button>
             </div>
@@ -219,7 +216,7 @@
             <div class="shop-item" style="margin-top:10px;">
               <div class="info">
                 <div class="t">Unvan Satın Al</div>
-                <div class="d">Kıdemli Üye: 20.000 puan · Uzman Üye: 40.000 puan</div>
+                <div class="d">Kıdemli Üye: 200.000 puan · Uzman Üye: 400.000 puan</div>
               </div>
               <button class="btn" id="openRankPicker" style="width:auto;">Satın Al</button>
             </div>
@@ -232,7 +229,7 @@
             <div class="shop-item" style="margin-top:10px;">
               <div class="info">
                 <div class="t">Koruma Puanı</div>
-                <div class="d">30.000 puan · Sınavda düşme cezasından korur · sende: <span id="myProtectionCount">0</span></div>
+                <div class="d">300.000 puan · Sınavda düşme cezasından korur · sende: <span id="myProtectionCount">0</span></div>
               </div>
               <button class="btn" id="buyProtectionBtn" style="width:auto;">Satın Al</button>
             </div>
@@ -245,7 +242,7 @@
     <!-- TASKS VIEW -->
     <section class="view" id="view-tasks">
       <div class="section-title">GÖREVLER</div>
-      <div class="section-sub">Yönetici sana bir görev atar. Tamamladığında işaretlersin, karşılığında 100 puan kazanırsın.</div>
+      <div class="section-sub">Yönetici sana bir görev atar. Tamamladığında işaretlersin, karşılığında 1.000 puan kazanırsın.</div>
       <div class="panel">
         <div class="panel-head">
           <h2>GÖREV LİSTESİ</h2>
@@ -301,14 +298,14 @@
           <div class="guide-num">2</div>
           <div>
             <div class="guide-title">Puan Kazanma</div>
-            <div class="guide-text">Üç yolla puan kazanırsın: (1) her 30 günde bir "30 Günlük Ödül" butonuyla 10.000 puan, (2) yönetici sana bir görev atadığında tamamlayarak 100 puan, (3) bir sınavı kazanarak.</div>
+            <div class="guide-text">Üç yolla puan kazanırsın: (1) her 30 günde bir "30 Günlük Ödül" butonuyla 100.000 puan, (2) yönetici sana bir görev atadığında tamamlayarak 1.000 puan, (3) bir sınavı kazanarak.</div>
           </div>
         </div>
         <div class="guide-item">
           <div class="guide-num">3</div>
           <div>
             <div class="guide-title">Dükkan — Puanını Harcama</div>
-            <div class="guide-text">Puanlar &amp; Dükkan sekmesinde puanını şunlara harcayabilirsin: başka bir sınıfa geçiş (50.000 puan, en fazla 3 kere), birinin puanını çalmaya çalışma, kumar oynama, özel bir unvan satın alma, veya "koruma puanı" satın alma (sınavda sınıf düşmekten korur).</div>
+            <div class="guide-text">Puanlar &amp; Dükkan sekmesinde puanını şunlara harcayabilirsin: başka bir sınıfa geçiş (500.000 puan, en fazla 3 kere), birinin puanını çalmaya çalışma, kumar oynama, özel bir unvan satın alma, veya "koruma puanı" satın alma (sınavda sınıf düşmekten korur).</div>
           </div>
         </div>
         <div class="guide-item">
@@ -347,6 +344,22 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- TRAILER VIEW -->
+    <section class="view" id="view-trailer">
+      <div class="section-title">FRAGMAN</div>
+      <div class="section-sub">Birliğimizin fragman müziği — dinlemek için butona bas.</div>
+
+      <div class="player" style="margin-top:20px;">
+        <div class="cover-wrap">
+          <img class="cover-img" id="siteCoverImg" src="trailer-cover.jpg" alt="Fragman kapağı">
+          <button class="play-btn" id="sitePlayBtn" aria-label="Fragman müziğini oynat/durdur">▶</button>
+        </div>
+        <div class="player-label">Tıkla, dinle</div>
+      </div>
+
+      <audio id="siteTrailerAudio" src="trailer-music.mp3" loop preload="none"></audio>
     </section>
 
   </main>
@@ -756,7 +769,7 @@
     const used = currentProfile?.class_changes_used ?? 0;
     const left = Math.max(0, 3 - used);
     document.getElementById('changesLeft').textContent = left;
-    document.getElementById('openClassPicker').disabled = left <= 0 || (currentProfile?.points ?? 0) < 50000;
+    document.getElementById('openClassPicker').disabled = left <= 0 || (currentProfile?.points ?? 0) < 500000;
     renderStealCooldown();
   }
 
@@ -788,13 +801,13 @@
     const btn = document.getElementById('openStealPicker');
     const last = currentProfile?.last_steal_at ? new Date(currentProfile.last_steal_at) : null;
     if(!last){
-      note.textContent = ''; btn.disabled = (currentProfile?.points ?? 0) < 2000;
+      note.textContent = ''; btn.disabled = (currentProfile?.points ?? 0) < 20000;
       return;
     }
     const next = new Date(last.getTime() + 12*60*60*1000);
     const now = new Date();
     if(now >= next){
-      note.textContent = ''; btn.disabled = (currentProfile?.points ?? 0) < 2000;
+      note.textContent = ''; btn.disabled = (currentProfile?.points ?? 0) < 20000;
     } else {
       btn.disabled = true;
       const hoursLeft = Math.ceil((next - now) / (1000*60*60));
@@ -1113,6 +1126,25 @@
       .on('postgres_changes', { event: '*', schema: 'public', table: 'class_wall_posts' }, () => { if(currentUser) loadClassWall(); })
       .subscribe();
   }
+
+  // ---------- TRAILER PLAYER ----------
+  (function setupTrailerPlayer(){
+    const audio = document.getElementById('siteTrailerAudio');
+    const cover = document.getElementById('siteCoverImg');
+    const btn = document.getElementById('sitePlayBtn');
+    if(!audio || !btn) return;
+    btn.addEventListener('click', () => {
+      if(audio.paused){
+        audio.play();
+        cover.classList.add('playing');
+        btn.textContent = '❚❚';
+      } else {
+        audio.pause();
+        cover.classList.remove('playing');
+        btn.textContent = '▶';
+      }
+    });
+  })();
 
   // ---------- BOOT ----------
   (async function boot(){

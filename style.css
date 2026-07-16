@@ -317,7 +317,7 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 /* profile modal */
 .modal-backdrop{ position:fixed; inset:0; background: rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center; z-index:60; padding:20px; }
 .modal-backdrop.show{ display:flex; }
-.modal-card{ width:100%; max-width:380px; background: var(--panel); border:1px solid var(--line); border-radius:12px; padding:28px; text-align:center; position:relative; }
+.modal-card{ width:100%; max-width:380px; background: var(--panel); border:1px solid var(--line); border-radius:12px; padding:28px; text-align:center; position:relative; overflow-x:hidden; overflow-y:auto; max-height:88vh; }
 .modal-close{ position:absolute; top:12px; right:14px; background:none; border:none; color:var(--ink-dim); font-size:20px; cursor:pointer; }
 .modal-avatar{ width:88px; height:88px; border-radius:50%; margin: 0 auto 14px; background: var(--panel-2); border:1px solid var(--line);
   display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:700; color:var(--silver-1); overflow:hidden; }
@@ -341,6 +341,7 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
   padding:22px 16px 26px;
   text-align:center;
   box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset, 0 12px 30px rgba(0,0,0,0.5);
+  overflow:hidden;
 }
 .oaa-notch{
   width:8px; height:8px; border-radius:50%;
@@ -400,10 +401,10 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 .oaa-badge-grade{ font-weight:700; font-size:15px; color:var(--silver-1); line-height:1; }
 .oaa-badge-lbl{ font-size:6.5px; letter-spacing:0.5px; color:var(--ink-dim); margin-top:2px; }
 
-.oaa-b0{ top:0; left:8px; }
-.oaa-b1{ top:0; right:8px; }
-.oaa-b2{ bottom:0; left:8px; }
-.oaa-b3{ bottom:0; right:8px; }
+.oaa-b0{ top:6px; left:16px; }
+.oaa-b1{ top:6px; right:16px; }
+.oaa-b2{ bottom:6px; left:16px; }
+.oaa-b3{ bottom:6px; right:16px; }
 
 /* avatar upload */
 .avatar-upload{ margin-top:16px; }
@@ -472,3 +473,20 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 }
 
 @media (prefers-reduced-motion: reduce){ *{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; } }
+
+/* trailer music player */
+.player{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+.cover-wrap{
+  position:relative; width:130px; height:130px; border-radius:50%; overflow:hidden;
+  border:2px solid var(--silver-3); box-shadow: 0 0 24px rgba(200,205,210,0.15);
+}
+.cover-img{ width:100%; height:100%; object-fit:cover; animation: spin 7s linear infinite; animation-play-state: paused; }
+.cover-img.playing{ animation-play-state: running; }
+@keyframes spin{ to{ transform: rotate(360deg); } }
+.play-btn{
+  position:absolute; inset:0; margin:auto; width:42px; height:42px; border-radius:50%;
+  background: rgba(0,0,0,0.55); border:1px solid rgba(255,255,255,0.35); color:#fff;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px;
+  backdrop-filter: blur(2px);
+}
+.player-label{ font-size:10px; letter-spacing:2.5px; color: var(--ink-dim); text-transform:uppercase; }
