@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<link rel="icon" type="image/x-icon" href="/LTF-Real-Site/favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="/LTF-Real-Site/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/LTF-Real-Site/favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/LTF-Real-Site/apple-touch-icon.png">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Loyal Elite Force — Yakında Geliyoruz</title>
 <meta name="description" content="Loyal Elite Force (LTF), sınıflar, puan sistemi ve görevlerden oluşan bir birlik topluluğudur. Sitemiz yakında yayında.">
@@ -58,6 +55,25 @@
     margin-top:30px; padding:10px 22px; border:1px solid rgba(255,255,255,0.15); border-radius:30px;
     font-size:11px; letter-spacing:3px; color: var(--silver-1); text-transform:uppercase;
   }
+
+  .player{ margin-top:34px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .cover-wrap{
+    position:relative; width:110px; height:110px; border-radius:50%; overflow:hidden;
+    border:2px solid var(--silver-3); box-shadow: 0 0 24px rgba(200,205,210,0.15);
+  }
+  .cover-img{
+    width:100%; height:100%; object-fit:cover;
+    animation: spin 7s linear infinite; animation-play-state: paused;
+  }
+  .cover-img.playing{ animation-play-state: running; }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .play-btn{
+    position:absolute; inset:0; margin:auto; width:38px; height:38px; border-radius:50%;
+    background: rgba(0,0,0,0.55); border:1px solid rgba(255,255,255,0.35); color:#fff;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:15px;
+    backdrop-filter: blur(2px);
+  }
+  .player-label{ font-size:10px; letter-spacing:2.5px; color: var(--ink-dim); text-transform:uppercase; }
 </style>
 </head>
 <body>
@@ -76,6 +92,34 @@
   </p>
 
   <div class="badge">Yakında Geliyoruz</div>
+
+  <div class="player">
+    <div class="cover-wrap">
+      <img class="cover-img" id="coverImg" src="trailer-cover.jpg" alt="Fragman kapağı">
+      <button class="play-btn" id="playBtn" aria-label="Fragman müziğini oynat/durdur">▶</button>
+    </div>
+    <div class="player-label">Fragman Müziği</div>
+  </div>
+
+  <audio id="trailerAudio" src="trailer-music.mp3" loop preload="none"></audio>
+
+  <script>
+    const audio = document.getElementById('trailerAudio');
+    const cover = document.getElementById('coverImg');
+    const btn = document.getElementById('playBtn');
+
+    btn.addEventListener('click', () => {
+      if(audio.paused){
+        audio.play();
+        cover.classList.add('playing');
+        btn.textContent = '❚❚';
+      } else {
+        audio.pause();
+        cover.classList.remove('playing');
+        btn.textContent = '▶';
+      }
+    });
+  </script>
 
 </body>
 </html>
