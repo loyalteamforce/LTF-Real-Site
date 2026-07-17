@@ -38,13 +38,15 @@
     </div>
 
     <nav class="sidebar-nav">
-      <button class="nav-btn active" data-view="classes">Sınıflar</button>
-      <button class="nav-btn" data-view="points">Puanlar &amp; Dükkan</button>
-      <button class="nav-btn" data-view="exams">Sınavlar</button>
-      <button class="nav-btn" data-view="tasks">Görevler</button>
-      <button class="nav-btn" data-view="profile">Profilim</button>
-      <button class="nav-btn" data-view="guide">Nasıl Çalışır?</button>
-      <button class="nav-btn" data-view="trailer">Fragman</button>
+      <button class="nav-btn active" data-view="classes"><span class="nav-icon">🏫</span><span class="nav-label">Sınıflar</span></button>
+      <button class="nav-btn" data-view="points"><span class="nav-icon">💰</span><span class="nav-label">Puanlar</span></button>
+      <button class="nav-btn" data-view="exams"><span class="nav-icon">📝</span><span class="nav-label">Sınavlar</span></button>
+      <button class="nav-btn" data-view="tasks"><span class="nav-icon">✅</span><span class="nav-label">Görevler</span></button>
+      <button class="nav-btn" data-view="profile"><span class="nav-icon">👤</span><span class="nav-label">Profilim</span></button>
+      <button class="nav-btn" data-view="guide"><span class="nav-icon">❓</span><span class="nav-label">Rehber</span></button>
+      <button class="nav-btn" data-view="trailer"><span class="nav-icon">🎵</span><span class="nav-label">Şarkılar</span></button>
+      <button class="nav-btn admin-only-btn" data-view="roster" style="display:none;"><span class="nav-icon">🗂️</span><span class="nav-label">Tüm Üyeler</span></button>
+      <button class="nav-btn mobile-only-btn" id="mobileLogoutBtn"><span class="nav-icon">🚪</span><span class="nav-label">Çıkış</span></button>
     </nav>
 
     <button class="logout-btn" id="logoutBtn">Çıkış</button>
@@ -57,11 +59,6 @@
     <section class="view active" id="view-classes">
       <div class="section-title">SINIFLAR</div>
       <div class="section-sub">Herkes bir sınıfa (A/B/C/D) dahildir, sınıf başına en fazla 25 kişi var. Kendi sınıfının duvarına yazabilir, diğer sınıfları sadece görebilirsin.</div>
-
-      <div class="panel" style="margin-bottom:18px;">
-        <div class="panel-head"><h2>SINIF SIRALAMASI</h2></div>
-        <div class="panel-body" id="classRanking"><div class="empty">Yükleniyor...</div></div>
-      </div>
 
       <div class="class-tabs" id="classTabs"></div>
       <div class="member-grid" id="classMembers"></div>
@@ -124,6 +121,11 @@
     <section class="view" id="view-points">
       <div class="section-title">PUANLAR</div>
       <div class="section-sub">30 günde bir 100.000 puan alırsın, görev tamamlayarak da kazanırsın. Puanını birine gönderebilir veya dükkanda harcayabilirsin.</div>
+
+      <div class="panel" style="margin-bottom:18px;">
+        <div class="panel-head"><h2>SINIF SIRALAMASI</h2></div>
+        <div class="panel-body" id="classRanking"><div class="empty">Yükleniyor...</div></div>
+      </div>
 
       <div class="points-card">
         <div class="pc-texture"></div>
@@ -348,18 +350,37 @@
 
     <!-- TRAILER VIEW -->
     <section class="view" id="view-trailer">
-      <div class="section-title">FRAGMAN</div>
-      <div class="section-sub">Birliğimizin fragman müziği — dinlemek için butona bas.</div>
+      <div class="section-title">ŞARKILARIMIZ</div>
+      <div class="section-sub">Birliğimizin resmi parçası. Dinlemek için oynat butonuna bas.</div>
 
-      <div class="player" style="margin-top:20px;">
-        <div class="cover-wrap">
-          <img class="cover-img" id="siteCoverImg" src="trailer-cover.jpg" alt="Fragman kapağı">
-          <button class="play-btn" id="sitePlayBtn" aria-label="Fragman müziğini oynat/durdur">▶</button>
+      <div class="track-card">
+        <div class="track-art">
+          <img id="siteCoverImg" src="trailer-cover.jpg" alt="Parça kapağı">
         </div>
-        <div class="player-label">Tıkla, dinle</div>
+        <div class="track-info">
+          <div class="track-title">Loyal Elite Force — Tema</div>
+          <div class="track-artist">Birlik Parçası</div>
+          <div class="track-controls">
+            <button class="track-play-btn" id="sitePlayBtn" aria-label="Oynat/Durdur">▶</button>
+            <div class="track-progress" id="trackProgressWrap">
+              <div class="track-progress-fill" id="trackProgressFill"></div>
+            </div>
+            <div class="track-time" id="trackTime">0:00</div>
+          </div>
+        </div>
       </div>
 
       <audio id="siteTrailerAudio" src="trailer-music.mp3" loop preload="none"></audio>
+    </section>
+
+    <!-- ROSTER VIEW (admin only) -->
+    <section class="view" id="view-roster">
+      <div class="section-title">TÜM ÜYELER</div>
+      <div class="section-sub">Sadece yöneticiler görebilir — birlikteki her üyenin anlık durumu.</div>
+
+      <div class="roster-wall">
+        <div class="roster-grid" id="rosterGrid"><div class="empty">Yükleniyor...</div></div>
+      </div>
     </section>
 
   </main>
@@ -417,19 +438,25 @@
     window.location.href = 'login.html';
   });
 
+  document.getElementById('mobileLogoutBtn').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.href = 'login.html';
+  });
+
   // ---------- NAV ----------
-  document.querySelectorAll('.nav-btn').forEach(btn => {
+  document.querySelectorAll('.nav-btn[data-view]').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.nav-btn[data-view]').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('view-' + btn.dataset.view).classList.add('active');
 
       const view = btn.dataset.view;
-      if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); renderClassRanking(); loadClassWall(); }
+      if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadClassWall(); }
+      if(view === 'points'){ refreshMyProfile(); renderClassRanking(); }
       if(view === 'exams'){ loadExams(); }
       if(view === 'tasks'){ loadTasks(); }
-      if(view === 'points'){ refreshMyProfile(); }
+      if(view === 'roster'){ loadAllProfiles().then(renderRoster); }
     });
   });
 
@@ -472,6 +499,8 @@
     renderOwnProfile();
     updateTaskFormVisibility();
     updateExamCreateVisibility();
+    updateRosterVisibility();
+    renderRoster();
     loadTasks();
     loadExams();
 
@@ -646,17 +675,22 @@
 
     return `
       <div class="oaa-phone">
-        <div class="oaa-notch"></div>
-        <div class="oaa-title">Genel Yetenek</div>
-        <div class="oaa-subtitle">LOYAL ELITE FORCE KARNESİ</div>
+        <div class="oaa-header">
+          <div class="oaa-title">Genel Yetenek</div>
+          <div class="oaa-subtitle">LOYAL ELITE FORCE KARNESİ</div>
+        </div>
 
         <div class="oaa-photo-frame">${avatarHtml(profile)}</div>
 
+        <div class="oaa-id-tag">BİRLİK ÜYESİ</div>
         <div class="oaa-id-pill">
           <div class="oaa-id-class">Sınıf ${profile?.class || '-'}</div>
+          <div class="oaa-id-div"></div>
           <div class="oaa-id-name">${escapeHtml(profile?.username || '—')}</div>
         </div>
+        <div class="oaa-id-rank">${escapeHtml(profile?.rank || 'Üye')}</div>
 
+        <div class="oaa-eval-label">BECERİ DEĞERLENDİRMESİ</div>
         <div class="oaa-wrap">
           ${badges}
           <div class="oaa-center">
@@ -908,6 +942,32 @@
     document.getElementById('examCreatePanel').style.display = currentProfile?.rank === 'Yönetici' ? 'block' : 'none';
   }
 
+  function updateRosterVisibility(){
+    const isAdmin = currentProfile?.rank === 'Yönetici';
+    document.querySelectorAll('.admin-only-btn').forEach(btn => { btn.style.display = isAdmin ? 'flex' : 'none'; });
+  }
+
+  function renderRoster(){
+    if(currentProfile?.rank !== 'Yönetici') return;
+    const grid = document.getElementById('rosterGrid');
+    if(!allProfiles || allProfiles.length === 0){
+      grid.innerHTML = '<div class="empty">Henüz üye yok.</div>';
+      return;
+    }
+    const sorted = [...allProfiles].sort((a,b) => (a.class || '').localeCompare(b.class || '') || a.username.localeCompare(b.username));
+    grid.innerHTML = sorted.map(p => `
+      <div class="roster-card">
+        <div class="roster-avatar">${avatarHtml(p)}</div>
+        <div class="roster-name">${escapeHtml(p.username)}</div>
+        <div class="roster-meta">Sınıf ${escapeHtml(p.class || '-')} · ${escapeHtml(p.rank || 'Üye')}</div>
+        <div class="roster-meta">${(p.points ?? 0).toLocaleString('tr-TR')} puan</div>
+        <div class="roster-stats">
+          ${STAT_DEFS.map(([key, label]) => `<span>${STAT_ABBR[label] || label.slice(0,3)}: ${p[key] || 'C'}</span>`).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
   document.getElementById('examCreateForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const msg = document.getElementById('examCreateMsg');
@@ -1111,6 +1171,7 @@
         await loadAllProfiles();
         renderClassTabs();
         renderClassMembers();
+        renderRoster();
       })
       .subscribe();
     supabase.channel('public:class_points')
@@ -1130,19 +1191,42 @@
   // ---------- TRAILER PLAYER ----------
   (function setupTrailerPlayer(){
     const audio = document.getElementById('siteTrailerAudio');
-    const cover = document.getElementById('siteCoverImg');
     const btn = document.getElementById('sitePlayBtn');
+    const fill = document.getElementById('trackProgressFill');
+    const progressWrap = document.getElementById('trackProgressWrap');
+    const timeEl = document.getElementById('trackTime');
     if(!audio || !btn) return;
+
+    function fmt(sec){
+      if(!isFinite(sec)) return '0:00';
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
     btn.addEventListener('click', () => {
       if(audio.paused){
         audio.play();
-        cover.classList.add('playing');
         btn.textContent = '❚❚';
       } else {
         audio.pause();
-        cover.classList.remove('playing');
         btn.textContent = '▶';
       }
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+      fill.style.width = pct + '%';
+      timeEl.textContent = fmt(audio.currentTime);
+    });
+
+    audio.addEventListener('ended', () => { btn.textContent = '▶'; });
+
+    progressWrap.addEventListener('click', (e) => {
+      if(!audio.duration) return;
+      const rect = progressWrap.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = pct * audio.duration;
     });
   })();
 

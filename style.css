@@ -196,6 +196,8 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
   letter-spacing:0.5px; cursor:pointer; text-align:left; }
 .nav-btn:hover{ background: var(--panel-2); color: var(--ink); }
 .nav-btn.active{ background: var(--panel-2); color: var(--silver-1); border-left:2px solid var(--silver-2); }
+.nav-icon{ font-size:15px; line-height:1; }
+.mobile-only-btn{ display:none; }
 
 .sidebar .logout-btn{ margin: 10px; }
 
@@ -338,41 +340,45 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
   background: linear-gradient(165deg, #1c1d20, #0d0e10 75%);
   border:3px solid var(--silver-3);
   border-radius:34px;
-  padding:22px 16px 26px;
-  text-align:center;
+  padding:20px 18px 24px;
+  text-align:left;
   box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset, 0 12px 30px rgba(0,0,0,0.5);
   overflow:hidden;
 }
-.oaa-notch{
-  width:8px; height:8px; border-radius:50%;
-  background: rgba(255,255,255,0.15);
-  margin:0 auto 12px;
-}
+.oaa-header{ margin-bottom:16px; }
 .oaa-title{
   font-family:'Cinzel Decorative', serif; font-style:italic; font-weight:700;
-  font-size:16px; color:var(--silver-1); letter-spacing:0.5px;
+  font-size:15px; color:var(--silver-1); letter-spacing:0.5px; line-height:1.1;
 }
 .oaa-subtitle{
-  font-size:7.5px; letter-spacing:2px; color:var(--ink-dim); text-transform:uppercase;
-  margin-top:2px; margin-bottom:16px;
+  font-size:7px; letter-spacing:1.5px; color:var(--ink-dim); text-transform:uppercase;
+  margin-top:3px;
 }
 
 .oaa-photo-frame{
-  width:88px; height:88px; margin:0 auto 14px; border-radius:16px;
+  width:86px; height:86px; margin:0 auto 14px; border-radius:16px;
   background: var(--panel-2); border:1px solid var(--silver-3); overflow:hidden;
   display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--silver-1);
   box-shadow: 0 0 14px rgba(200,205,210,0.12);
 }
 .oaa-photo-frame img{ width:100%; height:100%; object-fit:cover; border-radius:0; }
 
+.oaa-id-tag{ font-size:8px; letter-spacing:2px; color:var(--ink-dim); text-transform:uppercase; text-align:center; margin-bottom:6px; }
+
 .oaa-id-pill{
-  display:inline-flex; flex-direction:column; align-items:center; gap:2px;
-  padding:8px 22px; border-radius:30px; max-width:100%;
+  display:flex; flex-direction:row; align-items:center; justify-content:center; gap:10px;
+  padding:7px 18px; border-radius:30px; max-width:100%; width:fit-content; margin:0 auto 6px;
   background: rgba(255,255,255,0.04); border:1px solid var(--line);
-  margin-bottom:22px;
 }
-.oaa-id-class{ font-size:9px; letter-spacing:2px; color:var(--ink-dim); text-transform:uppercase; }
-.oaa-id-name{ font-family:'Cinzel Decorative', serif; font-size:14px; letter-spacing:1px; color:var(--silver-1); text-transform:uppercase; overflow-wrap:break-word; word-break:break-word; max-width:100%; }
+.oaa-id-class{ font-size:11px; letter-spacing:1px; color:var(--ink-dim); white-space:nowrap; }
+.oaa-id-div{ width:1px; height:14px; background:var(--line); flex-shrink:0; }
+.oaa-id-name{ font-family:'Cinzel Decorative', serif; font-size:13px; letter-spacing:1px; color:var(--silver-1); text-transform:uppercase; overflow-wrap:break-word; word-break:break-word; }
+.oaa-id-rank{ text-align:center; font-size:9.5px; letter-spacing:2px; color:var(--ink-dim); text-transform:uppercase; margin-bottom:18px; }
+
+.oaa-eval-label{
+  text-align:center; font-size:9px; letter-spacing:2px; color:var(--ink-dim); text-transform:uppercase;
+  margin-bottom:10px; padding-top:10px; border-top:1px solid var(--line);
+}
 
 .oaa-wrap{ position:relative; width:170px; height:150px; margin:0 auto; }
 .oaa-center{
@@ -427,16 +433,27 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 
   .sidebar-me{ display:none; }
 
+  /* Alt sabit menü — yatay kaydırma YOK, 4'lü grid halinde sabit dursun */
   .sidebar-nav{
-    flex-direction:row; flex-wrap:nowrap; overflow-x:auto;
-    padding: 6px 10px 10px; gap:6px; -webkit-overflow-scrolling:touch;
+    position:fixed; left:0; right:0; bottom:0; z-index:40;
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:2px;
+    background: rgba(13,14,16,0.98); backdrop-filter: blur(10px);
+    border-top:1px solid var(--line);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    overflow:visible; max-height:none;
   }
-  .nav-btn{ flex-shrink:0; white-space:nowrap; padding:8px 12px; font-size:13px; }
-  .nav-btn.active{ border-left:none; border-bottom:2px solid var(--silver-2); }
+  .nav-btn{
+    flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    padding:6px 2px; font-size:9.5px; text-align:center; white-space:normal; line-height:1.1;
+    border-radius:8px;
+  }
+  .nav-btn.active{ border-left:none; box-shadow: inset 0 0 0 1px var(--silver-3); }
+  .nav-icon{ font-size:17px; }
+  .mobile-only-btn{ display:flex; }
 
   .sidebar .logout-btn{ display:none; }
 
-  .main-area{ max-width:100%; padding: 16px 14px 40px; }
+  .main-area{ max-width:100%; padding: 16px 14px 130px; }
   .section-title{ font-size:12.5px; letter-spacing:2px; }
 
   .member-grid{ grid-template-columns: repeat(auto-fill, minmax(110px,1fr)); gap:8px; }
@@ -466,6 +483,9 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 
   .top-brand span{ display:none; }
   header.top{ padding:12px 16px; }
+
+  .track-card{ flex-direction:column; text-align:center; max-width:100%; }
+  .track-controls{ width:100%; }
 }
 
 @media (max-width: 420px){
@@ -490,3 +510,46 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
   backdrop-filter: blur(2px);
 }
 .player-label{ font-size:10px; letter-spacing:2.5px; color: var(--ink-dim); text-transform:uppercase; }
+
+/* track card (Şarkılarımız) */
+.track-card{
+  display:flex; gap:16px; align-items:center; background: var(--panel); border:1px solid var(--line);
+  border-radius:14px; padding:16px; max-width:480px;
+}
+.track-art{ width:76px; height:76px; border-radius:10px; overflow:hidden; flex-shrink:0; box-shadow:0 4px 14px rgba(0,0,0,0.4); }
+.track-art img{ width:100%; height:100%; object-fit:cover; }
+.track-info{ flex:1; min-width:0; }
+.track-title{ font-weight:700; font-size:14.5px; color:var(--ink); overflow-wrap:break-word; }
+.track-artist{ font-size:11.5px; color:var(--ink-dim); margin-top:2px; margin-bottom:10px; }
+.track-controls{ display:flex; align-items:center; gap:10px; }
+.track-play-btn{
+  width:34px; height:34px; border-radius:50%; flex-shrink:0;
+  background: linear-gradient(120deg, var(--silver-3), var(--silver-2)); border:none; color:#0a0a0a;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px;
+}
+.track-progress{ flex:1; height:5px; background:#0c0d0f; border-radius:3px; overflow:hidden; border:1px solid var(--line); cursor:pointer; min-width:0; }
+.track-progress-fill{ height:100%; width:0%; background: linear-gradient(90deg, var(--silver-3), var(--silver-1)); }
+.track-time{ font-size:10.5px; color:var(--ink-dim); flex-shrink:0; min-width:34px; text-align:right; }
+
+/* roster wall (admin only) — screens-behind-silhouette hissi */
+.roster-wall{
+  background: radial-gradient(ellipse at 50% -10%, rgba(255,255,255,0.05), transparent 60%), #060708;
+  border:1px solid var(--line); border-radius:14px; padding:18px;
+}
+.roster-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(140px,1fr)); gap:12px; }
+.roster-card{
+  background: linear-gradient(160deg, #14161a, #0a0b0d 80%);
+  border:1px solid rgba(180,190,200,0.18); border-radius:10px; padding:14px 10px; text-align:center;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+.roster-avatar{
+  width:58px; height:58px; margin:0 auto 8px; border-radius:8px; overflow:hidden;
+  background: var(--panel-2); border:1px solid rgba(180,190,200,0.4);
+  box-shadow: 0 0 12px rgba(200,210,220,0.18);
+  display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--silver-1);
+}
+.roster-avatar img{ width:100%; height:100%; object-fit:cover; }
+.roster-name{ font-size:13px; font-weight:700; color:var(--ink); overflow-wrap:break-word; }
+.roster-meta{ font-size:10px; color:var(--ink-dim); margin-top:3px; letter-spacing:0.5px; }
+.roster-stats{ display:flex; justify-content:center; flex-wrap:wrap; gap:3px; margin-top:8px; }
+.roster-stats span{ font-size:8.5px; padding:2px 5px; border:1px solid rgba(180,190,200,0.25); border-radius:5px; color:var(--silver-1); }
