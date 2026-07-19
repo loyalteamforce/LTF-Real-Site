@@ -38,18 +38,15 @@
     </div>
 
     <nav class="sidebar-nav">
-      <button class="nav-btn active" data-view="classes"><span class="nav-icon">🏫</span><span class="nav-label">Sınıflar</span></button>
-      <button class="nav-btn" data-view="points"><span class="nav-icon">💰</span><span class="nav-label">Puanlar</span></button>
-      <button class="nav-btn" data-view="exams"><span class="nav-icon">📝</span><span class="nav-label">Sınavlar</span></button>
-      <button class="nav-btn" data-view="tasks"><span class="nav-icon">✅</span><span class="nav-label">Görevler</span></button>
-      <button class="nav-btn" data-view="profile"><span class="nav-icon">👤</span><span class="nav-label">Profilim</span></button>
-      <button class="nav-btn" data-view="guide"><span class="nav-icon">❓</span><span class="nav-label">Rehber</span></button>
-      <button class="nav-btn" data-view="trailer"><span class="nav-icon">🎵</span><span class="nav-label">Şarkılar</span></button>
-      <button class="nav-btn admin-only-btn" data-view="roster" style="display:none;"><span class="nav-icon">🗂️</span><span class="nav-label">Tüm Üyeler</span></button>
-      <button class="nav-btn mobile-only-btn" id="mobileLogoutBtn"><span class="nav-icon">🚪</span><span class="nav-label">Çıkış</span></button>
+      <button class="nav-btn active" data-view="classes"><span class="nav-label">Sınıflar</span></button>
+      <button class="nav-btn" data-view="points"><span class="nav-label">Puanlar</span></button>
+      <button class="nav-btn" data-view="exams"><span class="nav-label">Sınavlar</span></button>
+      <button class="nav-btn" data-view="tasks"><span class="nav-label">Görevler</span></button>
+      <button class="nav-btn" data-view="profile"><span class="nav-label">Profilim</span></button>
+      <button class="nav-btn" data-view="guide"><span class="nav-label">Rehber</span></button>
+      <button class="nav-btn" data-view="trailer"><span class="nav-label">Şarkılar</span></button>
+      <button class="nav-btn admin-only-btn" data-view="roster" style="display:none;"><span class="nav-label">Tüm Üyeler</span></button>
     </nav>
-
-    <button class="logout-btn" id="logoutBtn">Çıkış</button>
   </aside>
 
   <!-- ===================== MAIN AREA ===================== -->
@@ -277,7 +274,6 @@
             <span id="profClass">—</span>
             <span id="profRank">—</span>
           </div>
-          <div id="profStats"></div>
           <div id="profOaa" style="margin-top:20px;"></div>
         </div>
       </div>
@@ -346,6 +342,19 @@
           </div>
         </div>
       </div>
+
+      <div class="panel" style="margin-top:20px; max-width:340px;">
+        <div class="panel-head"><h2>NOT ÖLÇEĞİ</h2></div>
+        <div class="panel-body">
+          <div class="grade-scale-row"><span>Üstün</span><span class="grade-badge">A+</span></div>
+          <div class="grade-scale-row"><span>Çok İyi</span><span class="grade-badge">A</span></div>
+          <div class="grade-scale-row"><span>İyi</span><span class="grade-badge">B</span></div>
+          <div class="grade-scale-row"><span>Orta</span><span class="grade-badge">C</span></div>
+          <div class="grade-scale-row"><span>Zayıf</span><span class="grade-badge">D</span></div>
+          <div class="grade-scale-row"><span>Çok Zayıf</span><span class="grade-badge">E</span></div>
+          <div class="grade-scale-row"><span>Yetersiz</span><span class="grade-badge">F</span></div>
+        </div>
+      </div>
     </section>
 
     <!-- TRAILER VIEW -->
@@ -358,8 +367,8 @@
           <img id="siteCoverImg" src="trailer-cover.jpg" alt="Parça kapağı">
         </div>
         <div class="track-info">
-          <div class="track-title">Loyal Elite Force — Tema</div>
-          <div class="track-artist">Birlik Parçası</div>
+          <div class="track-title">Loyal Elite Force – 「選ばれし影」<br><span style="font-size:11px; font-weight:500; color:var(--ink-dim);">(Erabareshi Kage / Seçilmiş Gölge)</span></div>
+          <div class="track-artist" style="display:none;"></div>
           <div class="track-controls">
             <button class="track-play-btn" id="sitePlayBtn" aria-label="Oynat/Durdur">▶</button>
             <div class="track-progress" id="trackProgressWrap">
@@ -408,7 +417,6 @@
       <span id="modalClass">—</span>
       <span id="modalRank">—</span>
     </div>
-    <div id="modalStats"></div>
     <div id="modalOaa" style="margin-top:20px;"></div>
   </div>
 </div>
@@ -426,22 +434,21 @@
     ['stat_agresiflik', 'Agresiflik'],
     ['stat_beceriklilik', 'Beceriklilik'],
   ];
-  const GRADE_WIDTH = { 'F':10, 'E':25, 'D':40, 'C':55, 'B':70, 'A':85, 'A+':100 };
-  const GRADE_ORDER = ['F','E','D','C','B','A','A+'];
+  const GRADE_ORDER = ['F','E-','E','E+','D-','D','D+','C-','C','C+','B-','B','B+','A-','A','A+'];
+  const GRADE_WIDTH = Object.fromEntries(GRADE_ORDER.map((g,i) => [g, Math.round((i+1)/GRADE_ORDER.length*100)]));
+  // Harfe göre sabit başarı sayısı: A+ =100, B+ =90, C+ =80 ... her ana harf 10 puanlık dilime yayılır
+  const GRADE_NUM = {
+    'A+':100, 'A':96, 'A-':92,
+    'B+':90, 'B':86, 'B-':82,
+    'C+':80, 'C':76, 'C-':72,
+    'D+':70, 'D':66, 'D-':62,
+    'E+':60, 'E':56, 'E-':52,
+    'F':45
+  };
   const STAT_ABBR = { 'Akıllı':'AKL', 'Strateji':'STR', 'Agresiflik':'AGR', 'Beceriklilik':'BEC' };
   let activeClass = 'A';
 
   const appShell = document.getElementById('appShell');
-
-  document.getElementById('logoutBtn').addEventListener('click', async () => {
-    await supabase.auth.signOut();
-    window.location.href = 'login.html';
-  });
-
-  document.getElementById('mobileLogoutBtn').addEventListener('click', async () => {
-    await supabase.auth.signOut();
-    window.location.href = 'login.html';
-  });
 
   // ---------- NAV ----------
   document.querySelectorAll('.nav-btn[data-view]').forEach(btn => {
@@ -654,7 +661,7 @@
     const idxs = STAT_DEFS.map(([key]) => {
       const g = profile?.[key] || 'C';
       const i = GRADE_ORDER.indexOf(g);
-      return i === -1 ? 3 : i;
+      return i === -1 ? 8 : i;
     });
     const avg = Math.round(idxs.reduce((a,b) => a+b, 0) / idxs.length);
     return GRADE_ORDER[Math.max(0, Math.min(GRADE_ORDER.length-1, avg))];
@@ -663,12 +670,12 @@
   function oaaCardHtml(profile){
     const badges = STAT_DEFS.map(([key, label], i) => {
       const grade = profile?.[key] || 'C';
+      const num = GRADE_NUM[grade] ?? 70;
       return `
         <div class="oaa-badge oaa-b${i}">
-          <div class="oaa-badge-inner">
-            <div class="oaa-badge-grade">${grade}</div>
-            <div class="oaa-badge-lbl">${STAT_ABBR[label] || label.slice(0,3).toUpperCase()}</div>
-          </div>
+          <span class="oaa-badge-skill">${label}</span>
+          <span class="oaa-badge-num">${num}</span>
+          <span class="oaa-badge-grade-box">${grade}</span>
         </div>
       `;
     }).join('');
@@ -676,26 +683,23 @@
     return `
       <div class="oaa-phone">
         <div class="oaa-header">
-          <div class="oaa-title">Genel Yetenek</div>
-          <div class="oaa-subtitle">LOYAL ELITE FORCE KARNESİ</div>
+          <div class="oaa-title">
+            <span class="cap">G</span>enel <span class="cap">Y</span>etenek
+          </div>
+          <div class="oaa-subtitle">LOYAL ELITE FORCE</div>
         </div>
 
         <div class="oaa-photo-frame">${avatarHtml(profile)}</div>
 
-        <div class="oaa-id-tag">BİRLİK ÜYESİ</div>
         <div class="oaa-id-pill">
-          <div class="oaa-id-class">Sınıf ${profile?.class || '-'}</div>
-          <div class="oaa-id-div"></div>
+          <span class="oaa-id-lbl">Sınıf ${profile?.class || '-'}</span>
           <div class="oaa-id-name">${escapeHtml(profile?.username || '—')}</div>
         </div>
-        <div class="oaa-id-rank">${escapeHtml(profile?.rank || 'Üye')}</div>
 
-        <div class="oaa-eval-label">BECERİ DEĞERLENDİRMESİ</div>
         <div class="oaa-wrap">
           ${badges}
-          <div class="oaa-center">
+          <div class="oaa-center-frame">
             <div class="oaa-center-grade">${overallGrade(profile)}</div>
-            <div class="oaa-center-lbl">GENEL</div>
           </div>
         </div>
       </div>
@@ -709,7 +713,6 @@
     document.getElementById('modalName').textContent = p.username;
     document.getElementById('modalClass').textContent = 'Sınıf ' + p.class;
     document.getElementById('modalRank').textContent = p.rank || 'Üye';
-    document.getElementById('modalStats').innerHTML = statsHtml(p);
     document.getElementById('modalOaa').innerHTML = oaaCardHtml(p);
     profileModal.classList.add('show');
   }
@@ -720,7 +723,6 @@
     document.getElementById('profName').textContent = currentProfile?.username || '—';
     document.getElementById('profClass').textContent = 'Sınıf ' + (currentProfile?.class || '-');
     document.getElementById('profRank').textContent = currentProfile?.rank || 'Üye';
-    document.getElementById('profStats').innerHTML = statsHtml(currentProfile);
     document.getElementById('profOaa').innerHTML = oaaCardHtml(currentProfile);
   }
 
@@ -966,6 +968,13 @@
         </div>
       </div>
     `).join('');
+
+    const logoSrc = document.querySelector('.sidebar-brand img')?.src;
+    if(logoSrc){
+      grid.querySelectorAll('.roster-avatar').forEach(el => {
+        el.style.backgroundImage = `linear-gradient(rgba(6,7,9,0.5), rgba(6,7,9,0.5)), url('${logoSrc}')`;
+      });
+    }
   }
 
   document.getElementById('examCreateForm').addEventListener('submit', async (e) => {
