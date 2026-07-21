@@ -89,6 +89,8 @@ h1,h2,h3, .crest-font{ font-family:'Cinzel Decorative', serif; }
   color: var(--ink); font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:500; letter-spacing:0.5px; }
 .field input:focus{ outline:none; border-color: var(--silver-2); }
 
+.username-warning{ margin-top:6px; font-size:11px; color:#c99a4a; line-height:1.4; }
+
 .pw-field{ position:relative; }
 .pw-field input{ padding-right:40px; }
 .pw-toggle{ position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none;
@@ -198,6 +200,12 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 .nav-btn.active{ background: var(--panel-2); color: var(--silver-1); border-left:2px solid var(--silver-2); }
 .nav-icon{ font-size:15px; line-height:1; }
 .mobile-profile-logout{ display:none; }
+
+.nav-group-label{
+  font-size:9.5px; letter-spacing:2px; color: var(--ink-dim); text-transform:uppercase;
+  padding:12px 12px 4px; font-weight:700;
+}
+.nav-group-label:first-child{ padding-top:2px; }
 
 .sidebar .logout-btn{ margin: 10px; }
 
@@ -457,6 +465,7 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
     padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
     overflow:visible; max-height:none;
   }
+  .nav-group-label{ display:none; }
   .nav-btn{
     flex-direction:column; align-items:center; justify-content:center; gap:2px;
     padding:6px 2px; font-size:9.5px; text-align:center; white-space:normal; line-height:1.1;

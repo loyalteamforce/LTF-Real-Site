@@ -38,13 +38,23 @@
     </div>
 
     <nav class="sidebar-nav">
+      <div class="nav-group-label">TOPLULUK</div>
       <button class="nav-btn active" data-view="classes"><span class="nav-label">Sınıflar</span></button>
+
+      <div class="nav-group-label">EKONOMİ</div>
       <button class="nav-btn" data-view="points"><span class="nav-label">Puanlar</span></button>
+      <button class="nav-btn" data-view="history"><span class="nav-label">İşlem Geçmişi</span></button>
+
+      <div class="nav-group-label">SINAV &amp; GÖREV</div>
       <button class="nav-btn" data-view="exams"><span class="nav-label">Sınavlar</span></button>
       <button class="nav-btn" data-view="tasks"><span class="nav-label">Görevler</span></button>
+
+      <div class="nav-group-label">HESAP</div>
       <button class="nav-btn" data-view="profile"><span class="nav-label">Profilim</span></button>
       <button class="nav-btn" data-view="guide"><span class="nav-label">Rehber</span></button>
       <button class="nav-btn" data-view="trailer"><span class="nav-label">Şarkılar</span></button>
+
+      <div class="nav-group-label admin-only-label" style="display:none;">YÖNETİM</div>
       <button class="nav-btn admin-only-btn" data-view="roster" style="display:none;"><span class="nav-label">Tüm Üyeler</span></button>
     </nav>
   </aside>
@@ -238,6 +248,19 @@
       </div>
     </section>
 
+    <!-- HISTORY VIEW -->
+    <section class="view" id="view-history">
+      <div class="section-title">İŞLEM GEÇMİŞİ</div>
+      <div class="section-sub">Puanlarınla ilgili tüm hareketler — kimden geldi, kime gönderdin, ne zaman.</div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>HAREKETLER</h2>
+          <span class="count" id="historyCount">0 işlem</span>
+        </div>
+        <div class="panel-body" id="historyList"><div class="empty">Yükleniyor...</div></div>
+      </div>
+    </section>
+
     <!-- TASKS VIEW -->
     <section class="view" id="view-tasks">
       <div class="section-title">GÖREVLER</div>
@@ -275,6 +298,21 @@
             <span id="profRank">—</span>
           </div>
           <div id="profOaa" style="margin-top:20px;"></div>
+
+          <!-- GEÇİCİ: isim değiştirme (sonra kaldırılacak) -->
+          <div class="panel" style="margin-top:20px; text-align:left;">
+            <div class="panel-head"><h2>KULLANICI ADINI DEĞİŞTİR (GEÇİCİ)</h2></div>
+            <div class="panel-body">
+              <form id="usernameChangeForm">
+                <div class="field">
+                  <label>Yeni Kullanıcı Adı</label>
+                  <input type="text" id="newUsernameInput" minlength="3" required>
+                </div>
+                <button class="btn" type="submit">Değiştir</button>
+                <div class="msg" id="usernameChangeMsg"></div>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -461,6 +499,7 @@
       const view = btn.dataset.view;
       if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadClassWall(); }
       if(view === 'points'){ refreshMyProfile(); renderClassRanking(); }
+      if(view === 'history'){ loadHistory(); }
       if(view === 'exams'){ loadExams(); }
       if(view === 'tasks'){ loadTasks(); }
       if(view === 'roster'){ loadAllProfiles().then(renderRoster); }
@@ -510,6 +549,7 @@
     renderRoster();
     loadTasks();
     loadExams();
+    loadHistory();
 
     if(!localStorage.getItem('lef_welcome_seen_' + currentUser.id)){
       document.getElementById('welcomeModal').classList.add('show');
@@ -581,6 +621,56 @@
         <div class="rank-badge">${(c.points ?? 0).toLocaleString('tr-TR')} puan</div>
       </div>
     `).join('');
+  }
+
+  // ---------- HISTORY ----------
+  const HISTORY_LABELS = {
+    'claim': 'Ödül', 'transfer': 'Puan Transferi', 'task_reward': 'Görev Ödülü',
+    'class_change': 'Sınıf Değişimi', 'steal_attempt': 'Saldırı Denemesi',
+    'steal_success': 'Saldırı Başarılı', 'steal_fail': 'Saldırı Başarısız',
+    'protection_purchase': 'Koruma Puanı', 'rank_purchase': 'Unvan Satın Alma',
+    'gamble_win': 'Şans Oyunu — Kazandı', 'gamble_loss': 'Şans Oyunu — Kaybetti',
+    'exam_entry': 'Sınav Katılımı', 'exam_win': 'Sınav Kazancı'
+  };
+
+  async function loadHistory(){
+    const box = document.getElementById('historyList');
+    const { data, error } = await supabase
+      .from('point_transactions')
+      .select('*, from_profile:profiles!point_transactions_from_user_fkey(username), to_profile:profiles!point_transactions_to_user_fkey(username)')
+      .or(`from_user.eq.${currentUser.id},to_user.eq.${currentUser.id}`)
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    if(error || !data || data.length === 0){
+      box.innerHTML = '<div class="empty">Henüz bir işlem yok.</div>';
+      document.getElementById('historyCount').textContent = '0 işlem';
+      return;
+    }
+
+    document.getElementById('historyCount').textContent = data.length + ' işlem';
+
+    box.innerHTML = data.map(tx => {
+      const isSender = tx.from_user === currentUser.id;
+      const positive = tx.amount >= 0;
+      const otherParty = isSender ? tx.to_profile?.username : tx.from_profile?.username;
+      const label = HISTORY_LABELS[tx.type] || tx.type;
+      let detail = label;
+      if(tx.type === 'transfer'){
+        detail = isSender ? `Gönderildi → ${escapeHtml(otherParty || 'Bilinmeyen')}` : `Alındı ← ${escapeHtml(otherParty || 'Bilinmeyen')}`;
+      }
+      return `
+        <div class="task-row">
+          <div class="task-main">
+            <div class="task-title">${detail}</div>
+            <div class="task-meta">${new Date(tx.created_at).toLocaleString('tr-TR')}</div>
+          </div>
+          <div class="rank-badge" style="color:${positive ? 'var(--ok)' : 'var(--danger)'}; border-color:${positive ? 'var(--ok)' : 'var(--danger)'};">
+            ${positive ? '+' : ''}${tx.amount.toLocaleString('tr-TR')}
+          </div>
+        </div>
+      `;
+    }).join('');
   }
 
   // ---------- CLASS WALL ----------
@@ -739,6 +829,32 @@
     const avatarUrl = pub.publicUrl + '?t=' + Date.now();
 
     await supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
+    await refreshMyProfile();
+    await loadAllProfiles();
+    renderClassMembers();
+  });
+
+  // GEÇİCİ: isim değiştirme
+  document.getElementById('usernameChangeForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('usernameChangeMsg');
+    msg.className = 'msg'; msg.textContent = '';
+    const newUsername = document.getElementById('newUsernameInput').value.trim();
+
+    if(newUsername.length < 3){
+      msg.classList.add('error'); msg.textContent = 'En az 3 karakter olmalı.'; return;
+    }
+
+    const { error } = await supabase.from('profiles').update({ username: newUsername }).eq('id', currentUser.id);
+    if(error){
+      msg.classList.add('error');
+      msg.textContent = error.message.includes('duplicate') || error.message.includes('unique')
+        ? 'Bu kullanıcı adı zaten alınmış.' : error.message;
+      return;
+    }
+
+    msg.classList.add('ok'); msg.textContent = 'Kullanıcı adın değiştirildi.';
+    document.getElementById('usernameChangeForm').reset();
     await refreshMyProfile();
     await loadAllProfiles();
     renderClassMembers();
@@ -947,6 +1063,7 @@
   function updateRosterVisibility(){
     const isAdmin = currentProfile?.rank === 'Yönetici';
     document.querySelectorAll('.admin-only-btn').forEach(btn => { btn.style.display = isAdmin ? 'flex' : 'none'; });
+    document.querySelectorAll('.admin-only-label').forEach(el => { el.style.display = isAdmin ? 'block' : 'none'; });
   }
 
   function renderRoster(){
@@ -1194,6 +1311,9 @@
       .subscribe();
     supabase.channel('public:class_wall_posts')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'class_wall_posts' }, () => { if(currentUser) loadClassWall(); })
+      .subscribe();
+    supabase.channel('public:point_transactions')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'point_transactions' }, () => { if(currentUser) loadHistory(); })
       .subscribe();
   }
 
