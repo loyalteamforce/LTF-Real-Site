@@ -243,6 +243,66 @@
               <button class="btn" id="buyProtectionBtn" style="width:auto;">Satın Al</button>
             </div>
             <div class="msg" id="protectionMsg"></div>
+
+            <!-- GİZLİ KUTU -->
+            <div class="shop-item" style="margin-top:10px;">
+              <div class="info">
+                <div class="t">Gizli Kutu</div>
+                <div class="d">10.000 puan · rastgele ödül — hiç, küçük, orta, büyük ya da JACKPOT</div>
+              </div>
+              <button class="btn" id="openLootboxBtn" style="width:auto;">Aç</button>
+            </div>
+            <div class="msg" id="lootboxMsg"></div>
+
+            <!-- DÜELLO -->
+            <div class="shop-item" style="margin-top:10px;">
+              <div class="info">
+                <div class="t">Düello</div>
+                <div class="d">Birine meydan oku, o kabul ederse yazı-tura ile kazanan tüm bahsi alır</div>
+              </div>
+              <button class="btn" id="openDuelForm" style="width:auto;">Meydan Oku</button>
+            </div>
+            <form id="duelForm" style="display:none; margin-top:10px;">
+              <div class="field">
+                <label>Rakip Kullanıcı Adı</label>
+                <input type="text" id="duelOpponent" required>
+              </div>
+              <div class="field">
+                <label>Bahis Miktarı</label>
+                <input type="text" inputmode="numeric" id="duelWager" placeholder="örn: 20000" required>
+              </div>
+              <button class="btn" type="submit">Meydan Okumayı Gönder</button>
+            </form>
+            <div class="msg" id="duelMsg"></div>
+
+            <div id="incomingDuels" style="margin-top:10px;"></div>
+
+            <!-- HEDİYE GÖNDER -->
+            <div class="shop-item" style="margin-top:10px;">
+              <div class="info">
+                <div class="t">Hediye Gönder</div>
+                <div class="d">Bir mesajla birine özel bir puan hediyesi yolla</div>
+              </div>
+              <button class="btn" id="openGiftForm" style="width:auto;">Hediye Gönder</button>
+            </div>
+            <form id="giftForm" style="display:none; margin-top:10px;">
+              <div class="field">
+                <label>Alıcı Kullanıcı Adı</label>
+                <input type="text" id="giftUsername" required>
+              </div>
+              <div class="field">
+                <label>Miktar</label>
+                <input type="text" inputmode="numeric" id="giftAmount" placeholder="örn: 10000" required>
+              </div>
+              <div class="field">
+                <label>Mesaj (isteğe bağlı)</label>
+                <input type="text" id="giftMessage" maxlength="120">
+              </div>
+              <button class="btn" type="submit">Gönder</button>
+            </form>
+            <div class="msg" id="giftMsg"></div>
+
+            <div id="receivedGifts" style="margin-top:10px;"></div>
           </div>
         </div>
       </div>
@@ -298,21 +358,6 @@
             <span id="profRank">—</span>
           </div>
           <div id="profOaa" style="margin-top:20px;"></div>
-
-          <!-- GEÇİCİ: isim değiştirme (sonra kaldırılacak) -->
-          <div class="panel" style="margin-top:20px; text-align:left;">
-            <div class="panel-head"><h2>KULLANICI ADINI DEĞİŞTİR (GEÇİCİ)</h2></div>
-            <div class="panel-body">
-              <form id="usernameChangeForm">
-                <div class="field">
-                  <label>Yeni Kullanıcı Adı</label>
-                  <input type="text" id="newUsernameInput" minlength="3" required>
-                </div>
-                <button class="btn" type="submit">Değiştir</button>
-                <div class="msg" id="usernameChangeMsg"></div>
-              </form>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -498,7 +543,7 @@
 
       const view = btn.dataset.view;
       if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadClassWall(); }
-      if(view === 'points'){ refreshMyProfile(); renderClassRanking(); }
+      if(view === 'points'){ refreshMyProfile(); renderClassRanking(); loadIncomingDuels(); loadReceivedGifts(); }
       if(view === 'history'){ loadHistory(); }
       if(view === 'exams'){ loadExams(); }
       if(view === 'tasks'){ loadTasks(); }
@@ -549,6 +594,8 @@
     renderRoster();
     loadTasks();
     loadExams();
+    loadIncomingDuels();
+    loadReceivedGifts();
     loadHistory();
 
     if(!localStorage.getItem('lef_welcome_seen_' + currentUser.id)){
@@ -630,7 +677,9 @@
     'steal_success': 'Saldırı Başarılı', 'steal_fail': 'Saldırı Başarısız',
     'protection_purchase': 'Koruma Puanı', 'rank_purchase': 'Unvan Satın Alma',
     'gamble_win': 'Şans Oyunu — Kazandı', 'gamble_loss': 'Şans Oyunu — Kaybetti',
-    'exam_entry': 'Sınav Katılımı', 'exam_win': 'Sınav Kazancı'
+    'exam_entry': 'Sınav Katılımı', 'exam_win': 'Sınav Kazancı',
+    'duel_locked': 'Düello Bahsi', 'duel_win': 'Düello Kazancı', 'duel_refund': 'Düello İadesi',
+    'gift': 'Hediye', 'lootbox': 'Gizli Kutu'
   };
 
   async function loadHistory(){
@@ -834,32 +883,6 @@
     renderClassMembers();
   });
 
-  // GEÇİCİ: isim değiştirme
-  document.getElementById('usernameChangeForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById('usernameChangeMsg');
-    msg.className = 'msg'; msg.textContent = '';
-    const newUsername = document.getElementById('newUsernameInput').value.trim();
-
-    if(newUsername.length < 3){
-      msg.classList.add('error'); msg.textContent = 'En az 3 karakter olmalı.'; return;
-    }
-
-    const { error } = await supabase.from('profiles').update({ username: newUsername }).eq('id', currentUser.id);
-    if(error){
-      msg.classList.add('error');
-      msg.textContent = error.message.includes('duplicate') || error.message.includes('unique')
-        ? 'Bu kullanıcı adı zaten alınmış.' : error.message;
-      return;
-    }
-
-    msg.classList.add('ok'); msg.textContent = 'Kullanıcı adın değiştirildi.';
-    document.getElementById('usernameChangeForm').reset();
-    await refreshMyProfile();
-    await loadAllProfiles();
-    renderClassMembers();
-  });
-
   // ---------- POINTS ----------
   function renderPoints(){
     document.getElementById('pointsNum').textContent = (currentProfile?.points ?? 0).toLocaleString('tr-TR');
@@ -1054,6 +1077,138 @@
     msg.classList.add('ok'); msg.textContent = 'Koruma puanı alındı.';
     await refreshMyProfile();
   });
+
+  // ---------- LOOTBOX ----------
+  document.getElementById('openLootboxBtn').addEventListener('click', async () => {
+    const msg = document.getElementById('lootboxMsg');
+    msg.className = 'msg'; msg.textContent = '';
+    const { data, error } = await supabase.rpc('open_lootbox');
+    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+    const result = Array.isArray(data) ? data[0] : data;
+    msg.classList.add(result.reward > 0 ? 'ok' : 'error');
+    msg.textContent = result.reward > 0
+      ? `${result.tier}! +${result.reward.toLocaleString('tr-TR')} puan kazandın.`
+      : `${result.tier}. Bu sefer hiçbir şey çıkmadı.`;
+    await refreshMyProfile();
+  });
+
+  // ---------- DUELS ----------
+  document.getElementById('openDuelForm').addEventListener('click', () => {
+    const form = document.getElementById('duelForm');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  });
+
+  document.getElementById('duelForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('duelMsg');
+    msg.className = 'msg'; msg.textContent = '';
+    const opponent = document.getElementById('duelOpponent').value.trim();
+    const wager = parseInt(document.getElementById('duelWager').value.replace(/[.,\s]/g, ''), 10);
+
+    if(!wager || wager <= 0){
+      msg.classList.add('error'); msg.textContent = 'Geçerli bir miktar gir.'; return;
+    }
+
+    const { error } = await supabase.rpc('create_duel', { p_opponent_username: opponent, p_wager: wager });
+    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+    msg.classList.add('ok'); msg.textContent = 'Meydan okuma gönderildi, rakibin onayını bekliyorsun.';
+    document.getElementById('duelForm').reset();
+    document.getElementById('duelForm').style.display = 'none';
+    await refreshMyProfile();
+    await loadIncomingDuels();
+  });
+
+  async function loadIncomingDuels(){
+    const box = document.getElementById('incomingDuels');
+    const { data, error } = await supabase
+      .from('duels')
+      .select('*, challenger:profiles!duels_challenger_id_fkey(username)')
+      .eq('opponent_id', currentUser.id)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+
+    if(error || !data || data.length === 0){ box.innerHTML = ''; return; }
+
+    box.innerHTML = `<div style="font-size:11px; color:var(--ink-dim); margin-bottom:6px;">Sana gelen meydan okumalar:</div>` +
+      data.map(d => `
+        <div class="shop-item" style="margin-bottom:6px;">
+          <div class="info">
+            <div class="t">${escapeHtml(d.challenger?.username || 'Bilinmeyen')}</div>
+            <div class="d">${d.wager.toLocaleString('tr-TR')} puan bahis</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn accept-duel-btn" data-duel="${d.id}" style="width:auto;">Kabul Et</button>
+            <button class="btn decline-duel-btn" data-duel="${d.id}" style="width:auto; background:transparent; border:1px solid var(--line); color:var(--ink-dim);">Reddet</button>
+          </div>
+        </div>
+      `).join('');
+
+    box.querySelectorAll('.accept-duel-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const { data, error } = await supabase.rpc('accept_duel', { p_duel_id: btn.dataset.duel });
+        if(error){ alert(error.message); return; }
+        const result = Array.isArray(data) ? data[0] : data;
+        alert(result.won ? `Kazandın! +${result.pot.toLocaleString('tr-TR')} puan.` : `Kaybettin. ${result.winner_username} kazandı.`);
+        await refreshMyProfile();
+        await loadIncomingDuels();
+      });
+    });
+    box.querySelectorAll('.decline-duel-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const { error } = await supabase.rpc('decline_duel', { p_duel_id: btn.dataset.duel });
+        if(error){ alert(error.message); return; }
+        await loadIncomingDuels();
+      });
+    });
+  }
+
+  // ---------- GIFTS ----------
+  document.getElementById('openGiftForm').addEventListener('click', () => {
+    const form = document.getElementById('giftForm');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  });
+
+  document.getElementById('giftForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('giftMsg');
+    msg.className = 'msg'; msg.textContent = '';
+    const username = document.getElementById('giftUsername').value.trim();
+    const amount = parseInt(document.getElementById('giftAmount').value.replace(/[.,\s]/g, ''), 10);
+    const message = document.getElementById('giftMessage').value.trim();
+
+    if(!amount || amount <= 0){
+      msg.classList.add('error'); msg.textContent = 'Geçerli bir miktar gir.'; return;
+    }
+
+    const { error } = await supabase.rpc('send_gift', { p_target_username: username, p_amount: amount, p_message: message || null });
+    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+    msg.classList.add('ok'); msg.textContent = 'Hediye gönderildi.';
+    document.getElementById('giftForm').reset();
+    document.getElementById('giftForm').style.display = 'none';
+    await refreshMyProfile();
+  });
+
+  async function loadReceivedGifts(){
+    const box = document.getElementById('receivedGifts');
+    const { data, error } = await supabase
+      .from('gifts')
+      .select('*, from_profile:profiles!gifts_from_user_fkey(username)')
+      .eq('to_user', currentUser.id)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if(error || !data || data.length === 0){ box.innerHTML = ''; return; }
+
+    box.innerHTML = `<div style="font-size:11px; color:var(--ink-dim); margin-bottom:6px;">Gelen hediyeler:</div>` +
+      data.map(g => `
+        <div class="task-row">
+          <div class="task-main">
+            <div class="task-title">${escapeHtml(g.from_profile?.username || 'Bilinmeyen')} sana ${g.amount.toLocaleString('tr-TR')} puan hediye etti</div>
+            ${g.message ? `<div class="task-meta">"${escapeHtml(g.message)}"</div>` : ''}
+          </div>
+        </div>
+      `).join('');
+  }
 
   // ---------- EXAMS ----------
   function updateExamCreateVisibility(){
@@ -1314,6 +1469,12 @@
       .subscribe();
     supabase.channel('public:point_transactions')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'point_transactions' }, () => { if(currentUser) loadHistory(); })
+      .subscribe();
+    supabase.channel('public:duels')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'duels' }, () => { if(currentUser) loadIncomingDuels(); })
+      .subscribe();
+    supabase.channel('public:gifts')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'gifts' }, () => { if(currentUser) loadReceivedGifts(); })
       .subscribe();
   }
 
