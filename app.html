@@ -67,6 +67,27 @@
       <div class="section-title">SINIFLAR</div>
       <div class="section-sub">Herkes bir sınıfa (A/B/C/D) dahildir, sınıf başına en fazla 25 kişi var. Kendi sınıfının duvarına yazabilir, diğer sınıfları sadece görebilirsin.</div>
 
+      <div class="panel" style="margin-bottom:18px;">
+        <div class="panel-head"><h2>DUYURULAR</h2></div>
+        <div class="panel-body">
+          <div id="announcementCreatePanel" style="display:none; margin-bottom:14px;">
+            <form id="announcementForm">
+              <div class="field">
+                <label>Başlık</label>
+                <input type="text" id="announcementTitle" maxlength="120" required>
+              </div>
+              <div class="field">
+                <label>İçerik</label>
+                <input type="text" id="announcementContent" maxlength="500" required>
+              </div>
+              <button class="btn" type="submit">Yayınla</button>
+              <div class="msg" id="announcementMsg"></div>
+            </form>
+          </div>
+          <div id="announcementList"><div class="empty">Yükleniyor...</div></div>
+        </div>
+      </div>
+
       <div class="class-tabs" id="classTabs"></div>
       <div class="member-grid" id="classMembers"></div>
 
@@ -542,7 +563,7 @@
       document.getElementById('view-' + btn.dataset.view).classList.add('active');
 
       const view = btn.dataset.view;
-      if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadClassWall(); }
+      if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadClassWall(); loadAnnouncements(); }
       if(view === 'points'){ refreshMyProfile(); renderClassRanking(); loadIncomingDuels(); loadReceivedGifts(); }
       if(view === 'history'){ loadHistory(); }
       if(view === 'exams'){ loadExams(); }
@@ -590,6 +611,8 @@
     renderOwnProfile();
     updateTaskFormVisibility();
     updateExamCreateVisibility();
+    updateAnnouncementCreateVisibility();
+    loadAnnouncements();
     updateRosterVisibility();
     renderRoster();
     loadTasks();
@@ -1215,6 +1238,58 @@
     document.getElementById('examCreatePanel').style.display = currentProfile?.rank === 'Yönetici' ? 'block' : 'none';
   }
 
+  function updateAnnouncementCreateVisibility(){
+    document.getElementById('announcementCreatePanel').style.display = currentProfile?.rank === 'Yönetici' ? 'block' : 'none';
+  }
+
+  async function loadAnnouncements(){
+    const box = document.getElementById('announcementList');
+    const { data, error } = await supabase
+      .from('announcements')
+      .select('*, profiles(username)')
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if(error || !data || data.length === 0){
+      box.innerHTML = '<div class="empty">Henüz duyuru yok.</div>';
+      return;
+    }
+
+    const isAdmin = currentProfile?.rank === 'Yönetici';
+    box.innerHTML = data.map(a => `
+      <div class="task-row">
+        <div class="task-main">
+          <div class="task-title">${escapeHtml(a.title)}</div>
+          <div class="task-meta">${escapeHtml(a.content)}</div>
+          <div class="task-meta">${escapeHtml(a.profiles?.username || 'Yönetici')} · ${new Date(a.created_at).toLocaleString('tr-TR')}</div>
+        </div>
+        ${isAdmin ? `<button class="task-del" data-ann-del="${a.id}">✕</button>` : ''}
+      </div>
+    `).join('');
+
+    box.querySelectorAll('[data-ann-del]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const { error } = await supabase.rpc('delete_announcement', { p_id: btn.dataset.annDel });
+        if(error){ alert(error.message); return; }
+        await loadAnnouncements();
+      });
+    });
+  }
+
+  document.getElementById('announcementForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('announcementMsg');
+    msg.className = 'msg'; msg.textContent = '';
+    const title = document.getElementById('announcementTitle').value.trim();
+    const content = document.getElementById('announcementContent').value.trim();
+
+    const { error } = await supabase.rpc('create_announcement', { p_title: title, p_content: content });
+    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+    msg.classList.add('ok'); msg.textContent = 'Duyuru yayınlandı.';
+    document.getElementById('announcementForm').reset();
+    await loadAnnouncements();
+  });
+
   function updateRosterVisibility(){
     const isAdmin = currentProfile?.rank === 'Yönetici';
     document.querySelectorAll('.admin-only-btn').forEach(btn => { btn.style.display = isAdmin ? 'flex' : 'none'; });
@@ -1475,6 +1550,9 @@
       .subscribe();
     supabase.channel('public:gifts')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'gifts' }, () => { if(currentUser) loadReceivedGifts(); })
+      .subscribe();
+    supabase.channel('public:announcements')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'announcements' }, () => { if(currentUser) loadAnnouncements(); })
       .subscribe();
   }
 
