@@ -209,6 +209,16 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 
 .sidebar .logout-btn{ margin: 10px; }
 
+.subnav{
+  display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;
+  border-bottom:1px solid var(--line); padding-bottom:14px;
+}
+.subnav-btn{
+  padding:8px 16px; border-radius:20px; border:1px solid var(--line); background: var(--panel);
+  color:var(--ink-dim); font-family:'Rajdhani',sans-serif; font-weight:600; font-size:13px; cursor:pointer;
+}
+.subnav-btn.active{ background: var(--panel-2); color: var(--silver-1); border-color: var(--silver-2); }
+
 .main-area{ flex:1; min-width:0; padding: 28px 30px 60px; max-width: 980px; }
 .view{ display:none; }
 .view.active{ display:block; }
@@ -352,6 +362,8 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 .stat-bar .fill{ height:100%; background: linear-gradient(90deg, var(--silver-3), var(--silver-1)); }
 
 /* OAA-style ability card — phone shaped, like the reference image */
+.oaa-reveal-wrap{ position:relative; max-width:270px; margin:0 auto; }
+
 .oaa-phone{
   position:relative;
   width:100%; max-width:270px; margin:0 auto;
@@ -363,6 +375,41 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
   box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset, 0 12px 30px rgba(0,0,0,0.5);
   overflow:hidden;
 }
+
+/* açılma animasyonu: önce ince bir çizgi ortadan uzar, sonra ikiye ayrılıp
+   üst yarı yukarı, alt yarı aşağı kayarak kartı ortaya çıkarır */
+.oaa-curtain{
+  position:absolute; left:0; right:0; z-index:5;
+  background: linear-gradient(165deg, #1c1d20, #0d0e10 75%);
+}
+.oaa-curtain-top{
+  top:0; height:50%; border-radius:14px 14px 0 0;
+  transform: translateY(0);
+  animation: oaaCurtainUp 0.55s ease-in forwards;
+  animation-delay: 0.32s;
+}
+.oaa-curtain-bottom{
+  bottom:0; height:50%; border-radius:0 0 14px 14px;
+  transform: translateY(0);
+  animation: oaaCurtainDown 0.55s ease-in forwards;
+  animation-delay: 0.32s;
+}
+@keyframes oaaCurtainUp{ to{ transform: translateY(-100%); } }
+@keyframes oaaCurtainDown{ to{ transform: translateY(100%); } }
+
+.oaa-scanline{
+  position:absolute; left:6%; right:6%; top:50%; height:2px;
+  background: var(--silver-1);
+  box-shadow: 0 0 10px 1px rgba(223,225,228,0.7);
+  transform: translateY(-50%) scaleX(0);
+  transform-origin:center;
+  z-index:6;
+  animation: oaaLineGrow 0.32s ease-out forwards, oaaLineFade 0.25s ease-in forwards;
+  animation-delay: 0s, 0.32s;
+}
+@keyframes oaaLineGrow{ to{ transform: translateY(-50%) scaleX(1); } }
+@keyframes oaaLineFade{ to{ opacity:0; } }
+
 .oaa-header{ margin-bottom:14px; text-align:center; }
 .oaa-title{
   font-family:'Rajdhani', sans-serif; font-weight:500; font-style:italic;
@@ -444,6 +491,9 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 
 @media (max-width: 760px){
   .app-shell{ flex-direction:column; }
+
+  .subnav{ gap:6px; margin-bottom:14px; padding-bottom:10px; }
+  .subnav-btn{ padding:7px 12px; font-size:12px; }
 
   .sidebar{
     width:100%; height:auto; position:sticky; top:0; z-index:20;

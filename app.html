@@ -38,29 +38,31 @@
     </div>
 
     <nav class="sidebar-nav">
-      <div class="nav-group-label">TOPLULUK</div>
-      <button class="nav-btn active" data-view="classes"><span class="nav-label">Sınıflar</span></button>
-
-      <div class="nav-group-label">EKONOMİ</div>
-      <button class="nav-btn" data-view="points"><span class="nav-label">Puanlar</span></button>
-      <button class="nav-btn" data-view="history"><span class="nav-label">İşlem Geçmişi</span></button>
-
-      <div class="nav-group-label">SINAV &amp; GÖREV</div>
-      <button class="nav-btn" data-view="exams"><span class="nav-label">Sınavlar</span></button>
-      <button class="nav-btn" data-view="tasks"><span class="nav-label">Görevler</span></button>
-
-      <div class="nav-group-label">HESAP</div>
-      <button class="nav-btn" data-view="profile"><span class="nav-label">Profilim</span></button>
-      <button class="nav-btn" data-view="guide"><span class="nav-label">Rehber</span></button>
-      <button class="nav-btn" data-view="trailer"><span class="nav-label">Şarkılar</span></button>
-
-      <div class="nav-group-label admin-only-label" style="display:none;">YÖNETİM</div>
-      <button class="nav-btn admin-only-btn" data-view="roster" style="display:none;"><span class="nav-label">Tüm Üyeler</span></button>
+      <button class="nav-btn active" data-category="classes"><span class="nav-label">Sınıflar</span></button>
+      <button class="nav-btn" data-category="economy"><span class="nav-label">Ekonomi</span></button>
+      <button class="nav-btn" data-category="examtask"><span class="nav-label">Sınav &amp; Görev</span></button>
+      <button class="nav-btn" data-category="account"><span class="nav-label">Profilim</span></button>
+      <button class="nav-btn admin-only-btn" data-category="roster" style="display:none;"><span class="nav-label">Tüm Üyeler</span></button>
     </nav>
   </aside>
 
   <!-- ===================== MAIN AREA ===================== -->
   <main class="main-area">
+
+    <!-- Kategori içi alt sekmeler (yalnızca birden fazla sayfası olan kategorilerde görünür) -->
+    <div class="subnav" id="subnav-economy" style="display:none;">
+      <button class="subnav-btn active" data-view="points">Puanlarım</button>
+      <button class="subnav-btn" data-view="history">İşlem Geçmişi</button>
+    </div>
+    <div class="subnav" id="subnav-examtask" style="display:none;">
+      <button class="subnav-btn active" data-view="exams">Sınavlar</button>
+      <button class="subnav-btn" data-view="tasks">Görevler</button>
+    </div>
+    <div class="subnav" id="subnav-account" style="display:none;">
+      <button class="subnav-btn active" data-view="profile">Profilim</button>
+      <button class="subnav-btn" data-view="guide">Rehber</button>
+      <button class="subnav-btn" data-view="trailer">Şarkılar</button>
+    </div>
 
     <!-- CLASSES VIEW -->
     <section class="view active" id="view-classes">
@@ -229,22 +231,6 @@
 
             <div class="shop-item" style="margin-top:10px;">
               <div class="info">
-                <div class="t">Şans Oyunu</div>
-                <div class="d">Puan riske at · %50 şans · kazanırsan ikiye katlar</div>
-              </div>
-              <button class="btn" id="openGamblePicker" style="width:auto;">Oyna</button>
-            </div>
-            <form id="gambleForm" style="display:none; margin-top:10px;">
-              <div class="field">
-                <label>Riske Atılacak Miktar</label>
-                <input type="text" inputmode="numeric" id="gambleAmount" placeholder="örn: 5000" required>
-              </div>
-              <button class="btn" type="submit">Riske At</button>
-            </form>
-            <div class="msg" id="gambleMsg"></div>
-
-            <div class="shop-item" style="margin-top:10px;">
-              <div class="info">
                 <div class="t">Unvan Satın Al</div>
                 <div class="d">Kıdemli Üye: 200.000 puan · Uzman Üye: 400.000 puan</div>
               </div>
@@ -298,32 +284,6 @@
 
             <div id="incomingDuels" style="margin-top:10px;"></div>
 
-            <!-- HEDİYE GÖNDER -->
-            <div class="shop-item" style="margin-top:10px;">
-              <div class="info">
-                <div class="t">Hediye Gönder</div>
-                <div class="d">Bir mesajla birine özel bir puan hediyesi yolla</div>
-              </div>
-              <button class="btn" id="openGiftForm" style="width:auto;">Hediye Gönder</button>
-            </div>
-            <form id="giftForm" style="display:none; margin-top:10px;">
-              <div class="field">
-                <label>Alıcı Kullanıcı Adı</label>
-                <input type="text" id="giftUsername" required>
-              </div>
-              <div class="field">
-                <label>Miktar</label>
-                <input type="text" inputmode="numeric" id="giftAmount" placeholder="örn: 10000" required>
-              </div>
-              <div class="field">
-                <label>Mesaj (isteğe bağlı)</label>
-                <input type="text" id="giftMessage" maxlength="120">
-              </div>
-              <button class="btn" type="submit">Gönder</button>
-            </form>
-            <div class="msg" id="giftMsg"></div>
-
-            <div id="receivedGifts" style="margin-top:10px;"></div>
           </div>
         </div>
       </div>
@@ -407,14 +367,14 @@
           <div class="guide-num">3</div>
           <div>
             <div class="guide-title">Dükkan — Puanını Harcama</div>
-            <div class="guide-text">Puanlar &amp; Dükkan sekmesinde puanını şunlara harcayabilirsin: başka bir sınıfa geçiş (500.000 puan, en fazla 3 kere), birinin puanını çalmaya çalışma, şans oyunu, gizli kutu açma, özel bir unvan satın alma, veya "koruma puanı" satın alma (sınavda sınıf düşmekten korur).</div>
+            <div class="guide-text">Puanlar &amp; Dükkan sekmesinde puanını şunlara harcayabilirsin: başka bir sınıfa geçiş (500.000 puan, en fazla 3 kere), birinin puanını çalmaya çalışma, gizli kutu açma, özel bir unvan satın alma, veya "koruma puanı" satın alma (sınavda sınıf düşmekten korur).</div>
           </div>
         </div>
         <div class="guide-item">
           <div class="guide-num">4</div>
           <div>
             <div class="guide-title">Puan Gönderme, Hediye ve Düello</div>
-            <div class="guide-text">Aynı sekmede bir kullanıcı adı yazıp istediğin miktarda puanı doğrudan birine gönderebilirsin. "Hediye Gönder" ile buna bir mesaj da ekleyebilirsin. "Düello"da ise birine meydan okursun; kabul ederse yazı-tura ile kazanan tüm bahsi alır.</div>
+            <div class="guide-text">Aynı sekmede bir kullanıcı adı yazıp istediğin miktarda puanı doğrudan birine gönderebilirsin. "Düello"da ise birine meydan okursun; kabul ederse yazı-tura ile kazanan tüm bahsi alır.</div>
           </div>
         </div>
         <div class="guide-item">
@@ -576,21 +536,51 @@
   const appShell = document.getElementById('appShell');
 
   // ---------- NAV ----------
-  document.querySelectorAll('.nav-btn[data-view]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.nav-btn[data-view]').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('view-' + btn.dataset.view).classList.add('active');
+  const CATEGORY_VIEWS = {
+    classes: ['classes'],
+    economy: ['points', 'history'],
+    examtask: ['exams', 'tasks'],
+    account: ['profile', 'guide', 'trailer'],
+    roster: ['roster']
+  };
 
-      const view = btn.dataset.view;
-      if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadClassWall(); loadAnnouncements(); }
-      if(view === 'points'){ refreshMyProfile(); renderClassRanking(); loadIncomingDuels(); loadReceivedGifts(); }
-      if(view === 'history'){ loadHistory(); }
-      if(view === 'exams'){ loadExams(); }
-      if(view === 'tasks'){ loadTasks(); }
-      if(view === 'roster'){ loadAllProfiles().then(renderRoster); }
+  function onViewDataLoad(view){
+    if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadClassWall(); loadAnnouncements(); }
+    if(view === 'points'){ refreshMyProfile(); renderClassRanking(); loadIncomingDuels(); }
+    if(view === 'history'){ loadHistory(); }
+    if(view === 'exams'){ loadExams(); }
+    if(view === 'tasks'){ loadTasks(); }
+    if(view === 'roster'){ loadAllProfiles().then(renderRoster); }
+  }
+
+  function showView(view){
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + view).classList.add('active');
+
+    // hangi kategoriye ait olduğunu bul, ana menüde onu aktif göster
+    const category = Object.keys(CATEGORY_VIEWS).find(c => CATEGORY_VIEWS[c].includes(view));
+    document.querySelectorAll('.nav-btn[data-category]').forEach(b => b.classList.toggle('active', b.dataset.category === category));
+
+    // ilgili alt sekme çubuğunu göster, diğerlerini gizle
+    document.querySelectorAll('.subnav').forEach(s => s.style.display = 'none');
+    const subnav = document.getElementById('subnav-' + category);
+    if(subnav){
+      subnav.style.display = 'flex';
+      subnav.querySelectorAll('.subnav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+    }
+
+    onViewDataLoad(view);
+  }
+
+  document.querySelectorAll('.nav-btn[data-category]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const category = btn.dataset.category;
+      showView(CATEGORY_VIEWS[category][0]);
     });
+  });
+
+  document.querySelectorAll('.subnav-btn').forEach(btn => {
+    btn.addEventListener('click', () => showView(btn.dataset.view));
   });
 
   function initials(name){ return (name || '?').trim().slice(0,2).toUpperCase(); }
@@ -639,7 +629,6 @@
     loadTasks();
     loadExams();
     loadIncomingDuels();
-    loadReceivedGifts();
     loadHistory();
 
     if(!localStorage.getItem('lef_welcome_seen_' + currentUser.id)){
@@ -864,27 +853,32 @@
     }).join('');
 
     return `
-      <div class="oaa-phone">
-        <div class="oaa-header">
-          <div class="oaa-title">
-            <span class="cap">G</span>enel <span class="cap">Y</span>etenek
+      <div class="oaa-reveal-wrap">
+        <div class="oaa-phone">
+          <div class="oaa-header">
+            <div class="oaa-title">
+              <span class="cap">G</span>enel <span class="cap">Y</span>etenek
+            </div>
+            <div class="oaa-subtitle">LOYAL ELITE FORCE</div>
           </div>
-          <div class="oaa-subtitle">LOYAL ELITE FORCE</div>
-        </div>
 
-        <div class="oaa-photo-frame">${avatarHtml(profile)}</div>
+          <div class="oaa-photo-frame">${avatarHtml(profile)}</div>
 
-        <div class="oaa-id-pill">
-          <span class="oaa-id-lbl">Sınıf ${profile?.class || '-'}</span>
-          <div class="oaa-id-name">${escapeHtml(profile?.username || '—')}</div>
-        </div>
+          <div class="oaa-id-pill">
+            <span class="oaa-id-lbl">Sınıf ${profile?.class || '-'}</span>
+            <div class="oaa-id-name">${escapeHtml(profile?.username || '—')}</div>
+          </div>
 
-        <div class="oaa-wrap">
-          ${badges}
-          <div class="oaa-center-frame">
-            <div class="oaa-center-grade">${overallGrade(profile)}</div>
+          <div class="oaa-wrap">
+            ${badges}
+            <div class="oaa-center-frame">
+              <div class="oaa-center-grade">${overallGrade(profile)}</div>
+            </div>
           </div>
         </div>
+        <div class="oaa-curtain oaa-curtain-top"></div>
+        <div class="oaa-curtain oaa-curtain-bottom"></div>
+        <div class="oaa-scanline"></div>
       </div>
     `;
   }
@@ -1059,34 +1053,6 @@
     renderClassMembers();
   });
 
-  // ---------- SHOP: GAMBLE ----------
-  document.getElementById('openGamblePicker').addEventListener('click', () => {
-    const form = document.getElementById('gambleForm');
-    form.style.display = form.style.display === 'none' ? 'block' : 'none';
-  });
-
-  document.getElementById('gambleForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById('gambleMsg');
-    msg.className = 'msg'; msg.textContent = '';
-    const amount = parseInt(document.getElementById('gambleAmount').value.replace(/[.,\s]/g, ''), 10);
-
-    if(!amount || amount <= 0){
-      msg.classList.add('error'); msg.textContent = 'Geçerli bir miktar gir (örn: 5000).'; return;
-    }
-
-    const { data, error } = await supabase.rpc('gamble_points', { amount });
-    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-
-    const result = Array.isArray(data) ? data[0] : data;
-    msg.classList.add(result.won ? 'ok' : 'error');
-    msg.textContent = result.won ? `Kazandın! +${amount} puan.` : `Kaybettin. -${amount} puan.`;
-
-    document.getElementById('gambleForm').reset();
-    document.getElementById('gambleForm').style.display = 'none';
-    await refreshMyProfile();
-  });
-
   // ---------- SHOP: RANK TITLE ----------
   document.getElementById('openRankPicker').addEventListener('click', () => {
     const picker = document.getElementById('rankPicker');
@@ -1204,54 +1170,6 @@
         await loadIncomingDuels();
       });
     });
-  }
-
-  // ---------- GIFTS ----------
-  document.getElementById('openGiftForm').addEventListener('click', () => {
-    const form = document.getElementById('giftForm');
-    form.style.display = form.style.display === 'none' ? 'block' : 'none';
-  });
-
-  document.getElementById('giftForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById('giftMsg');
-    msg.className = 'msg'; msg.textContent = '';
-    const username = document.getElementById('giftUsername').value.trim();
-    const amount = parseInt(document.getElementById('giftAmount').value.replace(/[.,\s]/g, ''), 10);
-    const message = document.getElementById('giftMessage').value.trim();
-
-    if(!amount || amount <= 0){
-      msg.classList.add('error'); msg.textContent = 'Geçerli bir miktar gir.'; return;
-    }
-
-    const { error } = await supabase.rpc('send_gift', { p_target_username: username, p_amount: amount, p_message: message || null });
-    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-    msg.classList.add('ok'); msg.textContent = 'Hediye gönderildi.';
-    document.getElementById('giftForm').reset();
-    document.getElementById('giftForm').style.display = 'none';
-    await refreshMyProfile();
-  });
-
-  async function loadReceivedGifts(){
-    const box = document.getElementById('receivedGifts');
-    const { data, error } = await supabase
-      .from('gifts')
-      .select('*, from_profile:profiles!gifts_from_user_fkey(username)')
-      .eq('to_user', currentUser.id)
-      .order('created_at', { ascending: false })
-      .limit(10);
-
-    if(error || !data || data.length === 0){ box.innerHTML = ''; return; }
-
-    box.innerHTML = `<div style="font-size:11px; color:var(--ink-dim); margin-bottom:6px;">Gelen hediyeler:</div>` +
-      data.map(g => `
-        <div class="task-row">
-          <div class="task-main">
-            <div class="task-title">${escapeHtml(g.from_profile?.username || 'Bilinmeyen')} sana ${g.amount.toLocaleString('tr-TR')} puan hediye etti</div>
-            ${g.message ? `<div class="task-meta">"${escapeHtml(g.message)}"</div>` : ''}
-          </div>
-        </div>
-      `).join('');
   }
 
   // ---------- EXAMS ----------
@@ -1568,9 +1486,6 @@
       .subscribe();
     supabase.channel('public:duels')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'duels' }, () => { if(currentUser) loadIncomingDuels(); })
-      .subscribe();
-    supabase.channel('public:gifts')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'gifts' }, () => { if(currentUser) loadReceivedGifts(); })
       .subscribe();
     supabase.channel('public:announcements')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'announcements' }, () => { if(currentUser) loadAnnouncements(); })

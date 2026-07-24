@@ -162,6 +162,37 @@
     window.location.href = 'app.html';
   });
 
+  // ---------- DEVICE FINGERPRINT (tek hesap kontrolü için, kesin değil) ----------
+  async function getDeviceFingerprint(){
+    try{
+      const parts = [
+        navigator.userAgent,
+        navigator.language,
+        screen.width + 'x' + screen.height,
+        screen.colorDepth,
+        navigator.hardwareConcurrency || '',
+        Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+        navigator.platform || ''
+      ];
+      // basit canvas parmak izi
+      try{
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.textBaseline = 'top';
+        ctx.font = '14px Arial';
+        ctx.fillText('LEF-fingerprint-🔒', 2, 2);
+        parts.push(canvas.toDataURL());
+      } catch(e){}
+
+      const raw = parts.join('|');
+      const enc = new TextEncoder().encode(raw);
+      const hashBuf = await crypto.subtle.digest('SHA-256', enc);
+      return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    } catch(e){
+      return null;
+    }
+  }
+
   // ---------- SIGNUP ----------
   signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -185,6 +216,8 @@
 
     btn.disabled = true; btn.textContent = 'Kayıt olunuyor...';
 
+    const fingerprint = await getDeviceFingerprint();
+
     const { data, error } = await supabase.auth.signUp({
       email: usernameToEmail(username),
       password
@@ -197,16 +230,18 @@
       return;
     }
 
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: data.user.id,
-      username: username
+    const { error: profileError } = await supabase.rpc('register_profile', {
+      p_username: username,
+      p_fingerprint: fingerprint
     });
 
     btn.disabled = false; btn.textContent = 'Kayıt Ol';
 
     if(profileError){
       msg.classList.add('error');
-      msg.textContent = 'Bu kullanıcı adı zaten alınmış.';
+      msg.textContent = profileError.message.includes('tek hesap') || profileError.message.includes('cihazdan')
+        ? profileError.message
+        : (profileError.message.includes('duplicate') || profileError.message.includes('unique') ? 'Bu kullanıcı adı zaten alınmış.' : profileError.message);
       return;
     }
 
