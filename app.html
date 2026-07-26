@@ -90,6 +90,11 @@
         </div>
       </div>
 
+      <div class="panel" style="margin-bottom:18px;">
+        <div class="panel-head"><h2>SINIF SIRALAMASI</h2></div>
+        <div class="panel-body" id="classRanking"><div class="empty">Yükleniyor...</div></div>
+      </div>
+
       <div class="class-tabs" id="classTabs"></div>
       <div class="member-grid" id="classMembers"></div>
 
@@ -151,11 +156,6 @@
     <section class="view" id="view-points">
       <div class="section-title">PUANLAR</div>
       <div class="section-sub">30 günde bir 100.000 puan alırsın, görev tamamlayarak da kazanırsın. Puanını birine gönderebilir veya dükkanda harcayabilirsin.</div>
-
-      <div class="panel" style="margin-bottom:18px;">
-        <div class="panel-head"><h2>SINIF SIRALAMASI</h2></div>
-        <div class="panel-body" id="classRanking"><div class="empty">Yükleniyor...</div></div>
-      </div>
 
       <div class="points-card">
         <div class="pc-texture"></div>
@@ -545,8 +545,8 @@
   };
 
   function onViewDataLoad(view){
-    if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadClassWall(); loadAnnouncements(); }
-    if(view === 'points'){ refreshMyProfile(); renderClassRanking(); loadIncomingDuels(); }
+    if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadClassWall(); loadAnnouncements(); renderClassRanking(); }
+    if(view === 'points'){ refreshMyProfile(); loadIncomingDuels(); }
     if(view === 'history'){ loadHistory(); }
     if(view === 'exams'){ loadExams(); }
     if(view === 'tasks'){ loadTasks(); }

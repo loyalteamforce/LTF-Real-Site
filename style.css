@@ -484,8 +484,13 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 @media (max-width: 760px){
   .app-shell{ flex-direction:column; }
 
-  .subnav{ gap:6px; margin-bottom:14px; padding-bottom:10px; }
-  .subnav-btn{ padding:7px 12px; font-size:12px; }
+  .subnav{
+    position:fixed; left:0; right:0; bottom:60px; z-index:35;
+    background: rgba(13,14,16,0.97); backdrop-filter: blur(10px);
+    margin:0; gap:6px; padding:8px 10px; border-top:1px solid var(--line); border-bottom:none;
+    justify-content:center; flex-wrap:wrap;
+  }
+  .subnav-btn{ padding:6px 10px; font-size:11.5px; flex-shrink:0; white-space:nowrap; }
 
   .sidebar{
     width:100%; height:auto; position:sticky; top:0; z-index:20;
@@ -519,7 +524,14 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 
   .sidebar .logout-btn{ display:none; }
 
-  .main-area{ max-width:100%; padding: 16px 14px 130px; }
+  .main-area{ max-width:100%; padding: 16px 14px 190px; }
+
+  /* mobilde ağır animasyonlar sadeleştirildi — sadece hızlı bir belirme var */
+  .oaa-line{ display:none; }
+  .oaa-phone{ animation: oaaCardFadeIn 0.25s ease-out forwards; animation-delay:0s; }
+  .sweep::after{ display:none; }
+  .pc-title{ animation:none; background-position:0 center; }
+  .brand h1{ animation:none; background-position:0 center; }
   .section-title{ font-size:12.5px; letter-spacing:2px; }
 
   .member-grid{ grid-template-columns: repeat(auto-fill, minmax(110px,1fr)); gap:8px; }
