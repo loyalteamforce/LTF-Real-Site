@@ -233,23 +233,63 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 .guide-title{ font-size:14.5px; font-weight:700; color:var(--ink); margin-bottom:4px; }
 .guide-text{ font-size:13px; color:var(--ink-dim); line-height:1.6; }
 
-/* Sınıf Tablosu — referanstaki "A Sınıfı 1.206 Puan" listesi + yanında büyük arma */
-.class-table{ display:flex; align-items:center; gap:18px; }
-.class-table-list{ flex:1; min-width:0; }
+/* Sınıf Tablosu — Classroom of the Elite tarzı "sınıf puanı tableti" ekranı */
+.class-table-tablet{
+  position:relative;
+  border-radius:16px;
+  padding:28px 26px 24px;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 25% 15%, rgba(130,165,225,0.16), transparent 55%),
+    linear-gradient(160deg, #202b40 0%, #131a29 45%, #171f30 75%, #0c1119 100%);
+  border:1px solid rgba(150,180,220,0.28);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), inset 0 0 40px rgba(0,0,0,0.35), 0 18px 44px rgba(0,0,0,0.55);
+}
+.class-table-glare{
+  position:absolute; top:0; left:-70%; width:45%; height:100%;
+  background: linear-gradient(75deg, transparent, rgba(255,255,255,0.05), transparent);
+  transform:skewX(-18deg); pointer-events:none; z-index:1;
+}
+.class-table-crest{
+  position:absolute; right:-6%; top:50%; transform:translateY(-50%);
+  width:230px; height:230px; pointer-events:none; z-index:1;
+  opacity:0.5;
+  background-color:#5aa9f2;
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-position:center; mask-position:center;
+  -webkit-mask-size:contain; mask-size:contain;
+  filter: drop-shadow(0 0 16px rgba(90,169,242,0.55)) drop-shadow(0 0 34px rgba(90,169,242,0.3));
+}
+.class-table-heading{
+  position:relative; z-index:2; display:inline-block;
+  font-family:'Cinzel Decorative', serif; font-weight:700; font-size:12.5px; letter-spacing:3.5px;
+  color:#e4eaf2; background: linear-gradient(120deg, #3d4d6b, #29344a);
+  border:1px solid rgba(170,195,230,0.35); border-radius:5px;
+  padding:7px 18px; margin-bottom:18px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.class-table-list{ position:relative; z-index:2; }
 .class-table-row{
-  display:flex; align-items:center; gap:10px; padding:10px 4px;
-  border-bottom:1px solid var(--line); font-family:'Rajdhani',sans-serif;
+  display:flex; align-items:center; gap:14px; padding:13px 4px;
+  border-bottom:1px solid rgba(255,255,255,0.07); font-family:'Rajdhani',sans-serif;
 }
 .class-table-row:last-child{ border-bottom:none; }
-.class-table-dot{ width:10px; height:10px; border-radius:2px; flex-shrink:0; }
-.dot-rank-0{ background: var(--silver-1); box-shadow:0 0 6px rgba(223,225,228,0.7); }
-.dot-rank-1{ background: var(--silver-2); }
-.dot-rank-2{ background: var(--silver-3); }
-.dot-rank-3{ background: #333; }
-.class-table-name{ flex:1; min-width:0; font-size:14px; font-weight:600; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.class-table-points{ font-family:'Cinzel Decorative', serif; font-size:16px; font-weight:700; color:var(--silver-1); flex-shrink:0; }
-.class-table-crest{ width:110px; height:110px; flex-shrink:0; opacity:0.9; filter: drop-shadow(0 0 14px rgba(200,205,210,0.15)); }
-@media (max-width:600px){ .class-table-crest{ display:none; } }
+.class-table-bar{ width:5px; height:26px; border-radius:3px; flex-shrink:0; }
+.bar-A{ background:#e8cc3f; box-shadow:0 0 9px rgba(232,204,63,0.65); }
+.bar-B{ background:#4aa0e8; box-shadow:0 0 9px rgba(74,160,232,0.65); }
+.bar-C{ background:#e05fce; box-shadow:0 0 9px rgba(224,95,206,0.65); }
+.bar-D{ background:#4fe0a3; box-shadow:0 0 9px rgba(79,224,163,0.65); }
+.class-table-name{ flex:1; min-width:0; font-size:15px; font-weight:600; letter-spacing:0.5px; color:#e4eaf2;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.class-table-points-wrap{ display:flex; align-items:baseline; gap:5px; flex-shrink:0; }
+.class-table-points-num{ font-family:'Cinzel Decorative', serif; font-weight:700; font-size:clamp(20px,4.2vw,30px);
+  color:#fff; text-shadow:0 0 14px rgba(200,220,255,0.35); font-variant-numeric:tabular-nums; }
+.class-table-points-pt{ font-size:11.5px; color:rgba(223,225,228,0.55); letter-spacing:0.5px; }
+
+@media (max-width:600px){
+  .class-table-crest{ width:150px; height:150px; opacity:0.4; right:-10%; }
+  .class-table-tablet{ padding:22px 18px 18px; }
+}
 
 .grade-scale-row{
   display:flex; align-items:center; justify-content:space-between; padding:9px 4px;

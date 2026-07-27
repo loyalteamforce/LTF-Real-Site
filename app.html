@@ -90,14 +90,11 @@
         </div>
       </div>
 
-      <div class="panel" style="margin-bottom:18px;">
-        <div class="panel-head"><h2>SINIF TABLOSU</h2></div>
-        <div class="panel-body">
-          <div class="class-table">
-            <div class="class-table-list" id="classRanking"><div class="empty">Yükleniyor...</div></div>
-            <img class="class-table-crest" id="classTableCrest" src="" alt="">
-          </div>
-        </div>
+      <div class="class-table-tablet" style="margin-bottom:18px;">
+        <div class="class-table-crest" id="classTableCrest"></div>
+        <div class="class-table-glare"></div>
+        <div class="class-table-heading">SINIF PUANLARI</div>
+        <div class="class-table-list" id="classRanking"><div class="empty">Yükleniyor...</div></div>
       </div>
 
       <div class="class-tabs" id="classTabs"></div>
@@ -702,15 +699,19 @@
 
     box.innerHTML = data.map((c, i) => `
       <div class="class-table-row">
-        <span class="class-table-dot dot-rank-${i}"></span>
+        <span class="class-table-bar bar-${c.class}"></span>
         <span class="class-table-name">${c.class} Sınıfı</span>
-        <span class="class-table-points">${(c.points ?? 0).toLocaleString('tr-TR')} Puan</span>
+        <span class="class-table-points-wrap"><span class="class-table-points-num">${(c.points ?? 0).toLocaleString('tr-TR')}</span><span class="class-table-points-pt">Pt</span></span>
       </div>
     `).join('');
 
     const crest = document.getElementById('classTableCrest');
     const logoSrc = document.querySelector('.sidebar-brand img')?.src;
-    if(crest && logoSrc && !crest.src) crest.src = logoSrc;
+    if(crest && logoSrc && !crest.dataset.set){
+      crest.style.webkitMaskImage = `url("${logoSrc}")`;
+      crest.style.maskImage = `url("${logoSrc}")`;
+      crest.dataset.set = '1';
+    }
   }
 
   // ---------- HISTORY ----------
