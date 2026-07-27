@@ -92,7 +92,6 @@
 
       <div class="class-table-tablet" style="margin-bottom:18px;">
         <div class="class-table-crest" id="classTableCrest"></div>
-        <div class="class-table-glare"></div>
         <div class="class-table-heading">SINIF PUANLARI</div>
         <div class="class-table-list" id="classRanking"><div class="empty">Yükleniyor...</div></div>
       </div>
@@ -708,8 +707,7 @@
     const crest = document.getElementById('classTableCrest');
     const logoSrc = document.querySelector('.sidebar-brand img')?.src;
     if(crest && logoSrc && !crest.dataset.set){
-      crest.style.webkitMaskImage = `url("${logoSrc}")`;
-      crest.style.maskImage = `url("${logoSrc}")`;
+      crest.style.setProperty('--crest-url', `url("${logoSrc}")`);
       crest.dataset.set = '1';
     }
   }
@@ -867,7 +865,6 @@
     return `
       <div class="oaa-card">
         <div class="oaa-card-bg"></div>
-        <div class="oaa-scan"></div>
 
         <div class="oaa-topline">
           <div class="oaa-title">Genel Yetenek</div>
