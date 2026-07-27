@@ -6,6 +6,12 @@
 <title>Loyal Elite Force</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="shortcut icon" href="favicon.ico">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -330,16 +336,10 @@
       <div class="section-sub">Fotoğrafın, sınıfın, rütbenin ve yönetici tarafından belirlenen becerilerin burada görünür.</div>
       <div class="panel" style="max-width:380px;">
         <div class="panel-body" style="text-align:center;">
-          <div class="modal-avatar" id="profAvatar" style="margin:0 auto 14px;">—</div>
-          <div class="avatar-upload">
-            <label>Fotoğraf Yükle<input type="file" id="avatarFile" accept="image/*"></label>
+          <div class="avatar-upload avatar-upload-compact">
+            <label>Fotoğrafı Değiştir<input type="file" id="avatarFile" accept="image/*"></label>
           </div>
-          <div class="modal-name" id="profName" style="margin-top:14px;">—</div>
-          <div class="modal-tags">
-            <span id="profClass">—</span>
-            <span id="profRank">—</span>
-          </div>
-          <div id="profOaa" style="margin-top:20px;"></div>
+          <div id="profOaa" style="margin-top:14px;"></div>
         </div>
       </div>
     </section>
@@ -497,13 +497,7 @@
 <div class="modal-backdrop" id="profileModal">
   <div class="modal-card">
     <button class="modal-close" id="closeModal">&times;</button>
-    <div class="modal-avatar" id="modalAvatar">—</div>
-    <div class="modal-name" id="modalName">—</div>
-    <div class="modal-tags">
-      <span id="modalClass">—</span>
-      <span id="modalRank">—</span>
-    </div>
-    <div id="modalOaa" style="margin-top:20px;"></div>
+    <div id="modalOaa" style="margin-top:8px;"></div>
   </div>
 </div>
 
@@ -905,10 +899,6 @@
   function openProfileModal(id){
     const p = allProfiles.find(x => x.id === id);
     if(!p) return;
-    document.getElementById('modalAvatar').innerHTML = avatarHtml(p);
-    document.getElementById('modalName').textContent = p.username;
-    document.getElementById('modalClass').textContent = 'Sınıf ' + p.class;
-    document.getElementById('modalRank').textContent = p.rank || 'Üye';
     document.getElementById('modalOaa').innerHTML = oaaCardHtml(p);
     profileModal.classList.add('show');
   }
