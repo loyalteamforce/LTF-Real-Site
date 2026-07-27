@@ -851,47 +851,56 @@
   }
 
   function oaaCardHtml(profile){
-    const badges = STAT_DEFS.map(([key, label], i) => {
+    const stats = STAT_DEFS.map(([key, label], i) => {
       const grade = profile?.[key] || 'C';
       const num = GRADE_NUM[grade] ?? 70;
+      const abbr = STAT_ABBR[label] || label;
       return `
-        <div class="oaa-badge oaa-b${i}">
-          <span class="oaa-badge-skill">${label}</span>
-          <span class="oaa-badge-num">${num}</span>
-          <span class="oaa-badge-grade-box">${grade}</span>
+        <div class="oaa-stat oaa-stat-${i}">
+          <span class="oaa-stat-lbl">${abbr}</span>
+          <span class="oaa-stat-num">${num}</span>
+          <span class="oaa-stat-grade">${grade}</span>
         </div>
       `;
     }).join('');
 
     return `
-      <div class="oaa-reveal-wrap">
-        <div class="oaa-phone">
-          <div class="oaa-header">
-            <div class="oaa-title">
-              <span class="cap">G</span>enel <span class="cap">Y</span>etenek
-            </div>
-            <div class="oaa-subtitle">LOYAL ELITE FORCE<br>BİRLİK KAYIT SİSTEMİ</div>
+      <div class="oaa-card">
+        <div class="oaa-card-bg"></div>
+        <div class="oaa-scan"></div>
+
+        <div class="oaa-topline">
+          <div class="oaa-title">Genel Yetenek</div>
+          <div class="oaa-subtitle">LOYAL ELITE FORCE<br>BİRLİK KAYIT SİSTEMİ</div>
+        </div>
+
+        <div class="oaa-photo">
+          <div class="oaa-photo-corner tl"></div>
+          <div class="oaa-photo-corner tr"></div>
+          <div class="oaa-photo-corner bl"></div>
+          <div class="oaa-photo-corner br"></div>
+          ${avatarHtml(profile)}
+        </div>
+
+        <div class="oaa-id">
+          <div class="oaa-id-top">
+            <span class="oaa-id-lbl">Sınıf</span>
+            <span class="oaa-id-class">${profile?.class || '-'}</span>
           </div>
+          <div class="oaa-id-name">${escapeHtml(profile?.username || '—')}</div>
+          <div class="oaa-id-rank">${escapeHtml((profile?.rank || 'ÜYE').toUpperCase())}</div>
+        </div>
 
-          <div class="oaa-photo-frame">${avatarHtml(profile)}</div>
-
-          <div class="oaa-id-pill">
-            <span class="oaa-id-lbl">Sınıf ${profile?.class || '-'}</span>
-            <div class="oaa-id-name">${escapeHtml(profile?.username || '—')}</div>
-            <div class="oaa-id-sub">${escapeHtml((profile?.rank || 'ÜYE').toUpperCase())}</div>
-          </div>
-
-          <div class="oaa-section-lbl">BECERİ DEĞERLENDİRMESİ</div>
-          <div class="oaa-wrap">
-            ${badges}
-            <div class="oaa-center-frame">
-              <div class="oaa-center-lbl">GENEL</div>
-              <div class="oaa-center-grade">${overallGrade(profile)}</div>
+        <div class="oaa-stats">
+          ${stats}
+          <div class="oaa-ring">
+            <div class="oaa-ring-arc"></div>
+            <div class="oaa-ring-inner">
+              <div class="oaa-ring-lbl">Genel</div>
+              <div class="oaa-ring-grade">${overallGrade(profile)}</div>
             </div>
           </div>
         </div>
-        <div class="oaa-line oaa-line-top"></div>
-        <div class="oaa-line oaa-line-bottom"></div>
       </div>
     `;
   }
