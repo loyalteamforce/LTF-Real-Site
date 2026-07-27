@@ -91,8 +91,13 @@
       </div>
 
       <div class="panel" style="margin-bottom:18px;">
-        <div class="panel-head"><h2>SINIF SIRALAMASI</h2></div>
-        <div class="panel-body" id="classRanking"><div class="empty">Yükleniyor...</div></div>
+        <div class="panel-head"><h2>SINIF TABLOSU</h2></div>
+        <div class="panel-body">
+          <div class="class-table">
+            <div class="class-table-list" id="classRanking"><div class="empty">Yükleniyor...</div></div>
+            <img class="class-table-crest" id="classTableCrest" src="" alt="">
+          </div>
+        </div>
       </div>
 
       <div class="class-tabs" id="classTabs"></div>
@@ -694,13 +699,18 @@
     const box = document.getElementById('classRanking');
     const { data, error } = await supabase.from('class_points').select('*').order('points', { ascending: false });
     if(error || !data){ box.innerHTML = '<div class="empty">Yüklenemedi.</div>'; return; }
+
     box.innerHTML = data.map((c, i) => `
-      <div class="member-row">
-        <div class="avatar" style="border-radius:8px; font-size:11px;">#${i+1}</div>
-        <div class="member-name">Sınıf ${c.class}</div>
-        <div class="rank-badge">${(c.points ?? 0).toLocaleString('tr-TR')} puan</div>
+      <div class="class-table-row">
+        <span class="class-table-dot dot-rank-${i}"></span>
+        <span class="class-table-name">${c.class} Sınıfı</span>
+        <span class="class-table-points">${(c.points ?? 0).toLocaleString('tr-TR')} Puan</span>
       </div>
     `).join('');
+
+    const crest = document.getElementById('classTableCrest');
+    const logoSrc = document.querySelector('.sidebar-brand img')?.src;
+    if(crest && logoSrc && !crest.src) crest.src = logoSrc;
   }
 
   // ---------- HISTORY ----------
@@ -859,7 +869,7 @@
             <div class="oaa-title">
               <span class="cap">G</span>enel <span class="cap">Y</span>etenek
             </div>
-            <div class="oaa-subtitle">LOYAL ELITE FORCE</div>
+            <div class="oaa-subtitle">LOYAL ELITE FORCE<br>BİRLİK KAYIT SİSTEMİ</div>
           </div>
 
           <div class="oaa-photo-frame">${avatarHtml(profile)}</div>
@@ -867,11 +877,14 @@
           <div class="oaa-id-pill">
             <span class="oaa-id-lbl">Sınıf ${profile?.class || '-'}</span>
             <div class="oaa-id-name">${escapeHtml(profile?.username || '—')}</div>
+            <div class="oaa-id-sub">${escapeHtml((profile?.rank || 'ÜYE').toUpperCase())}</div>
           </div>
 
+          <div class="oaa-section-lbl">BECERİ DEĞERLENDİRMESİ</div>
           <div class="oaa-wrap">
             ${badges}
             <div class="oaa-center-frame">
+              <div class="oaa-center-lbl">GENEL</div>
               <div class="oaa-center-grade">${overallGrade(profile)}</div>
             </div>
           </div>

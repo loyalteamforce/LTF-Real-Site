@@ -233,6 +233,24 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 .guide-title{ font-size:14.5px; font-weight:700; color:var(--ink); margin-bottom:4px; }
 .guide-text{ font-size:13px; color:var(--ink-dim); line-height:1.6; }
 
+/* Sınıf Tablosu — referanstaki "A Sınıfı 1.206 Puan" listesi + yanında büyük arma */
+.class-table{ display:flex; align-items:center; gap:18px; }
+.class-table-list{ flex:1; min-width:0; }
+.class-table-row{
+  display:flex; align-items:center; gap:10px; padding:10px 4px;
+  border-bottom:1px solid var(--line); font-family:'Rajdhani',sans-serif;
+}
+.class-table-row:last-child{ border-bottom:none; }
+.class-table-dot{ width:10px; height:10px; border-radius:2px; flex-shrink:0; }
+.dot-rank-0{ background: var(--silver-1); box-shadow:0 0 6px rgba(223,225,228,0.7); }
+.dot-rank-1{ background: var(--silver-2); }
+.dot-rank-2{ background: var(--silver-3); }
+.dot-rank-3{ background: #333; }
+.class-table-name{ flex:1; min-width:0; font-size:14px; font-weight:600; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.class-table-points{ font-family:'Cinzel Decorative', serif; font-size:16px; font-weight:700; color:var(--silver-1); flex-shrink:0; }
+.class-table-crest{ width:110px; height:110px; flex-shrink:0; opacity:0.9; filter: drop-shadow(0 0 14px rgba(200,205,210,0.15)); }
+@media (max-width:600px){ .class-table-crest{ display:none; } }
+
 .grade-scale-row{
   display:flex; align-items:center; justify-content:space-between; padding:9px 4px;
   border-bottom:1px solid var(--line); font-size:13px; color:var(--ink);
@@ -416,16 +434,23 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
   margin-top:5px; line-height:1.5;
 }
 
-/* fotoğraf çerçevesi: sol üst ve sağ alt köşe çapraz kesik */
+/* fotoğraf çerçevesi: düz çerçeve + küçük köşe aksan çizgisi (referanstaki gibi) */
 .oaa-photo-frame{
   position:relative;
-  width:100%; height:130px; margin:0 auto 10px;
+  width:100%; height:130px; margin:0 auto 10px; border-radius:6px;
   background: var(--panel-2); border:1.5px solid var(--silver-3); overflow:hidden;
   display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--silver-1);
   box-shadow: 0 0 14px rgba(200,205,210,0.12);
-  clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
 }
 .oaa-photo-frame img{ width:100%; height:100%; object-fit:cover; }
+.oaa-photo-frame::before{
+  content:''; position:absolute; top:6px; left:6px; width:16px; height:16px;
+  border-top:2px solid var(--silver-1); border-left:2px solid var(--silver-1); opacity:0.8;
+}
+.oaa-photo-frame::after{
+  content:''; position:absolute; bottom:6px; right:6px; width:16px; height:16px;
+  border-bottom:2px solid var(--silver-1); border-right:2px solid var(--silver-1); opacity:0.8;
+}
 
 /* isim kutusu: aynı çapraz köşe kesimi */
 .oaa-id-pill{
@@ -436,6 +461,9 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 }
 .oaa-id-lbl{ display:block; font-size:9px; letter-spacing:1.5px; color:var(--ink-dim); text-transform:uppercase; margin-bottom:4px; }
 .oaa-id-name{ font-family:'Cinzel Decorative', serif; font-size:17px; letter-spacing:1px; color:var(--silver-1); overflow-wrap:break-word; word-break:break-word; }
+.oaa-id-sub{ font-size:9px; letter-spacing:2px; color:var(--ink-dim); text-transform:uppercase; margin-top:4px; }
+
+.oaa-section-lbl{ font-size:8.5px; letter-spacing:2px; color:var(--ink-dim); text-transform:uppercase; margin-bottom:8px; }
 
 .oaa-wrap{ position:relative; width:220px; height:150px; margin:0 auto; }
 
@@ -447,9 +475,10 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
   clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
   background: radial-gradient(circle at 35% 30%, #3a3d42, #101113 75%);
   box-shadow: 0 0 20px rgba(220,224,228,0.25);
-  display:flex; align-items:center; justify-content:center; z-index:2;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2;
 }
-.oaa-center-grade{ font-family:'Cinzel Decorative', serif; font-weight:700; font-size:24px; color:var(--silver-1); line-height:1; }
+.oaa-center-lbl{ font-size:6px; letter-spacing:1px; color:var(--ink-dim); margin-bottom:2px; }
+.oaa-center-grade{ font-family:'Cinzel Decorative', serif; font-weight:700; font-size:22px; color:var(--silver-1); line-height:1; }
 
 /* 4 köşedeki küçük dikdörtgenler: dikey beceri adı + sayı + harf kutusu */
 .oaa-badge{
