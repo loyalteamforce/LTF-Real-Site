@@ -111,22 +111,6 @@
 
       <div class="class-tabs" id="classTabs"></div>
       <div class="member-grid" id="classMembers"></div>
-
-      <div class="panel" style="margin-top:18px;">
-        <div class="panel-head">
-          <h2 id="wallTitle">SINIF A DUVARI</h2>
-          <span class="count" id="wallCount">0 mesaj</span>
-        </div>
-        <div class="panel-body">
-          <form class="task-add" id="wallForm" style="display:none;">
-            <input type="text" id="wallInput" placeholder="Sınıfına bir mesaj yaz..." maxlength="500" required>
-            <button type="submit">Gönder</button>
-          </form>
-          <div id="wallReplyNote" class="wall-reply-note" style="display:none;"></div>
-          <div id="wallLockedNote" class="claim-note" style="display:none;">Sadece bu sınıfın üyeleri veya yöneticiler yazabilir.</div>
-          <div id="wallPosts" style="margin-top:10px;"><div class="empty">Yükleniyor...</div></div>
-        </div>
-      </div>
     </section>
 
     <!-- EXAMS VIEW -->
@@ -550,7 +534,7 @@
   };
 
   function onViewDataLoad(view){
-    if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadClassWall(); loadAnnouncements(); renderClassRanking(); }
+    if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadAnnouncements(); renderClassRanking(); }
     if(view === 'points'){ refreshMyProfile(); loadIncomingDuels(); }
     if(view === 'history'){ loadHistory(); }
     if(view === 'exams'){ loadExams(); }
@@ -620,7 +604,6 @@
     renderClassTabs();
     renderClassMembers();
     renderClassRanking();
-    loadClassWall();
     renderPoints();
     renderShop();
     renderProtection();
@@ -671,7 +654,6 @@
         activeClass = btn.dataset.class;
         renderClassTabs();
         renderClassMembers();
-        loadClassWall();
       });
     });
   }
@@ -767,119 +749,6 @@
       `;
     }).join('');
   }
-
-  // ---------- CLASS WALL ----------
-  let wallReplyingTo = null;
-
-  function setWallReplyingTo(id, label){
-    wallReplyingTo = id;
-    const note = document.getElementById('wallReplyNote');
-    if(id){
-      note.style.display = 'flex';
-      note.innerHTML = `<span>↪ Yanıtlanıyor: ${escapeHtml(label)}</span><button type="button" id="wallReplyCancel">✕</button>`;
-      document.getElementById('wallReplyCancel').addEventListener('click', () => setWallReplyingTo(null, ''));
-      document.getElementById('wallInput').focus();
-    } else {
-      note.style.display = 'none';
-      note.innerHTML = '';
-    }
-  }
-
-  async function loadClassWall(){
-    document.getElementById('wallTitle').textContent = `SINIF ${activeClass} DUVARI`;
-
-    const canPost = currentProfile?.class === activeClass || currentProfile?.rank === 'Yönetici';
-    const isAdmin = currentProfile?.rank === 'Yönetici';
-    document.getElementById('wallForm').style.display = canPost ? 'flex' : 'none';
-    document.getElementById('wallLockedNote').style.display = canPost ? 'none' : 'block';
-
-    const box = document.getElementById('wallPosts');
-    const { data, error } = await supabase
-      .from('class_wall_posts')
-      .select('*, profiles(username), class_wall_reactions(user_id)')
-      .eq('class', activeClass)
-      .order('created_at', { ascending: false });
-
-    if(error || !data){ box.innerHTML = '<div class="empty">Yüklenemedi.</div>'; return; }
-
-    document.getElementById('wallCount').textContent = data.length + ' mesaj';
-
-    const sorted = [...data].sort((a, b) => (b.pinned === true) - (a.pinned === true));
-    const postsById = Object.fromEntries(data.map(p => [p.id, p]));
-
-    box.innerHTML = sorted.length === 0 ? '<div class="empty">Henüz mesaj yok.</div>' : sorted.map(post => {
-      const reactions = post.class_wall_reactions || [];
-      const reacted = reactions.some(r => r.user_id === currentUser.id);
-      const replyTarget = post.reply_to ? postsById[post.reply_to] : null;
-      const replyBlock = replyTarget
-        ? `<div class="wall-reply-quote">↪ ${escapeHtml(replyTarget.profiles?.username || 'Bilinmeyen')}: ${escapeHtml((replyTarget.content || '').slice(0, 80))}</div>`
-        : (post.reply_to ? `<div class="wall-reply-quote">↪ (silinmiş mesaj)</div>` : '');
-
-      return `
-      <div class="task-row wall-post${post.pinned ? ' pinned' : ''}">
-        <div class="task-main">
-          ${post.pinned ? '<div class="wall-pin-badge">📌 Sabitlendi</div>' : ''}
-          ${replyBlock}
-          <div class="task-title">${escapeHtml(post.content)}</div>
-          <div class="task-meta">${escapeHtml(post.profiles?.username || 'Bilinmeyen')} · ${new Date(post.created_at).toLocaleString('tr-TR')}</div>
-          <div class="wall-actions">
-            <button class="wall-react-btn${reacted ? ' active' : ''}" data-react="${post.id}">👍 <span>${reactions.length}</span></button>
-            ${canPost ? `<button class="wall-reply-btn" data-reply="${post.id}" data-reply-label="${escapeHtml(post.profiles?.username || 'Bilinmeyen')}">Yanıtla</button>` : ''}
-            ${isAdmin ? `<button class="wall-pin-btn" data-pin="${post.id}" data-pinned="${post.pinned ? '1' : '0'}">${post.pinned ? 'Kaldır' : 'Sabitle'}</button>` : ''}
-          </div>
-        </div>
-        ${(post.user_id === currentUser.id || isAdmin)
-          ? `<button class="task-del" data-wall-del="${post.id}">✕</button>` : ''}
-      </div>`;
-    }).join('');
-
-    box.querySelectorAll('[data-wall-del]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        await supabase.from('class_wall_posts').delete().eq('id', btn.dataset.wallDel);
-        await loadClassWall();
-      });
-    });
-
-    box.querySelectorAll('[data-react]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const postId = btn.dataset.react;
-        const post = postsById[postId];
-        const already = (post.class_wall_reactions || []).some(r => r.user_id === currentUser.id);
-        if(already){
-          await supabase.from('class_wall_reactions').delete().eq('post_id', postId).eq('user_id', currentUser.id);
-        } else {
-          await supabase.from('class_wall_reactions').insert({ post_id: postId, user_id: currentUser.id, emoji: '👍' });
-        }
-        await loadClassWall();
-      });
-    });
-
-    box.querySelectorAll('[data-reply]').forEach(btn => {
-      btn.addEventListener('click', () => setWallReplyingTo(btn.dataset.reply, btn.dataset.replyLabel));
-    });
-
-    box.querySelectorAll('[data-pin]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const newPinned = btn.dataset.pinned !== '1';
-        await supabase.from('class_wall_posts').update({ pinned: newPinned }).eq('id', btn.dataset.pin);
-        await loadClassWall();
-      });
-    });
-  }
-
-  document.getElementById('wallForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const input = document.getElementById('wallInput');
-    const content = input.value.trim();
-    if(!content) return;
-    const { error } = await supabase.from('class_wall_posts').insert({
-      class: activeClass, user_id: currentUser.id, content, reply_to: wallReplyingTo
-    });
-    if(error){ alert(error.message); return; }
-    input.value = '';
-    setWallReplyingTo(null, '');
-    await loadClassWall();
-  });
 
   // ---------- PROFILE MODAL (others) ----------
   const profileModal = document.getElementById('profileModal');
@@ -1554,12 +1423,6 @@
       .subscribe();
     supabase.channel('public:exam_participants')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'exam_participants' }, () => { if(currentUser) loadExams(); })
-      .subscribe();
-    supabase.channel('public:class_wall_posts')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'class_wall_posts' }, () => { if(currentUser) loadClassWall(); })
-      .subscribe();
-    supabase.channel('public:class_wall_reactions')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'class_wall_reactions' }, () => { if(currentUser) loadClassWall(); })
       .subscribe();
     supabase.channel('public:point_transactions')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'point_transactions' }, () => { if(currentUser) loadHistory(); })
