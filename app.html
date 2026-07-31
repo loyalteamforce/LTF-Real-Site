@@ -116,7 +116,7 @@
     <!-- EXAMS VIEW -->
     <section class="view" id="view-exams">
       <div class="section-title">SINAVLAR</div>
-      <div class="section-sub">Yönetici puan karşılığında bir sınav açar, üyeler puan ödeyerek katılır. Kazananlar tüm havuzu paylaşır; bazı sınavlarda kaybedenler bir alt sınıfa düşebilir.</div>
+      <div class="section-sub">Yönetici puan karşılığında bir sınav açar, üyeler puan ödeyerek katılır. Kazananlar tüm havuzu paylaşır + bonus alır; bazı sınavlarda kaybedenler bir alt sınıfa düşebilir.</div>
 
       <div class="panel" id="examCreatePanel" style="display:none; margin-bottom:18px;">
         <div class="panel-head"><h2>YENİ SINAV OLUŞTUR</h2></div>
@@ -127,8 +127,16 @@
               <input type="text" id="examTitle" required>
             </div>
             <div class="field">
+              <label>Açıklama / İçerik (isteğe bağlı)</label>
+              <textarea id="examDesc" rows="3" placeholder="Sınavda ne test ediliyor, kurallar neler..."></textarea>
+            </div>
+            <div class="field">
               <label>Katılım Ücreti (puan)</label>
               <input type="text" inputmode="numeric" id="examCost" placeholder="örn: 5000" required>
+            </div>
+            <div class="field">
+              <label>Son Katılım Tarihi (isteğe bağlı)</label>
+              <input type="datetime-local" id="examDeadline">
             </div>
             <div class="field" style="display:flex; align-items:center; gap:8px;">
               <input type="checkbox" id="examDemote" style="width:auto;">
@@ -1214,8 +1222,10 @@
     const msg = document.getElementById('examCreateMsg');
     msg.className = 'msg'; msg.textContent = '';
     const title = document.getElementById('examTitle').value.trim();
+    const desc = document.getElementById('examDesc').value.trim();
     const cost = parseInt(document.getElementById('examCost').value.replace(/[.,\s]/g, ''), 10);
     const demote = document.getElementById('examDemote').checked;
+    const deadlineRaw = document.getElementById('examDeadline').value;
 
     if(!cost || cost < 0){
       msg.classList.add('error'); msg.textContent = 'Geçerli bir ücret gir.'; return;
@@ -1223,6 +1233,19 @@
 
     const { error } = await supabase.rpc('create_exam', { p_title: title, p_entry_cost: cost, p_demote_losers: demote });
     if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+
+    if(desc || deadlineRaw){
+      const { data: justCreated } = await supabase
+        .from('exams').select('id').eq('title', title)
+        .order('created_at', { ascending: false }).limit(1).maybeSingle();
+      if(justCreated){
+        await supabase.from('exams').update({
+          description: desc || null,
+          deadline: deadlineRaw ? new Date(deadlineRaw).toISOString() : null
+        }).eq('id', justCreated.id);
+      }
+    }
+
     msg.classList.add('ok'); msg.textContent = 'Sınav oluşturuldu.';
     document.getElementById('examCreateForm').reset();
     await loadExams();
@@ -1252,12 +1275,14 @@
     openBox.innerHTML = open.length === 0 ? '<div class="empty">Açık sınav yok.</div>' : open.map(ex => {
       const plist = partByExam[ex.id] || [];
       const joined = plist.some(p => p.user_id === currentUser.id);
+      const deadlinePassed = ex.deadline ? new Date(ex.deadline).getTime() < Date.now() : false;
+
       const adminBlock = isAdmin ? `
-        <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--line);">
-          <div style="font-size:11px; color:var(--ink-dim); margin-bottom:6px;">Kazananları seç ve sonuçlandır:</div>
+        <div class="exam-admin-block">
+          <div class="exam-admin-lbl">Kazananları seç ve sonuçlandır</div>
           <div class="exam-participant-list">
             ${plist.map(p => `
-              <label style="display:flex; align-items:center; gap:6px; font-size:13px; margin-bottom:4px;">
+              <label class="exam-winner-row">
                 <input type="checkbox" class="winner-check" data-exam="${ex.id}" data-user="${p.user_id}" style="width:auto;">
                 ${escapeHtml(p.profiles?.username || '—')}
               </label>
@@ -1268,15 +1293,23 @@
       ` : '';
 
       return `
-        <div class="shop-item" style="flex-direction:column; align-items:stretch; gap:8px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-            <div class="info">
-              <div class="t">${escapeHtml(ex.title)}</div>
-              <div class="d">${ex.entry_cost.toLocaleString('tr-TR')} puan giriş · ${plist.length} katılımcı ${ex.demote_losers ? '· kaybedenler sınıf düşer' : ''}</div>
-            </div>
+        <div class="exam-card">
+          <div class="exam-card-head">
+            <div class="exam-card-title">${escapeHtml(ex.title)}</div>
+            ${ex.deadline ? `<div class="exam-deadline${deadlinePassed ? ' expired' : ''}" data-deadline="${ex.deadline}">${deadlinePassed ? 'Süre doldu' : ''}</div>` : ''}
+          </div>
+          ${ex.description ? `<div class="exam-card-desc">${escapeHtml(ex.description)}</div>` : ''}
+          <div class="exam-card-meta">
+            <span>${ex.entry_cost.toLocaleString('tr-TR')} puan giriş</span>
+            <span>${plist.length} katılımcı</span>
+            ${ex.demote_losers ? '<span class="exam-tag-danger">Kaybedenler sınıf düşer</span>' : ''}
+          </div>
+          <div class="exam-card-actions">
             ${joined
               ? '<span class="rank-badge">Katıldın</span>'
-              : `<button class="btn join-exam-btn" data-exam="${ex.id}" style="width:auto;">Katıl</button>`}
+              : deadlinePassed
+                ? '<span class="rank-badge" style="color:var(--danger); border-color:var(--danger);">Süre doldu</span>'
+                : `<button class="btn join-exam-btn" data-exam="${ex.id}" style="width:auto;">Katıl</button>`}
           </div>
           ${adminBlock}
         </div>
@@ -1289,14 +1322,29 @@
       const demoted = plist.filter(p => p.demoted).map(p => p.profiles?.username).filter(Boolean);
       const protectedUsers = plist.filter(p => p.protected).map(p => p.profiles?.username).filter(Boolean);
       return `
-        <div class="shop-item" style="flex-direction:column; align-items:stretch; gap:4px;">
-          <div class="t">${escapeHtml(ex.title)}</div>
-          <div class="d">Kazananlar: ${winners.length ? escapeHtml(winners.join(', ')) : '—'}</div>
-          ${demoted.length ? `<div class="d" style="color:var(--danger);">Sınıfı düşenler: ${escapeHtml(demoted.join(', '))}</div>` : ''}
-          ${protectedUsers.length ? `<div class="d">Koruma puanıyla kurtulanlar: ${escapeHtml(protectedUsers.join(', '))}</div>` : ''}
+        <div class="exam-card exam-card-closed">
+          <div class="exam-card-title">${escapeHtml(ex.title)}</div>
+          <div class="exam-card-meta"><span>Kazananlar: ${winners.length ? escapeHtml(winners.join(', ')) : '—'}</span></div>
+          ${demoted.length ? `<div class="exam-card-meta"><span class="exam-tag-danger">Sınıfı düşenler: ${escapeHtml(demoted.join(', '))}</span></div>` : ''}
+          ${protectedUsers.length ? `<div class="exam-card-meta"><span>Koruma puanıyla kurtulanlar: ${escapeHtml(protectedUsers.join(', '))}</span></div>` : ''}
         </div>
       `;
     }).join('');
+
+    document.querySelectorAll('[data-deadline]').forEach(el => {
+      const target = new Date(el.dataset.deadline).getTime();
+      if(target < Date.now()) return;
+      const tick = () => {
+        const diff = target - Date.now();
+        if(diff <= 0){ el.textContent = 'Süre doldu'; el.classList.add('expired'); clearInterval(timer); return; }
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        el.textContent = `${h}s ${m}dk ${s}sn kaldı`;
+      };
+      tick();
+      const timer = setInterval(tick, 1000);
+    });
 
     document.querySelectorAll('.join-exam-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
