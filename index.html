@@ -3,10 +3,13 @@
 <head> <meta name="google-site-verification" content="S06DKtCJxjMms5rDkOKDWGl53qofC8dvNGJ-mOJp2vg" /> </head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Loyal Elite Force — Yakında Geliyoruz</title>
-<meta name="description" content="Loyal Elite Force (LTF), sınıflar, puan sistemi ve görevlerden oluşan bir birlik topluluğudur. Sitemiz yakında yayında.">
+<title>Loyal Elite Force</title>
+<meta name="description" content="Loyal Elite Force (LTF), sınıflar, puan sistemi ve görevlerden oluşan bir birlik topluluğudur.">
 <meta property="og:title" content="Loyal Elite Force">
-<meta property="og:description" content="Loyal Elite Force birlik topluluğu — yakında yayında.">
+<meta property="og:description" content="Loyal Elite Force birlik topluluğu.">
+<meta property="og:image" content="https://loyalteamforce.com">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -98,40 +101,26 @@
   <h1>LOYAL ELITE FORCE</h1>
   <div class="tagline">Discipline · Loyalty · Strength</div>
 
-  <p class="desc">
-    Loyal Elite Force, sınıflara ayrılmış üyelerden oluşan, puan ekonomisi ve görevlerle işleyen bir birlik topluluğudur.
-    Üyelik sistemi, sınıf sıralamaları ve dahili sınavlarıyla yakında yayında olacağız.
+  <p class="desc" id="statusText">
+    Yönlendiriliyorsun...
   </p>
 
-  <div class="badge">Yakında Geliyoruz</div>
+  <script type="module">
+    import { supabase } from './config.js';
 
-  <div class="player">
-    <p class="hint">Fragman müziğimizi deneyin</p>
-    <div class="cover-wrap">
-      <img class="cover-img" id="coverImg" src="trailer-cover.jpg" alt="Fragman kapağı">
-      <button class="play-btn" id="playBtn" aria-label="Fragman müziğini oynat/durdur">▶</button>
-    </div>
-    <div class="player-label">Tıkla, dinle</div>
-  </div>
-
-  <audio id="trailerAudio" src="trailer-music.mp3" loop preload="none"></audio>
-
-  <script>
-    const audio = document.getElementById('trailerAudio');
-    const cover = document.getElementById('coverImg');
-    const btn = document.getElementById('playBtn');
-
-    btn.addEventListener('click', () => {
-      if(audio.paused){
-        audio.play();
-        cover.classList.add('playing');
-        btn.textContent = '❚❚';
-      } else {
-        audio.pause();
-        cover.classList.remove('playing');
-        btn.textContent = '▶';
+    (async function boot(){
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if(session){
+          window.location.replace('app.html');
+        } else {
+          window.location.replace('login.html');
+        }
+      } catch(e){
+        // Supabase erişilemezse yine de girişe yönlendir
+        window.location.replace('login.html');
       }
-    });
+    })();
   </script>
 
 </body>

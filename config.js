@@ -1,5 +1,3 @@
-
-
 // ============================================================
 // SUPABASE AYARLARI — Tüm site bu dosyadaki bağlantıyı kullanır.
 // Bilgilerini değiştirmen gerekirse SADECE burayı güncelle.
