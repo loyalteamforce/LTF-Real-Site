@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Loyal Elite Force</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
@@ -66,6 +66,7 @@
     <div class="subnav" id="subnav-economy" style="display:none;">
       <button class="subnav-btn active" data-view="points">Puanlarım</button>
       <button class="subnav-btn" data-view="history">İşlem Geçmişi</button>
+      <button class="subnav-btn" data-view="cards">Kartlarım</button>
     </div>
     <div class="subnav" id="subnav-examtask" style="display:none;">
       <button class="subnav-btn active" data-view="exams">Sınavlar</button>
@@ -296,6 +297,44 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- CARDS VIEW -->
+    <section class="view" id="view-cards">
+      <div class="section-title">KARTLARIM</div>
+      <div class="section-sub">Özel sınavlarda veya yönetici tarafından kazandığın kartlar burada. Kartı kullandığında etkisi otomatik uygulanır.</div>
+
+      <div class="panel" id="cardAdminPanel" style="display:none; margin-bottom:18px;">
+        <div class="panel-head"><h2>KART YÖNETİMİ</h2></div>
+        <div class="panel-body">
+          <form id="cardCreateForm" style="margin-bottom:16px;">
+            <div class="field"><label>Kart Adı</label><input type="text" id="cardName" maxlength="60" required placeholder="ör. Deneme"></div>
+            <div class="field"><label>Açıklama</label><input type="text" id="cardDesc" maxlength="200" required placeholder="ör. Kullanınca 5.000 puan kazandırır"></div>
+            <div class="field">
+              <label>Etki Türü</label>
+              <select id="cardEffectType" style="width:100%; padding:10px 12px; background:#0a1522; border:1px solid var(--line); border-radius:6px; color:var(--ink); font-family:'Rajdhani',sans-serif; font-size:15px;">
+                <option value="flat_points">Otomatik puan kazandır</option>
+                <option value="info">Bilgi amaçlı (etki manuel uygulanır)</option>
+              </select>
+            </div>
+            <div class="field" id="cardValueField"><label>Puan Miktarı</label><input type="number" id="cardValue" min="0" step="1" placeholder="ör. 5000"></div>
+            <button type="submit" class="btn">KART OLUŞTUR</button>
+            <div class="msg" id="cardCreateMsg"></div>
+          </form>
+
+          <form id="cardAssignForm" style="border-top:1px solid var(--line); padding-top:16px;">
+            <div class="field"><label>Kullanıcı Adı</label><input type="text" id="cardAssignUsername" required placeholder="kullanıcı adı"></div>
+            <div class="field">
+              <label>Kart</label>
+              <select id="cardAssignSelect" style="width:100%; padding:10px 12px; background:#0a1522; border:1px solid var(--line); border-radius:6px; color:var(--ink); font-family:'Rajdhani',sans-serif; font-size:15px;"></select>
+            </div>
+            <button type="submit" class="btn">ÜYEYE VER</button>
+            <div class="msg" id="cardAssignMsg"></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-grid" id="myCardsList"><div class="empty">Yükleniyor...</div></div>
     </section>
 
     <!-- HISTORY VIEW -->
@@ -535,7 +574,7 @@
   // ---------- NAV ----------
   const CATEGORY_VIEWS = {
     classes: ['classes'],
-    economy: ['points', 'history'],
+    economy: ['points', 'history', 'cards'],
     examtask: ['exams', 'tasks'],
     account: ['profile', 'guide', 'trailer'],
     roster: ['roster']
@@ -548,6 +587,7 @@
     if(view === 'exams'){ loadExams(); }
     if(view === 'tasks'){ loadTasks(); }
     if(view === 'roster'){ loadAllProfiles().then(renderRoster); }
+    if(view === 'cards'){ loadMyCards(); }
   }
 
   function showView(view){
@@ -1150,13 +1190,11 @@
 
     const isAdmin = currentProfile?.rank === 'Yönetici';
     box.innerHTML = data.map(a => `
-      <div class="task-row">
-        <div class="task-main">
-          <div class="task-title">${escapeHtml(a.title)}</div>
-          <div class="task-meta">${escapeHtml(a.content)}</div>
-          <div class="task-meta">${escapeHtml(a.profiles?.username || 'Yönetici')} · ${new Date(a.created_at).toLocaleString('tr-TR')}</div>
-        </div>
-        ${isAdmin ? `<button class="task-del" data-ann-del="${a.id}">✕</button>` : ''}
+      <div class="doc-sheet">
+        <div class="doc-sheet-title">${escapeHtml(a.title)}</div>
+        <div class="doc-sheet-body">${escapeHtml(a.content)}</div>
+        <div class="doc-sheet-meta">${escapeHtml(a.profiles?.username || 'Yönetici')} · ${new Date(a.created_at).toLocaleString('tr-TR')}</div>
+        ${isAdmin ? `<button class="task-del" data-ann-del="${a.id}" style="position:absolute; top:8px; right:8px;">✕</button>` : ''}
       </div>
     `).join('');
 
@@ -1182,6 +1220,128 @@
     document.getElementById('announcementForm').reset();
     await loadAnnouncements();
   });
+
+  // ===================== KART SİSTEMİ =====================
+  let allCardsCache = [];
+
+  document.getElementById('cardEffectType').addEventListener('change', (e) => {
+    document.getElementById('cardValueField').style.display = e.target.value === 'flat_points' ? 'block' : 'none';
+  });
+
+  async function loadAllCardsForAdmin(){
+    const { data, error } = await supabase.from('cards').select('*').order('created_at', { ascending: false });
+    if(error || !data) return;
+    allCardsCache = data;
+    const select = document.getElementById('cardAssignSelect');
+    select.innerHTML = data.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+  }
+
+  document.getElementById('cardCreateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('cardCreateMsg');
+    msg.className = 'msg'; msg.textContent = '';
+    const name = document.getElementById('cardName').value.trim();
+    const desc = document.getElementById('cardDesc').value.trim();
+    const effectType = document.getElementById('cardEffectType').value;
+    const value = effectType === 'flat_points' ? Number(document.getElementById('cardValue').value || 0) : 0;
+
+    const { error } = await supabase.rpc('admin_create_card', {
+      p_name: name, p_description: desc, p_effect_type: effectType, p_effect_value: value
+    });
+    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+    msg.classList.add('ok'); msg.textContent = 'Kart oluşturuldu.';
+    document.getElementById('cardCreateForm').reset();
+    document.getElementById('cardValueField').style.display = 'block';
+    await loadAllCardsForAdmin();
+  });
+
+  document.getElementById('cardAssignForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('cardAssignMsg');
+    msg.className = 'msg'; msg.textContent = '';
+    const username = document.getElementById('cardAssignUsername').value.trim();
+    const cardId = document.getElementById('cardAssignSelect').value;
+    if(!cardId){ msg.classList.add('error'); msg.textContent = 'Önce bir kart oluştur.'; return; }
+
+    const { error } = await supabase.rpc('admin_assign_card', { p_username: username, p_card_id: cardId });
+    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+    msg.classList.add('ok'); msg.textContent = 'Kart üyeye verildi.';
+    document.getElementById('cardAssignForm').reset();
+  });
+
+  async function loadMyCards(){
+    const isAdmin = currentProfile?.rank === 'Yönetici';
+    document.getElementById('cardAdminPanel').style.display = isAdmin ? 'block' : 'none';
+    if(isAdmin) await loadAllCardsForAdmin();
+
+    const box = document.getElementById('myCardsList');
+    const { data, error } = await supabase
+      .from('member_cards')
+      .select('*, cards(*)')
+      .eq('user_id', currentUser.id)
+      .order('assigned_at', { ascending: false });
+
+    if(error || !data || data.length === 0){
+      box.innerHTML = '<div class="empty">Henüz bir kartın yok.</div>';
+      return;
+    }
+
+    box.innerHTML = data.map(mc => {
+      const card = mc.cards || {};
+      const used = mc.status === 'used';
+      const uid = mc.id;
+      return `
+        <div class="tarot-card ${used ? 'tarot-used' : ''}">
+          <div class="tarot-frame">
+            <div class="tarot-roman left">X</div>
+            <div class="tarot-roman right">XII</div>
+            <div class="tarot-corner tc-tl"></div>
+            <div class="tarot-corner tc-tr"></div>
+            <div class="tarot-corner tc-bl"></div>
+            <div class="tarot-corner tc-br"></div>
+            <div class="tarot-inner">
+              <div class="tarot-emblem">
+                <svg viewBox="0 0 60 72" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="gemBody-${uid}" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#fff8ec"/>
+                      <stop offset="100%" stop-color="#ffffff"/>
+                    </linearGradient>
+                    <linearGradient id="gemCap-${uid}" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#ff8a72"/>
+                      <stop offset="100%" stop-color="#c22f3a"/>
+                    </linearGradient>
+                  </defs>
+                  <line x1="30" y1="0" x2="30" y2="18" stroke="#ffdd8c" stroke-width="1" opacity="0.85"/>
+                  <line x1="16" y1="8" x2="30" y2="18" stroke="#ffdd8c" stroke-width="0.7" opacity="0.6"/>
+                  <line x1="44" y1="8" x2="30" y2="18" stroke="#ffdd8c" stroke-width="0.7" opacity="0.6"/>
+                  <path d="M30 16 L47 34 L30 70 L13 34 Z" fill="url(#gemBody-${uid})" stroke="#ffdd8c" stroke-width="1.2"/>
+                  <path d="M30 16 L47 34 L30 42 L13 34 Z" fill="url(#gemCap-${uid})" stroke="#ffdd8c" stroke-width="0.8"/>
+                </svg>
+              </div>
+              <div class="tarot-name">${escapeHtml(card.name || '')}</div>
+              <div class="tarot-rule"></div>
+              <div class="tarot-desc">${escapeHtml(card.description || '')}</div>
+            </div>
+            <div class="tarot-kanji">試練</div>
+          </div>
+          ${used
+            ? '<span class="rank-badge" style="margin-top:10px;">Kullanıldı</span>'
+            : `<button class="btn use-card-btn" data-mc="${mc.id}" style="margin-top:10px;">KARTI KULLAN</button>`}
+        </div>
+      `;
+    }).join('');
+
+    box.querySelectorAll('.use-card-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        const { error } = await supabase.rpc('use_card', { p_member_card_id: btn.dataset.mc });
+        if(error){ alert(error.message); btn.disabled = false; return; }
+        await loadMyCards();
+        await refreshMyProfile();
+      });
+    });
+  }
 
   function updateRosterVisibility(){
     const isAdmin = currentProfile?.rank === 'Yönetici';
@@ -1279,12 +1439,15 @@
 
       const adminBlock = isAdmin ? `
         <div class="exam-admin-block">
-          <div class="exam-admin-lbl">Kazananları seç ve sonuçlandır</div>
+          <div class="exam-admin-lbl">Puan gir, kazananları seç ve sonuçlandır</div>
           <div class="exam-participant-list">
             ${plist.map(p => `
-              <label class="exam-winner-row">
-                <input type="checkbox" class="winner-check" data-exam="${ex.id}" data-user="${p.user_id}" style="width:auto;">
-                ${escapeHtml(p.profiles?.username || '—')}
+              <label class="exam-winner-row" style="justify-content:space-between; gap:8px;">
+                <span style="display:flex; align-items:center; gap:8px;">
+                  <input type="checkbox" class="winner-check" data-exam="${ex.id}" data-user="${p.user_id}" style="width:auto;">
+                  ${escapeHtml(p.profiles?.username || '—')}
+                </span>
+                <input type="number" class="score-input" data-exam="${ex.id}" data-user="${p.user_id}" placeholder="puan" style="width:70px; padding:5px 8px; background:#0a1522; border:1px solid var(--line); border-radius:6px; color:var(--ink); font-family:'Orbitron',sans-serif; font-size:12px;">
               </label>
             `).join('') || '<div style="font-size:12px; color:var(--ink-dim);">Henüz katılan yok.</div>'}
           </div>
@@ -1321,12 +1484,24 @@
       const winners = plist.filter(p => p.is_winner).map(p => p.profiles?.username).filter(Boolean);
       const demoted = plist.filter(p => p.demoted).map(p => p.profiles?.username).filter(Boolean);
       const protectedUsers = plist.filter(p => p.protected).map(p => p.profiles?.username).filter(Boolean);
+      const scored = [...plist].filter(p => p.score !== null && p.score !== undefined).sort((a,b) => (b.score || 0) - (a.score || 0));
       return `
         <div class="exam-card exam-card-closed">
           <div class="exam-card-title">${escapeHtml(ex.title)}</div>
-          <div class="exam-card-meta"><span>Kazananlar: ${winners.length ? escapeHtml(winners.join(', ')) : '—'}</span></div>
           ${demoted.length ? `<div class="exam-card-meta"><span class="exam-tag-danger">Sınıfı düşenler: ${escapeHtml(demoted.join(', '))}</span></div>` : ''}
           ${protectedUsers.length ? `<div class="exam-card-meta"><span>Koruma puanıyla kurtulanlar: ${escapeHtml(protectedUsers.join(', '))}</span></div>` : ''}
+          ${scored.length ? `
+            <div class="result-board">
+              <div class="result-board-head">SONUÇ · ${escapeHtml(ex.title).toUpperCase()}</div>
+              ${scored.map((p, i) => `
+                <div class="result-row ${i === 0 ? 'rank-1' : ''}">
+                  <span class="result-rank">${i + 1}</span>
+                  <span class="result-name">${escapeHtml(p.profiles?.username || '—')}${p.is_winner ? ' 🏆' : ''}</span>
+                  <span class="result-score">${p.score}</span>
+                </div>
+              `).join('')}
+            </div>
+          ` : `<div class="exam-card-meta"><span>Kazananlar: ${winners.length ? escapeHtml(winners.join(', ')) : '—'}</span></div>`}
         </div>
       `;
     }).join('');
@@ -1360,6 +1535,13 @@
         const examId = btn.dataset.exam;
         const winnerIds = Array.from(document.querySelectorAll(`.winner-check[data-exam="${examId}"]:checked`))
           .map(el => el.dataset.user);
+
+        const scoreInputs = Array.from(document.querySelectorAll(`.score-input[data-exam="${examId}"]`))
+          .filter(el => el.value !== '');
+        for(const el of scoreInputs){
+          await supabase.rpc('admin_set_exam_score', { p_exam_id: examId, p_user_id: el.dataset.user, p_score: Number(el.value) });
+        }
+
         const { error } = await supabase.rpc('resolve_exam', { p_exam_id: examId, winner_ids: winnerIds });
         if(error){ alert(error.message); return; }
         await loadExams();
