@@ -11,7 +11,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
@@ -105,18 +105,31 @@
     Yönlendiriliyorsun...
   </p>
 
+  <script>
+    // Güvenlik ağı: modül script'i herhangi bir sebeple (dosya eksik,
+    // ağ hatası, tarayıcı desteği vb.) çalışmazsa 4 saniye sonra
+    // yine de girişe yönlendir. Modül script'i başarılı olursa zaten
+    // daha erken yönlendirme yapacak ve bu zamanlayıcı devreye girmeden
+    // sayfa değişmiş olacak.
+    window.__lefFallback = setTimeout(function(){
+      window.location.replace('login.html');
+    }, 4000);
+  </script>
+
   <script type="module">
     import { supabase } from './config.js';
 
     (async function boot(){
       try {
         const { data: { session } } = await supabase.auth.getSession();
+        clearTimeout(window.__lefFallback);
         if(session){
           window.location.replace('app.html');
         } else {
           window.location.replace('login.html');
         }
       } catch(e){
+        clearTimeout(window.__lefFallback);
         // Supabase erişilemezse yine de girişe yönlendir
         window.location.replace('login.html');
       }
