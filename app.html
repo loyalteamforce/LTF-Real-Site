@@ -1601,7 +1601,8 @@
     }
     const sorted = [...allProfiles].sort((a,b) => (a.class || '').localeCompare(b.class || '') || a.username.localeCompare(b.username));
     grid.innerHTML = sorted.map(p => `
-      <div class="roster-card">
+      <div class="roster-card" style="position:relative;">
+        <button class="reset-pw-icon" data-username="${escapeHtml(p.username)}" title="Şifre sıfırla">🔑</button>
         <div class="roster-avatar">${avatarHtml(p)}</div>
         <div class="roster-name">${escapeHtml(p.username)}</div>
         <div class="roster-meta">Sınıf ${escapeHtml(p.class || '-')} · ${escapeHtml(p.rank || 'Üye')}</div>
@@ -1611,6 +1612,21 @@
         </div>
       </div>
     `).join('');
+
+    grid.querySelectorAll('.reset-pw-icon').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const username = btn.dataset.username;
+        const newPassword = prompt(`${username} için yeni şifre gir (en az 6 karakter):`);
+        if(!newPassword) return;
+        if(newPassword.length < 6){ alert('Şifre en az 6 karakter olmalı.'); return; }
+        btn.disabled = true;
+        const { error } = await supabase.rpc('admin_reset_password', { p_username: username, p_new_password: newPassword });
+        btn.disabled = false;
+        if(error){ alert(error.message); return; }
+        alert(`${username} için şifre sıfırlandı. Yeni şifreyi kendisine ilet: ${newPassword}`);
+      });
+    });
 
     const logoSrc = document.querySelector('.sidebar-brand img')?.src;
     if(logoSrc){
