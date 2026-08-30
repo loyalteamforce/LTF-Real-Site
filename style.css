@@ -286,6 +286,21 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
   color:#fff; text-shadow:0 0 14px rgba(200,220,255,0.35); font-variant-numeric:tabular-nums; }
 .class-table-points-pt{ font-size:11.5px; color:rgba(223,225,228,0.55); letter-spacing:0.5px; }
 
+.class-risk-badge{
+  flex-shrink:0; font-size:9.5px; letter-spacing:1px; font-weight:700; text-transform:uppercase;
+  padding:3px 8px; border-radius:20px; white-space:nowrap; font-family:'Rajdhani',sans-serif;
+}
+.class-risk-badge.warn{ color:#e8b84a; border:1px solid rgba(232,184,74,0.5); background:rgba(232,184,74,0.08); }
+.class-risk-badge.danger{ color:#e06b6b; border:1px solid rgba(224,107,107,0.55); background:rgba(224,107,107,0.1);
+  animation: riskPulse 1.8s ease-in-out infinite; }
+@keyframes riskPulse{ 0%,100%{ box-shadow:0 0 0 rgba(224,107,107,0); } 50%{ box-shadow:0 0 10px rgba(224,107,107,0.45); } }
+.class-penalty-btn{
+  margin-top:14px; width:100%; padding:9px; border-radius:6px; border:1px dashed rgba(224,107,107,0.5);
+  background:transparent; color:#e06b6b; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:11.5px;
+  letter-spacing:1.5px; text-transform:uppercase; cursor:pointer;
+}
+.class-penalty-btn:hover{ background:rgba(224,107,107,0.08); }
+
 @media (max-width:600px){
   .class-table-crest{ width:160px; height:160px; opacity:0.45; }
   .class-table-tablet{ padding:22px 18px 18px; }
