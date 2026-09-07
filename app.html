@@ -86,12 +86,13 @@
       <button class="subnav-btn active" data-view="profile">Profilim</button>
       <button class="subnav-btn" data-view="guide">Rehber</button>
       <button class="subnav-btn" data-view="trailer">Şarkılar</button>
+      <button class="subnav-btn" data-view="contracts">Sözleşmeler</button>
     </div>
 
     <!-- CLASSES VIEW -->
     <section class="view active" id="view-classes">
       <div class="section-title">SINIFLAR</div>
-      <div class="section-sub">Herkes bir sınıfa (A/B/C/D) dahildir, sınıf başına en fazla 25 kişi var. Kendi sınıfının duvarına yazabilir, diğer sınıfları sadece görebilirsin.</div>
+      <div class="section-sub">Herkes bir sınıfa (A/B/C/D) dahildir, sınıf başına en fazla 25 kişi var. Sınıfını, diğer sınıfları ve kimin başkan olduğunu buradan görebilirsin.</div>
 
       <div class="panel" style="margin-bottom:18px;">
         <div class="panel-head"><h2>DUYURULAR</h2></div>
@@ -121,6 +122,14 @@
       </div>
 
       <div class="class-tabs" id="classTabs"></div>
+
+      <div class="panel" style="margin:14px 0 10px;">
+        <div class="panel-head"><h2>SINIF BAŞKANI</h2></div>
+        <div class="panel-body">
+          <div id="classPresidentBox"><div class="empty">Yükleniyor...</div></div>
+        </div>
+      </div>
+
       <div class="member-grid" id="classMembers"></div>
     </section>
 
@@ -418,6 +427,13 @@
       <div class="section-title">NASIL ÇALIŞIR?</div>
       <div class="section-sub">Siteyi ilk kez kullanıyorsan buradan başla — sistemin tamamı özetlendi.</div>
 
+      <div class="panel" style="margin-bottom:20px; border-color:rgba(224,107,107,0.35);">
+        <div class="panel-head"><h2>SÖZLEŞMENİN ANLAMI</h2></div>
+        <div class="panel-body">
+          <div class="guide-text">Loyal Elite Force'a katılmak bir kayıt formu doldurmak değil, bir sözleşmeye imza atmaktır. Kitabın bir sayfası artık senin. Sınıfının puanı senin omzunda, bir başkasının yemini seni bağlıyor, her gün topladığın puan seni geri çağırıyor. Buraya giren biri boş elle çıkmaz — ya bir sınıf lideri, ya bir sözleşmeli, ya da bir efsane olarak anılır. Sayfanı çevir, oyun çoktan başladı.</div>
+        </div>
+      </div>
+
       <div class="guide-list">
         <div class="guide-item">
           <div class="guide-num">1</div>
@@ -464,8 +480,8 @@
         <div class="guide-item">
           <div class="guide-num">7</div>
           <div>
-            <div class="guide-title">Sınıf Puanı ve Sıralama</div>
-            <div class="guide-text">Kişisel puanından ayrı olarak, sınıfının da kolektif bir puanı vardır (görev tamamladıkça sınıfına da puan eklenir). Puanlar sekmesinin en üstünde hangi sınıfın önde olduğunu görebilirsin.</div>
+            <div class="guide-title">Sınıf Puanı, Sıralama ve Düşme Riski</div>
+            <div class="guide-text">Kişisel puanından ayrı olarak, sınıfının da kolektif bir puanı vardır (görev tamamladıkça sınıfına da puan eklenir). Puanlar sekmesinin en üstünde hangi sınıfın önde olduğunu görebilirsin. En düşük puanlı sınıf 300 puanın altına düşerse sarı "Düşme Riski", 0 veya altına düşerse kırmızı "Sahtekarlık Riski" rozetiyle işaretlenir — yönetici bu duruma sınıfa ceza puanı uygulayarak da müdahale edebilir, sebebi otomatik duyuru olarak paylaşılır.</div>
           </div>
         </div>
         <div class="guide-item">
@@ -494,6 +510,13 @@
           <div>
             <div class="guide-title">Tüm Üyeler (sadece yönetici)</div>
             <div class="guide-text">Rütbesi "Yönetici" olanlar, birlikteki herkesin fotoğrafını, sınıfını, puanını ve becerilerini tek ekranda görebileceği ayrı bir panele erişebilir.</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-num">12</div>
+          <div>
+            <div class="guide-title">Sözleşmeler</div>
+            <div class="guide-text">Hesabım &gt; Sözleşmeler'den bir üyeye kısa bir yemin metniyle özel bir sözleşme teklif edebilirsin. Kabul ederse ikiniz de "Aktif Sözleşmelerim" listesinde görünürsünüz; istediğiniz an bozabilirsiniz ama bu geri alınamaz. Şimdilik sosyal/rol yapma amaçlıdır, ileride oyun mekaniğine (koruma, bahis paylaşımı gibi) bağlanabilir.</div>
           </div>
         </div>
       </div>
@@ -535,6 +558,46 @@
       </div>
 
       <audio id="siteTrailerAudio" src="trailer-music.mp3" loop preload="none"></audio>
+    </section>
+
+    <!-- CONTRACTS VIEW (Vanitas no Carte temalı sözleşme sistemi) -->
+    <section class="view" id="view-contracts">
+      <div class="section-title">SÖZLEŞMELER</div>
+      <div class="section-sub">Kitabın bir sayfasını biriyle paylaş. İki üye arasındaki özel sözleşme — bir yemin, bir bağ. Kabul edilene kadar geçersizdir, bozulursa iz bırakır.</div>
+
+      <div class="grid-2" style="margin-top:22px;">
+        <div class="panel">
+          <div class="panel-head"><h2>YENİ SÖZLEŞME TEKLİF ET</h2></div>
+          <div class="panel-body">
+            <form id="contractForm">
+              <div class="field">
+                <label>Kullanıcı Adı</label>
+                <input type="text" id="contractPartner" required>
+              </div>
+              <div class="field">
+                <label>Yemin / Sözleşme Metni</label>
+                <input type="text" id="contractVow" maxlength="200" placeholder="örn: Kader ortağıyız, birbirimizi kollarız." required>
+              </div>
+              <button class="btn" type="submit">Sayfayı Gönder</button>
+              <div class="msg" id="contractMsg"></div>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>GELEN TEKLİFLER</h2></div>
+          <div class="panel-body">
+            <div id="incomingContracts"><div class="empty">Yükleniyor...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:18px;">
+        <div class="panel-head"><h2>AKTİF SÖZLEŞMELERİM</h2></div>
+        <div class="panel-body">
+          <div id="activeContracts"><div class="empty">Yükleniyor...</div></div>
+        </div>
+      </div>
     </section>
 
     <!-- ROSTER VIEW (admin only) -->
@@ -604,17 +667,18 @@
     classes: ['classes'],
     economy: ['points', 'history', 'cards', 'auction', 'loans'],
     examtask: ['exams', 'tasks'],
-    account: ['profile', 'guide', 'trailer'],
+    account: ['profile', 'guide', 'trailer', 'contracts'],
     roster: ['roster']
   };
 
   function onViewDataLoad(view){
-    if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadAnnouncements(); renderClassRanking(); }
+    if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadAnnouncements(); renderClassRanking(); loadClassPresident(); }
     if(view === 'points'){ refreshMyProfile(); loadIncomingDuels(); }
     if(view === 'history'){ loadHistory(); }
     if(view === 'exams'){ loadExams(); }
     if(view === 'tasks'){ loadTasks(); }
     if(view === 'roster'){ loadAllProfiles().then(renderRoster); }
+    if(view === 'contracts'){ loadContracts(); }
     if(view === 'cards'){ loadMyCards(); }
     if(view === 'auction'){ loadAuctions(); }
     if(view === 'loans'){ loadLoans(); }
@@ -733,9 +797,12 @@
         activeClass = btn.dataset.class;
         renderClassTabs();
         renderClassMembers();
+        loadClassPresident();
       });
     });
   }
+
+  let currentPresidentId = null;
 
   function renderClassMembers(){
     const grid = document.getElementById('classMembers');
@@ -747,12 +814,71 @@
     grid.innerHTML = members.map(m => `
       <div class="member-card" data-id="${m.id}">
         <div class="avatar">${avatarHtml(m)}</div>
-        <div class="nm">${escapeHtml(m.username)}</div>
+        <div class="nm">${m.id === currentPresidentId ? '👑 ' : ''}${escapeHtml(m.username)}</div>
         <div class="rk">${escapeHtml(m.rank || 'Üye')}</div>
       </div>
     `).join('');
     grid.querySelectorAll('.member-card').forEach(card => {
       card.addEventListener('click', () => openProfileModal(card.dataset.id));
+    });
+  }
+
+  async function loadClassPresident(){
+    const box = document.getElementById('classPresidentBox');
+    box.innerHTML = '<div class="empty">Yükleniyor...</div>';
+
+    const { data: votes, error } = await supabase
+      .from('president_votes')
+      .select('voter_id, candidate_id, candidate:profiles!president_votes_candidate_id_fkey(username)')
+      .eq('class', activeClass);
+
+    if(error){ box.innerHTML = '<div class="empty">Yüklenemedi.</div>'; currentPresidentId = null; return; }
+
+    const tally = {};
+    (votes || []).forEach(v => {
+      tally[v.candidate_id] = tally[v.candidate_id] || { count: 0, username: v.candidate?.username };
+      tally[v.candidate_id].count++;
+    });
+    const ranked = Object.entries(tally).sort((a, b) => b[1].count - a[1].count);
+    currentPresidentId = ranked.length ? ranked[0][0] : null;
+
+    const myVote = (votes || []).find(v => v.voter_id === currentUser.id);
+    const members = allProfiles.filter(p => p.class === activeClass && p.id !== currentUser.id);
+
+    const leaderHtml = ranked.length
+      ? `<div class="shop-item" style="margin-bottom:10px;">
+           <div class="info">
+             <div class="t">👑 ${escapeHtml(ranked[0][1].username || 'Bilinmeyen')}</div>
+             <div class="d">${ranked[0][1].count} oy ile önde</div>
+           </div>
+         </div>`
+      : `<div class="empty" style="margin-bottom:10px;">Bu sınıfta henüz oy verilmemiş.</div>`;
+
+    const isMyClass = currentProfile?.class === activeClass;
+    const voteHtml = !isMyClass ? '' : `
+      <div class="card-send-row">
+        <select id="presidentCandidateSelect" class="card-send-input" style="flex:1;">
+          <option value="">— aday seç —</option>
+          ${members.map(m => `<option value="${escapeHtml(m.username)}" ${myVote?.candidate_id === m.id ? 'selected' : ''}>${escapeHtml(m.username)}</option>`).join('')}
+        </select>
+        <button class="btn" id="presidentVoteBtn" style="width:auto;">${myVote ? 'Oyu Değiştir' : 'Oy Ver'}</button>
+      </div>
+      <div class="msg" id="presidentVoteMsg"></div>
+    `;
+
+    box.innerHTML = leaderHtml + voteHtml;
+    renderClassMembers();
+
+    if(!isMyClass) return;
+    document.getElementById('presidentVoteBtn').addEventListener('click', async () => {
+      const msg = document.getElementById('presidentVoteMsg');
+      msg.className = 'msg'; msg.textContent = '';
+      const candidate = document.getElementById('presidentCandidateSelect').value;
+      if(!candidate){ msg.classList.add('error'); msg.textContent = 'Bir aday seç.'; return; }
+      const { error } = await supabase.rpc('vote_for_president', { p_candidate_username: candidate });
+      if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+      msg.classList.add('ok'); msg.textContent = 'Oyun kaydedildi.';
+      await loadClassPresident();
     });
   }
 
@@ -1244,6 +1370,102 @@
         const { error } = await supabase.rpc('decline_duel', { p_duel_id: btn.dataset.duel });
         if(error){ alert(error.message); return; }
         await loadIncomingDuels();
+      });
+    });
+  }
+
+  // ---------- CONTRACTS (Vanitas no Carte temalı sözleşme sistemi) ----------
+  document.getElementById('contractForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('contractMsg');
+    msg.className = 'msg'; msg.textContent = '';
+
+    const partner = document.getElementById('contractPartner').value.trim();
+    const vow = document.getElementById('contractVow').value.trim();
+    if(!partner || !vow){ return; }
+
+    const { error } = await supabase.rpc('propose_contract', { p_partner_username: partner, p_vow: vow });
+    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
+
+    msg.classList.add('ok'); msg.textContent = 'Sayfa gönderildi. Kabul etmesini bekle.';
+    document.getElementById('contractForm').reset();
+    await loadContracts();
+  });
+
+  async function loadContracts(){
+    await Promise.all([loadIncomingContracts(), loadActiveContracts()]);
+  }
+
+  async function loadIncomingContracts(){
+    const box = document.getElementById('incomingContracts');
+    const { data, error } = await supabase
+      .from('contracts')
+      .select('*, initiator:profiles!contracts_initiator_id_fkey(username)')
+      .eq('partner_id', currentUser.id)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+
+    if(error || !data || data.length === 0){ box.innerHTML = '<div class="empty">Bekleyen teklif yok.</div>'; return; }
+
+    box.innerHTML = data.map(c => `
+      <div class="shop-item" style="margin-bottom:6px; align-items:flex-start;">
+        <div class="info">
+          <div class="t">${escapeHtml(c.initiator?.username || 'Bilinmeyen')}</div>
+          <div class="d">"${escapeHtml(c.vow)}"</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-shrink:0;">
+          <button class="btn accept-contract-btn" data-contract="${c.id}" style="width:auto;">Kabul Et</button>
+          <button class="btn decline-contract-btn" data-contract="${c.id}" style="width:auto; background:transparent; border:1px solid var(--line); color:var(--ink-dim);">Reddet</button>
+        </div>
+      </div>
+    `).join('');
+
+    box.querySelectorAll('.accept-contract-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const { error } = await supabase.rpc('respond_contract', { p_contract_id: btn.dataset.contract, p_accept: true });
+        if(error){ alert(error.message); return; }
+        await loadContracts();
+      });
+    });
+    box.querySelectorAll('.decline-contract-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const { error } = await supabase.rpc('respond_contract', { p_contract_id: btn.dataset.contract, p_accept: false });
+        if(error){ alert(error.message); return; }
+        await loadContracts();
+      });
+    });
+  }
+
+  async function loadActiveContracts(){
+    const box = document.getElementById('activeContracts');
+    const { data, error } = await supabase
+      .from('contracts')
+      .select('*, initiator:profiles!contracts_initiator_id_fkey(username), partner:profiles!contracts_partner_id_fkey(username)')
+      .or(`initiator_id.eq.${currentUser.id},partner_id.eq.${currentUser.id}`)
+      .eq('status', 'active')
+      .order('created_at', { ascending: false });
+
+    if(error || !data || data.length === 0){ box.innerHTML = '<div class="empty">Henüz aktif sözleşmen yok.</div>'; return; }
+
+    box.innerHTML = data.map(c => {
+      const otherName = c.initiator_id === currentUser.id ? c.partner?.username : c.initiator?.username;
+      return `
+      <div class="shop-item" style="margin-bottom:6px; align-items:flex-start;">
+        <div class="info">
+          <div class="t">${escapeHtml(otherName || 'Bilinmeyen')}</div>
+          <div class="d">"${escapeHtml(c.vow)}"</div>
+        </div>
+        <button class="btn break-contract-btn" data-contract="${c.id}" style="width:auto; background:transparent; border:1px solid var(--line); color:var(--ink-dim);">Sözleşmeyi Boz</button>
+      </div>
+    `;
+    }).join('');
+
+    box.querySelectorAll('.break-contract-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if(!confirm('Bu sözleşmeyi bozmak istediğine emin misin? Bu geri alınamaz.')) return;
+        const { error } = await supabase.rpc('break_contract', { p_contract_id: btn.dataset.contract });
+        if(error){ alert(error.message); return; }
+        await loadContracts();
       });
     });
   }
@@ -1991,6 +2213,12 @@
       .subscribe();
     supabase.channel('public:duels')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'duels' }, () => { if(currentUser) loadIncomingDuels(); })
+      .subscribe();
+    supabase.channel('public:contracts')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'contracts' }, () => { if(currentUser) loadContracts(); })
+      .subscribe();
+    supabase.channel('public:president_votes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'president_votes' }, () => { if(currentUser) loadClassPresident(); })
       .subscribe();
     supabase.channel('public:announcements')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'announcements' }, () => { if(currentUser) loadAnnouncements(); })
