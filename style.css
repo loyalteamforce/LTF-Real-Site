@@ -1273,3 +1273,77 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 @media (max-width: 640px){
   #globeCanvas{ opacity: 0.85; }
 }
+/* ======================================================================
+   LIQUID METAL BUTTON — sıvı metal / krom düğme efekti
+   (site genelindeki tüm .btn düğmelerine uygulanır)
+   ====================================================================== */
+.btn{
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 100px;
+  color: #0a0f16;
+  background:
+    linear-gradient(120deg,
+      #6f7378 0%, #d8dadd 14%, #9a9ea3 28%, #f2f4f6 40%,
+      #cfd2d5 52%, #7fa3c4 64%, #eef2f5 76%, #8b8f93 90%, #6f7378 100%);
+  background-size: 280% 280%;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.4),
+    0 10px 22px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -3px 5px rgba(0,0,0,0.28);
+  transition: box-shadow 0.25s ease, transform 0.2s cubic-bezier(.34,1.56,.64,1), filter 0.25s ease;
+  animation: liquidMetalFlow 7s ease-in-out infinite;
+  will-change: background-position;
+}
+.btn::before{
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none; border-radius:inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.05) 30%, rgba(0,0,0,0.08) 70%, rgba(0,0,0,0.22) 100%);
+  mix-blend-mode: overlay;
+}
+.btn > *{ position:relative; z-index:1; }
+@keyframes liquidMetalFlow{
+  0%,100%{ background-position: 0% 50%; }
+  50%{ background-position: 100% 50%; }
+}
+.btn:hover{
+  filter: brightness(1.1) saturate(1.12);
+  transform: translateY(-2px) scale(1.015);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.45),
+    0 16px 32px rgba(0,0,0,0.45),
+    0 0 20px rgba(191,227,255,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    inset 0 -3px 5px rgba(0,0,0,0.3);
+  animation-duration: 2s;
+}
+.btn:active{
+  transform: translateY(0) scale(0.965);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.5),
+    0 4px 10px rgba(0,0,0,0.4),
+    inset 0 3px 8px rgba(0,0,0,0.45);
+  filter: brightness(0.97);
+}
+.btn:disabled{
+  animation-play-state: paused;
+  filter: grayscale(0.55) brightness(0.75);
+  transform:none;
+}
+/* eski düz "sweep" parlamasını iptal et — yerini akışkan metal + ripple alıyor */
+.btn::after{ content: none; }
+
+.btn-ripple{
+  position:absolute; z-index:0; border-radius:50%; pointer-events:none;
+  background: radial-gradient(circle, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0) 68%);
+  transform: translate(-50%,-50%) scale(0);
+  animation: btnRipple 0.65s ease-out forwards;
+}
+@keyframes btnRipple{
+  0%{ transform: translate(-50%,-50%) scale(0); opacity:0.65; }
+  100%{ transform: translate(-50%,-50%) scale(3.2); opacity:0; }
+}
+@media (prefers-reduced-motion: reduce){
+  .btn{ animation:none; background-position:0 50%; }
+}

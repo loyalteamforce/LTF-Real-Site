@@ -298,5 +298,22 @@
   });
 </script>
 
+<script>
+  // ---------- LIQUID METAL BUTTON: tıklama dalgası (ripple) ----------
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.btn');
+    if(!btn || btn.disabled) return;
+    var rect = btn.getBoundingClientRect();
+    var size = Math.max(rect.width, rect.height);
+    var ripple = document.createElement('span');
+    ripple.className = 'btn-ripple';
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left) + 'px';
+    ripple.style.top = (e.clientY - rect.top) + 'px';
+    btn.appendChild(ripple);
+    setTimeout(function(){ ripple.remove(); }, 700);
+  });
+</script>
+
 </body>
 </html>
