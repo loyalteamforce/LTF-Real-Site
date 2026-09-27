@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="shortcut icon" href="favicon.ico">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 
@@ -162,8 +162,8 @@
 
         var depth = (z2 + 1) / 2; // 0 arka, 1 ön
         var twinkle = 0.85 + Math.sin(t * 0.001 + p.tw) * 0.15;
-        var alpha = (0.10 + depth * 0.75) * twinkle;
-        var size = (0.5 + depth * 1.6) * DPR;
+        var alpha = (0.22 + depth * 0.78) * twinkle;
+        var size = (0.9 + depth * 2.1) * DPR;
 
         ctx.beginPath();
         ctx.fillStyle = 'rgba(191,227,255,' + alpha.toFixed(3) + ')';
