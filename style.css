@@ -1183,9 +1183,10 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
 .auth-card > *{ position:relative; z-index:1; }
 
 .auth-card h1{
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Dancing Script', cursive;
   font-weight: 700;
-  letter-spacing: 3px;
+  font-size: 32px;
+  letter-spacing: 0.5px;
 }
 
 .tabs{

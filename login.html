@@ -6,7 +6,7 @@
 <title>Loyal Elite Force</title>
 <meta name="description" content="Loyal Elite Force birlik topluluğuna giriş yap veya kayıt ol.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700;800&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
@@ -82,6 +82,18 @@
 
   </div>
 </div>
+
+<script>
+  // Güvenlik ağı: modül script'i (Supabase importu, file:// üzerinden CORS,
+  // yavaş/başarısız ağ isteği vb. herhangi bir sebeple) hiç çalışmazsa
+  // yükleme ekranı sonsuza kadar açık kalıp arkasını (küreyi) gizlemesin.
+  window.__lefFallback = setTimeout(function(){
+    var loader = document.getElementById('appLoading');
+    var authView = document.getElementById('authView');
+    if(loader){ loader.classList.add('done'); setTimeout(function(){ loader.style.display = 'none'; }, 700); }
+    if(authView){ authView.style.display = 'flex'; }
+  }, 3000);
+</script>
 
 <script>
 (function(){
@@ -193,6 +205,7 @@
   }
 
   function showAuth(){
+    clearTimeout(window.__lefFallback);
     authView.style.display = 'flex';
     loader.classList.add('done');
     setTimeout(() => { loader.style.display = 'none'; }, 700);
@@ -202,6 +215,7 @@
   (async function boot(){
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      clearTimeout(window.__lefFallback);
       if(session){
         window.location.replace('app.html');
         return;
