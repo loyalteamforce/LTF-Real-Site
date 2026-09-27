@@ -1142,3 +1142,83 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
     background: var(--panel);
   }
 }
+
+/* ======================================================================
+   DÖNEN PARÇACIK KÜRESİ — giriş/kayıt kartının arkasında
+   ====================================================================== */
+#globeCanvas{
+  position: fixed; inset: 0; z-index: 0; display: block;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+/* Küreyi kenarlarda arka plana yumuşakça karıştıran vinyet */
+.globe-vignette{
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 38%, rgba(6,11,19,0.55) 72%, var(--bg) 100%);
+}
+#authView{ position: relative; z-index: 1; }
+#appLoading{ position: fixed; }
+
+@media (prefers-reduced-motion: reduce){
+  #globeCanvas{ opacity: 0.9; }
+}
+
+/* ======================================================================
+   GİRİŞ / KAYIT KARTI — YÜKSELTİLMİŞ CAM (GLASSMORPHISM) KALİTESİ
+   ====================================================================== */
+.auth-card{
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(160deg, rgba(28,48,74,0.55) 0%, rgba(10,19,31,0.62) 60%, rgba(8,15,25,0.68) 100%);
+  border: 1px solid rgba(191,227,255,0.16);
+  backdrop-filter: blur(26px) saturate(165%);
+  -webkit-backdrop-filter: blur(26px) saturate(165%);
+  box-shadow:
+    0 30px 70px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(255,255,255,0.03),
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    inset 0 0 50px rgba(90,160,230,0.06);
+}
+/* Üstten gelen ince cam parlaklığı */
+.auth-card::before{
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none; border-radius:inherit;
+  background: linear-gradient(165deg, rgba(255,255,255,0.12) 0%, transparent 42%);
+}
+/* Yavaşça kayan ışık çizgisi — camın üzerinde ışık oynuyormuş hissi */
+.auth-card::after{
+  content:''; position:absolute; top:-60%; left:-30%; width:55%; height:220%; z-index:0; pointer-events:none;
+  background: linear-gradient(75deg, transparent, rgba(255,255,255,0.07), transparent);
+  transform: rotate(18deg) translateX(-40%);
+  animation: authCardSheen 9s ease-in-out infinite;
+}
+@keyframes authCardSheen{
+  0%, 100%{ transform: rotate(18deg) translateX(-40%); }
+  50%{ transform: rotate(18deg) translateX(340%); }
+}
+.auth-card > *{ position:relative; z-index:1; }
+
+.tabs{
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(191,227,255,0.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.field input, .field textarea{
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(191,227,255,0.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.field input:focus, .field textarea:focus{
+  border-color: rgba(191,227,255,0.55);
+  background: rgba(255,255,255,0.07);
+  box-shadow: 0 0 0 3px rgba(90,160,230,0.14);
+}
+
+@media (max-width: 640px){
+  #globeCanvas{ opacity: 0.85; }
+}
