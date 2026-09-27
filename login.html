@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Giriş — Loyal Elite Force</title>
+<title>Loyal Elite Force</title>
 <meta name="description" content="Loyal Elite Force birlik topluluğuna giriş yap veya kayıt ol.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
@@ -74,15 +74,6 @@
           <button type="button" class="pw-toggle" data-target="regPassword2">👁</button>
         </div>
       </div>
-      <div class="field">
-        <label>Sınıf Seç</label>
-        <div id="classPicker" style="display:flex; gap:8px;">
-          <button type="button" class="btn" data-class="A" style="width:auto; flex:1;">A</button>
-          <button type="button" class="btn" data-class="B" style="width:auto; flex:1;">B</button>
-          <button type="button" class="btn" data-class="C" style="width:auto; flex:1;">C</button>
-          <button type="button" class="btn" data-class="D" style="width:auto; flex:1;">D</button>
-        </div>
-      </div>
       <button type="submit" class="btn" id="registerBtn">Kayıt Ol</button>
       <div class="msg" id="registerMsg"></div>
     </form>
@@ -98,9 +89,29 @@
   const CLASSES = ['A', 'B', 'C', 'D'];
   const CLASS_LIMIT = 25;
 
+  // Herkes rastgele bir sınıfa atanır; dolu olmayan sınıflar arasından
+  // rastgele seçilir, hepsi doluysa en az doluya düşer.
+  async function pickRandomClass(){
+    try {
+      const { data, error } = await supabase.from('profiles').select('class');
+      if(error || !data) throw error || new Error('no data');
+      const counts = {};
+      CLASSES.forEach(c => counts[c] = 0);
+      data.forEach(p => { if(p.class && counts[p.class] !== undefined) counts[p.class]++; });
+      const open = CLASSES.filter(c => counts[c] < CLASS_LIMIT);
+      if(open.length) return open[Math.floor(Math.random() * open.length)];
+      // hepsi doluysa en az doluyu seç
+      return CLASSES.reduce((a, b) => counts[a] <= counts[b] ? a : b);
+    } catch(e){
+      // sayım alınamazsa yine de rastgele bir sınıf ver
+      return CLASSES[Math.floor(Math.random() * CLASSES.length)];
+    }
+  }
+
   function showAuth(){
-    loader.style.display = 'none';
     authView.style.display = 'flex';
+    loader.classList.add('done');
+    setTimeout(() => { loader.style.display = 'none'; }, 700);
   }
 
   // ---------- BOOT: zaten girişliyse doğrudan app.html'e yolla ----------
@@ -124,7 +135,6 @@
       document.querySelectorAll('.form-block').forEach(f => f.classList.remove('active'));
       tab.classList.add('active');
       document.getElementById(tab.dataset.tab + 'Form').classList.add('active');
-      if(tab.dataset.tab === 'register') refreshClassAvailability();
     });
   });
 
@@ -137,34 +147,6 @@
       btn.classList.toggle('showing', !showing);
     });
   });
-
-  // ---------- CLASS PICKER ----------
-  let selectedClass = null;
-  document.querySelectorAll('#classPicker [data-class]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if(btn.disabled) return;
-      document.querySelectorAll('#classPicker [data-class]').forEach(b => b.style.outline = 'none');
-      selectedClass = btn.dataset.class;
-      btn.style.outline = '2px solid var(--silver-1)';
-    });
-  });
-
-  async function refreshClassAvailability(){
-    try {
-      const { data, error } = await supabase.from('profiles').select('class');
-      if(error || !data) return;
-      const counts = {};
-      CLASSES.forEach(c => counts[c] = 0);
-      data.forEach(p => { if(p.class && counts[p.class] !== undefined) counts[p.class]++; });
-      document.querySelectorAll('#classPicker [data-class]').forEach(btn => {
-        const full = counts[btn.dataset.class] >= CLASS_LIMIT;
-        btn.disabled = full;
-        btn.style.opacity = full ? '0.35' : '1';
-        btn.title = full ? 'Bu sınıf dolu' : '';
-        if(full && selectedClass === btn.dataset.class) selectedClass = null;
-      });
-    } catch(e){ /* sessiz geç, sınıf doluluk kontrolü ikincil bir özellik */ }
-  }
 
   // ---------- LOGIN ----------
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -219,17 +201,15 @@
       msg.classList.add('error'); msg.textContent = 'Şifreler eşleşmiyor.';
       return;
     }
-    if(!selectedClass){
-      msg.classList.add('error'); msg.textContent = 'Bir sınıf seç.';
-      return;
-    }
 
     btn.disabled = true; btn.textContent = 'Kayıt oluşturuluyor...';
+
+    const assignedClass = await pickRandomClass();
 
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email: usernameToEmail(username),
       password,
-      options: { data: { username, class: selectedClass } }
+      options: { data: { username, class: assignedClass } }
     });
 
     if(signUpError){
@@ -246,7 +226,7 @@
       await supabase.from('profiles').upsert({
         id: signUpData.user.id,
         username,
-        class: selectedClass,
+        class: assignedClass,
         rank: 'Üye'
       }, { onConflict: 'id' });
     }
