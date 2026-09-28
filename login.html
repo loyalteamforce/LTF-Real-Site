@@ -131,7 +131,7 @@
   import { mountEtchedAccretion } from './etched-accretion.js';
   try {
     const bg = document.querySelector('.cosmic-bg');
-    if (bg && mountEtchedAccretion(bg)) {
+    if (bg && mountEtchedAccretion(bg, window.innerWidth < window.innerHeight ? { center: [0.5, 0.14], holeSize: 0.045 } : { center: [0.2, 0.48] })) {
       bg.querySelectorAll('.flow-paths, .cosmic-beam, .cosmic-arc').forEach(el => el.style.display = 'none');
     }
   } catch(e){ console.warn('Arka plan yüklenemedi:', e); }
