@@ -3,8 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Loyal Elite Force</title>
-<meta name="description" content="Loyal Elite Force birlik topluluğuna giriş yap veya kayıt ol.">
+<title>Giriş Yap / Kayıt Ol | Loyal Elite Force (LTF)</title>
+<meta name="description" content="Loyal Elite Force (Loyal Team Force / LTF) birlik topluluğuna giriş yap veya kayıt ol.">
+<link rel="canonical" href="https://loyalteamforce.com/login.html">
+<meta property="og:title" content="Loyal Elite Force (LTF) | Giriş Yap">
+<meta property="og:description" content="Loyal Elite Force (Loyal Team Force) birlik topluluğuna giriş yap veya kayıt ol.">
+<meta property="og:image" content="https://loyalteamforce.com/favicon-512x512.png">
+<meta property="og:url" content="https://loyalteamforce.com/login.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700;800&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -13,7 +18,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="shortcut icon" href="favicon.ico">
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
 
@@ -119,6 +124,17 @@
   buildPaths(1);
   buildPaths(-1);
 })();
+</script>
+
+<script type="module">
+  // Mavi kara delik arka planı (WebGL2). Başarısız olursa eski akan çizgiler kalır.
+  import { mountEtchedAccretion } from './etched-accretion.js';
+  try {
+    const bg = document.querySelector('.cosmic-bg');
+    if (bg && mountEtchedAccretion(bg)) {
+      bg.querySelectorAll('.flow-paths, .cosmic-beam, .cosmic-arc').forEach(el => el.style.display = 'none');
+    }
+  } catch(e){ console.warn('Arka plan yüklenemedi:', e); }
 </script>
 
 <script>
