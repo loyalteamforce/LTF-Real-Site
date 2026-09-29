@@ -5,7 +5,8 @@
      hemen üstünde ayrı bir yüzen çubuk; menüyle çakışmaz.
    - Sayfa içeriğine alt boşluk eklendi; buton/form menünün
      arkasında kalmaz.
-   - Yeni düğmeler: Bildirim (okunmamış sayısıyla) ve Çıkış.
+   - Yeni düğme: Bildirim (okunmamış sayısıyla). Çıkış düğmesi kaldırıldı.
+   - Menü ekranın en dibine yapışık; altında hiçbir şey görünmez.
    style.css'ten SONRA, nav-glow.js'ten ÖNCE yüklenmeli.
    ============================================================ */
 .nav-icon svg{ width:21px; height:21px; display:block; fill:none; stroke:currentColor;
@@ -27,20 +28,22 @@
 
   /* ---- ANA MENÜ: en altta, tam genişlik ---- */
   .sidebar-nav{
-    position:fixed; left:8px; right:8px; bottom:calc(var(--dock-gap) + env(safe-area-inset-bottom));
+    position:fixed; left:0; right:0; bottom:0;
     transform:none; width:auto; max-width:none;
     display:flex !important; flex-direction:row !important; flex-wrap:nowrap;
-    align-items:center; justify-content:space-between; gap:0; padding:5px 6px;
-    height:var(--dock-h); margin:0;
-    border-radius:26px; border:1px solid rgba(140,195,240,0.22);
-    background: rgba(10,18,32,0.72);
+    align-items:center; justify-content:space-between; gap:0;
+    box-sizing:border-box; margin:0;
+    padding:5px 10px calc(5px + env(safe-area-inset-bottom));
+    height:calc(var(--dock-h) + env(safe-area-inset-bottom));
+    border-radius:24px 24px 0 0; border:1px solid rgba(140,195,240,0.22); border-bottom:none;
+    background: rgba(8,14,26,0.94);
     backdrop-filter: blur(22px) saturate(1.4); -webkit-backdrop-filter: blur(22px) saturate(1.4);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
+    box-shadow: 0 -8px 28px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
     overflow:visible; max-height:none; z-index:40;
   }
 
   .nav-glow{
-    position:absolute; top:50%; left:0; width:54px; height:54px;
+    position:absolute; top:31px; left:0; width:54px; height:54px;
     transform: translate(-50%,-50%); border-radius:50%; pointer-events:none;
     background: radial-gradient(circle, rgba(79,140,255,0.95) 0%, rgba(47,107,255,0.55) 45%, transparent 72%);
     filter: blur(9px); opacity:0;
@@ -65,12 +68,11 @@
   .nav-icon{ font-size:0; }
   .nav-label{ opacity:.85; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
   .nav-btn.active .nav-label{ opacity:1; }
-  #navLogoutBtn{ color:#ff8f9b; }
 
   /* ---- ALT SEKMELER: menünün hemen üstünde ayrı yüzen çubuk ---- */
   .subnav{
     position:fixed !important; left:8px; right:8px; top:auto !important;
-    bottom:calc(var(--dock-gap) + var(--dock-h) + 8px + env(safe-area-inset-bottom));
+    bottom:calc(var(--dock-h) + 8px + env(safe-area-inset-bottom));
     transform:none; width:auto; margin:0 !important;
     flex-direction:row; flex-wrap:nowrap; align-items:center; justify-content:flex-start; gap:6px;
     padding:6px; border-radius:999px; z-index:39;
@@ -88,7 +90,7 @@
   .subnav-btn.active{ background:rgba(79,140,255,0.22); border-color:rgba(140,195,240,0.55); color:#fff; }
 
   /* ---- İçerik menülerin arkasında kalmasın ---- */
-  .main-area{ padding-bottom:calc(var(--dock-h) + 90px + env(safe-area-inset-bottom)) !important; }
+  .main-area{ padding-bottom:calc(var(--dock-h) + 84px + env(safe-area-inset-bottom)) !important; }
 }
 @media (max-width: 380px){
   .nav-label{ font-size:8px; }

@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="stylesheet" href="style.css?v=7">
-<link rel="stylesheet" href="navpill.css?v=3">
+<link rel="stylesheet" href="navpill.css?v=4">
 </head>
 <body>
 
@@ -66,10 +66,8 @@
       <button class="nav-btn" data-category="account"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.6 3.6-5.4 7.5-5.4s6.7 1.8 7.5 5.4"/></svg></span><span class="nav-label">Profilim</span></button>
       <button class="nav-btn admin-only-btn" data-category="roster" style="display:none;"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M2.8 19.5c.7-3.2 3-4.8 6.2-4.8s5.5 1.6 6.2 4.8"/><path d="M16 5.6a3.1 3.1 0 0 1 0 5.8M18.2 14.9c1.6.6 2.7 2 3.1 4.6"/></svg></span><span class="nav-label">Tüm Üyeler</span></button>
       <button class="nav-btn nav-extra" id="navNotifBtn" type="button" aria-label="Bildirimler"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 21h4"/></svg><span class="nav-dot" id="navNotifDot" style="display:none;">0</span></span><span class="nav-label">Bildirim</span></button>
-      <button class="nav-btn nav-extra" id="navLogoutBtn" type="button" aria-label="Çıkış yap"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 8l-4 4 4 4M6 12h10"/></svg></span><span class="nav-label">Çıkış</span></button>
     </nav>
 
-    <button class="logout-btn" id="logoutBtn" style="width:calc(100% - 20px);">Çıkış Yap</button>
   </aside>
 
   <!-- ===================== MAIN AREA ===================== -->
@@ -423,9 +421,6 @@
             <label>Fotoğrafı Değiştir<input type="file" id="avatarFile" accept="image/*"></label>
           </div>
           <div id="profOaa" style="margin-top:14px;"></div>
-          <div class="mobile-profile-logout">
-            <button class="logout-btn" id="logoutBtnMobile" style="width:100%; margin-top:16px;">Çıkış Yap</button>
-          </div>
         </div>
       </div>
     </section>
@@ -722,14 +717,6 @@
     btn.addEventListener('click', () => showView(btn.dataset.view));
   });
 
-  // ---------- LOGOUT ----------
-  async function doLogout(){
-    try { await supabase.auth.signOut(); }
-    catch(e){ console.error(e); }
-    window.location.href = 'login.html';
-  }
-  document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
-  document.getElementById('logoutBtnMobile')?.addEventListener('click', doLogout);
 
   function initials(name){ return (name || '?').trim().slice(0,2).toUpperCase(); }
 
@@ -2331,23 +2318,16 @@
   });
 </script>
 <script>
-  // ---------- ALT MENÜ EK DÜĞMELER: Bildirim + Çıkış ----------
+  // ---------- ALT MENÜ EK DÜĞMELER: Bildirim ----------
   (function(){
     var bell = document.getElementById('notifBell');
     var nBtn = document.getElementById('navNotifBtn');
-    var lBtn = document.getElementById('navLogoutBtn');
     var badge = document.getElementById('notifBadge');
     var dot = document.getElementById('navNotifDot');
     if(nBtn && bell) nBtn.addEventListener('click', function(){
       bell.click();
       var panel = document.getElementById('notifPanel');
       if(panel && panel.style.display !== 'none') window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    if(lBtn) lBtn.addEventListener('click', function(){
-      if(confirm('Çıkış yapmak istiyor musun?')){
-        var real = document.getElementById('logoutBtn');
-        if(real) real.click();
-      }
     });
     function syncDot(){
       if(!badge || !dot) return;
