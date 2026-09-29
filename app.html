@@ -20,6 +20,9 @@
     animation:none !important; transform:none !important; transition:none !important;
   }
   /* Waves arka planı açıkken sayfa katmanları şeffaf olsun ki dalgalar görünsün */
+  /* Eski sabit arka plan (Marine Foam vb.) html/body ::before/::after ile çiziliyorsa dalgaların üstünü kapatmasın */
+  html.waves-on::before, html.waves-on::after{ display:none !important; }
+  html.waves-on body::before, html.waves-on body::after{ background:none !important; }
   html.waves-on, html.waves-on body, html.waves-on .app-shell, html.waves-on .main-area{
     background:transparent !important; background-image:none !important;
   }
