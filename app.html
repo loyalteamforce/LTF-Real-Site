@@ -14,6 +14,16 @@
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="stylesheet" href="style.css?v=7">
 <link rel="stylesheet" href="navpill.css?v=4">
+<style>
+  /* Sol üstteki logo dönmesin */
+  .sidebar-brand img, .sidebar-brand img::before, .sidebar-brand img::after{
+    animation:none !important; transform:none !important; transition:none !important;
+  }
+  /* Waves arka planı açıkken sayfa katmanları şeffaf olsun ki dalgalar görünsün */
+  html.waves-on, html.waves-on body, html.waves-on .app-shell, html.waves-on .main-area{
+    background:transparent !important; background-image:none !important;
+  }
+</style>
 </head>
 <body>
 
@@ -2339,5 +2349,9 @@
   })();
 </script>
 <script src="nav-glow.js?v=1"></script>
+<script type="module">
+  import { mountWavesBackground } from './waves-background.js';
+  try { mountWavesBackground({ scrim: 0.55 }); } catch(e){ console.warn('Waves arka planı yüklenemedi:', e); }
+</script>
 </body>
 </html>
