@@ -584,7 +584,10 @@ main.content{ max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
   .sidebar{
     width:100%; height:auto; position:sticky; top:0; z-index:20;
     flex-direction:column; flex-wrap:nowrap;
-    background: rgba(16,17,19,0.95); backdrop-filter: blur(8px);
+    background: rgba(16,17,19,0.97);
+    /* backdrop-filter kasten kaldırıldı: içindeki position:fixed .sidebar-nav
+       (alt menü) için yeni bir konumlama referansı oluşturuyor, bu yüzden alt
+       menü ekranın altına değil bu sticky üst çubuğun konumuna sabitleniyordu. */
   }
   .sidebar-brand{ flex-direction:row; padding:12px 14px; gap:10px; border-bottom:none; }
   .sidebar-brand img{ width:32px; height:32px; }
@@ -1421,3 +1424,17 @@ html::after{
    (akan çizgiler, yıldız tozu ve ışın korundu) */
 .cosmic-bg{ background: transparent; }
 .cosmic-arc{ display:none; }
+
+/* ============================================================
+   MOBİL ALT MENÜ KONUM DÜZELTMESİ
+   .sidebar üzerinde (buzlu cam temasından gelen) backdrop-filter,
+   içindeki position:fixed .sidebar-nav (alt menü) için yeni bir
+   konumlama referansı oluşturuyor; bu yüzden mobilde alt menü
+   ekranın altına değil, sticky üst çubuğun (.sidebar) konumuna
+   sabitleniyordu. Dosyada .sidebar birden fazla yerde tanımlı
+   olduğundan, kaynak sırasından bağımsız kesin çözüm için burada
+   !important ile kapatılıyor.
+   ============================================================ */
+@media (max-width: 760px){
+  .sidebar{ backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
+}
