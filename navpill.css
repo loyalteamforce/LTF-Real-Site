@@ -1,30 +1,46 @@
 /* ============================================================
-   MOBİL ALT MENÜ — LumaBar tarzı, mavi
-   Yüzen cam kapsül + aktif ikonun altında kayan mavi ışık.
-   Sadece mobilde (≤760px) çalışır; masaüstü kenar çubuğu aynen kalır.
+   MOBİL ALT MENÜ v3 — LumaBar tarzı, mavi
+   - Menü ekranın en altına indi ve tam genişliğe yayıldı.
+   - Alt sekmeler (Puanlarım / İşlem Geçmişi...) artık menünün
+     hemen üstünde ayrı bir yüzen çubuk; menüyle çakışmaz.
+   - Sayfa içeriğine alt boşluk eklendi; buton/form menünün
+     arkasında kalmaz.
+   - Yeni düğmeler: Bildirim (okunmamış sayısıyla) ve Çıkış.
    style.css'ten SONRA, nav-glow.js'ten ÖNCE yüklenmeli.
    ============================================================ */
 .nav-icon svg{ width:21px; height:21px; display:block; fill:none; stroke:currentColor;
   stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.nav-icon{ position:relative; }
+.nav-dot{
+  position:absolute; top:-5px; right:-8px; min-width:15px; height:15px; padding:0 4px;
+  border-radius:999px; background:#ff4d5e; color:#fff; font-size:9px; font-weight:700; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 0 2px rgba(10,18,32,0.9);
+}
+/* Ek düğmeler masaüstü kenar çubuğunda görünmez */
+.nav-extra{ display:none !important; }
 
 @media (max-width: 760px){
+  :root{ --dock-h: 62px; --dock-gap: 6px; }
+
+  .nav-extra{ display:flex !important; }
+
+  /* ---- ANA MENÜ: en altta, tam genişlik ---- */
   .sidebar-nav{
-    position:fixed; left:50%; right:auto; bottom:calc(14px + env(safe-area-inset-bottom));
-    transform: translateX(-50%);
-    width:max-content; max-width:calc(100% - 24px);
+    position:fixed; left:8px; right:8px; bottom:calc(var(--dock-gap) + env(safe-area-inset-bottom));
+    transform:none; width:auto; max-width:none;
     display:flex !important; flex-direction:row !important; flex-wrap:nowrap;
-    align-items:center; justify-content:center; gap:2px; padding:7px;
-    height:auto; margin:0;
-    border-radius:999px; border:1px solid rgba(140,195,240,0.22);
-    background: rgba(10,18,32,0.55);
-    backdrop-filter: blur(20px) saturate(1.4); -webkit-backdrop-filter: blur(20px) saturate(1.4);
-    box-shadow: 0 12px 36px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
+    align-items:center; justify-content:space-between; gap:0; padding:5px 6px;
+    height:var(--dock-h); margin:0;
+    border-radius:26px; border:1px solid rgba(140,195,240,0.22);
+    background: rgba(10,18,32,0.72);
+    backdrop-filter: blur(22px) saturate(1.4); -webkit-backdrop-filter: blur(22px) saturate(1.4);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
     overflow:visible; max-height:none; z-index:40;
   }
 
-  /* kayan parlak gösterge — konumu nav-glow.js tarafından ayarlanır */
   .nav-glow{
-    position:absolute; top:50%; left:0; width:52px; height:52px;
+    position:absolute; top:50%; left:0; width:54px; height:54px;
     transform: translate(-50%,-50%); border-radius:50%; pointer-events:none;
     background: radial-gradient(circle, rgba(79,140,255,0.95) 0%, rgba(47,107,255,0.55) 45%, transparent 72%);
     filter: blur(9px); opacity:0;
@@ -34,11 +50,11 @@
 
   .nav-group-label{ display:none; }
   .nav-btn{
-    position:relative; z-index:1; flex:0 0 auto;
-    width:46px; height:46px; padding:0 !important;
-    flex-direction:column; align-items:center; justify-content:center; gap:1px;
-    border-radius:50%; border-left:none !important; background:transparent;
-    color: var(--silver-2); font-size:8.5px; font-weight:600; letter-spacing:.2px;
+    position:relative; z-index:1; flex:1 1 0; min-width:0; max-width:72px;
+    height:52px; padding:0 !important;
+    flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    border-radius:18px; border-left:none !important; background:transparent;
+    color: var(--silver-2); font-size:9px; font-weight:600; letter-spacing:.2px;
     transition: color .25s ease, transform .25s cubic-bezier(.3,.9,.3,1);
     -webkit-tap-highlight-color: transparent;
   }
@@ -47,12 +63,36 @@
   .nav-btn.active{ color:#fff; transform: translateY(-3px) scale(1.06); }
   .nav-btn.active .nav-icon{ filter: drop-shadow(0 0 6px rgba(120,170,255,0.9)); }
   .nav-icon{ font-size:0; }
-  .nav-label{ opacity:.85; }
+  .nav-label{ opacity:.85; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
   .nav-btn.active .nav-label{ opacity:1; }
+  #navLogoutBtn{ color:#ff8f9b; }
+
+  /* ---- ALT SEKMELER: menünün hemen üstünde ayrı yüzen çubuk ---- */
+  .subnav{
+    position:fixed !important; left:8px; right:8px; top:auto !important;
+    bottom:calc(var(--dock-gap) + var(--dock-h) + 8px + env(safe-area-inset-bottom));
+    transform:none; width:auto; margin:0 !important;
+    flex-direction:row; flex-wrap:nowrap; align-items:center; justify-content:flex-start; gap:6px;
+    padding:6px; border-radius:999px; z-index:39;
+    border:1px solid rgba(140,195,240,0.18);
+    background: rgba(10,18,32,0.72);
+    backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  .subnav::-webkit-scrollbar{ display:none; }
+  .subnav-btn{
+    flex:0 0 auto; white-space:nowrap; padding:8px 14px; border-radius:999px;
+    font-size:12px; -webkit-tap-highlight-color: transparent;
+  }
+  .subnav-btn.active{ background:rgba(79,140,255,0.22); border-color:rgba(140,195,240,0.55); color:#fff; }
+
+  /* ---- İçerik menülerin arkasında kalmasın ---- */
+  .main-area{ padding-bottom:calc(var(--dock-h) + 90px + env(safe-area-inset-bottom)) !important; }
 }
-@media (max-width: 360px){
-  .nav-btn{ width:42px; height:42px; }
-  .nav-glow{ width:46px; height:46px; }
+@media (max-width: 380px){
+  .nav-label{ font-size:8px; }
+  .subnav-btn{ padding:7px 11px; font-size:11.5px; }
 }
 @media (prefers-reduced-motion: reduce){
   .nav-btn, .nav-glow{ transition:none; }
