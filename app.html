@@ -2,2396 +2,346 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Loyal Elite Force</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="shortcut icon" href="favicon.ico">
-<link rel="stylesheet" href="style.css?v=7">
-<link rel="stylesheet" href="navpill.css?v=4">
-<link rel="stylesheet" href="layout.css?v=1">
+<link rel="icon" href="favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@600;700&display=swap" rel="stylesheet">
 <style>
-  /* Sol üstteki logo dönmesin */
-  .sidebar-brand img, .sidebar-brand img::before, .sidebar-brand img::after{
-    animation:none !important; transform:none !important; transition:none !important;
-  }
-  /* Waves arka planı açıkken sayfa katmanları şeffaf olsun ki dalgalar görünsün */
-  /* Eski sabit arka plan (Marine Foam vb.) html/body ::before/::after ile çiziliyorsa dalgaların üstünü kapatmasın */
-  html.waves-on::before, html.waves-on::after{ display:none !important; }
-  html.waves-on body::before, html.waves-on body::after{ background:none !important; }
-  html.waves-on, html.waves-on body, html.waves-on .app-shell, html.waves-on .main-area{
-    background:transparent !important; background-image:none !important;
-  }
+:root{--card:#0c1425;--line:rgba(120,160,255,.17);--ink:#eef2fb;--dim:#8a96b1;--red:#d1123f;--red2:#8f0d2c;--blue:#5b8cff;--gold:#e6be5a;--serif:'Noto Serif',serif;--sans:'Noto Sans',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:radial-gradient(120% 60% at 50% 0,#10204a 0,#060a14 60%) fixed #060a14;color:var(--ink);font:400 14px var(--sans);min-height:100vh}
+#app{width:100%;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:84px}
+h1,h2,.brand{font-family:var(--serif)}
+.top{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;background:rgba(6,10,20,.93);backdrop-filter:blur(12px)}
+.top img{width:34px;height:34px}.brand{flex:1;font-weight:700;font-size:13px;letter-spacing:1.5px}.brand small{display:block;font:500 9px var(--sans);letter-spacing:1px;color:var(--dim)}
+.page{display:none;padding:14px}.page.on{display:block}
+.ph{display:flex;align-items:center;gap:10px;margin:-14px -14px 14px;padding:13px 14px;border-bottom:1px solid var(--line)}
+.ph h2{font-size:17px}.ph small{display:block;font-size:10px;color:var(--dim)}
+.back{background:none;border:none;color:var(--ink);font-size:24px;cursor:pointer;line-height:1}
+.hero{height:200px;border-radius:14px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:flex-end;padding:16px 18px;background:linear-gradient(180deg,transparent 35%,rgba(6,10,20,.92)),url(hero.jpg) 45% center/cover no-repeat;margin-bottom:12px}
+.hero h1{font-size:19px;line-height:1.3;text-shadow:0 2px 10px #000}.hero p{margin-top:4px;font-size:12.5px;color:#d5dcee;text-shadow:0 1px 6px #000}
+.pts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.box{border:1px solid var(--line);background:linear-gradient(160deg,rgba(28,48,92,.5),var(--card));border-radius:14px;padding:12px 14px}
+.box .l{font-size:12px;font-weight:600}.box .l small{display:block;color:var(--dim);font-size:10px;font-weight:400}
+.box .v{font-weight:700;font-size:21px;margin-top:8px;font-variant-numeric:tabular-nums}.box .v em{font:500 11px var(--sans);color:var(--dim);font-style:normal;margin-left:3px}
+.sec{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:14px;margin-bottom:12px}
+.st{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font:700 14px var(--serif)}
+.st span:first-child:before{content:'';display:inline-block;width:4px;height:15px;background:var(--red);transform:skewX(-18deg);margin-right:9px;vertical-align:-2px}
+.st a{font:500 11px var(--sans);color:var(--dim);cursor:pointer}
+.row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}.row:last-child{border:0}
+.row .d{flex:0 0 74px;color:var(--dim);font-size:11.5px}.row .t{flex:1;min-width:0}.pos{color:#4fd08a;font-weight:600}.neg{color:#ff5f7e;font-weight:600}
+.link{cursor:pointer}.tag{font-size:10px;padding:2px 9px;border-radius:99px;background:var(--red)}
+.q{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.q button{background:rgba(20,34,64,.7);border:1px solid var(--line);border-radius:12px;padding:13px 4px;color:var(--ink);font:600 12px var(--sans);display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:.15s}
+.q button:hover{border-color:var(--red);transform:translateY(-2px)}
+svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:14px}.tabs span{flex:1;text-align:center;padding:10px 0;font-size:13px;color:var(--dim);cursor:pointer}.tabs .on{color:#fff;border-bottom:2px solid var(--red)}
+.pane{display:none}.pane.on{display:block}
+.ring{width:132px;height:132px;border-radius:50%;margin:8px auto 14px;border:5px solid rgba(91,140,255,.25);border-top-color:var(--blue);border-right-color:var(--blue);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(91,140,255,.25)}
+.ring b{font:700 34px var(--serif)}.ring small{color:var(--dim);font-size:11px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.g2 .box{text-align:center}.g2 .box .v{font-size:28px;margin:6px 0 2px}.g2 small{color:var(--dim);font-size:11px}
+.rk{display:flex;align-items:center;gap:12px;padding:13px;border-radius:10px;border:1px solid var(--line);background:var(--card);margin-bottom:9px;border-left:3px solid var(--blue)}
+.rk.first{border-color:var(--gold);background:rgba(230,190,90,.07)}.rk b{flex:1;font:700 15px var(--serif)}.rk span{font-weight:600;font-variant-numeric:tabular-nums}
+.tb{width:100%;border-collapse:collapse;font-size:13px}.tb td,.tb th{padding:9px 6px;text-align:right;border-bottom:1px solid rgba(255,255,255,.06)}.tb th{color:var(--dim);font-weight:500;font-size:11px}.tb td:first-child,.tb th:first-child{text-align:left}
+.ex{border:1px solid var(--red);border-radius:6px;padding:8px 12px;font-size:12px;background:rgba(209,18,63,.14);margin-bottom:12px}
+.cd{border:1px solid var(--red);background:rgba(209,18,63,.1);border-radius:12px;padding:12px;text-align:center;margin:12px 0}.cd b{font-size:24px;color:#ff6f8f}
+.cta{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(90deg,var(--red2),var(--red));color:#fff;font:700 14.5px var(--sans);margin-top:10px;cursor:pointer}.cta:disabled{opacity:.5}
+input{width:100%;padding:11px 12px;margin-bottom:10px;border-radius:10px;border:1px solid var(--line);background:#0a111e;color:var(--ink);font:14px var(--sans)}input:focus{outline:none;border-color:var(--red)}
+label{font-size:12px;color:var(--dim);display:block;margin-bottom:5px}.msg{margin-top:8px;font-size:12.5px;min-height:16px}.msg.ok{color:#4fd08a}.msg.err{color:#ff5f7e}
+.av{display:flex;gap:14px;align-items:center;margin-bottom:12px}.av i{width:64px;height:64px;border-radius:12px;background:#1a2440;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font:700 22px var(--serif)}
+.song{text-align:center}.song img{width:170px;height:170px;border-radius:50%;object-fit:cover;border:2px solid var(--line);margin:6px auto 14px;display:block}.song.play img{animation:sp 8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.pl{display:flex;align-items:center;gap:12px;margin-top:14px}.pl button{width:44px;height:44px;border-radius:50%;border:none;background:linear-gradient(120deg,var(--red2),var(--red));color:#fff;cursor:pointer}.bar{flex:1;height:5px;border-radius:9px;background:rgba(255,255,255,.12);overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--red)}
+.empty{padding:14px 0;text-align:center;color:var(--dim);font-size:13px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;display:flex;background:rgba(6,10,20,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:10}
+.nav button{flex:1;background:none;border:none;color:var(--dim);font:600 10px var(--sans);display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;position:relative}
+.nav button.on{color:var(--red)}.nav button.on:after{content:'';position:absolute;bottom:-8px;width:26px;height:2px;background:var(--red)}
+.side{display:none}
+
+/* ========== MASAÜSTÜ ========== */
+@media (min-width:900px){
+  #app{max-width:none;padding:0 0 0 250px}
+  .top,.nav,.back{display:none}
+  .side{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:250px;padding:22px 14px;border-right:1px solid var(--line);background:rgba(8,13,26,.96);z-index:10}
+  .side .logo{display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid var(--line);margin-bottom:14px}.side .logo img{width:40px}
+  .side button{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;margin-bottom:4px;border:none;border-radius:10px;background:none;color:var(--dim);font:600 13.5px var(--sans);cursor:pointer;text-align:left}
+  .side button:hover{background:rgba(255,255,255,.04);color:var(--ink)}
+  .side button.on{background:rgba(209,18,63,.16);color:#fff;box-shadow:inset 3px 0 0 var(--red)}
+  .side .me{margin-top:auto;padding:12px 8px 0;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim)}.side .me b{display:block;color:var(--ink);font-size:14px}
+  .page{padding:32px 40px;max-width:1180px}
+  .ph{margin:0 0 22px;padding:0 0 14px}.ph h2{font-size:24px}
+  .hero{height:300px;padding:26px 30px}.hero h1{font-size:30px}.hero p{font-size:15px}
+  #home.on{display:grid;grid-template-columns:1fr 1fr;gap:16px}#home .hero,#home .pts{grid-column:1/-1;margin:0}
+  #home .sec{margin:0}.pts .box .v{font-size:28px}
+  .q{grid-template-columns:repeat(3,1fr)}
+  #rank.on,#oaa.on,#exam.on,#profile.on,#points.on{max-width:820px}
+}
 </style>
 </head>
 <body>
+<div id="app">
 
-<svg width="0" height="0" style="position:absolute;">
-  <filter id="crestOutline" x="-30%" y="-30%" width="160%" height="160%">
-    <feMorphology in="SourceAlpha" operator="erode" radius="2.2" result="eroded"></feMorphology>
-    <feComposite in="SourceGraphic" in2="eroded" operator="out"></feComposite>
-  </filter>
-</svg>
+<aside class="side">
+  <div class="logo"><img src="crest.png" alt=""><div class="brand">LOYAL ELITE FORCE<small>Discipline · Loyalty · Strength</small></div></div>
+  <button data-go="home"><svg class="i" viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v9H4z"/></svg>Ana Sayfa</button>
+  <button data-go="news"><svg class="i" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/></svg>Duyurular</button>
+  <button data-go="points"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/></svg>Puanlarım</button>
+  <button data-go="oaa"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>OAA Değerlendirme</button>
+  <button data-go="rank"><svg class="i" viewBox="0 0 24 24"><path d="M4 18 3 7l5 4 4-6 4 6 5-4-1 11z"/></svg>Sınıf Sıralaması</button>
+  <button data-go="exam"><svg class="i" viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z"/></svg>Özel Sınav</button>
+  <button data-go="sched"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Program</button>
+  <button data-go="songs"><svg class="i" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>Şarkılarımız</button>
+  <button data-go="profile"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.6 3.6-5.4 7.5-5.4s6.7 1.8 7.5 5.4"/></svg>Profil</button>
+  <div class="me"><b class="u-name">—</b><span class="u-cls"></span><br><a class="link" style="color:#ff5f7e" data-logout>Çıkış Yap</a></div>
+</aside>
 
-<div id="appLoading">
-  <div class="crest-wrap">
-    <div class="ring"></div>
-    <img class="crest-img" id="loaderLogo" src="" alt="Loyal Elite Force">
-    <div class="sweep"></div>
+<div class="top"><img src="crest.png" alt=""><div class="brand">LOYAL ELITE FORCE<small>Discipline · Loyalty · Strength</small></div></div>
+
+<section class="page on" id="home">
+  <div class="hero"><h1>Hoş geldin,<br>Loyal Elite Force'a</h1><p>Burası yalnızca özel insanların toplandığı yer.</p></div>
+  <div class="pts">
+    <div class="box link" data-go="points"><div class="l">Kişisel Puan<small>Private Points</small></div><div class="v"><span id="hPts">—</span><em>pt</em></div></div>
+    <div class="box link" data-go="rank"><div class="l">Sınıf Puanı<small id="hCls">Class Points</small></div><div class="v"><span id="hClsPts">—</span><em>pt</em></div></div>
   </div>
-  <div class="brand"><h1>LOYAL ELITE FORCE</h1></div>
-</div>
-<div id="appError" style="display:none;"></div>
-
-<div class="app-shell" id="appShell" style="display:none;">
-
-  <!-- ===================== SIDEBAR ===================== -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <img src="crest.png" alt="logo">
-      <span>LOYAL ELITE FORCE</span>
-      <button class="notif-bell" id="notifBell" aria-label="Bildirimler">
-        🔔<span class="notif-badge" id="notifBadge" style="display:none;">0</span>
-      </button>
+  <div class="sec"><div class="st"><span>Son İşlemler</span><a data-go="history">Tümünü gör ›</a></div><div class="txlist"><div class="empty">Yükleniyor...</div></div></div>
+  <div class="sec"><div class="st"><span>Son Duyurular</span><a data-go="news">Tümünü gör ›</a></div><div class="annlist" data-n="3"><div class="empty">Yükleniyor...</div></div></div>
+  <div class="sec"><div class="st"><span>Hızlı Menü</span></div>
+    <div class="q">
+      <button data-go="points"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/></svg>Puanlarım</button>
+      <button data-go="oaa"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>OAA</button>
+      <button data-go="exam"><svg class="i" viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z"/></svg>Özel Sınav</button>
+      <button data-go="rank"><svg class="i" viewBox="0 0 24 24"><path d="M4 18 3 7l5 4 4-6 4 6 5-4-1 11z"/></svg>Sıralama</button>
+      <button data-go="songs"><svg class="i" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>Şarkılar</button>
+      <button data-go="profile"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.6 3.6-5.4 7.5-5.4s6.7 1.8 7.5 5.4"/></svg>Profil</button>
     </div>
-
-    <div class="notif-panel" id="notifPanel" style="display:none;">
-      <div class="notif-panel-head">BİLDİRİMLER</div>
-      <div id="notifList"><div class="empty">Bildirim yok.</div></div>
-    </div>
-
-    <div class="sidebar-me">
-      <div class="avatar" id="meAvatar">—</div>
-      <div class="who">
-        <div class="name" id="meName">—</div>
-        <div class="meta" id="meMeta">—</div>
-      </div>
-    </div>
-
-    <nav class="sidebar-nav">
-      <button class="nav-btn active" data-category="classes"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5 12 4l9 5.5"/><path d="M5 10v8M9.7 10v8M14.3 10v8M19 10v8"/><path d="M3 20h18"/></svg></span><span class="nav-label">Sınıflar</span></button>
-      <button class="nav-btn" data-category="economy"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><circle cx="16.5" cy="14.5" r="1.2"/></svg></span><span class="nav-label">Ekonomi</span></button>
-      <button class="nav-btn" data-category="examtask"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span><span class="nav-label">Sınav &amp; Görev</span></button>
-      <button class="nav-btn" data-category="account"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.6 3.6-5.4 7.5-5.4s6.7 1.8 7.5 5.4"/></svg></span><span class="nav-label">Profilim</span></button>
-      <button class="nav-btn admin-only-btn" data-category="roster" style="display:none;"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M2.8 19.5c.7-3.2 3-4.8 6.2-4.8s5.5 1.6 6.2 4.8"/><path d="M16 5.6a3.1 3.1 0 0 1 0 5.8M18.2 14.9c1.6.6 2.7 2 3.1 4.6"/></svg></span><span class="nav-label">Tüm Üyeler</span></button>
-      <button class="nav-btn nav-extra" id="navNotifBtn" type="button" aria-label="Bildirimler"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 21h4"/></svg><span class="nav-dot" id="navNotifDot" style="display:none;">0</span></span><span class="nav-label">Bildirim</span></button>
-    </nav>
-
-  </aside>
-
-  <!-- ===================== MAIN AREA ===================== -->
-  <main class="main-area">
-
-    <!-- Kategori içi alt sekmeler (yalnızca birden fazla sayfası olan kategorilerde görünür) -->
-    <div class="subnav" id="subnav-economy" style="display:none;">
-      <button class="subnav-btn active" data-view="points">Puanlarım</button>
-      <button class="subnav-btn" data-view="history">İşlem Geçmişi</button>
-      <button class="subnav-btn" data-view="cards">Kartlarım</button>
-      <button class="subnav-btn" data-view="auction">Müzayede</button>
-      <button class="subnav-btn" data-view="loans">Krediler</button>
-    </div>
-    <div class="subnav" id="subnav-examtask" style="display:none;">
-      <button class="subnav-btn active" data-view="exams">Sınavlar</button>
-      <button class="subnav-btn" data-view="tasks">Görevler</button>
-    </div>
-    <div class="subnav" id="subnav-account" style="display:none;">
-      <button class="subnav-btn active" data-view="profile">Profilim</button>
-      <button class="subnav-btn" data-view="guide">Rehber</button>
-      <button class="subnav-btn" data-view="trailer">Şarkılar</button>
-      <button class="subnav-btn" data-view="contracts">Sözleşmeler</button>
-    </div>
-
-    <!-- CLASSES VIEW -->
-    <section class="view active" id="view-classes">
-      <div class="section-title">SINIFLAR</div>
-      <div class="section-sub">Herkes bir sınıfa (A/B/C/D) dahildir, sınıf başına en fazla 25 kişi var. Sınıfını, diğer sınıfları ve kimin başkan olduğunu buradan görebilirsin.</div>
-
-      <div class="panel" style="margin-bottom:18px;">
-        <div class="panel-head"><h2>DUYURULAR</h2></div>
-        <div class="panel-body">
-          <div id="announcementCreatePanel" style="display:none; margin-bottom:14px;">
-            <form id="announcementForm">
-              <div class="field">
-                <label>Başlık</label>
-                <input type="text" id="announcementTitle" maxlength="120" required>
-              </div>
-              <div class="field">
-                <label>İçerik</label>
-                <input type="text" id="announcementContent" maxlength="500" required>
-              </div>
-              <button class="btn" type="submit">Yayınla</button>
-              <div class="msg" id="announcementMsg"></div>
-            </form>
-          </div>
-          <div id="announcementList"><div class="empty">Yükleniyor...</div></div>
-        </div>
-      </div>
-
-      <div class="class-table-tablet" style="margin-bottom:18px;">
-        <div class="class-table-crest" id="classTableCrest"></div>
-        <div class="class-table-heading">SINIF PUANLARI</div>
-        <div class="class-table-list" id="classRanking"><div class="empty">Yükleniyor...</div></div>
-      </div>
-
-      <div class="class-tabs" id="classTabs"></div>
-
-      <div class="panel" style="margin:14px 0 10px;">
-        <div class="panel-head"><h2>SINIF BAŞKANI</h2></div>
-        <div class="panel-body">
-          <div id="classPresidentBox"><div class="empty">Yükleniyor...</div></div>
-        </div>
-      </div>
-
-      <div class="member-grid" id="classMembers"></div>
-    </section>
-
-    <!-- EXAMS VIEW -->
-    <section class="view" id="view-exams">
-      <div class="section-title">SINAVLAR</div>
-      <div class="section-sub">Yönetici puan karşılığında bir sınav açar, üyeler puan ödeyerek katılır. Kazananlar tüm havuzu paylaşır + bonus alır; bazı sınavlarda kaybedenler bir alt sınıfa düşebilir.</div>
-
-      <div class="panel" id="examCreatePanel" style="display:none; margin-bottom:18px;">
-        <div class="panel-head"><h2>YENİ SINAV OLUŞTUR</h2></div>
-        <div class="panel-body">
-          <form id="examCreateForm">
-            <div class="field">
-              <label>Sınav Başlığı</label>
-              <input type="text" id="examTitle" required>
-            </div>
-            <div class="field">
-              <label>Açıklama / İçerik (isteğe bağlı)</label>
-              <textarea id="examDesc" rows="3" placeholder="Sınavda ne test ediliyor, kurallar neler..."></textarea>
-            </div>
-            <div class="field">
-              <label>Katılım Ücreti (puan)</label>
-              <input type="text" inputmode="numeric" id="examCost" placeholder="örn: 5000" required>
-            </div>
-            <div class="field">
-              <label>Son Katılım Tarihi (isteğe bağlı)</label>
-              <input type="datetime-local" id="examDeadline">
-            </div>
-            <div class="field" style="display:flex; align-items:center; gap:8px;">
-              <input type="checkbox" id="examDemote" style="width:auto;">
-              <label style="margin:0;">Kaybedenler sınıf düşürsün (koruma puanı yoksa)</label>
-            </div>
-            <button class="btn" type="submit">Sınavı Oluştur</button>
-            <div class="msg" id="examCreateMsg"></div>
-          </form>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head"><h2>AÇIK SINAVLAR</h2></div>
-        <div class="panel-body" id="openExams"><div class="empty">Yükleniyor...</div></div>
-      </div>
-
-      <div class="panel" style="margin-top:18px;">
-        <div class="panel-head"><h2>SONUÇLANAN SINAVLAR</h2></div>
-        <div class="panel-body" id="closedExams"><div class="empty">Yükleniyor...</div></div>
-      </div>
-    </section>
-
-    <!-- POINTS + SHOP VIEW -->
-    <section class="view" id="view-points">
-      <div class="page-head">
-        <div class="section-title">PUANLAR</div>
-        <div class="section-sub">30 günde bir 100.000 puan alırsın, görev tamamlayarak da kazanırsın. Puanını birine gönderebilir veya dükkanda harcayabilirsin.</div>
-      </div>
-
-      <div class="points-card">
-        <div class="pc-texture"></div>
-        <div class="pc-top">
-          <div class="pc-title">POINTS</div>
-          <img class="pc-crest" src="crest.png" alt="">
-        </div>
-        <div class="pc-chip">
-          <div class="pc-chip-lines"></div>
-        </div>
-        <div class="pc-number"><span id="pointsNum">0</span><span class="pc-pt">pt</span></div>
-        <div class="pc-bottom">
-          <div class="pc-holder">
-            <div class="pc-holder-lbl">Kart Sahibi</div>
-            <div class="pc-holder-name" id="pcHolderName">—</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Hızlı işlemler: ödül + puan gönder yan yana -->
-      <div class="grid-2 block-gap">
-        <div class="panel">
-          <div class="panel-head"><h2>GÜNLÜK ÖDÜL</h2></div>
-          <div class="panel-body">
-            <button class="btn claim-btn" id="claimBtn">30 Günlük Ödülü Al (+100.000)</button>
-            <div class="claim-note" id="claimNote"></div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head"><h2>PUAN GÖNDER</h2></div>
-          <div class="panel-body">
-            <form id="sendForm">
-              <div class="field">
-                <label>Kullanıcı Adı</label>
-                <input type="text" id="sendUsername" required>
-              </div>
-              <div class="field">
-                <label>Miktar</label>
-                <input type="text" inputmode="numeric" id="sendAmount" placeholder="örn: 5000" required>
-              </div>
-              <button class="btn" type="submit">Gönder</button>
-              <div class="msg" id="sendMsg"></div>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <!-- DÜKKAN: iki gruba ayrıldı -->
-      <div class="shop-title">DÜKKAN</div>
-      <div class="grid-2 shop-grid">
-
-        <div class="panel">
-          <div class="panel-head"><h2>HESAP &amp; UNVAN</h2></div>
-          <div class="panel-body">
-
-            <div class="shop-block">
-              <div class="shop-item">
-                <span class="si-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg></span>
-                <div class="info">
-                  <div class="t">Sınıf Değiştir</div>
-                  <div class="d">500.000 puan · <span id="changesLeft">3</span> hak kaldı</div>
-                </div>
-                <button class="btn btn-sm" id="openClassPicker">Satın Al</button>
-              </div>
-              <div class="class-picker" id="classPicker" style="display:none;"></div>
-              <div class="msg" id="shopMsg"></div>
-            </div>
-
-            <div class="shop-block">
-              <div class="shop-item">
-                <span class="si-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.4 6.8 19.2l1-5.9L3.5 9.2l5.9-.8z"/></svg></span>
-                <div class="info">
-                  <div class="t">Unvan Satın Al</div>
-                  <div class="d">Kıdemli Üye: 200.000 · Uzman Üye: 400.000 · Elit Üye: 600.000 · Efsanevi Üye: 1.000.000 puan</div>
-                </div>
-                <button class="btn btn-sm" id="openRankPicker">Satın Al</button>
-              </div>
-              <div class="class-picker" id="rankPicker" style="display:none;">
-                <button class="btn btn-sm" data-rank="Kıdemli Üye">Kıdemli Üye</button>
-                <button class="btn btn-sm" data-rank="Uzman Üye">Uzman Üye</button>
-                <button class="btn btn-sm" data-rank="Elit Üye">Elit Üye</button>
-                <button class="btn btn-sm" data-rank="Efsanevi Üye">Efsanevi Üye</button>
-              </div>
-              <div class="msg" id="rankMsg"></div>
-            </div>
-
-            <div class="shop-block">
-              <div class="shop-item">
-                <span class="si-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z"/></svg></span>
-                <div class="info">
-                  <div class="t">Koruma Puanı</div>
-                  <div class="d">300.000 puan · Sınavda düşme cezasından korur · sende: <span id="myProtectionCount">0</span></div>
-                </div>
-                <button class="btn btn-sm" id="buyProtectionBtn">Satın Al</button>
-              </div>
-              <div class="msg" id="protectionMsg"></div>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head"><h2>ŞANS &amp; REKABET</h2></div>
-          <div class="panel-body">
-
-            <div class="shop-block">
-              <div class="shop-item">
-                <span class="si-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11" rx="2"/><path d="M3.5 13h17M12 9v11M12 9c-2-4-6-3-5 0M12 9c2-4 6-3 5 0"/></svg></span>
-                <div class="info">
-                  <div class="t">Gizli Kutu</div>
-                  <div class="d">10.000 puan · rastgele ödül — hiç, küçük, orta, büyük ya da JACKPOT</div>
-                </div>
-                <button class="btn btn-sm" id="openLootboxBtn">Aç</button>
-              </div>
-              <div class="msg" id="lootboxMsg"></div>
-            </div>
-
-            <div class="shop-block">
-              <div class="shop-item">
-                <span class="si-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></span>
-                <div class="info">
-                  <div class="t">Puan Çal</div>
-                  <div class="d">Deneme: 20.000 puan · %50 şans · başarırsan hedefin %15'i</div>
-                </div>
-                <button class="btn btn-sm" id="openStealPicker">Saldır</button>
-              </div>
-              <form id="stealForm" class="shop-form" style="display:none;">
-                <div class="field">
-                  <label>Hedef Kullanıcı Adı</label>
-                  <input type="text" id="stealTarget" required>
-                </div>
-                <button class="btn" type="submit">Saldırıyı Başlat</button>
-              </form>
-              <div class="msg" id="stealMsg"></div>
-              <div class="claim-note" id="stealCooldownNote"></div>
-            </div>
-
-            <div class="shop-block">
-              <div class="shop-item">
-                <span class="si-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 5 9 9M14 5l-9 9M13 15l3 3M11 13l-3 6M19 19l-4-4M17 13l4 4"/></svg></span>
-                <div class="info">
-                  <div class="t">Düello</div>
-                  <div class="d">Birine meydan oku, o kabul ederse yazı-tura ile kazanan tüm bahsi alır</div>
-                </div>
-                <button class="btn btn-sm" id="openDuelForm">Meydan Oku</button>
-              </div>
-              <form id="duelForm" class="shop-form" style="display:none;">
-                <div class="field">
-                  <label>Rakip Kullanıcı Adı</label>
-                  <input type="text" id="duelOpponent" required>
-                </div>
-                <div class="field">
-                  <label>Bahis Miktarı</label>
-                  <input type="text" inputmode="numeric" id="duelWager" placeholder="örn: 20000" required>
-                </div>
-                <button class="btn" type="submit">Meydan Okumayı Gönder</button>
-              </form>
-              <div class="msg" id="duelMsg"></div>
-              <div id="incomingDuels"></div>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    
-<!-- CARDS VIEW -->
-    <section class="view" id="view-cards">
-      <div class="section-title">KARTLARIM</div>
-      <div class="section-sub" id="cardsSubtitle">Özel sınavlarda veya yönetici tarafından kazandığın kartlar burada. Kullanınca etkisi otomatik uygulanır, başka birine de gönderebilirsin.</div>
-
-      <div class="card-grid" id="myCardsList"><div class="empty">Yükleniyor...</div></div>
-    </section>
-
-    <!-- AUCTION VIEW -->
-    <section class="view" id="view-auction">
-      <div class="section-title">MÜZAYEDE</div>
-      <div class="section-sub">Yönetici bir ödül açar, herkes puanla teklif verir. En yüksek teklifi veren kazanır, puanı anında düşer.</div>
-
-      <div class="panel admin-only-block" id="auctionAdminPanel" style="display:none; margin-bottom:18px;">
-        <div class="panel-head"><h2>MÜZAYEDE AÇ</h2></div>
-        <div class="panel-body">
-          <form id="auctionCreateForm">
-            <div class="field"><label>Başlık</label><input type="text" id="auctionTitle" maxlength="80" required placeholder="ör. Sınıf başkanı önceliği"></div>
-            <div class="field"><label>Açıklama</label><input type="text" id="auctionDesc" maxlength="200" placeholder="isteğe bağlı"></div>
-            <div class="field"><label>Başlangıç Fiyatı</label><input type="number" id="auctionStart" min="0" step="1" required placeholder="ör. 1000"></div>
-            <button type="submit" class="btn">MÜZAYEDEYİ BAŞLAT</button>
-            <div class="msg" id="auctionCreateMsg"></div>
-          </form>
-        </div>
-      </div>
-
-      <div id="auctionList"><div class="empty">Yükleniyor...</div></div>
-    </section>
-
-    <!-- LOANS VIEW -->
-    <section class="view" id="view-loans">
-      <div class="section-title">KREDİLER</div>
-      <div class="section-sub">Yönetici sana faizli kredi açabilir, puan anında hesabına geçer. Borcunu istediğin an, istediğin kadar öderisin.</div>
-
-      <div class="panel admin-only-block" id="loanAdminPanel" style="display:none; margin-bottom:18px;">
-        <div class="panel-head"><h2>KREDİ VER</h2></div>
-        <div class="panel-body">
-          <form id="loanCreateForm">
-            <div class="field"><label>Kullanıcı Adı</label><input type="text" id="loanUsername" required placeholder="kullanıcı adı"></div>
-            <div class="field"><label>Ana Para (puan)</label><input type="number" id="loanPrincipal" min="0" step="1" required placeholder="ör. 5000"></div>
-            <div class="field"><label>Faiz Oranı (%)</label><input type="number" id="loanRate" min="0" step="1" required placeholder="ör. 20"></div>
-            <button type="submit" class="btn">KREDİYİ VER</button>
-            <div class="msg" id="loanCreateMsg"></div>
-          </form>
-        </div>
-      </div>
-
-      <div id="loanList"><div class="empty">Yükleniyor...</div></div>
-    </section>
-
-    <!-- HISTORY VIEW -->
-    <section class="view" id="view-history">
-      <div class="section-title">İŞLEM GEÇMİŞİ</div>
-      <div class="section-sub">Puanlarınla ilgili tüm hareketler — kimden geldi, kime gönderdin, ne zaman.</div>
-      <div class="panel">
-        <div class="panel-head">
-          <h2>HAREKETLER</h2>
-          <span class="count" id="historyCount">0 işlem</span>
-        </div>
-        <div class="panel-body" id="historyList"><div class="empty">Yükleniyor...</div></div>
-      </div>
-    </section>
-
-    <!-- TASKS VIEW -->
-    <section class="view" id="view-tasks">
-      <div class="section-title">GÖREVLER</div>
-      <div class="section-sub">Yönetici sana bir görev atar. Tamamladığında işaretlersin, görevin ödülü kadar puan kazanırsın. Günlük/haftalık görevler süresi dolunca kendiliğinden tekrar açılır.</div>
-      <div class="panel">
-        <div class="panel-head">
-          <h2>GÖREV LİSTESİ</h2>
-          <span class="count" id="taskCount">0 görev</span>
-        </div>
-        <div class="panel-body">
-          <form class="task-add" id="taskAddForm" style="display:none; flex-wrap:wrap;">
-            <input type="text" id="taskTarget" placeholder="Kullanıcı adı (kime)" style="flex:0 0 160px;" required>
-            <input type="text" id="taskInput" placeholder="Görev başlığı..." required>
-            <input type="number" id="taskReward" placeholder="Ödül (puan)" min="0" step="1" value="1000" style="flex:0 0 110px;" required>
-            <select id="taskRecurrence" style="flex:0 0 130px; padding:8px 10px; background:#0a1522; border:1px solid var(--line); border-radius:6px; color:var(--ink); font-family:'Rajdhani',sans-serif; font-size:14px;">
-              <option value="once">Tek seferlik</option>
-              <option value="daily">Günlük</option>
-              <option value="weekly">Haftalık</option>
-            </select>
-            <button type="submit">Ekle</button>
-          </form>
-          <div class="empty" id="taskAddHint" style="display:none; padding:10px 4px;">Görev eklemek sadece yöneticilere açık.</div>
-          <div id="taskList"><div class="empty">Yükleniyor...</div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- OWN PROFILE VIEW -->
-    <section class="view" id="view-profile">
-      <div class="section-title">PROFİLİM</div>
-      <div class="section-sub">Fotoğrafın, sınıfın, rütbenin ve yönetici tarafından belirlenen becerilerin burada görünür.</div>
-      <div class="panel" style="max-width:380px;">
-        <div class="panel-body" style="text-align:center;">
-          <div class="avatar-upload avatar-upload-compact">
-            <label>Fotoğrafı Değiştir<input type="file" id="avatarFile" accept="image/*"></label>
-          </div>
-          <div id="profOaa" style="margin-top:14px;"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- GUIDE VIEW -->
-    <section class="view" id="view-guide">
-      <div class="section-title">NASIL ÇALIŞIR?</div>
-      <div class="section-sub">Siteyi ilk kez kullanıyorsan buradan başla — sistemin tamamı özetlendi.</div>
-
-      <div class="panel" style="margin-bottom:20px; border-color:rgba(224,107,107,0.35);">
-        <div class="panel-head"><h2>SÖZLEŞMENİN ANLAMI</h2></div>
-        <div class="panel-body">
-          <div class="guide-text">Loyal Elite Force'a katılmak bir kayıt formu doldurmak değil, bir sözleşmeye imza atmaktır. Kitabın bir sayfası artık senin. Sınıfının puanı senin omzunda, bir başkasının yemini seni bağlıyor, her gün topladığın puan seni geri çağırıyor. Buraya giren biri boş elle çıkmaz — ya bir sınıf lideri, ya bir sözleşmeli, ya da bir efsane olarak anılır. Sayfanı çevir, oyun çoktan başladı.</div>
-        </div>
-      </div>
-
-      <div class="guide-list">
-        <div class="guide-item">
-          <div class="guide-num">1</div>
-          <div>
-            <div class="guide-title">Sınıflar</div>
-            <div class="guide-text">Kayıt olunca otomatik olarak A, B, C veya D sınıflarından birine rastgele atanırsın. Her sınıfta en fazla 25 kişi olabilir. Sınıflar sekmesinden kimin hangi sınıfta olduğunu görebilir, isimlere tıklayıp profillerini inceleyebilirsin. En üstte yöneticinin yayınladığı duyurular çıkar.</div>
-          </div>
-        </div>
-        <div class="guide-item">
-          <div class="guide-num">2</div>
-          <div>
-            <div class="guide-title">Puan Kazanma</div>
-            <div class="guide-text">Birkaç yolla puan kazanırsın: 30 günde bir "30 Günlük Ödül" ile 100.000 puan, yönetici sana bir görev atadığında tamamlayarak 1.000 puan, bir sınavı kazanarak, ya da şans oyunu/gizli kutu/düello ile.</div>
-          </div>
-        </div>
-        <div class="guide-item">
-          <div class="guide-num">3</div>
-          <div>
-            <div class="guide-title">Dükkan — Puanını Harcama</div>
-            <div class="guide-text">Puanlar &amp; Dükkan sekmesinde puanını şunlara harcayabilirsin: başka bir sınıfa geçiş (500.000 puan, en fazla 3 kere), birinin puanını çalmaya çalışma, gizli kutu açma, özel bir unvan satın alma, veya "koruma puanı" satın alma (sınavda sınıf düşmekten korur).</div>
-          </div>
-        </div>
-        <div class="guide-item">
-          <div class="guide-num">4</div>
-          <div>
-            <div class="guide-title">Puan Gönderme, Hediye ve Düello</div>
-            <div class="guide-text">Aynı sekmede bir kullanıcı adı yazıp istediğin miktarda puanı doğrudan birine gönderebilirsin. "Düello"da ise birine meydan okursun; kabul ederse yazı-tura ile kazanan tüm bahsi alır.</div>
-          </div>
-        </div>
-        <div class="guide-item">
-          <div class="guide-num">5</div>
-          <div>
-            <div class="guide-title">Sınavlar</div>
-            <div class="guide-text">Yönetici bir sınav açar (bir katılım ücreti belirler). Katılan herkesin ödediği puan bir havuzda toplanır. Sınav bitince yönetici kazananları seçer, havuzdaki tüm puan kazananlara paylaşılır. Bazı sınavlarda kaybedenler bir alt sınıfa düşer — ama "koruma puanın" varsa bundan korunursun.</div>
-          </div>
-        </div>
-        <div class="guide-item">
-          <div class="guide-num">6</div>
-          <div>
-            <div class="guide-title">Profil ve Beceriler</div>
-            <div class="guide-text">Profilim sekmesinden fotoğraf yükleyebilirsin. Akıllı, Strateji, Agresiflik ve Beceriklilik gibi dereceler (harf notu: F'den A+'ya, +/- dahil) yönetici tarafından elle belirlenir, bunlar "Genel Yetenek" kartında görünür.</div>
-          </div>
-        </div>
-        <div class="guide-item">
-          <div class="guide-num">7</div>
-          <div>
-            <div class="guide-title">Sınıf Puanı, Sıralama ve Düşme Riski</div>
-            <div class="guide-text">Kişisel puanından ayrı olarak, sınıfının da kolektif bir puanı vardır (görev tamamladıkça sınıfına da puan eklenir). Puanlar sekmesinin en üstünde hangi sınıfın önde olduğunu görebilirsin. En düşük puanlı sınıf 300 puanın altına düşerse sarı "Düşme Riski", 0 veya altına düşerse kırmızı "Sahtekarlık Riski" rozetiyle işaretlenir — yönetici bu duruma sınıfa ceza puanı uygulayarak da müdahale edebilir, sebebi otomatik duyuru olarak paylaşılır.</div>
-          </div>
-        </div>
-        <div class="guide-item">
-          <div class="guide-num">8</div>
-          <div>
-            <div class="guide-title">Sınıf Duvarı</div>
-            <div class="guide-text">Her sınıfın kendi mesaj panosu var. Sadece kendi sınıfının üyeleri o duvara yazabilir, ama herkes okuyabilir.</div>
-          </div>
-        </div>
-        <div class="guide-item">
-          <div class="guide-num">9</div>
-          <div>
-            <div class="guide-title">İşlem Geçmişi</div>
-            <div class="guide-text">Puanlar sekmesinden ayrı olarak, kendi puan hareketlerinin tamamını (kimden geldi, kime gönderdin, hangi ödülü kazandın) tarih sırasıyla görebilirsin.</div>
-          </div>
-        </div>
-        <div class="guide-item">
-          <div class="guide-num">10</div>
-          <div>
-            <div class="guide-title">Duyurular</div>
-            <div class="guide-text">Yönetici önemli bir haberi herkese açık şekilde duyurabilir. Duyurular Sınıflar sekmesinin en üstünde görünür.</div>
-          </div>
-        </div>
-        <div class="guide-item">
-          <div class="guide-num">11</div>
-          <div>
-            <div class="guide-title">Tüm Üyeler (sadece yönetici)</div>
-            <div class="guide-text">Rütbesi "Yönetici" olanlar, birlikteki herkesin fotoğrafını, sınıfını, puanını ve becerilerini tek ekranda görebileceği ayrı bir panele erişebilir.</div>
-          </div>
-        </div>
-        <div class="guide-item">
-          <div class="guide-num">12</div>
-          <div>
-            <div class="guide-title">Sözleşmeler</div>
-            <div class="guide-text">Hesabım &gt; Sözleşmeler'den bir üyeye kısa bir yemin metniyle özel bir sözleşme teklif edebilirsin. Kabul ederse ikiniz de "Aktif Sözleşmelerim" listesinde görünürsünüz; istediğiniz an bozabilirsiniz ama bu geri alınamaz. Şimdilik sosyal/rol yapma amaçlıdır, ileride oyun mekaniğine (koruma, bahis paylaşımı gibi) bağlanabilir.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel" style="margin-top:20px; max-width:340px;">
-        <div class="panel-head"><h2>NOT ÖLÇEĞİ</h2></div>
-        <div class="panel-body">
-          <div class="grade-scale-row"><span>Üstün</span><span class="grade-badge">A+</span></div>
-          <div class="grade-scale-row"><span>Çok İyi</span><span class="grade-badge">A / A-</span></div>
-          <div class="grade-scale-row"><span>İyi</span><span class="grade-badge">B+ / B / B-</span></div>
-          <div class="grade-scale-row"><span>Orta</span><span class="grade-badge">C+ / C / C-</span></div>
-          <div class="grade-scale-row"><span>Zayıf</span><span class="grade-badge">D+ / D / D-</span></div>
-          <div class="grade-scale-row"><span>Çok Zayıf</span><span class="grade-badge">E+ / E / E-</span></div>
-          <div class="grade-scale-row"><span>Yetersiz</span><span class="grade-badge">F</span></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TRAILER VIEW -->
-    <section class="view" id="view-trailer">
-      <div class="section-title">ŞARKILARIMIZ</div>
-      <div class="section-sub">Birliğimizin resmi parçası. Dinlemek için oynat butonuna bas.</div>
-
-      <div class="track-card">
-        <div class="track-art">
-          <img id="siteCoverImg" src="trailer-cover.jpg" alt="Parça kapağı">
-        </div>
-        <div class="track-info">
-          <div class="track-title">Loyal Elite Force – 「選ばれし影」<br><span style="font-size:11px; font-weight:500; color:var(--ink-dim);">(Erabareshi Kage / Seçilmiş Gölge)</span></div>
-          <div class="track-artist" style="display:none;"></div>
-          <div class="track-controls">
-            <button class="track-play-btn" id="sitePlayBtn" aria-label="Oynat/Durdur">▶</button>
-            <div class="track-progress" id="trackProgressWrap">
-              <div class="track-progress-fill" id="trackProgressFill"></div>
-            </div>
-            <div class="track-time" id="trackTime">0:00</div>
-          </div>
-        </div>
-      </div>
-
-      <audio id="siteTrailerAudio" src="trailer-music.mp3" loop preload="none"></audio>
-    </section>
-
-    <!-- CONTRACTS VIEW (Vanitas no Carte temalı sözleşme sistemi) -->
-    <section class="view" id="view-contracts">
-      <div class="section-title">SÖZLEŞMELER</div>
-      <div class="section-sub">Kitabın bir sayfasını biriyle paylaş. İki üye arasındaki özel sözleşme — bir yemin, bir bağ. Kabul edilene kadar geçersizdir, bozulursa iz bırakır.</div>
-
-      <div class="grid-2" style="margin-top:22px;">
-        <div class="panel">
-          <div class="panel-head"><h2>YENİ SÖZLEŞME TEKLİF ET</h2></div>
-          <div class="panel-body">
-            <form id="contractForm">
-              <div class="field">
-                <label>Kullanıcı Adı</label>
-                <input type="text" id="contractPartner" required>
-              </div>
-              <div class="field">
-                <label>Yemin / Sözleşme Metni</label>
-                <input type="text" id="contractVow" maxlength="200" placeholder="örn: Kader ortağıyız, birbirimizi kollarız." required>
-              </div>
-              <button class="btn" type="submit">Sayfayı Gönder</button>
-              <div class="msg" id="contractMsg"></div>
-            </form>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head"><h2>GELEN TEKLİFLER</h2></div>
-          <div class="panel-body">
-            <div id="incomingContracts"><div class="empty">Yükleniyor...</div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel" style="margin-top:18px;">
-        <div class="panel-head"><h2>AKTİF SÖZLEŞMELERİM</h2></div>
-        <div class="panel-body">
-          <div id="activeContracts"><div class="empty">Yükleniyor...</div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ROSTER VIEW (admin only) -->
-    <section class="view" id="view-roster">
-      <div class="section-title">TÜM ÜYELER</div>
-      <div class="section-sub">Sadece yöneticiler görebilir — birlikteki her üyenin anlık durumu.</div>
-
-      <div class="roster-wall">
-        <div class="roster-grid" id="rosterGrid"><div class="empty">Yükleniyor...</div></div>
-      </div>
-    </section>
-
-  </main>
-</div>
-
-<!-- ===================== WELCOME MODAL ===================== -->
-<div class="modal-backdrop" id="welcomeModal">
-  <div class="modal-card" style="max-width:420px; text-align:left;">
-    <img class="auth-crest" id="welcomeLogo" src="" alt="" style="margin:0 auto 14px; display:block;">
-    <h1 style="text-align:center; font-size:17px; letter-spacing:3px; color:var(--silver-1); font-family:'Cinzel Decorative',serif;">LOYAL ELITE FORCE'A HOŞ GELDİN</h1>
-    <p style="font-size:13.5px; color:var(--ink-dim); line-height:1.7; margin-top:14px;">
-      Bir sınıfa (A/B/C/D) dahilsin. Puan kazanıp harcayabilir, sınıflar arasında geçiş yapabilir, görev tamamlayabilir ve sınavlara katılabilirsin. Detaylı anlatım için her zaman sol menüden <strong style="color:var(--silver-1);">"Nasıl Çalışır?"</strong> sayfasına bakabilirsin.
-    </p>
-    <button class="btn" id="closeWelcomeBtn" style="margin-top:18px;">Anladım, Başlayalım</button>
   </div>
-</div>
+  <div class="sec"><div class="st"><span>Sınıf Sıralaması</span><a data-go="rank">Detay ›</a></div><div class="rklist"><div class="empty">Yükleniyor...</div></div></div>
+</section>
 
-<!-- ===================== PROFILE MODAL (others) ===================== -->
-<div class="modal-backdrop" id="profileModal">
-  <div class="modal-card">
-    <button class="modal-close" id="closeModal">&times;</button>
-    <div id="modalOaa" style="margin-top:8px;"></div>
+<section class="page" id="news">
+  <div class="ph"><div><h2>Duyurular</h2><small>Announcements</small></div></div>
+  <div class="sec"><div class="annlist" data-n="30"><div class="empty">Yükleniyor...</div></div></div>
+</section>
+
+<section class="page" id="sched">
+  <div class="ph"><div><h2>Program</h2><small>Schedule · örnek veri</small></div></div>
+  <div class="sec">
+    <div class="row"><span class="d">Pzt 08:30</span><span class="t">Matematik</span></div>
+    <div class="row"><span class="d">Sal 10:00</span><span class="t">Beden Eğitimi</span></div>
+    <div class="row"><span class="d">Çar 12:00</span><span class="t">Özel Sınav</span></div>
+    <div class="row"><span class="d">Per 09:00</span><span class="t">İngilizce</span></div>
   </div>
+</section>
+
+<section class="page" id="menu">
+  <div class="ph"><div><h2>Menü</h2><small>Menu</small></div></div>
+  <div class="sec">
+    <div class="row link" data-go="points">Puanlarım</div>
+    <div class="row link" data-go="oaa">OAA Değerlendirme</div>
+    <div class="row link" data-go="rank">Sınıf Sıralaması</div>
+    <div class="row link" data-go="exam">Özel Sınav</div>
+    <div class="row link" data-go="songs">Şarkılarımız</div>
+    <div class="row link" data-go="profile">Öğrenci Profili</div>
+    <div class="row link" style="color:#ff5f7e" data-logout>Çıkış Yap</div>
+  </div>
+</section>
+
+<section class="page" id="points">
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Puanlarım</h2><small>Points</small></div></div>
+  <div class="box" style="margin-bottom:12px"><div class="l">Bakiye</div><div class="v"><span class="p-now">—</span><em>pt</em></div></div>
+  <div class="sec"><div class="st"><span>Günlük Ödül</span></div>
+    <button class="cta" id="claimBtn" style="margin:0">30 Günlük Ödülü Al (+100.000)</button><div class="msg" id="claimMsg"></div></div>
+  <div class="sec"><div class="st"><span>Puan Gönder</span></div>
+    <form id="sendForm"><label>Kullanıcı Adı</label><input id="sUser" required autocomplete="off"><label>Miktar</label><input id="sAmt" inputmode="numeric" placeholder="örn: 5000" required>
+    <button class="cta" style="margin:0">Gönder</button><div class="msg" id="sendMsg"></div></form></div>
+</section>
+
+<section class="page" id="history">
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>İşlem Geçmişi</h2><small>Transactions</small></div></div>
+  <div class="sec"><div class="txlist" data-n="100"><div class="empty">Yükleniyor...</div></div></div>
+</section>
+
+<section class="page" id="songs">
+  <div class="ph"><button class="back" data-go="menu">‹</button><div><h2>Şarkılarımız</h2><small>Our Songs</small></div></div>
+  <div class="sec song" id="songBox">
+    <img src="trailer-cover.jpg" alt="">
+    <div style="font-weight:600;font-size:15px">Loyal Elite Force – 「選ばれし影」</div>
+    <small style="color:var(--dim)">Erabareshi Kage / Seçilmiş Gölge</small>
+    <div class="pl"><button id="playBtn">▶</button><div class="bar"><i id="barFill"></i></div><span id="tm" style="font-size:12px;color:var(--dim)">0:00</span></div>
+    <audio id="aud" src="trailer-music.mp3" loop preload="none"></audio>
+  </div>
+</section>
+
+<section class="page" id="oaa">
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>OAA Değerlendirme</h2><small>Student Evaluation · örnek veri</small></div></div>
+  <div class="tabs"><span class="on" data-t="oaa1">Mevcut</span><span data-t="oaa2">Geçmiş</span><span data-t="oaa3">Detay</span></div>
+  <div class="pane on" id="oaa1">
+    <div class="ring"><small>Genel</small><b>B+</b><small>742 / 1.000</small></div>
+    <div class="g2"><div class="box"><small>Akademik</small><div class="v">A</div><small>892 / 1.000</small></div><div class="box"><small>Fiziksel</small><div class="v">B+</div><small>780 / 1.000</small></div><div class="box"><small>Uyum</small><div class="v">B</div><small>690 / 1.000</small></div><div class="box"><small>Sosyal Katkı</small><div class="v">A-</div><small>835 / 1.000</small></div></div>
+    <div class="sec"><div class="st"><span>Gelişim</span></div><svg viewBox="0 0 300 110" style="width:100%"><polyline fill="none" stroke="#5b8cff" stroke-width="2.5" points="10,85 60,75 110,68 160,55 210,48 260,38"/><g fill="#5b8cff"><circle cx="10" cy="85" r="3"/><circle cx="60" cy="75" r="3"/><circle cx="110" cy="68" r="3"/><circle cx="160" cy="55" r="3"/><circle cx="210" cy="48" r="3"/><circle cx="260" cy="38" r="3"/></g></svg></div>
+  </div>
+  <div class="pane" id="oaa2"><div class="sec"><table class="tb"><tr><th>Hafta</th><th>Puan</th></tr><tr><td>1</td><td>610</td></tr><tr><td>2</td><td>650</td></tr><tr><td>3</td><td>690</td></tr><tr><td>4</td><td>720</td></tr><tr><td>5</td><td>735</td></tr><tr><td>6</td><td>742</td></tr></table></div></div>
+  <div class="pane" id="oaa3"><div class="sec"><div class="empty">Detaylı değerlendirme yakında.</div></div></div>
+</section>
+
+<section class="page" id="rank">
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Sınıf Sıralaması</h2><small>Class Ranking</small></div></div>
+  <div class="tabs"><span class="on" data-t="rk1">Genel</span><span data-t="rk2">Akademik</span><span data-t="rk3">Davranış</span><span data-t="rk4">Katkı</span></div>
+  <div class="pane on" id="rk1"><div class="rklist"><div class="empty">Yükleniyor...</div></div></div>
+  <div class="pane" id="rk2"><div class="sec"><div class="empty">Yakında.</div></div></div>
+  <div class="pane" id="rk3"><div class="sec"><div class="empty">Yakında.</div></div></div>
+  <div class="pane" id="rk4"><div class="sec"><div class="empty">Yakında.</div></div></div>
+</section>
+
+<section class="page" id="exam">
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Özel Sınav</h2><small>Special Exam</small></div></div>
+  <div id="examBox"><div class="empty">Yükleniyor...</div></div>
+</section>
+
+<section class="page" id="profile">
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Öğrenci Profili</h2><small>Student Profile</small></div></div>
+  <div class="av"><i class="u-ini">?</i><div><div style="font:700 19px var(--serif)" class="u-name">—</div><small style="color:var(--dim)">Sınıf: <span class="u-cl">—</span> · <span class="u-rank">Üye</span></small></div></div>
+  <div class="tabs"><span class="on" data-t="pf1">Bilgiler</span><span data-t="pf2">Puan</span><span data-t="pf3">Notlar</span></div>
+  <div class="pane on" id="pf1"><div class="sec">
+    <div class="row"><span class="t">Kullanıcı adı</span><span class="u-name">—</span></div>
+    <div class="row"><span class="t">Sınıf</span><span class="u-cl">—</span></div>
+    <div class="row"><span class="t">Rütbe</span><span class="u-rank">—</span></div>
+    <div class="row"><span class="t">Puan</span><span class="p-now">—</span></div></div></div>
+  <div class="pane" id="pf2"><div class="sec"><div class="txlist" data-n="10"><div class="empty">Yükleniyor...</div></div></div></div>
+  <div class="pane" id="pf3"><div class="sec"><div class="empty">Notlar yakında (örnek veri yok).</div></div></div>
+</section>
+
+<nav class="nav">
+  <button data-go="home" class="on"><svg class="i" viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v9H4z"/></svg>Ana Sayfa</button>
+  <button data-go="news"><svg class="i" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/></svg>Duyurular</button>
+  <button data-go="sched"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Program</button>
+  <button data-go="menu"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Menü</button>
+</nav>
 </div>
 
 <script type="module">
-  import { supabase, escapeHtml } from './config.js';
+import { supabase, escapeHtml } from './config.js';
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const fmt = n => (n ?? 0).toLocaleString('tr-TR');
+const fdate = s => new Date(s).toLocaleDateString('tr-TR', { day:'2-digit', month:'2-digit', year:'numeric' });
+const setAll = (sel, v) => $$(sel).forEach(e => e.textContent = v);
+let me = null, uid = null;
 
-  let currentUser = null;
-  let currentProfile = null;
-  let allProfiles = [];
-  const CLASSES = ['A','B','C','D'];
-  const STAT_DEFS = [
-    ['stat_akilli', 'Akıllı'],
-    ['stat_strateji', 'Strateji'],
-    ['stat_agresiflik', 'Agresiflik'],
-    ['stat_beceriklilik', 'Beceriklilik'],
-  ];
-  const GRADE_ORDER = ['F','E-','E','E+','D-','D','D+','C-','C','C+','B-','B','B+','A-','A','A+'];
-  const GRADE_WIDTH = Object.fromEntries(GRADE_ORDER.map((g,i) => [g, Math.round((i+1)/GRADE_ORDER.length*100)]));
-  // Harfe göre sabit başarı sayısı: A+ =100, B+ =90, C+ =80 ... her ana harf 10 puanlık dilime yayılır
-  const GRADE_NUM = {
-    'A+':100, 'A':96, 'A-':92,
-    'B+':90, 'B':86, 'B-':82,
-    'C+':80, 'C':76, 'C-':72,
-    'D+':70, 'D':66, 'D-':62,
-    'E+':60, 'E':56, 'E-':52,
-    'F':45
+/* ---------- YÖNLENDİRME & SEKMELER ---------- */
+const MOBILE_TAB = { home:'home', news:'news', sched:'sched' };
+function go(id){
+  $$('.page').forEach(p => p.classList.toggle('on', p.id === id));
+  $$('.side button').forEach(b => b.classList.toggle('on', b.dataset.go === id));
+  const nt = MOBILE_TAB[id] || 'menu';
+  $$('.nav button').forEach(b => b.classList.toggle('on', b.dataset.go === nt));
+  window.scrollTo(0, 0);
+  if(id === 'history' || id === 'profile') loadTx();
+  if(id === 'exam') loadExam();
+}
+document.addEventListener('click', async e => {
+  const t = e.target.closest('.tabs span[data-t]');
+  if(t){
+    const pg = t.closest('.page');
+    pg.querySelectorAll('.tabs span').forEach(s => s.classList.toggle('on', s === t));
+    pg.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === t.dataset.t));
+    return;
+  }
+  if(e.target.closest('[data-logout]')){ await supabase.auth.signOut(); location.replace('login.html'); return; }
+  const g = e.target.closest('[data-go]'); if(g) go(g.dataset.go);
+});
+
+/* ---------- VERİ ---------- */
+async function loadProfile(){
+  const { data } = await supabase.from('profiles').select('*').eq('id', uid).single();
+  me = data || {};
+  setAll('.u-name', me.username || '—'); setAll('.u-cl', me.class || '—'); setAll('.u-rank', me.rank || 'Üye');
+  setAll('.u-cls', me.class ? me.class + ' Sınıfı' : ''); setAll('.u-ini', (me.username || '?').slice(0,2).toUpperCase());
+  setAll('#hPts', fmt(me.points)); setAll('.p-now', fmt(me.points));
+  $('#hCls').textContent = me.class ? me.class + ' Sınıfı' : 'Class Points';
+}
+async function loadTx(){
+  const { data } = await supabase.from('point_transactions').select('*')
+    .or(`from_user.eq.${uid},to_user.eq.${uid}`).order('created_at', { ascending:false }).limit(100);
+  $$('.txlist').forEach(box => {
+    const n = +(box.dataset.n || 5);
+    const rows = (data || []).slice(0, n);
+    box.innerHTML = rows.length ? rows.map(x => {
+      const neg = x.from_user === uid && x.to_user !== uid, v = Math.abs(x.amount ?? 0);
+      const label = x.note || x.reason || x.description || (neg ? 'Gönderilen puan' : 'Alınan puan');
+      return `<div class="row"><span class="d">${fdate(x.created_at)}</span><span class="t">${escapeHtml(label)}</span><span class="${neg?'neg':'pos'}">${neg?'-':'+'}${fmt(v)}</span></div>`;
+    }).join('') : '<div class="empty">Henüz işlem yok.</div>';
+  });
+}
+async function loadAnn(){
+  const { data } = await supabase.from('announcements').select('*').order('created_at', { ascending:false }).limit(30);
+  $$('.annlist').forEach(box => {
+    const rows = (data || []).slice(0, +(box.dataset.n || 3));
+    box.innerHTML = rows.length ? rows.map((a,i) => `<div class="row"><span class="d">${fdate(a.created_at)}</span><span class="t"><b>${escapeHtml(a.title)}</b>${box.dataset.n>3&&a.content?`<br><span style="color:var(--dim);font-size:12px">${escapeHtml(a.content)}</span>`:''}</span>${i===0?'<span class="tag">YENİ</span>':''}</div>`).join('') : '<div class="empty">Duyuru yok.</div>';
+  });
+}
+async function loadRank(){
+  const { data } = await supabase.from('class_points').select('*').order('points', { ascending:false });
+  const html = (data || []).map((c,i) => `<div class="rk ${i===0?'first':''}"><b>${i===0?'👑 ':''}${escapeHtml(c.class)} Sınıfı</b><span>${fmt(c.points)} pt</span></div>`).join('') || '<div class="empty">Sıralama yok.</div>';
+  $$('.rklist').forEach(b => b.innerHTML = html);
+  const mine = (data || []).find(c => c.class === me?.class);
+  $('#hClsPts').textContent = mine ? fmt(mine.points) : '—';
+}
+let exam = null, cdTimer = null;
+async function loadExam(){
+  const box = $('#examBox');
+  const { data } = await supabase.from('exams').select('*').order('created_at', { ascending:false }).limit(1);
+  exam = data?.[0];
+  if(!exam){ box.innerHTML = '<div class="sec"><div class="empty">Şu an açık özel sınav yok.</div></div>'; return; }
+  box.innerHTML = `<div class="ex">Şu an devam eden özel sınav</div>
+    <div class="sec"><div style="font:700 19px var(--serif)">${escapeHtml(exam.title)}</div>
+    ${exam.description ? `<div style="color:var(--dim);font-size:12.5px;margin-top:6px">${escapeHtml(exam.description)}</div>` : ''}
+    <div class="row"><span class="t">Katılım ücreti</span><span>${fmt(exam.entry_cost)} pt</span></div></div>
+    ${exam.deadline ? '<div class="cd"><small>Kalan süre</small><br><b id="cdv">—</b></div>' : ''}
+    <button class="cta" id="joinBtn">Sınava Katıl ›</button><div class="msg" id="examMsg"></div>`;
+  clearInterval(cdTimer);
+  if(exam.deadline){
+    const tick = () => { let s = Math.max(0, Math.floor((new Date(exam.deadline) - Date.now())/1000));
+      $('#cdv').textContent = `${Math.floor(s/86400)}g ${Math.floor(s%86400/3600)}s ${Math.floor(s%3600/60)}dk ${s%60}sn`; };
+    tick(); cdTimer = setInterval(tick, 1000);
+  }
+  $('#joinBtn').onclick = async () => {
+    const m = $('#examMsg'); m.className = 'msg';
+    const { error } = await supabase.rpc('join_exam', { p_exam_id: exam.id });
+    m.className = 'msg ' + (error ? 'err' : 'ok'); m.textContent = error ? error.message : 'Sınava katıldın.';
+    if(!error){ loadProfile(); loadTx(); }
   };
-  const STAT_ABBR = { 'Akıllı':'AKL', 'Strateji':'STR', 'Agresiflik':'AGR', 'Beceriklilik':'BEC' };
-  let activeClass = 'A';
-
-  const appShell = document.getElementById('appShell');
-
-  // ---------- NAV ----------
-  const CATEGORY_VIEWS = {
-    classes: ['classes'],
-    economy: ['points', 'history', 'cards', 'auction', 'loans'],
-    examtask: ['exams', 'tasks'],
-    account: ['profile', 'guide', 'trailer', 'contracts'],
-    roster: ['roster']
-  };
-
-  function onViewDataLoad(view){
-    if(view === 'classes'){ loadAllProfiles().then(() => { renderClassTabs(); renderClassMembers(); }); loadAnnouncements(); renderClassRanking(); loadClassPresident(); }
-    if(view === 'points'){ refreshMyProfile(); loadIncomingDuels(); }
-    if(view === 'history'){ loadHistory(); }
-    if(view === 'exams'){ loadExams(); }
-    if(view === 'tasks'){ loadTasks(); }
-    if(view === 'roster'){ loadAllProfiles().then(renderRoster); }
-    if(view === 'contracts'){ loadContracts(); }
-    if(view === 'cards'){ loadMyCards(); }
-    if(view === 'auction'){ loadAuctions(); }
-    if(view === 'loans'){ loadLoans(); }
-  }
-
-  function showView(view){
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById('view-' + view).classList.add('active');
-
-    // hangi kategoriye ait olduğunu bul, ana menüde onu aktif göster
-    const category = Object.keys(CATEGORY_VIEWS).find(c => CATEGORY_VIEWS[c].includes(view));
-    document.querySelectorAll('.nav-btn[data-category]').forEach(b => b.classList.toggle('active', b.dataset.category === category));
-
-    // ilgili alt sekme çubuğunu göster, diğerlerini gizle
-    document.querySelectorAll('.subnav').forEach(s => s.style.display = 'none');
-    const subnav = document.getElementById('subnav-' + category);
-    if(subnav){
-      subnav.style.display = 'flex';
-      subnav.querySelectorAll('.subnav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
-    }
-
-    onViewDataLoad(view);
-  }
-
-  document.querySelectorAll('.nav-btn[data-category]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const category = btn.dataset.category;
-      showView(CATEGORY_VIEWS[category][0]);
-    });
-  });
-
-  document.querySelectorAll('.subnav-btn').forEach(btn => {
-    btn.addEventListener('click', () => showView(btn.dataset.view));
-  });
-
-
-  function initials(name){ return (name || '?').trim().slice(0,2).toUpperCase(); }
-
-  function avatarHtml(profile, size){
-    if(profile?.avatar_url){
-      return `<img src="${profile.avatar_url}" alt="">`;
-    }
-    return initials(profile?.username);
-  }
-
-  // ---------- SESSION ----------
-  async function loadSession(){
-    const { data: { session } } = await supabase.auth.getSession();
-    if(!session){ window.location.href = 'login.html'; return; }
-    currentUser = session.user;
-
-    const [{ data: profile }] = await Promise.all([
-      supabase.from('profiles').select('*').eq('id', currentUser.id).single(),
-      loadAllProfiles()
-    ]);
-    currentProfile = profile;
-    activeClass = profile?.class || 'A';
-
-    document.getElementById('meName').textContent = profile?.username || '—';
-    document.getElementById('meMeta').textContent = `Sınıf ${profile?.class || '-'} · ${profile?.points ?? 0} puan`;
-    document.getElementById('meAvatar').innerHTML = avatarHtml(profile);
-
-    appShell.style.display = 'flex';
-    document.getElementById('appLoading').classList.add('done');
-    setTimeout(() => { document.getElementById('appLoading').style.display = 'none'; }, 700);
-
-    renderClassTabs();
-    renderClassMembers();
-    renderClassRanking();
-    renderPoints();
-    renderShop();
-    renderProtection();
-    renderOwnProfile();
-    updateTaskFormVisibility();
-    updateExamCreateVisibility();
-    updateAnnouncementCreateVisibility();
-    loadAnnouncements();
-    updateRosterVisibility();
-    renderRoster();
-    loadTasks();
-    loadExams();
-    loadIncomingDuels();
-    loadHistory();
-    loadNotifications();
-
-    if(!localStorage.getItem('lef_welcome_seen_' + currentUser.id)){
-      document.getElementById('welcomeModal').classList.add('show');
-    }
-  }
-
-  async function refreshMyProfile(){
-    const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
-    currentProfile = profile;
-    document.getElementById('meMeta').textContent = `Sınıf ${profile?.class || '-'} · ${profile?.points ?? 0} puan`;
-    document.getElementById('meAvatar').innerHTML = avatarHtml(profile);
-    renderPoints();
-    renderShop();
-    renderProtection();
-    renderOwnProfile();
-  }
-
-  // ---------- ALL PROFILES / CLASSES ----------
-  async function loadAllProfiles(){
-    const { data } = await supabase.from('profiles').select('*').order('username', { ascending: true });
-    allProfiles = data || [];
-  }
-
-  function renderClassTabs(){
-    const tabs = document.getElementById('classTabs');
-    tabs.innerHTML = CLASSES.map(c => {
-      const count = allProfiles.filter(p => p.class === c).length;
-      return `<button class="class-tab ${c === activeClass ? 'active' : ''}" data-class="${c}">
-        Sınıf ${c} <span class="n">${count}/25</span>
-      </button>`;
-    }).join('');
-    tabs.querySelectorAll('.class-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        activeClass = btn.dataset.class;
-        renderClassTabs();
-        renderClassMembers();
-        loadClassPresident();
-      });
-    });
-  }
-
-  let currentPresidentId = null;
-
-  function renderClassMembers(){
-    const grid = document.getElementById('classMembers');
-    const members = allProfiles.filter(p => p.class === activeClass);
-    if(members.length === 0){
-      grid.innerHTML = '<div class="empty">Bu sınıfta henüz kimse yok.</div>';
-      return;
-    }
-    grid.innerHTML = members.map(m => `
-      <div class="member-card" data-id="${m.id}">
-        <div class="avatar">${avatarHtml(m)}</div>
-        <div class="nm">${m.id === currentPresidentId ? '👑 ' : ''}${escapeHtml(m.username)}</div>
-        <div class="rk">${escapeHtml(m.rank || 'Üye')}</div>
-      </div>
-    `).join('');
-    grid.querySelectorAll('.member-card').forEach(card => {
-      card.addEventListener('click', () => openProfileModal(card.dataset.id));
-    });
-  }
-
-  async function loadClassPresident(){
-    const box = document.getElementById('classPresidentBox');
-    box.innerHTML = '<div class="empty">Yükleniyor...</div>';
-
-    const { data: votes, error } = await supabase
-      .from('president_votes')
-      .select('voter_id, candidate_id, candidate:profiles!president_votes_candidate_id_fkey(username)')
-      .eq('class', activeClass);
-
-    if(error){ box.innerHTML = '<div class="empty">Yüklenemedi.</div>'; currentPresidentId = null; return; }
-
-    const tally = {};
-    (votes || []).forEach(v => {
-      tally[v.candidate_id] = tally[v.candidate_id] || { count: 0, username: v.candidate?.username };
-      tally[v.candidate_id].count++;
-    });
-    const ranked = Object.entries(tally).sort((a, b) => b[1].count - a[1].count);
-    currentPresidentId = ranked.length ? ranked[0][0] : null;
-
-    const myVote = (votes || []).find(v => v.voter_id === currentUser.id);
-    const members = allProfiles.filter(p => p.class === activeClass && p.id !== currentUser.id);
-
-    const leaderHtml = ranked.length
-      ? `<div class="shop-item" style="margin-bottom:10px;">
-           <div class="info">
-             <div class="t">👑 ${escapeHtml(ranked[0][1].username || 'Bilinmeyen')}</div>
-             <div class="d">${ranked[0][1].count} oy ile önde</div>
-           </div>
-         </div>`
-      : `<div class="empty" style="margin-bottom:10px;">Bu sınıfta henüz oy verilmemiş.</div>`;
-
-    const isMyClass = currentProfile?.class === activeClass;
-    const voteHtml = !isMyClass ? '' : `
-      <div class="card-send-row">
-        <select id="presidentCandidateSelect" class="card-send-input" style="flex:1;">
-          <option value="">— aday seç —</option>
-          ${members.map(m => `<option value="${escapeHtml(m.username)}" ${myVote?.candidate_id === m.id ? 'selected' : ''}>${escapeHtml(m.username)}</option>`).join('')}
-        </select>
-        <button class="btn" id="presidentVoteBtn" style="width:auto;">${myVote ? 'Oyu Değiştir' : 'Oy Ver'}</button>
-      </div>
-      <div class="msg" id="presidentVoteMsg"></div>
-    `;
-
-    box.innerHTML = leaderHtml + voteHtml;
-    renderClassMembers();
-
-    if(!isMyClass) return;
-    document.getElementById('presidentVoteBtn').addEventListener('click', async () => {
-      const msg = document.getElementById('presidentVoteMsg');
-      msg.className = 'msg'; msg.textContent = '';
-      const candidate = document.getElementById('presidentCandidateSelect').value;
-      if(!candidate){ msg.classList.add('error'); msg.textContent = 'Bir aday seç.'; return; }
-      const { error } = await supabase.rpc('vote_for_president', { p_candidate_username: candidate });
-      if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-      msg.classList.add('ok'); msg.textContent = 'Oyun kaydedildi.';
-      await loadClassPresident();
-    });
-  }
-
-  const CLASS_RISK_THRESHOLD = 300; // bu puanın altı 'düşme riski' sayılır
-  const CLASS_DANGER_THRESHOLD = 0; // bu puanın altı/eşiti 'sahtekarlık riski' sayılır
-
-  async function renderClassRanking(){
-    const box = document.getElementById('classRanking');
-    const { data, error } = await supabase.from('class_points').select('*').order('points', { ascending: false });
-    if(error || !data){ box.innerHTML = '<div class="empty">Yüklenemedi.</div>'; return; }
-
-    const lowest = data.length ? Math.min(...data.map(c => c.points ?? 0)) : null;
-
-    box.innerHTML = data.map((c, i) => {
-      const pts = c.points ?? 0;
-      const isLast = pts === lowest;
-      let badge = '';
-      if(isLast && pts <= CLASS_DANGER_THRESHOLD){
-        badge = `<span class="class-risk-badge danger">Sahtekarlık Riski</span>`;
-      } else if(isLast && pts < CLASS_RISK_THRESHOLD){
-        badge = `<span class="class-risk-badge warn">Düşme Riski</span>`;
-      }
-      return `
-      <div class="class-table-row">
-        <span class="class-table-bar bar-${c.class}"></span>
-        <span class="class-table-name">${c.class} Sınıfı</span>
-        ${badge}
-        <span class="class-table-points-wrap"><span class="class-table-points-num">${pts.toLocaleString('tr-TR')}</span><span class="class-table-points-pt">Pt</span></span>
-      </div>
-    `;
-    }).join('');
-
-    if(currentProfile?.rank === 'Yönetici' && !box.dataset.penaltyBtnAdded){
-      const btn = document.createElement('button');
-      btn.className = 'class-penalty-btn';
-      btn.textContent = 'Sınıfa Ceza Puanı Uygula';
-      btn.addEventListener('click', () => openClassPenaltyFlow());
-      box.after(btn);
-      box.dataset.penaltyBtnAdded = '1';
-    }
-
-    const crest = document.getElementById('classTableCrest');
-    const logoSrc = document.querySelector('.sidebar-brand img')?.src;
-    if(crest && logoSrc && !crest.dataset.set){
-      crest.style.setProperty('--crest-url', `url("${logoSrc}")`);
-      crest.classList.add('loaded');
-      crest.dataset.set = '1';
-    }
-  }
-
-  async function openClassPenaltyFlow(){
-    const targetClass = prompt('Hangi sınıfa ceza uygulanacak? (A / B / C / D)');
-    if(!targetClass) return;
-    const cls = targetClass.trim().toUpperCase();
-    if(!CLASSES.includes(cls)){ alert('Geçersiz sınıf. A, B, C veya D gir.'); return; }
-
-    const amountStr = prompt(`${cls} sınıfından kaç puan kesilecek?`);
-    if(!amountStr) return;
-    const amount = parseInt(amountStr.replace(/[.,\s]/g, ''), 10);
-    if(!Number.isFinite(amount) || amount <= 0){ alert('Geçerli bir puan miktarı gir.'); return; }
-
-    const reason = prompt('Sebep (üyelere duyuru olarak görünecek):');
-    if(!reason || !reason.trim()){ alert('Sebep girmeden ceza uygulanamaz.'); return; }
-
-    if(!confirm(`${cls} sınıfından ${amount.toLocaleString('tr-TR')} puan kesilecek.\nSebep: ${reason}\nOnaylıyor musun?`)) return;
-
-    const { error } = await supabase.rpc('admin_penalize_class', {
-      p_class: cls, p_amount: amount, p_reason: reason.trim()
-    });
-    if(error){ alert('İşlem başarısız: ' + error.message); return; }
-
-    alert(`${cls} sınıfı cezalandırıldı.`);
-    renderClassRanking();
-    loadAnnouncements();
-  }
-
-  // ---------- HISTORY ----------
-  const HISTORY_LABELS = {
-    'claim': 'Ödül', 'transfer': 'Puan Transferi', 'task_reward': 'Görev Ödülü',
-    'class_change': 'Sınıf Değişimi', 'steal_attempt': 'Saldırı Denemesi',
-    'steal_success': 'Saldırı Başarılı', 'steal_fail': 'Saldırı Başarısız',
-    'protection_purchase': 'Koruma Puanı', 'rank_purchase': 'Unvan Satın Alma',
-    'gamble_win': 'Şans Oyunu — Kazandı', 'gamble_loss': 'Şans Oyunu — Kaybetti',
-    'exam_entry': 'Sınav Katılımı', 'exam_win': 'Sınav Kazancı',
-    'duel_locked': 'Düello Bahsi', 'duel_win': 'Düello Kazancı', 'duel_refund': 'Düello İadesi',
-    'gift': 'Hediye', 'lootbox': 'Gizli Kutu'
-  };
-
-  async function loadHistory(){
-    const box = document.getElementById('historyList');
-    const { data, error } = await supabase
-      .from('point_transactions')
-      .select('*, from_profile:profiles!point_transactions_from_user_fkey(username), to_profile:profiles!point_transactions_to_user_fkey(username)')
-      .or(`from_user.eq.${currentUser.id},to_user.eq.${currentUser.id}`)
-      .order('created_at', { ascending: false })
-      .limit(100);
-
-    if(error || !data || data.length === 0){
-      box.innerHTML = '<div class="empty">Henüz bir işlem yok.</div>';
-      document.getElementById('historyCount').textContent = '0 işlem';
-      return;
-    }
-
-    document.getElementById('historyCount').textContent = data.length + ' işlem';
-
-    box.innerHTML = data.map(tx => {
-      const isSender = tx.from_user === currentUser.id;
-      const positive = tx.amount >= 0;
-      const otherParty = isSender ? tx.to_profile?.username : tx.from_profile?.username;
-      const label = HISTORY_LABELS[tx.type] || tx.type;
-      let detail = label;
-      if(tx.type === 'transfer'){
-        detail = isSender ? `Gönderildi → ${escapeHtml(otherParty || 'Bilinmeyen')}` : `Alındı ← ${escapeHtml(otherParty || 'Bilinmeyen')}`;
-      }
-      return `
-        <div class="task-row">
-          <div class="task-main">
-            <div class="task-title">${detail}</div>
-            <div class="task-meta">${new Date(tx.created_at).toLocaleString('tr-TR')}</div>
-          </div>
-          <div class="rank-badge" style="color:${positive ? 'var(--ok)' : 'var(--danger)'}; border-color:${positive ? 'var(--ok)' : 'var(--danger)'};">
-            ${positive ? '+' : ''}${tx.amount.toLocaleString('tr-TR')}
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  // ---------- PROFILE MODAL (others) ----------
-  const profileModal = document.getElementById('profileModal');
-  document.getElementById('closeModal').addEventListener('click', () => profileModal.classList.remove('show'));
-
-  document.getElementById('closeWelcomeBtn').addEventListener('click', () => {
-    document.getElementById('welcomeModal').classList.remove('show');
-    if(currentUser) localStorage.setItem('lef_welcome_seen_' + currentUser.id, '1');
-  });
-  profileModal.addEventListener('click', (e) => { if(e.target === profileModal) profileModal.classList.remove('show'); });
-
-  function statsHtml(profile){
-    return STAT_DEFS.map(([key, label]) => {
-      const grade = profile?.[key] || 'C';
-      const width = GRADE_WIDTH[grade] ?? 55;
-      return `
-        <div class="stat-row">
-          <div class="lbl"><span>${label}</span><span>${grade}</span></div>
-          <div class="stat-bar"><div class="fill" style="width:${width}%"></div></div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  function overallGrade(profile){
-    const idxs = STAT_DEFS.map(([key]) => {
-      const g = profile?.[key] || 'C';
-      const i = GRADE_ORDER.indexOf(g);
-      return i === -1 ? 8 : i;
-    });
-    const avg = Math.round(idxs.reduce((a,b) => a+b, 0) / idxs.length);
-    return GRADE_ORDER[Math.max(0, Math.min(GRADE_ORDER.length-1, avg))];
-  }
-
-  function oaaCardHtml(profile){
-    const stats = STAT_DEFS.map(([key, label], i) => {
-      const grade = profile?.[key] || 'C';
-      const num = GRADE_NUM[grade] ?? 70;
-      const abbr = STAT_ABBR[label] || label;
-      return `
-        <div class="oaa-stat oaa-stat-${i}">
-          <span class="oaa-stat-lbl">${abbr}</span>
-          <span class="oaa-stat-num">${num}</span>
-          <span class="oaa-stat-grade">${grade}</span>
-        </div>
-      `;
-    }).join('');
-
-    return `
-      <div class="oaa-card">
-        <div class="oaa-card-bg"></div>
-
-        <div class="oaa-topline">
-          <div class="oaa-title">Genel Yetenek</div>
-          <div class="oaa-subtitle">LOYAL ELITE FORCE<br>BİRLİK KAYIT SİSTEMİ</div>
-        </div>
-
-        <div class="oaa-photo">
-          <div class="oaa-photo-corner tl"></div>
-          <div class="oaa-photo-corner tr"></div>
-          <div class="oaa-photo-corner bl"></div>
-          <div class="oaa-photo-corner br"></div>
-          ${avatarHtml(profile)}
-        </div>
-
-        <div class="oaa-id">
-          <div class="oaa-id-top">
-            <span class="oaa-id-lbl">Sınıf</span>
-            <span class="oaa-id-class">${profile?.class || '-'}</span>
-          </div>
-          <div class="oaa-id-name">${escapeHtml(profile?.username || '—')}</div>
-          <div class="oaa-id-rank">${escapeHtml((profile?.rank || 'ÜYE').toUpperCase())}</div>
-        </div>
-
-        <div class="oaa-stats">
-          ${stats}
-          <div class="oaa-ring">
-            <div class="oaa-ring-arc"></div>
-            <div class="oaa-ring-inner">
-              <div class="oaa-ring-lbl">Genel</div>
-              <div class="oaa-ring-grade">${overallGrade(profile)}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function openProfileModal(id){
-    const p = allProfiles.find(x => x.id === id);
-    if(!p) return;
-    document.getElementById('modalOaa').innerHTML = oaaCardHtml(p);
-    profileModal.classList.add('show');
-  }
-
-  // ---------- OWN PROFILE VIEW ----------
-  function renderOwnProfile(){
-    document.getElementById('profOaa').innerHTML = oaaCardHtml(currentProfile);
-  }
-
-  document.getElementById('avatarFile').addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if(!file) return;
-    const ext = file.name.split('.').pop();
-    const path = `${currentUser.id}/avatar.${ext}`;
-
-    const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
-    if(upErr){ alert('Yükleme hatası: ' + upErr.message); return; }
-
-    const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
-    const avatarUrl = pub.publicUrl + '?t=' + Date.now();
-
-    await supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
-    await refreshMyProfile();
-    await loadAllProfiles();
-    renderClassMembers();
-  });
-
-  // ---------- POINTS ----------
-  function renderPoints(){
-    document.getElementById('pointsNum').textContent = (currentProfile?.points ?? 0).toLocaleString('tr-TR');
-    document.getElementById('pcHolderName').textContent = currentProfile?.username || '—';
-    const claimBtn = document.getElementById('claimBtn');
-    const note = document.getElementById('claimNote');
-    const last = currentProfile?.last_claim_at ? new Date(currentProfile.last_claim_at) : null;
-    if(!last){
-      claimBtn.disabled = false; note.textContent = 'İlk ödülünü almaya hazırsın.';
-      return;
-    }
-    const next = new Date(last.getTime() + 30*24*60*60*1000);
-    const now = new Date();
-    if(now >= next){
-      claimBtn.disabled = false; note.textContent = 'Ödülünü almaya hazırsın.';
-    } else {
-      claimBtn.disabled = true;
-      const daysLeft = Math.ceil((next - now) / (1000*60*60*24));
-      note.textContent = `Sonraki ödül: ${daysLeft} gün sonra (${next.toLocaleDateString('tr-TR')})`;
-    }
-  }
-
-  document.getElementById('claimBtn').addEventListener('click', async () => {
-    const btn = document.getElementById('claimBtn');
-    btn.disabled = true;
-    const { error } = await supabase.rpc('claim_points');
-    if(error){
-      document.getElementById('claimNote').textContent = error.message;
-      return;
-    }
-    await refreshMyProfile();
-  });
-
-  // ---------- SEND POINTS ----------
-  document.getElementById('sendForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById('sendMsg');
-    msg.className = 'msg'; msg.textContent = '';
-    const username = document.getElementById('sendUsername').value.trim();
-    const amount = parseInt(document.getElementById('sendAmount').value.replace(/[.,\s]/g, ''), 10);
-
-    if(!amount || amount <= 0){
-      msg.classList.add('error'); msg.textContent = 'Geçerli bir miktar gir (örn: 5000).'; return;
-    }
-
-    const { error } = await supabase.rpc('transfer_points', { target_username: username, amount });
-    if(error){
-      msg.classList.add('error'); msg.textContent = error.message; return;
-    }
-    msg.classList.add('ok'); msg.textContent = 'Puan gönderildi.';
-    document.getElementById('sendForm').reset();
-    await refreshMyProfile();
-    await loadAllProfiles();
-    renderClassMembers();
-  });
-
-  // ---------- SHOP: CLASS CHANGE ----------
-  function renderShop(){
-    const used = currentProfile?.class_changes_used ?? 0;
-    const left = Math.max(0, 3 - used);
-    document.getElementById('changesLeft').textContent = left;
-    document.getElementById('openClassPicker').disabled = left <= 0 || (currentProfile?.points ?? 0) < 500000;
-    renderStealCooldown();
-  }
-
-  document.getElementById('openClassPicker').addEventListener('click', () => {
-    const picker = document.getElementById('classPicker');
-    const others = CLASSES.filter(c => c !== currentProfile.class);
-    picker.innerHTML = others.map(c => `<button class="btn" data-target="${c}" style="width:auto;">Sınıf ${c}</button>`).join('');
-    picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
-    picker.querySelectorAll('button').forEach(b => {
-      b.addEventListener('click', async () => {
-        const msg = document.getElementById('shopMsg');
-        msg.className = 'msg'; msg.textContent = '';
-        const { error } = await supabase.rpc('change_class', { target_class: b.dataset.target });
-        if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-        msg.classList.add('ok'); msg.textContent = `Sınıf ${b.dataset.target} olarak değişti.`;
-        picker.style.display = 'none';
-        await refreshMyProfile();
-        await loadAllProfiles();
-        activeClass = currentProfile.class;
-        renderClassTabs();
-        renderClassMembers();
-      });
-    });
-  });
-
-  // ---------- SHOP: STEAL POINTS ----------
-  function renderStealCooldown(){
-    const note = document.getElementById('stealCooldownNote');
-    const btn = document.getElementById('openStealPicker');
-    const last = currentProfile?.last_steal_at ? new Date(currentProfile.last_steal_at) : null;
-    if(!last){
-      note.textContent = ''; btn.disabled = (currentProfile?.points ?? 0) < 20000;
-      return;
-    }
-    const next = new Date(last.getTime() + 12*60*60*1000);
-    const now = new Date();
-    if(now >= next){
-      note.textContent = ''; btn.disabled = (currentProfile?.points ?? 0) < 20000;
-    } else {
-      btn.disabled = true;
-      const hoursLeft = Math.ceil((next - now) / (1000*60*60));
-      note.textContent = `Sonraki saldırı hakkın: ${hoursLeft} saat sonra`;
-    }
-  }
-
-  document.getElementById('openStealPicker').addEventListener('click', () => {
-    const form = document.getElementById('stealForm');
-    form.style.display = form.style.display === 'none' ? 'block' : 'none';
-  });
-
-  document.getElementById('stealForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById('stealMsg');
-    msg.className = 'msg'; msg.textContent = '';
-    const target = document.getElementById('stealTarget').value.trim();
-
-    const { data, error } = await supabase.rpc('attempt_steal', { target_username: target });
-    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-
-    const result = Array.isArray(data) ? data[0] : data;
-    msg.classList.add(result.success ? 'ok' : 'error');
-    msg.textContent = result.message;
-
-    document.getElementById('stealForm').reset();
-    document.getElementById('stealForm').style.display = 'none';
-    await refreshMyProfile();
-    await loadAllProfiles();
-    renderClassMembers();
-  });
-
-  // ---------- SHOP: RANK TITLE ----------
-  document.getElementById('openRankPicker').addEventListener('click', () => {
-    const picker = document.getElementById('rankPicker');
-    picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
-  });
-
-  document.querySelectorAll('#rankPicker [data-rank]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const msg = document.getElementById('rankMsg');
-      msg.className = 'msg'; msg.textContent = '';
-      const { error } = await supabase.rpc('buy_rank_title', { target_rank: btn.dataset.rank });
-      if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-      msg.classList.add('ok'); msg.textContent = `Yeni unvanın: ${btn.dataset.rank}`;
-      document.getElementById('rankPicker').style.display = 'none';
-      await refreshMyProfile();
-      await loadAllProfiles();
-      renderClassMembers();
-      renderOwnProfile();
-    });
-  });
-
-  // ---------- SHOP: PROTECTION POINTS ----------
-  function renderProtection(){
-    document.getElementById('myProtectionCount').textContent = currentProfile?.protection_points ?? 0;
-  }
-
-  document.getElementById('buyProtectionBtn').addEventListener('click', async () => {
-    const msg = document.getElementById('protectionMsg');
-    msg.className = 'msg'; msg.textContent = '';
-    const { error } = await supabase.rpc('buy_protection_point');
-    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-    msg.classList.add('ok'); msg.textContent = 'Koruma puanı alındı.';
-    await refreshMyProfile();
-  });
-
-  // ---------- LOOTBOX ----------
-  document.getElementById('openLootboxBtn').addEventListener('click', async () => {
-    const msg = document.getElementById('lootboxMsg');
-    msg.className = 'msg'; msg.textContent = '';
-    const { data, error } = await supabase.rpc('open_lootbox');
-    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-    const result = Array.isArray(data) ? data[0] : data;
-    msg.classList.add(result.reward > 0 ? 'ok' : 'error');
-    msg.textContent = result.reward > 0
-      ? `${result.tier}! +${result.reward.toLocaleString('tr-TR')} puan kazandın.`
-      : `${result.tier}. Bu sefer hiçbir şey çıkmadı.`;
-    await refreshMyProfile();
-  });
-
-  // ---------- DUELS ----------
-  document.getElementById('openDuelForm').addEventListener('click', () => {
-    const form = document.getElementById('duelForm');
-    form.style.display = form.style.display === 'none' ? 'block' : 'none';
-  });
-
-  document.getElementById('duelForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById('duelMsg');
-    msg.className = 'msg'; msg.textContent = '';
-    const opponent = document.getElementById('duelOpponent').value.trim();
-    const wager = parseInt(document.getElementById('duelWager').value.replace(/[.,\s]/g, ''), 10);
-
-    if(!wager || wager <= 0){
-      msg.classList.add('error'); msg.textContent = 'Geçerli bir miktar gir.'; return;
-    }
-
-    const { error } = await supabase.rpc('create_duel', { p_opponent_username: opponent, p_wager: wager });
-    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-    msg.classList.add('ok'); msg.textContent = 'Meydan okuma gönderildi, rakibin onayını bekliyorsun.';
-    document.getElementById('duelForm').reset();
-    document.getElementById('duelForm').style.display = 'none';
-    await refreshMyProfile();
-    await loadIncomingDuels();
-  });
-
-  async function loadIncomingDuels(){
-    const box = document.getElementById('incomingDuels');
-    const { data, error } = await supabase
-      .from('duels')
-      .select('*, challenger:profiles!duels_challenger_id_fkey(username)')
-      .eq('opponent_id', currentUser.id)
-      .eq('status', 'pending')
-      .order('created_at', { ascending: false });
-
-    if(error || !data || data.length === 0){ box.innerHTML = ''; return; }
-
-    box.innerHTML = `<div style="font-size:11px; color:var(--ink-dim); margin-bottom:6px;">Sana gelen meydan okumalar:</div>` +
-      data.map(d => `
-        <div class="shop-item" style="margin-bottom:6px;">
-          <div class="info">
-            <div class="t">${escapeHtml(d.challenger?.username || 'Bilinmeyen')}</div>
-            <div class="d">${d.wager.toLocaleString('tr-TR')} puan bahis</div>
-          </div>
-          <div style="display:flex; gap:6px;">
-            <button class="btn accept-duel-btn" data-duel="${d.id}" style="width:auto;">Kabul Et</button>
-            <button class="btn decline-duel-btn" data-duel="${d.id}" style="width:auto; background:transparent; border:1px solid var(--line); color:var(--ink-dim);">Reddet</button>
-          </div>
-        </div>
-      `).join('');
-
-    box.querySelectorAll('.accept-duel-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const { data, error } = await supabase.rpc('accept_duel', { p_duel_id: btn.dataset.duel });
-        if(error){ alert(error.message); return; }
-        const result = Array.isArray(data) ? data[0] : data;
-        alert(result.won ? `Kazandın! +${result.pot.toLocaleString('tr-TR')} puan.` : `Kaybettin. ${result.winner_username} kazandı.`);
-        await refreshMyProfile();
-        await loadIncomingDuels();
-      });
-    });
-    box.querySelectorAll('.decline-duel-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const { error } = await supabase.rpc('decline_duel', { p_duel_id: btn.dataset.duel });
-        if(error){ alert(error.message); return; }
-        await loadIncomingDuels();
-      });
-    });
-  }
-
-  // ---------- CONTRACTS (Vanitas no Carte temalı sözleşme sistemi) ----------
-  document.getElementById('contractForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById('contractMsg');
-    msg.className = 'msg'; msg.textContent = '';
-
-    const partner = document.getElementById('contractPartner').value.trim();
-    const vow = document.getElementById('contractVow').value.trim();
-    if(!partner || !vow){ return; }
-
-    const { error } = await supabase.rpc('propose_contract', { p_partner_username: partner, p_vow: vow });
-    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-
-    msg.classList.add('ok'); msg.textContent = 'Sayfa gönderildi. Kabul etmesini bekle.';
-    document.getElementById('contractForm').reset();
-    await loadContracts();
-  });
-
-  async function loadContracts(){
-    await Promise.all([loadIncomingContracts(), loadActiveContracts()]);
-  }
-
-  async function loadIncomingContracts(){
-    const box = document.getElementById('incomingContracts');
-    const { data, error } = await supabase
-      .from('contracts')
-      .select('*, initiator:profiles!contracts_initiator_id_fkey(username)')
-      .eq('partner_id', currentUser.id)
-      .eq('status', 'pending')
-      .order('created_at', { ascending: false });
-
-    if(error || !data || data.length === 0){ box.innerHTML = '<div class="empty">Bekleyen teklif yok.</div>'; return; }
-
-    box.innerHTML = data.map(c => `
-      <div class="shop-item" style="margin-bottom:6px; align-items:flex-start;">
-        <div class="info">
-          <div class="t">${escapeHtml(c.initiator?.username || 'Bilinmeyen')}</div>
-          <div class="d">"${escapeHtml(c.vow)}"</div>
-        </div>
-        <div style="display:flex; gap:6px; flex-shrink:0;">
-          <button class="btn accept-contract-btn" data-contract="${c.id}" style="width:auto;">Kabul Et</button>
-          <button class="btn decline-contract-btn" data-contract="${c.id}" style="width:auto; background:transparent; border:1px solid var(--line); color:var(--ink-dim);">Reddet</button>
-        </div>
-      </div>
-    `).join('');
-
-    box.querySelectorAll('.accept-contract-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const { error } = await supabase.rpc('respond_contract', { p_contract_id: btn.dataset.contract, p_accept: true });
-        if(error){ alert(error.message); return; }
-        await loadContracts();
-      });
-    });
-    box.querySelectorAll('.decline-contract-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const { error } = await supabase.rpc('respond_contract', { p_contract_id: btn.dataset.contract, p_accept: false });
-        if(error){ alert(error.message); return; }
-        await loadContracts();
-      });
-    });
-  }
-
-  async function loadActiveContracts(){
-    const box = document.getElementById('activeContracts');
-    const { data, error } = await supabase
-      .from('contracts')
-      .select('*, initiator:profiles!contracts_initiator_id_fkey(username), partner:profiles!contracts_partner_id_fkey(username)')
-      .or(`initiator_id.eq.${currentUser.id},partner_id.eq.${currentUser.id}`)
-      .eq('status', 'active')
-      .order('created_at', { ascending: false });
-
-    if(error || !data || data.length === 0){ box.innerHTML = '<div class="empty">Henüz aktif sözleşmen yok.</div>'; return; }
-
-    box.innerHTML = data.map(c => {
-      const otherName = c.initiator_id === currentUser.id ? c.partner?.username : c.initiator?.username;
-      return `
-      <div class="shop-item" style="margin-bottom:6px; align-items:flex-start;">
-        <div class="info">
-          <div class="t">${escapeHtml(otherName || 'Bilinmeyen')}</div>
-          <div class="d">"${escapeHtml(c.vow)}"</div>
-        </div>
-        <button class="btn break-contract-btn" data-contract="${c.id}" style="width:auto; background:transparent; border:1px solid var(--line); color:var(--ink-dim);">Sözleşmeyi Boz</button>
-      </div>
-    `;
-    }).join('');
-
-    box.querySelectorAll('.break-contract-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if(!confirm('Bu sözleşmeyi bozmak istediğine emin misin? Bu geri alınamaz.')) return;
-        const { error } = await supabase.rpc('break_contract', { p_contract_id: btn.dataset.contract });
-        if(error){ alert(error.message); return; }
-        await loadContracts();
-      });
-    });
-  }
-
-  // ---------- EXAMS ----------
-  function updateExamCreateVisibility(){
-    document.getElementById('examCreatePanel').style.display = currentProfile?.rank === 'Yönetici' ? 'block' : 'none';
-  }
-
-  function updateAnnouncementCreateVisibility(){
-    document.getElementById('announcementCreatePanel').style.display = currentProfile?.rank === 'Yönetici' ? 'block' : 'none';
-  }
-
-  async function loadAnnouncements(){
-    const box = document.getElementById('announcementList');
-    const { data, error } = await supabase
-      .from('announcements')
-      .select('*, profiles(username)')
-      .order('created_at', { ascending: false })
-      .limit(20);
-
-    if(error || !data || data.length === 0){
-      box.innerHTML = '<div class="empty">Henüz duyuru yok.</div>';
-      return;
-    }
-
-    const isAdmin = currentProfile?.rank === 'Yönetici';
-    box.innerHTML = data.map(a => `
-      <div class="doc-sheet">
-        <div class="doc-sheet-title">${escapeHtml(a.title)}</div>
-        <div class="doc-sheet-body">${escapeHtml(a.content)}</div>
-        <div class="doc-sheet-meta">${escapeHtml(a.profiles?.username || 'Yönetici')} · ${new Date(a.created_at).toLocaleString('tr-TR')}</div>
-        ${isAdmin ? `<button class="task-del" data-ann-del="${a.id}" style="position:absolute; top:8px; right:8px;">✕</button>` : ''}
-      </div>
-    `).join('');
-
-    box.querySelectorAll('[data-ann-del]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const { error } = await supabase.rpc('delete_announcement', { p_id: btn.dataset.annDel });
-        if(error){ alert(error.message); return; }
-        await loadAnnouncements();
-      });
-    });
-  }
-
-  document.getElementById('announcementForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById('announcementMsg');
-    msg.className = 'msg'; msg.textContent = '';
-    const title = document.getElementById('announcementTitle').value.trim();
-    const content = document.getElementById('announcementContent').value.trim();
-
-    const { error } = await supabase.rpc('create_announcement', { p_title: title, p_content: content });
-    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-    msg.classList.add('ok'); msg.textContent = 'Duyuru yayınlandı.';
-    document.getElementById('announcementForm').reset();
-    await loadAnnouncements();
-  });
-
-  // ===================== KART SİSTEMİ (basit) =====================
-  // Yönetici hesabı otomatik olarak TÜM kart türlerinden sınırsız sahiptir (oluşturma ekranı yok).
-  // Normal üye elindeki kartı ya kullanır (etkisi uygulanır, kart biter) ya da başka birine gönderir (kart ona geçer).
-
-  function cardTileSvg(uid){
-    return `
-      <svg viewBox="0 0 60 72" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="gemBody-${uid}" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#fff8ec"/>
-            <stop offset="100%" stop-color="#ffffff"/>
-          </linearGradient>
-          <linearGradient id="gemCap-${uid}" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#ff8a72"/>
-            <stop offset="100%" stop-color="#c22f3a"/>
-          </linearGradient>
-        </defs>
-        <line x1="30" y1="0" x2="30" y2="18" stroke="#ffdd8c" stroke-width="1" opacity="0.85"/>
-        <line x1="16" y1="8" x2="30" y2="18" stroke="#ffdd8c" stroke-width="0.7" opacity="0.6"/>
-        <line x1="44" y1="8" x2="30" y2="18" stroke="#ffdd8c" stroke-width="0.7" opacity="0.6"/>
-        <path d="M30 16 L47 34 L30 70 L13 34 Z" fill="url(#gemBody-${uid})" stroke="#ffdd8c" stroke-width="1.2"/>
-        <path d="M30 16 L47 34 L30 42 L13 34 Z" fill="url(#gemCap-${uid})" stroke="#ffdd8c" stroke-width="0.8"/>
-      </svg>
-    `;
-  }
-
-  function cardTileShell(uid, name, desc, footerHtml){
-    return `
-      <div class="tarot-card">
-        <div class="tarot-frame">
-          <div class="tarot-roman left">X</div>
-          <div class="tarot-roman right">XII</div>
-          <div class="tarot-corner tc-tl"></div>
-          <div class="tarot-corner tc-tr"></div>
-          <div class="tarot-corner tc-bl"></div>
-          <div class="tarot-corner tc-br"></div>
-          <div class="tarot-inner">
-            <div class="tarot-emblem">${cardTileSvg(uid)}</div>
-            <div class="tarot-name">${escapeHtml(name || '')}</div>
-            <div class="tarot-rule"></div>
-            <div class="tarot-desc">${escapeHtml(desc || '')}</div>
-          </div>
-          <div class="tarot-kanji">試練</div>
-        </div>
-        ${footerHtml}
-      </div>
-    `;
-  }
-
-  async function loadMyCards(){
-    const isAdmin = currentProfile?.rank === 'Yönetici';
-    const box = document.getElementById('myCardsList');
-    const subtitle = document.getElementById('cardsSubtitle');
-
-    if(isAdmin){
-      subtitle.textContent = 'Yönetici olarak tüm kart türlerinden sınırsız sahipsin. İstediğin kartı istediğin üyeye gönderebilirsin.';
-      const { data, error } = await supabase.from('cards').select('*').order('name', { ascending: true });
-      if(error || !data || data.length === 0){
-        box.innerHTML = '<div class="empty">Tanımlı kart bulunamadı.</div>';
-        return;
-      }
-      box.innerHTML = data.map(card => cardTileShell(card.id, card.name, card.description, `
-        <div class="card-send-row">
-          <input type="text" class="card-send-input" data-card="${card.id}" placeholder="kullanıcı adı">
-          <button class="btn card-send-btn" data-card="${card.id}">GÖNDER</button>
-        </div>
-        <div class="msg" id="cardMsg-${card.id}"></div>
-      `)).join('');
-
-      box.querySelectorAll('.card-send-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          const cardId = btn.dataset.card;
-          const input = box.querySelector(`.card-send-input[data-card="${cardId}"]`);
-          const msg = document.getElementById(`cardMsg-${cardId}`);
-          const username = input.value.trim();
-          msg.className = 'msg'; msg.textContent = '';
-          if(!username){ msg.classList.add('error'); msg.textContent = 'Kullanıcı adı gir.'; return; }
-          btn.disabled = true;
-          const { error } = await supabase.rpc('admin_assign_card', { p_username: username, p_card_id: cardId });
-          btn.disabled = false;
-          if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-          msg.classList.add('ok'); msg.textContent = 'Gönderildi.';
-          input.value = '';
-        });
-      });
-      return;
-    }
-
-    subtitle.textContent = 'Özel sınavlarda veya yönetici tarafından kazandığın kartlar burada. Kullanınca etkisi otomatik uygulanır, başka birine de gönderebilirsin.';
-    const { data, error } = await supabase
-      .from('member_cards')
-      .select('*, cards(*)')
-      .eq('user_id', currentUser.id)
-      .order('assigned_at', { ascending: false });
-
-    if(error || !data || data.length === 0){
-      box.innerHTML = '<div class="empty">Henüz bir kartın yok.</div>';
-      return;
-    }
-
-    box.innerHTML = data.map(mc => {
-      const card = mc.cards || {};
-      return cardTileShell(mc.id, card.name, card.description, `
-        <div class="card-actions-row">
-          <button class="btn use-card-btn" data-mc="${mc.id}">KULLAN</button>
-          <button class="btn send-card-btn" data-mc="${mc.id}">GÖNDER</button>
-        </div>
-        <div class="card-send-row" id="sendRow-${mc.id}" style="display:none;">
-          <input type="text" class="card-send-input" id="sendInput-${mc.id}" placeholder="kullanıcı adı">
-          <button class="btn card-send-confirm-btn" data-mc="${mc.id}">ONAYLA</button>
-        </div>
-        <div class="msg" id="cardMsg-${mc.id}"></div>
-      `);
-    }).join('');
-
-    box.querySelectorAll('.use-card-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        btn.disabled = true;
-        const { error } = await supabase.rpc('use_card', { p_member_card_id: btn.dataset.mc });
-        if(error){ alert(error.message); btn.disabled = false; return; }
-        await loadMyCards();
-        await refreshMyProfile();
-      });
-    });
-
-    box.querySelectorAll('.send-card-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.getElementById(`sendRow-${btn.dataset.mc}`).style.display = 'flex';
-      });
-    });
-
-    box.querySelectorAll('.card-send-confirm-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const mcId = btn.dataset.mc;
-        const input = document.getElementById(`sendInput-${mcId}`);
-        const msg = document.getElementById(`cardMsg-${mcId}`);
-        const username = input.value.trim();
-        msg.className = 'msg'; msg.textContent = '';
-        if(!username){ msg.classList.add('error'); msg.textContent = 'Kullanıcı adı gir.'; return; }
-        btn.disabled = true;
-        const { error } = await supabase.rpc('send_card', { p_member_card_id: mcId, p_target_username: username });
-        btn.disabled = false;
-        if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-        await loadMyCards();
-      });
-    });
-  }
-
-  // ===================== BİLDİRİMLER =====================
-  document.getElementById('notifBell').addEventListener('click', async () => {
-    const panel = document.getElementById('notifPanel');
-    const opening = panel.style.display === 'none';
-    panel.style.display = opening ? 'block' : 'none';
-    if(opening){
-      await supabase.from('notifications').update({ is_read: true }).eq('user_id', currentUser.id).eq('is_read', false);
-      document.getElementById('notifBadge').style.display = 'none';
-    }
-  });
-
-  async function loadNotifications(){
-    const { data, error } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', currentUser.id)
-      .order('created_at', { ascending: false })
-      .limit(20);
-
-    if(error || !data) return;
-
-    const unread = data.filter(n => !n.is_read).length;
-    const badge = document.getElementById('notifBadge');
-    if(unread > 0){ badge.style.display = 'flex'; badge.textContent = unread > 9 ? '9+' : String(unread); }
-    else { badge.style.display = 'none'; }
-
-    const list = document.getElementById('notifList');
-    if(data.length === 0){
-      list.innerHTML = '<div class="empty">Bildirim yok.</div>';
-      return;
-    }
-    list.innerHTML = data.map(n => `
-      <div class="notif-item ${n.is_read ? '' : 'unread'}">
-        <div class="notif-msg">${escapeHtml(n.message)}</div>
-        <div class="notif-time">${new Date(n.created_at).toLocaleString('tr-TR')}</div>
-      </div>
-    `).join('');
-  }
-
-  // ===================== MÜZAYEDE =====================
-  document.getElementById('auctionCreateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById('auctionCreateMsg');
-    msg.className = 'msg'; msg.textContent = '';
-    const title = document.getElementById('auctionTitle').value.trim();
-    const desc = document.getElementById('auctionDesc').value.trim();
-    const start = Number(document.getElementById('auctionStart').value || 0);
-
-    const { error } = await supabase.rpc('admin_create_auction', { p_title: title, p_description: desc, p_starting_price: start });
-    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-    msg.classList.add('ok'); msg.textContent = 'Müzayede başlatıldı.';
-    document.getElementById('auctionCreateForm').reset();
-    await loadAuctions();
-  });
-
-  async function loadAuctions(){
-    const isAdmin = currentProfile?.rank === 'Yönetici';
-    document.getElementById('auctionAdminPanel').style.display = isAdmin ? 'block' : 'none';
-
-    const box = document.getElementById('auctionList');
-    const { data, error } = await supabase
-      .from('auctions')
-      .select('*, profiles!auctions_current_bidder_fkey(username)')
-      .order('created_at', { ascending: false });
-
-    if(error || !data || data.length === 0){
-      box.innerHTML = '<div class="empty">Henüz müzayede yok.</div>';
-      return;
-    }
-
-    box.innerHTML = data.map(a => {
-      const price = a.current_price ?? a.starting_price;
-      const leader = a.profiles?.username;
-      const closed = a.status === 'closed';
-      return `
-        <div class="panel" style="margin-bottom:14px;">
-          <div class="panel-head">
-            <h2>${escapeHtml(a.title)}</h2>
-            <span class="count">${closed ? 'KAPANDI' : 'AÇIK'}</span>
-          </div>
-          <div class="panel-body">
-            ${a.description ? `<div class="exam-card-meta" style="margin-bottom:8px;"><span>${escapeHtml(a.description)}</span></div>` : ''}
-            <div class="exam-card-meta"><span>Güncel teklif: <b>${Number(price).toLocaleString('tr-TR')} puan</b>${leader ? ' — ' + escapeHtml(leader) : ' (henüz teklif yok)'}</span></div>
-            ${!closed ? `
-              <div class="card-send-row" style="margin-top:10px;">
-                <input type="number" class="bid-input" data-auction="${a.id}" min="${price + 1}" placeholder="teklifin">
-                <button class="btn bid-btn" data-auction="${a.id}">TEKLİF VER</button>
-                ${isAdmin ? `<button class="btn close-auction-btn" data-auction="${a.id}" style="background:#3a1420;">BİTİR</button>` : ''}
-              </div>
-              <div class="msg" id="auctionMsg-${a.id}"></div>
-            ` : ''}
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    box.querySelectorAll('.bid-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const id = btn.dataset.auction;
-        const input = box.querySelector(`.bid-input[data-auction="${id}"]`);
-        const msg = document.getElementById(`auctionMsg-${id}`);
-        const amount = Number(input.value || 0);
-        msg.className = 'msg'; msg.textContent = '';
-        if(!amount){ msg.classList.add('error'); msg.textContent = 'Bir miktar gir.'; return; }
-        btn.disabled = true;
-        const { error } = await supabase.rpc('place_bid', { p_auction_id: id, p_amount: amount });
-        btn.disabled = false;
-        if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-        await loadAuctions();
-        await refreshMyProfile();
-      });
-    });
-
-    box.querySelectorAll('.close-auction-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const { error } = await supabase.rpc('admin_close_auction', { p_auction_id: btn.dataset.auction });
-        if(error){ alert(error.message); return; }
-        await loadAuctions();
-      });
-    });
-  }
-
-  // ===================== KREDİLER =====================
-  document.getElementById('loanCreateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById('loanCreateMsg');
-    msg.className = 'msg'; msg.textContent = '';
-    const username = document.getElementById('loanUsername').value.trim();
-    const principal = Number(document.getElementById('loanPrincipal').value || 0);
-    const rate = Number(document.getElementById('loanRate').value || 0);
-
-    const { error } = await supabase.rpc('admin_grant_loan', { p_username: username, p_principal: principal, p_interest_rate: rate });
-    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-    msg.classList.add('ok'); msg.textContent = 'Kredi verildi.';
-    document.getElementById('loanCreateForm').reset();
-    await loadLoans();
-  });
-
-  async function loadLoans(){
-    const isAdmin = currentProfile?.rank === 'Yönetici';
-    document.getElementById('loanAdminPanel').style.display = isAdmin ? 'block' : 'none';
-
-    const box = document.getElementById('loanList');
-    const { data, error } = await supabase
-      .from('loans')
-      .select('*, profiles(username)')
-      .eq(isAdmin ? 'status' : 'borrower_id', isAdmin ? 'active' : currentUser.id)
-      .order('created_at', { ascending: false });
-
-    if(error || !data || data.length === 0){
-      box.innerHTML = '<div class="empty">Aktif kredi yok.</div>';
-      return;
-    }
-
-    box.innerHTML = data.map(l => `
-      <div class="task-row">
-        <div class="task-main">
-          <div class="task-title">${escapeHtml(l.profiles?.username || '')} — ${Number(l.total_due).toLocaleString('tr-TR')} puan kaldı</div>
-          <div class="task-meta">Ana para ${Number(l.principal).toLocaleString('tr-TR')} · Faiz %${l.interest_rate} · ${l.status === 'repaid' ? 'Kapandı' : 'Aktif'}</div>
-        </div>
-        ${(!isAdmin && l.status === 'active') ? `
-          <input type="number" class="repay-input" data-loan="${l.id}" min="1" placeholder="öde" style="width:80px; padding:6px 8px; background:#0a1522; border:1px solid var(--line); border-radius:6px; color:var(--ink); font-size:12px;">
-          <button class="btn repay-btn" data-loan="${l.id}" style="padding:6px 10px; font-size:12px;">ÖDE</button>
-        ` : ''}
-      </div>
-      <div class="msg" id="loanMsg-${l.id}"></div>
-    `).join('');
-
-    box.querySelectorAll('.repay-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const id = btn.dataset.loan;
-        const input = box.querySelector(`.repay-input[data-loan="${id}"]`);
-        const msg = document.getElementById(`loanMsg-${id}`);
-        const amount = Number(input.value || 0);
-        msg.className = 'msg'; msg.textContent = '';
-        if(!amount){ msg.classList.add('error'); msg.textContent = 'Bir miktar gir.'; return; }
-        btn.disabled = true;
-        const { error } = await supabase.rpc('repay_loan', { p_loan_id: id, p_amount: amount });
-        btn.disabled = false;
-        if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-        await loadLoans();
-        await refreshMyProfile();
-      });
-    });
-  }
-
-  function updateRosterVisibility(){
-    const isAdmin = currentProfile?.rank === 'Yönetici';
-    document.querySelectorAll('.admin-only-btn').forEach(btn => { btn.style.display = isAdmin ? 'flex' : 'none'; });
-    document.querySelectorAll('.admin-only-label').forEach(el => { el.style.display = isAdmin ? 'block' : 'none'; });
-  }
-
-  function renderRoster(){
-    if(currentProfile?.rank !== 'Yönetici') return;
-    const grid = document.getElementById('rosterGrid');
-    if(!allProfiles || allProfiles.length === 0){
-      grid.innerHTML = '<div class="empty">Henüz üye yok.</div>';
-      return;
-    }
-    const sorted = [...allProfiles].sort((a,b) => (a.class || '').localeCompare(b.class || '') || a.username.localeCompare(b.username));
-    grid.innerHTML = sorted.map(p => `
-      <div class="roster-card" style="position:relative;">
-        <button class="reset-pw-icon" data-username="${escapeHtml(p.username)}" title="Şifre sıfırla">🔑</button>
-        <div class="roster-avatar">${avatarHtml(p)}</div>
-        <div class="roster-name">${escapeHtml(p.username)}</div>
-        <div class="roster-meta">Sınıf ${escapeHtml(p.class || '-')} · ${escapeHtml(p.rank || 'Üye')}</div>
-        <div class="roster-meta">${(p.points ?? 0).toLocaleString('tr-TR')} puan</div>
-        <div class="roster-stats">
-          ${STAT_DEFS.map(([key, label]) => `<span>${STAT_ABBR[label] || label.slice(0,3)}: ${p[key] || 'C'}</span>`).join('')}
-        </div>
-      </div>
-    `).join('');
-
-    grid.querySelectorAll('.reset-pw-icon').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        const username = btn.dataset.username;
-        const newPassword = prompt(`${username} için yeni şifre gir (en az 6 karakter):`);
-        if(!newPassword) return;
-        if(newPassword.length < 6){ alert('Şifre en az 6 karakter olmalı.'); return; }
-        btn.disabled = true;
-        const { error } = await supabase.rpc('admin_reset_password', { p_username: username, p_new_password: newPassword });
-        btn.disabled = false;
-        if(error){ alert(error.message); return; }
-        alert(`${username} için şifre sıfırlandı. Yeni şifreyi kendisine ilet: ${newPassword}`);
-      });
-    });
-
-    const logoSrc = document.querySelector('.sidebar-brand img')?.src;
-    if(logoSrc){
-      grid.querySelectorAll('.roster-avatar').forEach(el => {
-        el.style.backgroundImage = `linear-gradient(rgba(6,7,9,0.5), rgba(6,7,9,0.5)), url('${logoSrc}')`;
-      });
-    }
-  }
-
-  document.getElementById('examCreateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById('examCreateMsg');
-    msg.className = 'msg'; msg.textContent = '';
-    const title = document.getElementById('examTitle').value.trim();
-    const desc = document.getElementById('examDesc').value.trim();
-    const cost = parseInt(document.getElementById('examCost').value.replace(/[.,\s]/g, ''), 10);
-    const demote = document.getElementById('examDemote').checked;
-    const deadlineRaw = document.getElementById('examDeadline').value;
-
-    if(!cost || cost < 0){
-      msg.classList.add('error'); msg.textContent = 'Geçerli bir ücret gir.'; return;
-    }
-
-    const { error } = await supabase.rpc('create_exam', { p_title: title, p_entry_cost: cost, p_demote_losers: demote });
-    if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-
-    if(desc || deadlineRaw){
-      const { data: justCreated } = await supabase
-        .from('exams').select('id').eq('title', title)
-        .order('created_at', { ascending: false }).limit(1).maybeSingle();
-      if(justCreated){
-        await supabase.from('exams').update({
-          description: desc || null,
-          deadline: deadlineRaw ? new Date(deadlineRaw).toISOString() : null
-        }).eq('id', justCreated.id);
-      }
-    }
-
-    msg.classList.add('ok'); msg.textContent = 'Sınav oluşturuldu.';
-    document.getElementById('examCreateForm').reset();
-    await loadExams();
-  });
-
-  async function loadExams(){
-    const { data: exams, error } = await supabase.from('exams').select('*').order('created_at', { ascending: false });
-    const openBox = document.getElementById('openExams');
-    const closedBox = document.getElementById('closedExams');
-    if(error || !exams){
-      openBox.innerHTML = '<div class="empty">Yüklenemedi.</div>';
-      closedBox.innerHTML = '<div class="empty">Yüklenemedi.</div>';
-      return;
-    }
-
-    const { data: participants } = await supabase.from('exam_participants').select('*, profiles(username)');
-    const partByExam = {};
-    (participants || []).forEach(p => {
-      (partByExam[p.exam_id] = partByExam[p.exam_id] || []).push(p);
-    });
-
-    const open = exams.filter(e => e.status === 'open');
-    const closed = exams.filter(e => e.status === 'resolved');
-
-    const isAdmin = currentProfile?.rank === 'Yönetici';
-
-    openBox.innerHTML = open.length === 0 ? '<div class="empty">Açık sınav yok.</div>' : open.map(ex => {
-      const plist = partByExam[ex.id] || [];
-      const joined = plist.some(p => p.user_id === currentUser.id);
-      const deadlinePassed = ex.deadline ? new Date(ex.deadline).getTime() < Date.now() : false;
-
-      const adminBlock = isAdmin ? `
-        <div class="exam-admin-block">
-          <div class="exam-admin-lbl">Puan gir, kazananları seç ve sonuçlandır</div>
-          <div class="exam-participant-list">
-            ${plist.map(p => `
-              <label class="exam-winner-row" style="justify-content:space-between; gap:8px;">
-                <span style="display:flex; align-items:center; gap:8px;">
-                  <input type="checkbox" class="winner-check" data-exam="${ex.id}" data-user="${p.user_id}" style="width:auto;">
-                  ${escapeHtml(p.profiles?.username || '—')}
-                </span>
-                <input type="number" class="score-input" data-exam="${ex.id}" data-user="${p.user_id}" placeholder="puan" style="width:70px; padding:5px 8px; background:#0a1522; border:1px solid var(--line); border-radius:6px; color:var(--ink); font-family:'Orbitron',sans-serif; font-size:12px;">
-              </label>
-            `).join('') || '<div style="font-size:12px; color:var(--ink-dim);">Henüz katılan yok.</div>'}
-          </div>
-          <button class="btn resolve-exam-btn" data-exam="${ex.id}" style="margin-top:8px;">Sonuçlandır</button>
-        </div>
-      ` : '';
-
-      return `
-        <div class="exam-card">
-          <div class="exam-card-head">
-            <div class="exam-card-title">${escapeHtml(ex.title)}</div>
-            ${ex.deadline ? `<div class="exam-deadline${deadlinePassed ? ' expired' : ''}" data-deadline="${ex.deadline}">${deadlinePassed ? 'Süre doldu' : ''}</div>` : ''}
-          </div>
-          ${ex.description ? `<div class="exam-card-desc">${escapeHtml(ex.description)}</div>` : ''}
-          <div class="exam-card-meta">
-            <span>${ex.entry_cost.toLocaleString('tr-TR')} puan giriş</span>
-            <span>${plist.length} katılımcı</span>
-            ${ex.demote_losers ? '<span class="exam-tag-danger">Kaybedenler sınıf düşer</span>' : ''}
-          </div>
-          <div class="exam-card-actions">
-            ${joined
-              ? '<span class="rank-badge">Katıldın</span>'
-              : deadlinePassed
-                ? '<span class="rank-badge" style="color:var(--danger); border-color:var(--danger);">Süre doldu</span>'
-                : `<button class="btn join-exam-btn" data-exam="${ex.id}" style="width:auto;">Katıl</button>`}
-          </div>
-          ${adminBlock}
-        </div>
-      `;
-    }).join('');
-
-    closedBox.innerHTML = closed.length === 0 ? '<div class="empty">Henüz sonuçlanan sınav yok.</div>' : closed.map(ex => {
-      const plist = partByExam[ex.id] || [];
-      const winners = plist.filter(p => p.is_winner).map(p => p.profiles?.username).filter(Boolean);
-      const demoted = plist.filter(p => p.demoted).map(p => p.profiles?.username).filter(Boolean);
-      const protectedUsers = plist.filter(p => p.protected).map(p => p.profiles?.username).filter(Boolean);
-      const scored = [...plist].filter(p => p.score !== null && p.score !== undefined).sort((a,b) => (b.score || 0) - (a.score || 0));
-      return `
-        <div class="exam-card exam-card-closed">
-          <div class="exam-card-title">${escapeHtml(ex.title)}</div>
-          ${demoted.length ? `<div class="exam-card-meta"><span class="exam-tag-danger">Sınıfı düşenler: ${escapeHtml(demoted.join(', '))}</span></div>` : ''}
-          ${protectedUsers.length ? `<div class="exam-card-meta"><span>Koruma puanıyla kurtulanlar: ${escapeHtml(protectedUsers.join(', '))}</span></div>` : ''}
-          ${scored.length ? `
-            <div class="result-board">
-              <div class="result-board-head">SONUÇ · ${escapeHtml(ex.title).toUpperCase()}</div>
-              ${scored.map((p, i) => `
-                <div class="result-row ${i === 0 ? 'rank-1' : ''}">
-                  <span class="result-rank">${i + 1}</span>
-                  <span class="result-name">${escapeHtml(p.profiles?.username || '—')}${p.is_winner ? ' 🏆' : ''}</span>
-                  <span class="result-score">${p.score}</span>
-                </div>
-              `).join('')}
-            </div>
-          ` : `<div class="exam-card-meta"><span>Kazananlar: ${winners.length ? escapeHtml(winners.join(', ')) : '—'}</span></div>`}
-          ${(isAdmin && ex.entry_cost > 0 && winners.length > 0) ? `
-            <button class="btn payout-pool-btn" data-exam="${ex.id}" style="margin-top:10px;">ÖDÜL HAVUZUNU DAĞIT (${(ex.entry_cost * plist.length).toLocaleString('tr-TR')} puan)</button>
-            <div class="msg" id="payoutMsg-${ex.id}"></div>
-          ` : ''}
-        </div>
-      `;
-    }).join('');
-
-    document.querySelectorAll('.payout-pool-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const id = btn.dataset.exam;
-        const msg = document.getElementById(`payoutMsg-${id}`);
-        msg.className = 'msg'; msg.textContent = '';
-        btn.disabled = true;
-        const { error } = await supabase.rpc('payout_exam_pool', { p_exam_id: id });
-        btn.disabled = false;
-        if(error){ msg.classList.add('error'); msg.textContent = error.message; return; }
-        msg.classList.add('ok'); msg.textContent = 'Havuz dağıtıldı.';
-        await loadAllProfiles();
-      });
-    });
-
-    document.querySelectorAll('[data-deadline]').forEach(el => {
-      const target = new Date(el.dataset.deadline).getTime();
-      if(target < Date.now()) return;
-      const tick = () => {
-        const diff = target - Date.now();
-        if(diff <= 0){ el.textContent = 'Süre doldu'; el.classList.add('expired'); clearInterval(timer); return; }
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
-        el.textContent = `${h}s ${m}dk ${s}sn kaldı`;
-      };
-      tick();
-      const timer = setInterval(tick, 1000);
-    });
-
-    document.querySelectorAll('.join-exam-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const { error } = await supabase.rpc('join_exam', { p_exam_id: btn.dataset.exam });
-        if(error){ alert(error.message); return; }
-        await refreshMyProfile();
-        await loadExams();
-      });
-    });
-
-    document.querySelectorAll('.resolve-exam-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const examId = btn.dataset.exam;
-        const winnerIds = Array.from(document.querySelectorAll(`.winner-check[data-exam="${examId}"]:checked`))
-          .map(el => el.dataset.user);
-
-        const scoreInputs = Array.from(document.querySelectorAll(`.score-input[data-exam="${examId}"]`))
-          .filter(el => el.value !== '');
-        for(const el of scoreInputs){
-          await supabase.rpc('admin_set_exam_score', { p_exam_id: examId, p_user_id: el.dataset.user, p_score: Number(el.value) });
-        }
-
-        const { error } = await supabase.rpc('resolve_exam', { p_exam_id: examId, winner_ids: winnerIds });
-        if(error){ alert(error.message); return; }
-        await loadExams();
-        await loadAllProfiles();
-        await renderClassRanking();
-        renderClassMembers();
-      });
-    });
-  }
-
-  // ---------- TASKS ----------
-  async function loadTasks(){
-    const list = document.getElementById('taskList');
-    const { data, error } = await supabase
-      .from('tasks')
-      .select('*, profiles(username)')
-      .order('created_at', { ascending: false });
-
-    if(error || !data || data.length === 0){
-      list.innerHTML = '<div class="empty">Henüz görev yok.</div>';
-      document.getElementById('taskCount').textContent = '0 görev';
-      return;
-    }
-    document.getElementById('taskCount').textContent = data.length + ' görev';
-    list.innerHTML = data.map(t => `
-      <div class="task-row" data-id="${t.id}">
-        <div class="task-check ${t.status === 'done' ? 'done' : ''}" data-toggle="${t.id}" data-status="${t.status}">
-          ${t.status === 'done' ? '✓' : ''}
-        </div>
-        <div class="task-main">
-          <div class="task-title ${t.status === 'done' ? 'done' : ''}">${escapeHtml(t.title)}</div>
-          <div class="task-meta">${escapeHtml(t.profiles?.username || 'Bilinmeyen')} · ${Number(t.reward || 0).toLocaleString('tr-TR')} puan${t.recurrence !== 'once' ? ' · ' + (t.recurrence === 'daily' ? 'Günlük' : 'Haftalık') : ''}</div>
-        </div>
-        ${t.user_id === currentUser.id ? `<button class="task-del" data-del="${t.id}">✕</button>` : ''}
-      </div>
-    `).join('');
-
-    list.querySelectorAll('[data-toggle]').forEach(el => {
-      el.addEventListener('click', async () => {
-        const id = el.getAttribute('data-toggle');
-        const current = el.getAttribute('data-status');
-        const row = data.find(t => t.id === id);
-        if(!row || row.user_id !== currentUser.id) return;
-
-        if(current === 'done'){
-          await supabase.from('tasks').update({ status: 'pending' }).eq('id', id);
-        } else {
-          const { error } = await supabase.rpc('complete_task', { p_task_id: id });
-          if(error){ alert(error.message); return; }
-          await refreshMyProfile();
-          await loadAllProfiles();
-          renderClassMembers();
-        }
-        await loadTasks();
-      });
-    });
-
-    list.querySelectorAll('[data-del]').forEach(el => {
-      el.addEventListener('click', async () => {
-        const id = el.getAttribute('data-del');
-        await supabase.from('tasks').delete().eq('id', id);
-        await loadTasks();
-      });
-    });
-  }
-
-  document.getElementById('taskAddForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const targetInput = document.getElementById('taskTarget');
-    const titleInput = document.getElementById('taskInput');
-    const rewardInput = document.getElementById('taskReward');
-    const recurrenceInput = document.getElementById('taskRecurrence');
-    const targetUsername = targetInput.value.trim();
-    const title = titleInput.value.trim();
-    const reward = Number(rewardInput.value || 0);
-    const recurrence = recurrenceInput.value;
-    if(!title || !targetUsername) return;
-
-    const target = allProfiles.find(p => p.username.toLowerCase() === targetUsername.toLowerCase());
-    if(!target){ alert('Kullanıcı bulunamadı: ' + targetUsername); return; }
-
-    const { error } = await supabase.from('tasks').insert({ user_id: target.id, title, reward, recurrence });
-    if(error){ alert(error.message); return; }
-    targetInput.value = ''; titleInput.value = ''; rewardInput.value = '1000'; recurrenceInput.value = 'once';
-    await loadTasks();
-  });
-
-  function updateTaskFormVisibility(){
-    const isAdmin = currentProfile?.rank === 'Yönetici';
-    document.getElementById('taskAddForm').style.display = isAdmin ? 'flex' : 'none';
-    document.getElementById('taskAddHint').style.display = isAdmin ? 'none' : 'block';
-  }
-
-  // ---------- REALTIME ----------
-  function setupRealtime(){
-    supabase.channel('public:tasks')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, () => { if(currentUser) loadTasks(); })
-      .subscribe();
-    supabase.channel('public:profiles')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, async () => {
-        if(!currentUser) return;
-        await loadAllProfiles();
-        renderClassTabs();
-        renderClassMembers();
-        renderRoster();
-      })
-      .subscribe();
-    supabase.channel('public:class_points')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'class_points' }, () => { if(currentUser) renderClassRanking(); })
-      .subscribe();
-    supabase.channel('public:exams')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'exams' }, () => { if(currentUser) loadExams(); })
-      .subscribe();
-    supabase.channel('public:exam_participants')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'exam_participants' }, () => { if(currentUser) loadExams(); })
-      .subscribe();
-    supabase.channel('public:point_transactions')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'point_transactions' }, () => { if(currentUser) loadHistory(); })
-      .subscribe();
-    supabase.channel('public:duels')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'duels' }, () => { if(currentUser) loadIncomingDuels(); })
-      .subscribe();
-    supabase.channel('public:contracts')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'contracts' }, () => { if(currentUser) loadContracts(); })
-      .subscribe();
-    supabase.channel('public:president_votes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'president_votes' }, () => { if(currentUser) loadClassPresident(); })
-      .subscribe();
-    supabase.channel('public:announcements')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'announcements' }, () => { if(currentUser) loadAnnouncements(); })
-      .subscribe();
-    supabase.channel('public:notifications')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, (payload) => {
-        if(currentUser && payload.new?.user_id === currentUser.id) loadNotifications();
-      })
-      .subscribe();
-  }
-
-  // ---------- TRAILER PLAYER ----------
-  (function setupTrailerPlayer(){
-    const audio = document.getElementById('siteTrailerAudio');
-    const btn = document.getElementById('sitePlayBtn');
-    const fill = document.getElementById('trackProgressFill');
-    const progressWrap = document.getElementById('trackProgressWrap');
-    const timeEl = document.getElementById('trackTime');
-    if(!audio || !btn) return;
-
-    function fmt(sec){
-      if(!isFinite(sec)) return '0:00';
-      const m = Math.floor(sec / 60);
-      const s = Math.floor(sec % 60).toString().padStart(2, '0');
-      return `${m}:${s}`;
-    }
-
-    btn.addEventListener('click', () => {
-      if(audio.paused){
-        audio.play();
-        btn.textContent = '❚❚';
-      } else {
-        audio.pause();
-        btn.textContent = '▶';
-      }
-    });
-
-    audio.addEventListener('timeupdate', () => {
-      const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
-      fill.style.width = pct + '%';
-      timeEl.textContent = fmt(audio.currentTime);
-    });
-
-    audio.addEventListener('ended', () => { btn.textContent = '▶'; });
-
-    progressWrap.addEventListener('click', (e) => {
-      if(!audio.duration) return;
-      const rect = progressWrap.getBoundingClientRect();
-      const pct = (e.clientX - rect.left) / rect.width;
-      audio.currentTime = pct * audio.duration;
-    });
-  })();
-
-  // ---------- BOOT ----------
-  (async function boot(){
-    document.getElementById('loaderLogo').src = document.querySelector('.sidebar-brand img').src;
-    document.getElementById('welcomeLogo').src = document.querySelector('.sidebar-brand img').src;
-    try {
-      setupRealtime();
-      await loadSession();
-    } catch (err) {
-      console.error(err);
-      document.getElementById('appLoading').style.display = 'none';
-      const box = document.getElementById('appError');
-      box.style.display = 'flex';
-      box.innerHTML = `
-        <div>
-          <div style="font-size:16px; margin-bottom:10px;">Bir şeyler ters gitti.</div>
-          <div style="font-size:12px; opacity:0.8;">${(err && err.message) ? err.message : err}</div>
-          <div style="margin-top:16px;"><a href="login.html" style="color:#dfe1e4;">Girişe dön</a></div>
-        </div>
-      `;
-    }
-  })();
-</script>
-
-<script>
-  // ---------- LIQUID METAL BUTTON: tıklama dalgası (ripple) ----------
-  document.addEventListener('click', function(e){
-    var btn = e.target.closest('.btn');
-    if(!btn || btn.disabled) return;
-    var rect = btn.getBoundingClientRect();
-    var size = Math.max(rect.width, rect.height);
-    var ripple = document.createElement('span');
-    ripple.className = 'btn-ripple';
-    ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = (e.clientX - rect.left) + 'px';
-    ripple.style.top = (e.clientY - rect.top) + 'px';
-    btn.appendChild(ripple);
-    setTimeout(function(){ ripple.remove(); }, 700);
-  });
-</script>
-<script>
-  // ---------- ALT MENÜ EK DÜĞMELER: Bildirim ----------
-  (function(){
-    var bell = document.getElementById('notifBell');
-    var nBtn = document.getElementById('navNotifBtn');
-    var badge = document.getElementById('notifBadge');
-    var dot = document.getElementById('navNotifDot');
-    if(nBtn && bell) nBtn.addEventListener('click', function(){
-      bell.click();
-      var panel = document.getElementById('notifPanel');
-      if(panel && panel.style.display !== 'none') window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    function syncDot(){
-      if(!badge || !dot) return;
-      var show = badge.style.display !== 'none' && badge.textContent.trim() !== '0';
-      dot.style.display = show ? 'flex' : 'none';
-      dot.textContent = badge.textContent;
-    }
-    if(badge){ new MutationObserver(syncDot).observe(badge, { attributes:true, childList:true, characterData:true, subtree:true }); syncDot(); }
-  })();
-</script>
-<script src="nav-glow.js?v=1"></script>
-<script type="module">
-  import { mountWavesBackground } from './waves-background.js';
-  try { mountWavesBackground({ scrim: 0.55 }); } catch(e){ console.warn('Waves arka planı yüklenemedi:', e); }
+}
+
+/* ---------- PUAN İŞLEMLERİ ---------- */
+$('#claimBtn').onclick = async () => {
+  const m = $('#claimMsg'); m.className = 'msg';
+  const { error } = await supabase.rpc('claim_points');
+  m.className = 'msg ' + (error ? 'err' : 'ok'); m.textContent = error ? error.message : '+100.000 puan hesabına eklendi.';
+  if(!error){ loadProfile(); loadTx(); }
+};
+$('#sendForm').onsubmit = async e => {
+  e.preventDefault();
+  const m = $('#sendMsg'); m.className = 'msg';
+  const amount = parseInt($('#sAmt').value.replace(/[.,\s]/g, ''), 10);
+  if(!amount || amount <= 0){ m.className = 'msg err'; m.textContent = 'Geçerli bir miktar gir.'; return; }
+  const { error } = await supabase.rpc('transfer_points', { target_username: $('#sUser').value.trim(), amount });
+  m.className = 'msg ' + (error ? 'err' : 'ok'); m.textContent = error ? error.message : 'Puan gönderildi.';
+  if(!error){ e.target.reset(); loadProfile(); loadTx(); }
+};
+
+/* ---------- MÜZİK ---------- */
+const a = $('#aud'), pb = $('#playBtn');
+pb.onclick = () => { if(a.paused){ a.play(); pb.textContent = '❚❚'; $('#songBox').classList.add('play'); } else { a.pause(); pb.textContent = '▶'; $('#songBox').classList.remove('play'); } };
+a.ontimeupdate = () => { if(a.duration) $('#barFill').style.width = (a.currentTime / a.duration * 100) + '%'; const s = Math.floor(a.currentTime); $('#tm').textContent = Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); };
+
+/* ---------- BAŞLAT ---------- */
+const { data:{ session } } = await supabase.auth.getSession();
+if(!session){ location.replace('login.html'); }
+else{
+  uid = session.user.id;
+  $$('.side button')[0].classList.add('on');
+  await loadProfile();
+  loadTx(); loadAnn(); loadRank();
+}
 </script>
 </body>
 </html>
