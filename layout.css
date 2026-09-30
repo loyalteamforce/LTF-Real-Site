@@ -1,0 +1,94 @@
+/* ============================================================
+   LAYOUT.CSS — ana uygulamanın (app.html) yerleşim düzeni
+   Sadece boşluk, hizalama ve blok düzeni. Renkler/tema aynı.
+   Kayıt ekranına ve alt menüye (navpill.css) dokunmaz.
+   style.css ve navpill.css'ten SONRA yüklenmeli.
+   ============================================================ */
+
+/* ---- Sayfa iskeleti ---- */
+.main-area{ max-width:1040px; padding:32px 32px 64px; margin:0 auto; width:100%; }
+.view{ animation:viewIn .28s ease both; }
+@keyframes viewIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+
+/* ---- Sayfa başlığı: hepsinde aynı ---- */
+.section-title{
+  font-size:15px; letter-spacing:3.5px; margin-bottom:8px; padding-left:12px;
+  border-left:3px solid var(--silver-2); line-height:1.2;
+}
+.section-sub{ max-width:640px; margin-bottom:22px; padding-left:15px; }
+.page-head{ margin-bottom:4px; }
+
+/* ---- Boşluk ritmi: bloklar arası hep 18px ---- */
+.view > .panel, .view > .grid-2, .view > .class-table-tablet,
+.view > .track-card, .view > .guide-list{ margin-top:0; margin-bottom:18px !important; }
+.view > .panel[style*="margin-top"]{ margin-top:0 !important; }
+.block-gap{ margin-top:22px; margin-bottom:18px; }
+.grid-2{ gap:18px; align-items:start; }
+
+/* ---- Paneller ---- */
+.panel{ border-radius:12px; }
+.panel-head{ padding:14px 18px; }
+.panel-head h2{ font-size:12.5px; letter-spacing:2.5px; }
+.panel-body{ padding:16px 18px; }
+
+/* ---- Formlar: alanlar aynı aralık, buton hep alt satırda ---- */
+.field{ margin-bottom:12px; }
+.field label{ display:block; margin-bottom:6px; }
+.panel-body form > .btn:last-of-type{ margin-top:4px; }
+
+/* ---- Puan kartı + günlük ödül ---- */
+.points-card{ margin-left:auto; margin-right:auto; }
+.claim-btn{ margin-top:0; }
+.claim-note{ text-align:center; }
+.claim-note:empty, .msg:empty{ display:none; }
+
+/* ---- Dükkan ---- */
+.shop-title{
+  font-size:13px; letter-spacing:3.5px; font-weight:700; color:var(--silver-1);
+  margin:8px 0 12px; padding-left:12px; border-left:3px solid var(--silver-2);
+}
+.shop-grid .panel-body{ display:flex; flex-direction:column; gap:12px; }
+.shop-block{ display:flex; flex-direction:column; gap:8px; }
+.shop-block + .shop-block{ padding-top:12px; border-top:1px dashed var(--line); }
+.shop-block .shop-item{ margin-bottom:0; flex-wrap:nowrap; align-items:center; gap:12px; }
+.shop-block .shop-item .info{ flex:1 1 auto; }
+.shop-block .btn-sm{ flex:0 0 auto; width:auto; margin:0; padding:9px 16px; font-size:13px; border-radius:10px; white-space:nowrap; }
+.si-icon{
+  flex:0 0 38px; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  background:rgba(140,195,240,0.09); border:1px solid var(--line); color:var(--silver-1);
+}
+.si-icon svg{ width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.shop-form{ padding:12px; border:1px solid var(--line); border-radius:10px; background:rgba(10,21,34,0.6); }
+.shop-form .field:last-of-type{ margin-bottom:8px; }
+.shop-block .class-picker{ margin-top:0; }
+.shop-block .msg{ margin-top:0; }
+
+/* ---- Listeler ---- */
+.member-grid, .card-grid, .roster-grid{ gap:14px; }
+.class-tabs{ margin-bottom:14px; }
+.guide-list{ display:flex; flex-direction:column; gap:14px; }
+
+/* ---- Profil: ortada, düzgün genişlik ---- */
+#view-profile .panel{ max-width:420px !important; margin-left:0; }
+
+/* ---- Alt sekmeler (masaüstü): başlığın hemen üstünde, temiz ---- */
+@media (min-width:761px){
+  .subnav{ margin-bottom:22px; padding-bottom:12px; }
+}
+
+/* ---- Mobil ---- */
+@media (max-width:760px){
+  .main-area{ padding:20px 14px 0; }
+  .section-title{ font-size:14px; }
+  .section-sub{ font-size:12.5px; margin-bottom:16px; }
+  .grid-2{ gap:14px; }
+  .panel-body{ padding:14px; }
+  .shop-block .shop-item{ padding:12px; }
+  .si-icon{ flex-basis:34px; width:34px; height:34px; }
+  #view-profile .panel{ max-width:none !important; }
+}
+@media (max-width:420px){
+  .shop-block .shop-item{ flex-wrap:wrap; }
+  .shop-block .btn-sm{ width:100%; }
+}
+@media (prefers-reduced-motion:reduce){ .view{ animation:none; } }

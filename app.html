@@ -14,6 +14,7 @@
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="stylesheet" href="style.css?v=7">
 <link rel="stylesheet" href="navpill.css?v=4">
+<link rel="stylesheet" href="layout.css?v=1">
 <style>
   /* Sol üstteki logo dönmesin */
   .sidebar-brand img, .sidebar-brand img::before, .sidebar-brand img::after{
@@ -197,8 +198,10 @@
 
     <!-- POINTS + SHOP VIEW -->
     <section class="view" id="view-points">
-      <div class="section-title">PUANLAR</div>
-      <div class="section-sub">30 günde bir 100.000 puan alırsın, görev tamamlayarak da kazanırsın. Puanını birine gönderebilir veya dükkanda harcayabilirsin.</div>
+      <div class="page-head">
+        <div class="section-title">PUANLAR</div>
+        <div class="section-sub">30 günde bir 100.000 puan alırsın, görev tamamlayarak da kazanırsın. Puanını birine gönderebilir veya dükkanda harcayabilirsin.</div>
+      </div>
 
       <div class="points-card">
         <div class="pc-texture"></div>
@@ -218,12 +221,16 @@
         </div>
       </div>
 
-      <div style="max-width:420px; text-align:center; margin: 14px auto 0;">
-        <button class="btn claim-btn" id="claimBtn">30 Günlük Ödülü Al (+100.000)</button>
-        <div class="claim-note" id="claimNote"></div>
-      </div>
+      <!-- Hızlı işlemler: ödül + puan gönder yan yana -->
+      <div class="grid-2 block-gap">
+        <div class="panel">
+          <div class="panel-head"><h2>GÜNLÜK ÖDÜL</h2></div>
+          <div class="panel-body">
+            <button class="btn claim-btn" id="claimBtn">30 Günlük Ödülü Al (+100.000)</button>
+            <div class="claim-note" id="claimNote"></div>
+          </div>
+        </div>
 
-      <div class="grid-2" style="margin-top:22px;">
         <div class="panel">
           <div class="panel-head"><h2>PUAN GÖNDER</h2></div>
           <div class="panel-body">
@@ -241,100 +248,130 @@
             </form>
           </div>
         </div>
+      </div>
+
+      <!-- DÜKKAN: iki gruba ayrıldı -->
+      <div class="shop-title">DÜKKAN</div>
+      <div class="grid-2 shop-grid">
 
         <div class="panel">
-          <div class="panel-head"><h2>DÜKKAN</h2></div>
+          <div class="panel-head"><h2>HESAP &amp; UNVAN</h2></div>
           <div class="panel-body">
-            <div class="shop-item">
-              <div class="info">
-                <div class="t">Sınıf Değiştir</div>
-                <div class="d">500.000 puan · <span id="changesLeft">3</span> hak kaldı</div>
-              </div>
-              <button class="btn" id="openClassPicker" style="width:auto;">Satın Al</button>
-            </div>
-            <div class="class-picker" id="classPicker" style="display:none;"></div>
-            <div class="msg" id="shopMsg"></div>
 
-            <div class="shop-item" style="margin-top:10px;">
-              <div class="info">
-                <div class="t">Puan Çal</div>
-                <div class="d">Deneme: 20.000 puan · %50 şans · başarırsan hedefin %15'i</div>
+            <div class="shop-block">
+              <div class="shop-item">
+                <span class="si-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg></span>
+                <div class="info">
+                  <div class="t">Sınıf Değiştir</div>
+                  <div class="d">500.000 puan · <span id="changesLeft">3</span> hak kaldı</div>
+                </div>
+                <button class="btn btn-sm" id="openClassPicker">Satın Al</button>
               </div>
-              <button class="btn" id="openStealPicker" style="width:auto;">Saldır</button>
+              <div class="class-picker" id="classPicker" style="display:none;"></div>
+              <div class="msg" id="shopMsg"></div>
             </div>
-            <form id="stealForm" style="display:none; margin-top:10px;">
-              <div class="field">
-                <label>Hedef Kullanıcı Adı</label>
-                <input type="text" id="stealTarget" required>
-              </div>
-              <button class="btn" type="submit">Saldırıyı Başlat</button>
-            </form>
-            <div class="msg" id="stealMsg"></div>
-            <div class="claim-note" id="stealCooldownNote"></div>
 
-            <div class="shop-item" style="margin-top:10px;">
-              <div class="info">
-                <div class="t">Unvan Satın Al</div>
-                <div class="d">Kıdemli Üye: 200.000 · Uzman Üye: 400.000 · Elit Üye: 600.000 · Efsanevi Üye: 1.000.000 puan</div>
+            <div class="shop-block">
+              <div class="shop-item">
+                <span class="si-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.4 6.8 19.2l1-5.9L3.5 9.2l5.9-.8z"/></svg></span>
+                <div class="info">
+                  <div class="t">Unvan Satın Al</div>
+                  <div class="d">Kıdemli Üye: 200.000 · Uzman Üye: 400.000 · Elit Üye: 600.000 · Efsanevi Üye: 1.000.000 puan</div>
+                </div>
+                <button class="btn btn-sm" id="openRankPicker">Satın Al</button>
               </div>
-              <button class="btn" id="openRankPicker" style="width:auto;">Satın Al</button>
+              <div class="class-picker" id="rankPicker" style="display:none;">
+                <button class="btn btn-sm" data-rank="Kıdemli Üye">Kıdemli Üye</button>
+                <button class="btn btn-sm" data-rank="Uzman Üye">Uzman Üye</button>
+                <button class="btn btn-sm" data-rank="Elit Üye">Elit Üye</button>
+                <button class="btn btn-sm" data-rank="Efsanevi Üye">Efsanevi Üye</button>
+              </div>
+              <div class="msg" id="rankMsg"></div>
             </div>
-            <div class="class-picker" id="rankPicker" style="display:none;">
-              <button class="btn" data-rank="Kıdemli Üye" style="width:auto;">Kıdemli Üye</button>
-              <button class="btn" data-rank="Uzman Üye" style="width:auto;">Uzman Üye</button>
-              <button class="btn" data-rank="Elit Üye" style="width:auto;">Elit Üye</button>
-              <button class="btn" data-rank="Efsanevi Üye" style="width:auto;">Efsanevi Üye</button>
-            </div>
-            <div class="msg" id="rankMsg"></div>
 
-            <div class="shop-item" style="margin-top:10px;">
-              <div class="info">
-                <div class="t">Koruma Puanı</div>
-                <div class="d">300.000 puan · Sınavda düşme cezasından korur · sende: <span id="myProtectionCount">0</span></div>
+            <div class="shop-block">
+              <div class="shop-item">
+                <span class="si-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z"/></svg></span>
+                <div class="info">
+                  <div class="t">Koruma Puanı</div>
+                  <div class="d">300.000 puan · Sınavda düşme cezasından korur · sende: <span id="myProtectionCount">0</span></div>
+                </div>
+                <button class="btn btn-sm" id="buyProtectionBtn">Satın Al</button>
               </div>
-              <button class="btn" id="buyProtectionBtn" style="width:auto;">Satın Al</button>
+              <div class="msg" id="protectionMsg"></div>
             </div>
-            <div class="msg" id="protectionMsg"></div>
-
-            <!-- GİZLİ KUTU -->
-            <div class="shop-item" style="margin-top:10px;">
-              <div class="info">
-                <div class="t">Gizli Kutu</div>
-                <div class="d">10.000 puan · rastgele ödül — hiç, küçük, orta, büyük ya da JACKPOT</div>
-              </div>
-              <button class="btn" id="openLootboxBtn" style="width:auto;">Aç</button>
-            </div>
-            <div class="msg" id="lootboxMsg"></div>
-
-            <!-- DÜELLO -->
-            <div class="shop-item" style="margin-top:10px;">
-              <div class="info">
-                <div class="t">Düello</div>
-                <div class="d">Birine meydan oku, o kabul ederse yazı-tura ile kazanan tüm bahsi alır</div>
-              </div>
-              <button class="btn" id="openDuelForm" style="width:auto;">Meydan Oku</button>
-            </div>
-            <form id="duelForm" style="display:none; margin-top:10px;">
-              <div class="field">
-                <label>Rakip Kullanıcı Adı</label>
-                <input type="text" id="duelOpponent" required>
-              </div>
-              <div class="field">
-                <label>Bahis Miktarı</label>
-                <input type="text" inputmode="numeric" id="duelWager" placeholder="örn: 20000" required>
-              </div>
-              <button class="btn" type="submit">Meydan Okumayı Gönder</button>
-            </form>
-            <div class="msg" id="duelMsg"></div>
-
-            <div id="incomingDuels" style="margin-top:10px;"></div>
 
           </div>
         </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>ŞANS &amp; REKABET</h2></div>
+          <div class="panel-body">
+
+            <div class="shop-block">
+              <div class="shop-item">
+                <span class="si-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11" rx="2"/><path d="M3.5 13h17M12 9v11M12 9c-2-4-6-3-5 0M12 9c2-4 6-3 5 0"/></svg></span>
+                <div class="info">
+                  <div class="t">Gizli Kutu</div>
+                  <div class="d">10.000 puan · rastgele ödül — hiç, küçük, orta, büyük ya da JACKPOT</div>
+                </div>
+                <button class="btn btn-sm" id="openLootboxBtn">Aç</button>
+              </div>
+              <div class="msg" id="lootboxMsg"></div>
+            </div>
+
+            <div class="shop-block">
+              <div class="shop-item">
+                <span class="si-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></span>
+                <div class="info">
+                  <div class="t">Puan Çal</div>
+                  <div class="d">Deneme: 20.000 puan · %50 şans · başarırsan hedefin %15'i</div>
+                </div>
+                <button class="btn btn-sm" id="openStealPicker">Saldır</button>
+              </div>
+              <form id="stealForm" class="shop-form" style="display:none;">
+                <div class="field">
+                  <label>Hedef Kullanıcı Adı</label>
+                  <input type="text" id="stealTarget" required>
+                </div>
+                <button class="btn" type="submit">Saldırıyı Başlat</button>
+              </form>
+              <div class="msg" id="stealMsg"></div>
+              <div class="claim-note" id="stealCooldownNote"></div>
+            </div>
+
+            <div class="shop-block">
+              <div class="shop-item">
+                <span class="si-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 5 9 9M14 5l-9 9M13 15l3 3M11 13l-3 6M19 19l-4-4M17 13l4 4"/></svg></span>
+                <div class="info">
+                  <div class="t">Düello</div>
+                  <div class="d">Birine meydan oku, o kabul ederse yazı-tura ile kazanan tüm bahsi alır</div>
+                </div>
+                <button class="btn btn-sm" id="openDuelForm">Meydan Oku</button>
+              </div>
+              <form id="duelForm" class="shop-form" style="display:none;">
+                <div class="field">
+                  <label>Rakip Kullanıcı Adı</label>
+                  <input type="text" id="duelOpponent" required>
+                </div>
+                <div class="field">
+                  <label>Bahis Miktarı</label>
+                  <input type="text" inputmode="numeric" id="duelWager" placeholder="örn: 20000" required>
+                </div>
+                <button class="btn" type="submit">Meydan Okumayı Gönder</button>
+              </form>
+              <div class="msg" id="duelMsg"></div>
+              <div id="incomingDuels"></div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </section>
 
-    <!-- CARDS VIEW -->
+    
+<!-- CARDS VIEW -->
     <section class="view" id="view-cards">
       <div class="section-title">KARTLARIM</div>
       <div class="section-sub" id="cardsSubtitle">Özel sınavlarda veya yönetici tarafından kazandığın kartlar burada. Kullanınca etkisi otomatik uygulanır, başka birine de gönderebilirsin.</div>
