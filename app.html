@@ -119,9 +119,123 @@ input{background:rgba(255,255,255,.75);color:#0b2350;border:1px solid #fff}
 .nav button.on,.side .me b{color:#0b2350}.nav button.on:after{background:#2f6fe0}
 .msg.ok{color:#0a7a48}.msg.err{color:#c0183f}
 .tag{color:#fff}
+
+.lang{position:relative;display:inline-block}.lang .gl{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff;background:rgba(255,255,255,.55);color:#0b2350;cursor:pointer}
+.lang .opts{display:none;position:absolute;right:0;top:calc(100% + 6px);min-width:130px;z-index:50;background:rgba(236,247,255,.98);border:2px solid #fff;border-radius:12px;box-shadow:0 6px 24px rgba(30,80,170,.35);overflow:hidden}
+.lang.open .opts{display:block}.lang .opts div{padding:10px 14px;font:600 13px var(--sans);color:#0b2350;cursor:pointer}.lang .opts div:hover{background:rgba(47,111,224,.15)}.lang .opts div.on{background:#2f6fe0;color:#fff}
+.side .lang{margin-top:8px}.side .lang .opts{top:auto;bottom:calc(100% + 6px);left:0;right:auto}
+
+/* ===== LIQUID GLASS DÜĞMELER (liquid-glass-button bileşeninin saf CSS uyarlaması) =====
+   Uygulanan: .cta (ana eylem düğmeleri), .q button (hızlı erişim), .pl button (oynat)
+   Not: Kayıt/giriş ekranına (login.html) dokunulmadı. */
+.cta,.q button,.pl button{
+  position:relative; isolation:isolate; overflow:hidden; z-index:0;
+  border:1px solid rgba(255,255,255,.55)!important;
+  background:rgba(47,111,224,.38)!important;
+  color:#fff!important; text-shadow:0 1px 3px rgba(11,35,80,.55);
+  backdrop-filter:blur(6px) saturate(1.5); -webkit-backdrop-filter:blur(6px) saturate(1.5);
+  box-shadow:
+    0 0 6px rgba(0,0,0,.03), 0 4px 14px rgba(33,80,184,.32),
+    inset 3px 3px .5px -3px rgba(255,255,255,.9), inset -3px -3px .5px -3px rgba(255,255,255,.85),
+    inset 1px 1px 1px -.5px rgba(255,255,255,.6), inset -1px -1px 1px -.5px rgba(255,255,255,.6),
+    inset 0 0 6px 6px rgba(255,255,255,.12), inset 0 0 2px 2px rgba(255,255,255,.06),
+    0 0 12px rgba(255,255,255,.25)!important;
+  transition:transform .3s ease, box-shadow .3s ease, background .3s ease;
+}
+.cta::before,.q button::before,.pl button::before{
+  content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; border-radius:inherit;
+  background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0) 55%);
+}
+.cta::after,.q button::after,.pl button::after{
+  content:''; position:absolute; inset:0; z-index:-2; pointer-events:none; border-radius:inherit;
+}
+.lg-chromium .cta::after,.lg-chromium .q button::after,.lg-chromium .pl button::after{
+  backdrop-filter:url(#container-glass);
+}
+.cta:hover,.q button:hover,.pl button:hover{ transform:scale(1.04); background:rgba(47,111,224,.5)!important; }
+.cta:active,.q button:active,.pl button:active{ transform:scale(.98); }
+.cta:disabled{ opacity:.5; transform:none; }
+.q button{ background:rgba(255,255,255,.28)!important; color:var(--ink)!important; text-shadow:none; }
+.q button:hover{ border-color:rgba(255,255,255,.9)!important; background:rgba(255,255,255,.4)!important; }
+.cta:focus-visible,.q button:focus-visible,.pl button:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+@media (prefers-reduced-motion:reduce){ .cta,.q button,.pl button{ transition:none; } .cta:hover,.q button:hover,.pl button:hover{ transform:none; } }
+
+/* ===== GLASS CARD (glass-card bileşeninin saf CSS/JS uyarlaması) =====
+   Gövde: buzlu cam · Kenar: ışığı büken refraksiyon halkası (Chromium) ·
+   Işık: imleci izleyen specular parlama · Kromatik kenar + alt gölge.
+   Uygulanan: .sec .box .rk .cd .cpbox .holo  — login.html'e dokunulmadı. */
+@property --mx{ syntax:'<length-percentage>'; inherits:false; initial-value:30%; }
+@property --my{ syntax:'<length-percentage>'; inherits:false; initial-value:28%; }
+.sec,.box,.rk,.cd,.cpbox,.holo{
+  --gl-tint:rgba(255,255,255,.26); --gl-rim:8px;
+  position:relative; isolation:isolate;
+  border:0!important;
+  background:radial-gradient(circle 130px at var(--mx) var(--my),rgba(255,255,255,.42),rgba(255,255,255,.1) 48%,transparent 74%)!important;
+  box-shadow:0 26px 60px -26px rgba(0,25,70,.55),0 10px 26px -18px rgba(0,25,70,.4)!important;
+  transition:--mx .25s ease-out,--my .25s ease-out,transform .3s ease;
+}
+.rk{ border-left:3px solid var(--blue)!important; }
+.cpbox{ --gl-tint:rgba(16,28,66,.5); }
+.holo{ --gl-tint:rgba(150,205,240,.34); }
+.rk.first{ --gl-tint:rgba(255,214,120,.3); }
+.cd{ --gl-tint:rgba(255,255,255,.3); }
+.sec::before,.box::before,.rk::before,.cd::before,.cpbox::before,.holo::before{
+  content:''; position:absolute; z-index:-1; pointer-events:none;
+  inset:var(--gl-rim); border-radius:max(calc(14px - var(--gl-rim)),6px);
+  background:var(--gl-tint);
+  -webkit-backdrop-filter:blur(11px) saturate(160%) brightness(1.02);
+  backdrop-filter:blur(11px) saturate(160%) brightness(1.02);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.sec::after,.box::after,.rk::after,.cd::after,.cpbox::after,.holo::after{
+  content:''; position:absolute; z-index:-1; pointer-events:none; inset:0; border-radius:inherit;
+  box-sizing:border-box; padding:var(--gl-rim);
+  -webkit-mask-image:linear-gradient(#000,#000),linear-gradient(#000,#000);
+  mask-image:linear-gradient(#000,#000),linear-gradient(#000,#000);
+  -webkit-mask-clip:content-box,border-box; mask-clip:content-box,border-box;
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  -webkit-backdrop-filter:blur(1px) saturate(172%) brightness(1.07);
+  backdrop-filter:blur(1px) saturate(172%) brightness(1.07);
+  background:linear-gradient(125deg,rgba(90,215,255,.4),transparent 36%,transparent 64%,rgba(255,110,200,.34));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 0 1px rgba(255,255,255,.2),inset 0 -1px 0 rgba(255,255,255,.14);
+}
+.gl-refract .sec::after,.box::after,.rk::after,.cd::after,.cpbox::after,.holo::after{
+  -webkit-backdrop-filter:url(#gl-rim) blur(1px) saturate(172%) brightness(1.07);
+  backdrop-filter:url(#gl-rim) blur(1px) saturate(172%) brightness(1.07);
+}
+.sec:has(.lang.open){ z-index:30; } /* dil menüsü kartın dışına taşabilsin */
+@media (hover:hover) and (pointer:fine){
+  .sec:hover,.box:hover,.rk:hover,.cd:hover,.cpbox:hover,.holo:hover{ transform:translateY(-3px) scale(1.006); }
+}
+@media (prefers-reduced-motion:reduce){
+  .sec,.box,.rk,.cd,.cpbox,.holo{ transition:none; }
+  .sec:hover,.box:hover,.rk:hover,.cd:hover,.cpbox:hover,.holo:hover{ transform:none; }
+}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="container-glass" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed="1" result="turbulence"/><feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise"/><feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="70" xChannelSelector="R" yChannelSelector="B" result="displaced"/><feGaussianBlur in="displaced" stdDeviation="4" result="finalBlur"/><feComposite in="finalBlur" in2="finalBlur" operator="over"/></filter></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="gl-rim"><feTurbulence type="fractalNoise" baseFrequency="0.016 0.024" numOctaves="2" seed="7" result="noise"/><feGaussianBlur in="noise" stdDeviation="1.4" result="soft"/><feDisplacementMap in="SourceGraphic" in2="soft" scale="24" xChannelSelector="R" yChannelSelector="G"/></filter></defs></svg>
+<script>
+(function(){
+  var d=document.documentElement;
+  try{ var t='url(#gl-rim) blur(2px)';
+    if(window.CSS&&CSS.supports&&(CSS.supports('backdrop-filter',t)||CSS.supports('-webkit-backdrop-filter',t))) d.classList.add('gl-refract'); }catch(e){}
+  if(!matchMedia('(hover:hover) and (pointer:fine)').matches||matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  var SEL='.sec,.box,.rk,.cd,.cpbox,.holo', cur=null;
+  function reset(){ if(cur){ cur.style.removeProperty('--mx'); cur.style.removeProperty('--my'); cur=null; } }
+  document.addEventListener('pointermove',function(e){
+    var c=e.target.closest?e.target.closest(SEL):null;
+    if(c!==cur){ reset(); cur=c; }
+    if(!c) return;
+    var r=c.getBoundingClientRect();
+    c.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    c.style.setProperty('--my',(e.clientY-r.top)+'px');
+  },{passive:true});
+  document.addEventListener('mouseleave',reset);
+})();
+</script>
+<script>if(window.chrome)document.documentElement.classList.add("lg-chromium")</script>
 <div id="app">
 
 <aside class="side">
@@ -136,10 +250,10 @@ input{background:rgba(255,255,255,.75);color:#0b2350;border:1px solid #fff}
   <button data-go="sched"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Program</button>
   <button data-go="songs"><svg class="i" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>Şarkılarımız</button>
   <button data-go="profile"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.6 3.6-5.4 7.5-5.4s6.7 1.8 7.5 5.4"/></svg>Profil</button>
-  <div class="me"><b class="u-name">—</b><span class="u-cls"></span><br><div class="lang"><span data-lang="tr">TR</span><span data-lang="en">EN</span><span data-lang="ja">日本語</span></div></div>
+  <div class="me"><b class="u-name">—</b><span class="u-cls"></span><br><div class="lang"><div class="gl" tabindex="0" role="button" aria-label="Dil"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><div class="opts"><div data-lang="tr">Türkçe</div><div data-lang="en">English</div><div data-lang="ru">Русский</div><div data-lang="ja">日本語</div></div></div></div>
 </aside>
 
-<div class="top"><img src="crest.png" alt=""><div class="brand">LOYAL ELITE FORCE</div><div class="lang"><span data-lang="tr">TR</span><span data-lang="en">EN</span><span data-lang="ja">日本語</span></div></div>
+<div class="top"><img src="crest.png" alt=""><div class="brand">LOYAL ELITE FORCE</div><div class="lang"><div class="gl" tabindex="0" role="button" aria-label="Dil"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><div class="opts"><div data-lang="tr">Türkçe</div><div data-lang="en">English</div><div data-lang="ru">Русский</div><div data-lang="ja">日本語</div></div></div></div>
 
 <section class="page on" id="home">
   <div class="hero"><h1>Hoş geldin,<br>Loyal Elite Force'a</h1><p>Burası yalnızca özel insanların toplandığı yer.</p></div>
@@ -187,7 +301,7 @@ input{background:rgba(255,255,255,.75);color:#0b2350;border:1px solid #fff}
     <div class="row link" data-go="results">Sınav Sonuçları</div>
     <div class="row link" data-go="songs">Şarkılarımız</div>
     <div class="row link" data-go="profile">Öğrenci Profili</div>
-    <div class="row"><span class="t">Dil</span><div class="lang"><span data-lang="tr">TR</span><span data-lang="en">EN</span><span data-lang="ja">日本語</span></div></div>
+    <div class="row"><span class="t">Dil</span><div class="lang"><div class="gl" tabindex="0" role="button" aria-label="Dil"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><div class="opts"><div data-lang="tr">Türkçe</div><div data-lang="en">English</div><div data-lang="ru">Русский</div><div data-lang="ja">日本語</div></div></div></div>
   </div>
 </section>
 
@@ -400,6 +514,7 @@ a.ontimeupdate = () => { if(a.duration) $('#barFill').style.width = (a.currentTi
 
 /* ---------- DİL ---------- */
 const D={en:{'Ana Sayfa':'Home','Duyurular':'Announcements','Puanlarım':'My Points','OAA Değerlendirme':'OAA Evaluation','Sınıf Sıralaması':'Class Ranking','Özel Sınav':'Special Exam','Sınav Sonuçları':'Exam Results','Program':'Schedule','Şarkılarımız':'Our Songs','Profil':'Profile','Menü':'Menu','Dil':'Language','Öğrenci Profili':'Student Profile','Hoş geldin,':'Welcome,','Burası yalnızca özel insanların toplandığı yer.':'A place only for special people.','Kişisel Puan':'Private Points','Sınıf Puanı':'Class Points','Son İşlemler':'Recent Activity','Son Duyurular':'Latest Announcements','Hızlı Menü':'Quick Menu','Tümünü gör ›':'See all ›','Yükleniyor...':'Loading...','Bakiye':'Balance','Günlük Ödül':'Daily Reward','Puan Gönder':'Send Points','Gönder':'Send','Kullanıcı Adı':'Username','Miktar':'Amount','Mevcut':'Current','Akademik Aralık':'Academic Range','Akademik Puan Aralığı':'Academic Score Range','400 ve üzeri':'400 and above','1. Yıl Değerlendirmesi':'Year 1 Evaluation','Sınıf':'Class','Rütbe':'Rank','Puan':'Points','Bilgiler':'Info','Notlar':'Notes','Sıralama':'Ranking','Şarkılar':'Songs','Sınıfı':'Class','En İyi Gruplar':'Top Groups','En İyi Grup Listesi':'Top Group List','Sıra':'Rank','Yıl':'Year','Grup Adı':'Group','Puanlar':'Points','Matematik':'Mathematics','Sınav Sonuç Duyurusu · Matematik':'Exam Results · Mathematics','Tokyo İleri Düzey Gelişim Lisesi':'Tokyo Metropolitan Advanced Nurturing High School','Issız Ada Özel Sınavı':'Deserted Island Special Exam','Görev: Gülle Atma':'Mission: Shot Put','Kategori:':'Category:','Fiziksel':'Physical','Akademik':'Academic','Katılım:':'Participation:','Görev belirdikten sonra 30 dakika içinde kaydolun.':'Register within 30 minutes after the mission appears.','Giriş gereksinimleri:':'Entry requirements:','Üç veya daha fazla kişiden oluşan gruplar katılabilir. Altı grup kaydolduktan sonra kayıt biter.':'Groups of three or more can join. Registration closes once six groups have signed up.','Kazanma koşulları:':'Winning conditions:','Toplam puanı en yüksek olan üçlü grup kazanır.':'The group of three with the highest total points wins.','Ödüller:':'Rewards:','1. Sıra: 10 puan':'1st place: 10 points','2. Sıra: 5 puan':'2nd place: 5 points','3. Sıra: 3 puan':'3rd place: 3 points','Deneme':'Trial',"Özel sınavda verilen sınıf puanlarınızı %50 oranında artırabilirsiniz. Ancak grupların ilk %30'unda yer almazsanız, grubunuz bir ceza alacaktır. Ekstra puanlar okul tarafından sağlanacaktır.":'You can increase the class points awarded in the special exam by 50%. However, if you do not place in the top 30% of groups, your group will receive a penalty. The extra points are provided by the school.','Gizli Görev':'Secret Mission',"Görevin, Ayanokoji-kun'un Nisan ayı içinde okuldan atılmasını sağlamak.":"Your mission is to get Ayanokoji-kun expelled from school within April.",'Sınava Katıl ›':'Join Exam ›','Duyuru yok.':'No announcements.','Henüz işlem yok.':'No activity yet.'},
+ru:{'Ana Sayfa':'Главная','Duyurular':'Объявления','Puanlarım':'Мои очки','OAA Değerlendirme':'Оценка OAA','Sınıf Sıralaması':'Рейтинг классов','Özel Sınav':'Особый экзамен','Sınav Sonuçları':'Результаты экзаменов','Program':'Расписание','Şarkılarımız':'Наши песни','Profil':'Профиль','Menü':'Меню','Dil':'Язык','Öğrenci Profili':'Профиль ученика','Hoş geldin,':'Добро пожаловать,','Burası yalnızca özel insanların toplandığı yer.':'Место только для особенных людей.','Kişisel Puan':'Личные очки','Sınıf Puanı':'Очки класса','Son İşlemler':'Последние операции','Son Duyurular':'Последние объявления','Hızlı Menü':'Быстрое меню','Tümünü gör ›':'Показать все ›','Yükleniyor...':'Загрузка...','Bakiye':'Баланс','Günlük Ödül':'Ежедневная награда','Puan Gönder':'Отправить очки','Gönder':'Отправить','Kullanıcı Adı':'Имя пользователя','Miktar':'Сумма','Mevcut':'Текущие','Akademik Aralık':'Академ. диапазон','Akademik Puan Aralığı':'Диапазон академических баллов','400 ve üzeri':'400 и выше','1. Yıl Değerlendirmesi':'Оценка 1-го курса','Sınıf':'Класс','Rütbe':'Звание','Puan':'Очки','Bilgiler':'Данные','Notlar':'Заметки','Sıralama':'Рейтинг','Şarkılar':'Песни','Sınıfı':'класс','En İyi Gruplar':'Лучшие группы','En İyi Grup Listesi':'Список лучших групп','Sıra':'Место','Yıl':'Курс','Grup Adı':'Группа','Puanlar':'Очки','Matematik':'Математика','Sınav Sonuç Duyurusu · Matematik':'Результаты экзамена · Математика','Tokyo İleri Düzey Gelişim Lisesi':'Токийская высшая школа развития','Issız Ada Özel Sınavı':'Особый экзамен на необитаемом острове','Görev: Gülle Atma':'Задание: толкание ядра','Kategori:':'Категория:','Fiziksel':'Физическая','Akademik':'Академическая','Katılım:':'Участие:','Görev belirdikten sonra 30 dakika içinde kaydolun.':'Зарегистрируйтесь в течение 30 минут после появления задания.','Giriş gereksinimleri:':'Требования:','Üç veya daha fazla kişiden oluşan gruplar katılabilir. Altı grup kaydolduktan sonra kayıt biter.':'Участвуют группы от трёх человек. Регистрация закрывается после шести групп.','Kazanma koşulları:':'Условия победы:','Toplam puanı en yüksek olan üçlü grup kazanır.':'Побеждает тройка с наибольшей суммой очков.','Ödüller:':'Награды:','1. Sıra: 10 puan':'1 место: 10 очков','2. Sıra: 5 puan':'2 место: 5 очков','3. Sıra: 3 puan':'3 место: 3 очка','Deneme':'Испытание',"Özel sınavda verilen sınıf puanlarınızı %50 oranında artırabilirsiniz. Ancak grupların ilk %30'unda yer almazsanız, grubunuz bir ceza alacaktır. Ekstra puanlar okul tarafından sağlanacaktır.":'Вы можете увеличить очки класса за особый экзамен на 50%. Но если ваша группа не войдёт в первые 30%, она получит штраф. Дополнительные очки предоставляет школа.','Gizli Görev':'Тайное задание',"Görevin, Ayanokoji-kun'un Nisan ayı içinde okuldan atılmasını sağlamak.":'Твоё задание — добиться исключения Аянокоджи-куна из школы в течение апреля.','Sınava Katıl ›':'Участвовать ›','Duyuru yok.':'Объявлений нет.','Henüz işlem yok.':'Операций пока нет.'},
 ja:{'Ana Sayfa':'ホーム','Duyurular':'お知らせ','Puanlarım':'ポイント','OAA Değerlendirme':'総合力評価','Sınıf Sıralaması':'クラスポイント','Özel Sınav':'特別試験','Sınav Sonuçları':'試験結果発表','Program':'予定','Şarkılarımız':'楽曲','Profil':'プロフィール','Menü':'メニュー','Dil':'言語','Öğrenci Profili':'生徒情報','Kişisel Puan':'プライベートポイント','Sınıf Puanı':'クラスポイント','Son İşlemler':'最近の履歴','Son Duyurular':'最新のお知らせ','Hızlı Menü':'クイックメニュー','Mevcut':'現在','Akademik Aralık':'学力範囲','Akademik Puan Aralığı':'学力判定基準','Sınıfı':'クラス','En İyi Gruplar':'上位グループ','En İyi Grup Listesi':'上位グループ一覧','Matematik':'数学','Issız Ada Özel Sınavı':'無人島特別試験','Tokyo İleri Düzey Gelişim Lisesi':'東京都高度育成高等学校','Görev: Gülle Atma':'課題「砲丸投げ」','Deneme':'試練','Gizli Görev':'極秘任務','Fiziksel':'身体能力','Akademik':'学力','Sıra':'順位','Yıl':'学年','Grup Adı':'グループ名','Puanlar':'点数','Ödüller:':'報酬:','Bakiye':'残高','Yükleniyor...':'読み込み中...'}};
 let lang=localStorage.getItem('lang')||'tr', busy=false;
 function applyLang(){ busy=true; document.documentElement.lang=lang;
@@ -408,7 +523,7 @@ function applyLang(){ busy=true; document.documentElement.lang=lang;
     if(n.__w===undefined||n.nodeValue!==n.__w) n.__o=n.nodeValue;
     const k=n.__o.trim(), t=lang==='tr'?null:D[lang][k], out=t?n.__o.replace(k,t):n.__o; n.__w=out; if(n.nodeValue!==out)n.nodeValue=out; }
   $$('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===lang)); setTimeout(()=>busy=false,0); }
-document.addEventListener('click',e=>{const b=e.target.closest('[data-lang]'); if(b){lang=b.dataset.lang; localStorage.setItem('lang',lang); applyLang();}});
+document.addEventListener('click',e=>{const g=e.target.closest('.gl');$$('.lang.open').forEach(l=>{if(!g||l!==g.parentNode)l.classList.remove('open')});if(g)g.parentNode.classList.toggle('open');const b=e.target.closest('[data-lang]'); if(b){lang=b.dataset.lang; localStorage.setItem('lang',lang); applyLang();}});
 let lt; new MutationObserver(()=>{ if(busy)return; clearTimeout(lt); lt=setTimeout(applyLang,30); }).observe(document.body,{childList:true,subtree:true,characterData:true});
 applyLang();
 
