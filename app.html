@@ -75,26 +75,71 @@ label{font-size:12px;color:var(--dim);display:block;margin-bottom:5px}.msg{margi
   .q{grid-template-columns:repeat(3,1fr)}
   #rank.on,#oaa.on,#exam.on,#profile.on,#points.on{max-width:820px}
 }
+
+.holo{background:linear-gradient(160deg,#cfe8f6,#86bde0 70%,#6aa6d4);border:2px solid rgba(255,255,255,.55);border-radius:14px;color:#0d2a55;padding:14px;margin-bottom:12px;box-shadow:0 0 28px rgba(91,170,255,.25)}
+.holo h3{font:700 15px var(--serif);margin-bottom:8px;color:#0b2350}.holo p,.holo li{font-size:12.5px;line-height:1.55;color:#12305f}.holo ul{padding-left:16px}.holo b{color:#0b2350}
+.oaa-h{text-align:center;font:700 26px var(--serif);color:#fff;text-shadow:0 0 10px #4aa8ff;letter-spacing:1px}.oaa-h small{display:block;font:500 9px var(--sans);letter-spacing:1px;color:#e6f4ff;text-shadow:none}
+.ph-fr{margin:10px auto;width:78%;aspect-ratio:16/10;border:2px solid #fff;border-radius:6px;background:#5d95c9 center/contain no-repeat url(crest.png);box-shadow:inset 0 0 0 4px rgba(255,255,255,.2)}
+.nm{background:rgba(255,255,255,.35);border:1px solid #fff;border-radius:8px;padding:8px 14px;margin-bottom:10px}.nm small{font-size:9px;color:#27507f;letter-spacing:2px}.nm .gc{font:700 22px var(--serif)}.nm b{font:700 19px var(--serif);display:block}
+.ev{background:#2b3138;border-radius:10px;padding:12px;color:#fff;position:relative}.ev>small{font-size:11px;color:#ccd}
+.ev .g{display:grid;grid-template-columns:1fr 1fr;gap:34px 90px;margin-top:8px}.ev .s{display:flex;align-items:center;gap:6px;background:#3c6f9f;border-radius:6px;padding:4px 8px}.ev .s i{font:600 11px var(--sans);font-style:normal;opacity:.8}.ev .s b{font:700 28px var(--serif);flex:1;text-align:right}.ev .s small{display:none}
+.ev .c{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:92px;height:92px;border-radius:50%;border:5px solid #e8b44a;background:#2b3138;display:flex;align-items:center;justify-content:center;font:700 52px var(--serif);color:#f3c25b}
+.ev .c.red{border-color:#d1123f;color:#d1123f}
+.cp{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid rgba(255,255,255,.08);font:600 15px var(--serif)}.cp:last-child{border:0}.cp i{width:5px;height:22px;border-radius:2px}.cp span{flex:1}.cp b{font:600 26px var(--serif);font-variant-numeric:tabular-nums}.cp em{font:12px var(--sans);font-style:normal;color:var(--dim)}
+.cpbox{border:1px solid var(--line);background:linear-gradient(160deg,#101d3d,#0a1226);border-radius:14px;margin-bottom:12px}
+.map{display:grid;grid-template-columns:16px repeat(10,1fr);gap:1px;font-size:10px;color:#cfe6ff;margin:10px 0}.map div{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08)}.map .h{border:0;background:none;aspect-ratio:auto}.map .p{background:#ff7a9a}
+.ttl{text-align:center;font:700 17px var(--serif);color:#e7d8ff;padding:26px 10px;border-radius:14px;background:linear-gradient(160deg,#4b3a86,#8a5aa8);margin-bottom:12px;text-shadow:0 0 12px #b79cff}
+.ttl small{display:block;font:600 12px var(--sans);margin-top:4px;color:#d6c8ff}
+.gtb{width:100%;border-collapse:collapse;font-size:13px;color:#fff}.gtb th{background:#8a3fd0;padding:8px 6px;font-size:12px}.gtb td{padding:9px 6px;text-align:center;background:rgba(80,120,230,.55);border-bottom:1px solid rgba(255,255,255,.2)}.gtb tr:nth-child(3) td,.gtb tr:nth-child(7) td{background:rgba(230,140,80,.6)}
+.sc{display:flex;gap:10px;padding:11px 12px;margin-bottom:5px;background:#f3f6fa;color:#10203d;border:1px solid #9fb4cc;font:600 15px var(--sans)}.sc span{flex:1}.sc:first-of-type{border-width:2px}
+.ag{display:flex;align-items:center;gap:12px;padding:8px 12px;margin-bottom:6px;border-radius:6px;background:rgba(255,255,255,.4);font-weight:600}.ag span{flex:1}.ag b{width:46px;height:34px;display:flex;align-items:center;justify-content:center;background:#3b83a8;color:#fff;border-radius:5px;font:700 20px var(--serif)}
+.lang{display:flex;gap:6px}.lang span{padding:5px 10px;border:1px solid var(--line);border-radius:99px;font:600 11px var(--sans);color:var(--dim);cursor:pointer}.lang span.on{background:var(--red);color:#fff;border-color:var(--red)}
+.top .lang{margin-left:auto}.top .lang span{padding:3px 8px;font-size:10px}
+@media(min-width:900px){.side .lang{margin-top:8px}}
+
+/* ===== ANIME OKUL TELEFONU TEMASI (tüm site) ===== */
+:root{--card:rgba(255,255,255,.5);--line:rgba(255,255,255,.75);--ink:#0b2350;--dim:#3b5f8c;--red:#2f6fe0;--red2:#2150b8;--blue:#2f6fe0;--gold:#d99a1e}
+body{background:linear-gradient(rgba(255,255,255,.14) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(255,255,255,.14) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(160deg,#a9d8f2 0,#6fb0de 45%,#5a7fc4 100%) fixed;color:var(--ink)}
+.top,.nav,.side{background:rgba(214,236,252,.92)!important;border-color:rgba(255,255,255,.9)!important}
+.brand{color:#0b2350}
+.sec,.box,.rk,.cd,.q button{background:rgba(255,255,255,.5);border:2px solid rgba(255,255,255,.8);box-shadow:0 0 18px rgba(60,140,255,.28);color:var(--ink)}
+.rk.first{background:rgba(255,224,150,.6)}
+.hero{background:linear-gradient(160deg,#4b3a86,#8a5aa8)!important;border:2px solid #fff;color:#fff;box-shadow:0 0 28px rgba(150,120,255,.5)}
+.hero h1,.hero p{color:#fff}
+.tabs .on,.side button.on{color:#0b2350!important}
+.side button:hover{color:#0b2350}
+.row{border-bottom-color:rgba(11,35,80,.14)}.tb td,.tb th{border-color:rgba(11,35,80,.14)}
+.pos{color:#0a8f55}.neg{color:#c0183f}
+input{background:rgba(255,255,255,.75);color:#0b2350;border:1px solid #fff}
+.ex{background:rgba(255,255,255,.55);border-color:#2f6fe0;color:#0b2350}.cd b{color:#2150b8}
+.av i,.ring{background:rgba(255,255,255,.5);color:#0b2350}.ring{border-color:rgba(255,255,255,.7);border-top-color:#2f6fe0;border-right-color:#2f6fe0}
+.st{color:#0b2350}.st a{color:#2150b8}.st span:first-child:before{background:#7a4fd0}
+.cpbox{color:#fff;border:2px solid #fff;background:linear-gradient(160deg,#1a2c5e,#0f1a3d)}
+.song img{border-color:#fff}
+.nav button.on,.side .me b{color:#0b2350}.nav button.on:after{background:#2f6fe0}
+.msg.ok{color:#0a7a48}.msg.err{color:#c0183f}
+.tag{color:#fff}
 </style>
 </head>
 <body>
 <div id="app">
 
 <aside class="side">
-  <div class="logo"><img src="crest.png" alt=""><div class="brand">LOYAL ELITE FORCE<small>Discipline · Loyalty · Strength</small></div></div>
+  <div class="logo"><img src="crest.png" alt=""><div class="brand">LOYAL ELITE FORCE</div></div>
   <button data-go="home"><svg class="i" viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v9H4z"/></svg>Ana Sayfa</button>
   <button data-go="news"><svg class="i" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/></svg>Duyurular</button>
   <button data-go="points"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/></svg>Puanlarım</button>
   <button data-go="oaa"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>OAA Değerlendirme</button>
   <button data-go="rank"><svg class="i" viewBox="0 0 24 24"><path d="M4 18 3 7l5 4 4-6 4 6 5-4-1 11z"/></svg>Sınıf Sıralaması</button>
   <button data-go="exam"><svg class="i" viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z"/></svg>Özel Sınav</button>
+  <button data-go="results"><svg class="i" viewBox="0 0 24 24"><path d="M5 20V9M12 20V4M19 20v-7"/></svg>Sınav Sonuçları</button>
   <button data-go="sched"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Program</button>
   <button data-go="songs"><svg class="i" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>Şarkılarımız</button>
   <button data-go="profile"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.6 3.6-5.4 7.5-5.4s6.7 1.8 7.5 5.4"/></svg>Profil</button>
-  <div class="me"><b class="u-name">—</b><span class="u-cls"></span><br><a class="link" style="color:#ff5f7e" data-logout>Çıkış Yap</a></div>
+  <div class="me"><b class="u-name">—</b><span class="u-cls"></span><br><div class="lang"><span data-lang="tr">TR</span><span data-lang="en">EN</span><span data-lang="ja">日本語</span></div></div>
 </aside>
 
-<div class="top"><img src="crest.png" alt=""><div class="brand">LOYAL ELITE FORCE<small>Discipline · Loyalty · Strength</small></div></div>
+<div class="top"><img src="crest.png" alt=""><div class="brand">LOYAL ELITE FORCE</div><div class="lang"><span data-lang="tr">TR</span><span data-lang="en">EN</span><span data-lang="ja">日本語</span></div></div>
 
 <section class="page on" id="home">
   <div class="hero"><h1>Hoş geldin,<br>Loyal Elite Force'a</h1><p>Burası yalnızca özel insanların toplandığı yer.</p></div>
@@ -114,11 +159,11 @@ label{font-size:12px;color:var(--dim);display:block;margin-bottom:5px}.msg{margi
       <button data-go="profile"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.6 3.6-5.4 7.5-5.4s6.7 1.8 7.5 5.4"/></svg>Profil</button>
     </div>
   </div>
-  <div class="sec"><div class="st"><span>Sınıf Sıralaması</span><a data-go="rank">Detay ›</a></div><div class="rklist"><div class="empty">Yükleniyor...</div></div></div>
+  <div class="sec"><div class="st"><span>Sınıf Sıralaması</span><a data-go="rank">Detay ›</a></div><div class="cpbox rklist"><div class="empty">Yükleniyor...</div></div></div>
 </section>
 
 <section class="page" id="news">
-  <div class="ph"><div><h2>Duyurular</h2><small>Announcements</small></div></div>
+  <div class="ph"><div><h2>Duyurular</h2><small>お知らせ · Announcements</small></div></div>
   <div class="sec"><div class="annlist" data-n="30"><div class="empty">Yükleniyor...</div></div></div>
 </section>
 
@@ -139,14 +184,15 @@ label{font-size:12px;color:var(--dim);display:block;margin-bottom:5px}.msg{margi
     <div class="row link" data-go="oaa">OAA Değerlendirme</div>
     <div class="row link" data-go="rank">Sınıf Sıralaması</div>
     <div class="row link" data-go="exam">Özel Sınav</div>
+    <div class="row link" data-go="results">Sınav Sonuçları</div>
     <div class="row link" data-go="songs">Şarkılarımız</div>
     <div class="row link" data-go="profile">Öğrenci Profili</div>
-    <div class="row link" style="color:#ff5f7e" data-logout>Çıkış Yap</div>
+    <div class="row"><span class="t">Dil</span><div class="lang"><span data-lang="tr">TR</span><span data-lang="en">EN</span><span data-lang="ja">日本語</span></div></div>
   </div>
 </section>
 
 <section class="page" id="points">
-  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Puanlarım</h2><small>Points</small></div></div>
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Puanlarım</h2><small>ポイント · Points</small></div></div>
   <div class="box" style="margin-bottom:12px"><div class="l">Bakiye</div><div class="v"><span class="p-now">—</span><em>pt</em></div></div>
   <div class="sec"><div class="st"><span>Günlük Ödül</span></div>
     <button class="cta" id="claimBtn" style="margin:0">30 Günlük Ödülü Al (+100.000)</button><div class="msg" id="claimMsg"></div></div>
@@ -156,7 +202,7 @@ label{font-size:12px;color:var(--dim);display:block;margin-bottom:5px}.msg{margi
 </section>
 
 <section class="page" id="history">
-  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>İşlem Geçmişi</h2><small>Transactions</small></div></div>
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>İşlem Geçmişi</h2><small>履歴 · Transactions</small></div></div>
   <div class="sec"><div class="txlist" data-n="100"><div class="empty">Yükleniyor...</div></div></div>
 </section>
 
@@ -172,33 +218,40 @@ label{font-size:12px;color:var(--dim);display:block;margin-bottom:5px}.msg{margi
 </section>
 
 <section class="page" id="oaa">
-  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>OAA Değerlendirme</h2><small>Student Evaluation · örnek veri</small></div></div>
-  <div class="tabs"><span class="on" data-t="oaa1">Mevcut</span><span data-t="oaa2">Geçmiş</span><span data-t="oaa3">Detay</span></div>
-  <div class="pane on" id="oaa1">
-    <div class="ring"><small>Genel</small><b>B+</b><small>742 / 1.000</small></div>
-    <div class="g2"><div class="box"><small>Akademik</small><div class="v">A</div><small>892 / 1.000</small></div><div class="box"><small>Fiziksel</small><div class="v">B+</div><small>780 / 1.000</small></div><div class="box"><small>Uyum</small><div class="v">B</div><small>690 / 1.000</small></div><div class="box"><small>Sosyal Katkı</small><div class="v">A-</div><small>835 / 1.000</small></div></div>
-    <div class="sec"><div class="st"><span>Gelişim</span></div><svg viewBox="0 0 300 110" style="width:100%"><polyline fill="none" stroke="#5b8cff" stroke-width="2.5" points="10,85 60,75 110,68 160,55 210,48 260,38"/><g fill="#5b8cff"><circle cx="10" cy="85" r="3"/><circle cx="60" cy="75" r="3"/><circle cx="110" cy="68" r="3"/><circle cx="160" cy="55" r="3"/><circle cx="210" cy="48" r="3"/><circle cx="260" cy="38" r="3"/></g></svg></div>
-  </div>
-  <div class="pane" id="oaa2"><div class="sec"><table class="tb"><tr><th>Hafta</th><th>Puan</th></tr><tr><td>1</td><td>610</td></tr><tr><td>2</td><td>650</td></tr><tr><td>3</td><td>690</td></tr><tr><td>4</td><td>720</td></tr><tr><td>5</td><td>735</td></tr><tr><td>6</td><td>742</td></tr></table></div></div>
-  <div class="pane" id="oaa3"><div class="sec"><div class="empty">Detaylı değerlendirme yakında.</div></div></div>
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>OAA Değerlendirme</h2><small>総合力 · Over All Ability</small></div></div>
+  <div class="tabs"><span class="on" data-t="oaa1">Mevcut</span><span data-t="oaa2">Akademik Aralık</span></div>
+  <div class="pane on" id="oaa1"><div class="holo"><div class="oaa-h">Over All Ability<small>The Tokyo Metropolitan Advanced Nurturing High School</small></div><div class="ph-fr"></div>
+<div class="nm"><small>Grade&nbsp;&nbsp;&nbsp;Class</small><div class="gc">2 - <span class="u-cl">D</span></div><b class="u-name">—</b></div>
+  <div class="ev"><small>1. Yıl Değerlendirmesi</small><div class="g"><div class="s"><i>51</i><b>C</b></div><div class="s"><i>60</i><b>C+</b></div><div class="s"><i>37</i><b>D+</b></div><div class="s"><i>60</i><b>C+</b></div></div><div class="c">C</div></div></div></div>
+  <div class="pane" id="oaa2"><div class="holo"><h3>Akademik Puan Aralığı</h3>
+  <div class="ag"><span>400 ve üzeri</span><b>A</b></div><div class="ag"><span>300 ~ 399</span><b>B</b></div><div class="ag"><span>250 ~ 299</span><b>C</b></div><div class="ag"><span>200 ~ 249</span><b>D</b></div><div class="ag"><span>150 ~ 199</span><b>E</b></div></div></div>
 </section>
 
 <section class="page" id="rank">
-  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Sınıf Sıralaması</h2><small>Class Ranking</small></div></div>
-  <div class="tabs"><span class="on" data-t="rk1">Genel</span><span data-t="rk2">Akademik</span><span data-t="rk3">Davranış</span><span data-t="rk4">Katkı</span></div>
-  <div class="pane on" id="rk1"><div class="rklist"><div class="empty">Yükleniyor...</div></div></div>
-  <div class="pane" id="rk2"><div class="sec"><div class="empty">Yakında.</div></div></div>
-  <div class="pane" id="rk3"><div class="sec"><div class="empty">Yakında.</div></div></div>
-  <div class="pane" id="rk4"><div class="sec"><div class="empty">Yakında.</div></div></div>
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Sınıf Sıralaması</h2><small>クラスポイント · Class Points</small></div></div>
+  <div class="tabs"><span class="on" data-t="rk1">Sınıf Puanı</span><span data-t="rk2">En İyi Gruplar</span></div>
+  <div class="pane on" id="rk1"><div class="cpbox rklist"><div class="empty">Yükleniyor...</div></div></div>
+  <div class="pane" id="rk2"><div class="sec"><div class="st"><span>En İyi Grup Listesi</span></div><table class="gtb"><tr><th>Sıra</th><th>Yıl</th><th>Grup Adı</th><th>Puanlar</th></tr>
+  <tr><td>1</td><td>3. Yıl</td><td>Nagumo Grubu</td><td>236</td></tr><tr><td>2</td><td>2. Yıl</td><td>Koenji Grubu</td><td>230</td></tr><tr><td>3</td><td>3. Yıl</td><td>Kiriyama Grubu</td><td>188</td></tr><tr><td>4</td><td>3. Yıl</td><td>Ochiai Grubu</td><td>167</td></tr><tr><td>5</td><td>3. Yıl</td><td>Mizoe Grubu</td><td>166</td></tr><tr><td>6</td><td>2. Yıl</td><td>Sakayanagi Grubu</td><td>161</td></tr></table></div></div>
 </section>
 
 <section class="page" id="exam">
-  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Özel Sınav</h2><small>Special Exam</small></div></div>
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Özel Sınav</h2><small>特別試験 · Special Exam</small></div></div>
+  <div class="ttl">Tokyo İleri Düzey Gelişim Lisesi<small>Issız Ada Özel Sınavı</small></div>
+  <div class="holo"><h3>Görev: Gülle Atma</h3><div class="map" id="map"></div>
+  <p><b>Kategori:</b> Fiziksel</p><p><b>Katılım:</b> Görev belirdikten sonra 30 dakika içinde kaydolun.</p>
+  <p><b>Giriş gereksinimleri:</b> Üç veya daha fazla kişiden oluşan gruplar katılabilir. Altı grup kaydolduktan sonra kayıt biter.</p>
+  <p><b>Kazanma koşulları:</b> Toplam puanı en yüksek olan üçlü grup kazanır.</p>
+  <p><b>Ödüller:</b></p><ul><li>1. Sıra: 10 puan</li><li>2. Sıra: 5 puan</li><li>3. Sıra: 3 puan</li></ul></div>
+  <div class="holo"><h3>Deneme</h3><p>Özel sınavda verilen sınıf puanlarınızı %50 oranında artırabilirsiniz. Ancak grupların ilk %30'unda yer almazsanız, grubunuz bir ceza alacaktır. Ekstra puanlar okul tarafından sağlanacaktır.</p></div>
+  <div class="holo"><h3>Gizli Görev</h3><p>Görevin, Ayanokoji-kun'un Nisan ayı içinde okuldan atılmasını sağlamak.</p></div>
   <div id="examBox"><div class="empty">Yükleniyor...</div></div>
 </section>
 
 <section class="page" id="profile">
-  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Öğrenci Profili</h2><small>Student Profile</small></div></div>
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Öğrenci Profili</h2><small>生徒情報 · Student Profile</small></div></div>
+  <div class="holo"><div class="oaa-h">Student Card<small>The Tokyo Metropolitan Advanced Nurturing High School</small></div><div class="ph-fr"></div>
+<div class="nm"><small>Grade&nbsp;&nbsp;&nbsp;Class</small><div class="gc">2 - <span class="u-cl">D</span></div><b class="u-name">—</b></div></div>
   <div class="av"><i class="u-ini">?</i><div><div style="font:700 19px var(--serif)" class="u-name">—</div><small style="color:var(--dim)">Sınıf: <span class="u-cl">—</span> · <span class="u-rank">Üye</span></small></div></div>
   <div class="tabs"><span class="on" data-t="pf1">Bilgiler</span><span data-t="pf2">Puan</span><span data-t="pf3">Notlar</span></div>
   <div class="pane on" id="pf1"><div class="sec">
@@ -208,6 +261,12 @@ label{font-size:12px;color:var(--dim);display:block;margin-bottom:5px}.msg{margi
     <div class="row"><span class="t">Puan</span><span class="p-now">—</span></div></div></div>
   <div class="pane" id="pf2"><div class="sec"><div class="txlist" data-n="10"><div class="empty">Yükleniyor...</div></div></div></div>
   <div class="pane" id="pf3"><div class="sec"><div class="empty">Notlar yakında (örnek veri yok).</div></div></div>
+</section>
+
+<section class="page" id="results">
+  <div class="ph"><button class="back" data-go="menu">‹</button><div><h2>Sınav Sonuçları</h2><small>Sınav Sonuç Duyurusu · Matematik</small></div></div>
+  <div class="sec"><div class="st"><span>Matematik</span></div>
+  <div class="sc"><span>Ayanokoji Kiyotaka</span><b>100 puan</b></div><div class="sc"><span>Horikita Suzune</span><b>87 puan</b></div><div class="sc"><span>Öğrenci 3</span><b>84 puan</b></div><div class="sc"><span>Öğrenci 4</span><b>80 puan</b></div><div class="sc"><span>Öğrenci 5</span><b>79 puan</b></div><div class="sc"><span>Öğrenci 6</span><b>77 puan</b></div></div>
 </section>
 
 <nav class="nav">
@@ -245,7 +304,6 @@ document.addEventListener('click', async e => {
     pg.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === t.dataset.t));
     return;
   }
-  if(e.target.closest('[data-logout]')){ await supabase.auth.signOut(); location.replace('login.html'); return; }
   const g = e.target.closest('[data-go]'); if(g) go(g.dataset.go);
 });
 
@@ -280,7 +338,9 @@ async function loadAnn(){
 }
 async function loadRank(){
   const { data } = await supabase.from('class_points').select('*').order('points', { ascending:false });
-  const html = (data || []).map((c,i) => `<div class="rk ${i===0?'first':''}"><b>${i===0?'👑 ':''}${escapeHtml(c.class)} Sınıfı</b><span>${fmt(c.points)} pt</span></div>`).join('') || '<div class="empty">Sıralama yok.</div>';
+  const COL={A:'#f2d44f',B:'#3d8bff',C:'#d65ad6',D:'#3fd6a0'};
+  const rows = (data && data.length) ? data : [{class:'A',points:1206},{class:'B',points:578},{class:'C',points:571},{class:'D',points:551}];
+  const html = rows.map(c => `<div class="cp"><i style="background:${COL[c.class]||'#8a96b1'}"></i><span>${escapeHtml(c.class)} Sınıfı</span><b>${fmt(c.points)}</b><em>Pt</em></div>`).join('');
   $$('.rklist').forEach(b => b.innerHTML = html);
   const mine = (data || []).find(c => c.class === me?.class);
   $('#hClsPts').textContent = mine ? fmt(mine.points) : '—';
@@ -332,6 +392,25 @@ $('#sendForm').onsubmit = async e => {
 const a = $('#aud'), pb = $('#playBtn');
 pb.onclick = () => { if(a.paused){ a.play(); pb.textContent = '❚❚'; $('#songBox').classList.add('play'); } else { a.pause(); pb.textContent = '▶'; $('#songBox').classList.remove('play'); } };
 a.ontimeupdate = () => { if(a.duration) $('#barFill').style.width = (a.currentTime / a.duration * 100) + '%'; const s = Math.floor(a.currentTime); $('#tm').textContent = Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); };
+
+
+/* ---------- HARİTA ---------- */
+{ const m=$('#map'); let h='<div class="h"></div>'+'ABCDEFGHIJ'.split('').map(c=>`<div class="h">${c}</div>`).join(''); const P=['C5','F2','H4','J7','F8','B6','I3'];
+  for(let r=1;r<=10;r++){ h+=`<div class="h">${r}</div>`; for(const c of 'ABCDEFGHIJ') h+=`<div class="${P.includes(c+r)?'p':''}"></div>`; } m.innerHTML=h; }
+
+/* ---------- DİL ---------- */
+const D={en:{'Ana Sayfa':'Home','Duyurular':'Announcements','Puanlarım':'My Points','OAA Değerlendirme':'OAA Evaluation','Sınıf Sıralaması':'Class Ranking','Özel Sınav':'Special Exam','Sınav Sonuçları':'Exam Results','Program':'Schedule','Şarkılarımız':'Our Songs','Profil':'Profile','Menü':'Menu','Dil':'Language','Öğrenci Profili':'Student Profile','Hoş geldin,':'Welcome,','Burası yalnızca özel insanların toplandığı yer.':'A place only for special people.','Kişisel Puan':'Private Points','Sınıf Puanı':'Class Points','Son İşlemler':'Recent Activity','Son Duyurular':'Latest Announcements','Hızlı Menü':'Quick Menu','Tümünü gör ›':'See all ›','Yükleniyor...':'Loading...','Bakiye':'Balance','Günlük Ödül':'Daily Reward','Puan Gönder':'Send Points','Gönder':'Send','Kullanıcı Adı':'Username','Miktar':'Amount','Mevcut':'Current','Akademik Aralık':'Academic Range','Akademik Puan Aralığı':'Academic Score Range','400 ve üzeri':'400 and above','1. Yıl Değerlendirmesi':'Year 1 Evaluation','Sınıf':'Class','Rütbe':'Rank','Puan':'Points','Bilgiler':'Info','Notlar':'Notes','Sıralama':'Ranking','Şarkılar':'Songs','Sınıfı':'Class','En İyi Gruplar':'Top Groups','En İyi Grup Listesi':'Top Group List','Sıra':'Rank','Yıl':'Year','Grup Adı':'Group','Puanlar':'Points','Matematik':'Mathematics','Sınav Sonuç Duyurusu · Matematik':'Exam Results · Mathematics','Tokyo İleri Düzey Gelişim Lisesi':'Tokyo Metropolitan Advanced Nurturing High School','Issız Ada Özel Sınavı':'Deserted Island Special Exam','Görev: Gülle Atma':'Mission: Shot Put','Kategori:':'Category:','Fiziksel':'Physical','Akademik':'Academic','Katılım:':'Participation:','Görev belirdikten sonra 30 dakika içinde kaydolun.':'Register within 30 minutes after the mission appears.','Giriş gereksinimleri:':'Entry requirements:','Üç veya daha fazla kişiden oluşan gruplar katılabilir. Altı grup kaydolduktan sonra kayıt biter.':'Groups of three or more can join. Registration closes once six groups have signed up.','Kazanma koşulları:':'Winning conditions:','Toplam puanı en yüksek olan üçlü grup kazanır.':'The group of three with the highest total points wins.','Ödüller:':'Rewards:','1. Sıra: 10 puan':'1st place: 10 points','2. Sıra: 5 puan':'2nd place: 5 points','3. Sıra: 3 puan':'3rd place: 3 points','Deneme':'Trial',"Özel sınavda verilen sınıf puanlarınızı %50 oranında artırabilirsiniz. Ancak grupların ilk %30'unda yer almazsanız, grubunuz bir ceza alacaktır. Ekstra puanlar okul tarafından sağlanacaktır.":'You can increase the class points awarded in the special exam by 50%. However, if you do not place in the top 30% of groups, your group will receive a penalty. The extra points are provided by the school.','Gizli Görev':'Secret Mission',"Görevin, Ayanokoji-kun'un Nisan ayı içinde okuldan atılmasını sağlamak.":"Your mission is to get Ayanokoji-kun expelled from school within April.",'Sınava Katıl ›':'Join Exam ›','Duyuru yok.':'No announcements.','Henüz işlem yok.':'No activity yet.'},
+ja:{'Ana Sayfa':'ホーム','Duyurular':'お知らせ','Puanlarım':'ポイント','OAA Değerlendirme':'総合力評価','Sınıf Sıralaması':'クラスポイント','Özel Sınav':'特別試験','Sınav Sonuçları':'試験結果発表','Program':'予定','Şarkılarımız':'楽曲','Profil':'プロフィール','Menü':'メニュー','Dil':'言語','Öğrenci Profili':'生徒情報','Kişisel Puan':'プライベートポイント','Sınıf Puanı':'クラスポイント','Son İşlemler':'最近の履歴','Son Duyurular':'最新のお知らせ','Hızlı Menü':'クイックメニュー','Mevcut':'現在','Akademik Aralık':'学力範囲','Akademik Puan Aralığı':'学力判定基準','Sınıfı':'クラス','En İyi Gruplar':'上位グループ','En İyi Grup Listesi':'上位グループ一覧','Matematik':'数学','Issız Ada Özel Sınavı':'無人島特別試験','Tokyo İleri Düzey Gelişim Lisesi':'東京都高度育成高等学校','Görev: Gülle Atma':'課題「砲丸投げ」','Deneme':'試練','Gizli Görev':'極秘任務','Fiziksel':'身体能力','Akademik':'学力','Sıra':'順位','Yıl':'学年','Grup Adı':'グループ名','Puanlar':'点数','Ödüller:':'報酬:','Bakiye':'残高','Yükleniyor...':'読み込み中...'}};
+let lang=localStorage.getItem('lang')||'tr', busy=false;
+function applyLang(){ busy=true; document.documentElement.lang=lang;
+  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT); let n;
+  while(n=w.nextNode()){ if(n.parentNode.closest('script,style'))continue;
+    if(n.__w===undefined||n.nodeValue!==n.__w) n.__o=n.nodeValue;
+    const k=n.__o.trim(), t=lang==='tr'?null:D[lang][k], out=t?n.__o.replace(k,t):n.__o; n.__w=out; if(n.nodeValue!==out)n.nodeValue=out; }
+  $$('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===lang)); setTimeout(()=>busy=false,0); }
+document.addEventListener('click',e=>{const b=e.target.closest('[data-lang]'); if(b){lang=b.dataset.lang; localStorage.setItem('lang',lang); applyLang();}});
+let lt; new MutationObserver(()=>{ if(busy)return; clearTimeout(lt); lt=setTimeout(applyLang,30); }).observe(document.body,{childList:true,subtree:true,characterData:true});
+applyLang();
 
 /* ---------- BAŞLAT ---------- */
 const { data:{ session } } = await supabase.auth.getSession();
