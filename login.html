@@ -161,7 +161,9 @@
   // rastgele seçilir, hepsi doluysa en az doluya düşer.
   async function pickRandomClass(){
     try {
-      const { data, error } = await supabase.from('profiles').select('class');
+      let r = await supabase.from('public_profiles').select('class');
+      if(r.error) r = await supabase.from('profiles').select('class');
+      const { data, error } = r;
       if(error || !data) throw error || new Error('no data');
       const counts = {};
       CLASSES.forEach(c => counts[c] = 0);
@@ -304,6 +306,7 @@
     btn.disabled = false; btn.textContent = 'Kayıt Ol';
 
     if(signUpData?.session){
+      await window.playRegisterIntro();
       window.location.replace('app.html');
     } else {
       msg.classList.add('ok');
@@ -330,6 +333,8 @@
     setTimeout(function(){ ripple.remove(); }, 700);
   });
 </script>
+
+<script type="module" src="reg-intro.js"></script>
 
 </body>
 </html>
