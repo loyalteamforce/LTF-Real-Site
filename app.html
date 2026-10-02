@@ -374,7 +374,7 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 <div class="top"><img src="crest.png" alt=""><div class="brand">LOYAL ELITE FORCE</div><div class="lang"><div class="gl" tabindex="0" role="button" aria-label="Dil"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><div class="opts"><div data-lang="tr">Türkçe</div><div data-lang="en">English</div><div data-lang="ru">Русский</div><div data-lang="ja">日本語</div></div></div></div>
 
 <section class="page on" id="home">
-  <div class="hero"><h1>Hoş geldin,<br>Loyal Elite Force'a</h1><p>Burası yalnızca özel insanların toplandığı yer.</p></div>
+  <div class="hero"><h1>Hoş geldin,<br>Loyal Elite Force'a</h1></div>
   <div class="pts">
     <div class="box link" data-go="points"><div class="l">Kişisel Puan<small>Private Points</small></div><div class="v"><span id="hPts">—</span><em>pt</em></div></div>
     <div class="box link" data-go="rank"><div class="l">Sınıf Puanı<small id="hCls">Class Points</small></div><div class="v"><span id="hClsPts">—</span><em>pt</em></div></div>
@@ -579,7 +579,7 @@ async function loadAnn(){
 async function loadRank(){
   const [{ data }, { data: pr }] = await Promise.all([
     supabase.from('class_points').select('*').order('points', { ascending:false }),
-    supabase.from('profiles').select('class')
+    supabase.from('public_profiles').select('class')
   ]);
   const COL={A:'#f2d44f',B:'#3d8bff',C:'#d65ad6',D:'#3fd6a0'};
   const cnt={}; (pr||[]).forEach(p => { if(p.class) cnt[p.class] = (cnt[p.class]||0) + 1; });
@@ -648,8 +648,11 @@ document.addEventListener('change', async e => {
     const up = await supabase.storage.from('avatars').upload(path, blob, { upsert:true, contentType:'image/jpeg', cacheControl:'60' });
     if(up.error) throw up.error;
     const pub = supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl + '?v=' + Date.now();
-    const { error } = await supabase.from('profiles').update({ avatar_url: pub }).eq('id', uid);
-    if(error) throw error;
+    const r1 = await supabase.from('profiles').update({ avatar_url: pub }).eq('id', uid).select('id');
+    if(r1.error || !r1.data || !r1.data.length){
+      const r2 = await supabase.rpc('set_avatar', { p_url: pub });
+      if(r2.error) throw new Error('Fotoğraf profile kaydedilemedi, Supabase izin (RLS) ayarı eksik: ' + (r2.error.message || ''));
+    }
     me.avatar_url = pub; renderMyCard();
     const m2 = $('#avMsg'); m2.className = 'msg ok'; m2.textContent = 'Fotoğraf güncellendi.';
   } catch(err){
@@ -660,7 +663,10 @@ document.addEventListener('change', async e => {
 async function openStudent(id){
   if(id === uid){ go('profile'); return; }
   go('student'); const box = $('#stCard'); box.innerHTML = '<div class="empty">Yükleniyor...</div>';
-  const { data } = await supabase.from('profiles').select('*').eq('id', id).maybeSingle();
+  const PUB = 'id,username,class,rank,avatar_url,academic,physical,adaptability,social';
+  let r = await supabase.from('public_profiles').select(PUB).eq('id', id).maybeSingle();
+  if(r.error) r = await supabase.from('profiles').select('id,username,class,rank,avatar_url').eq('id', id).maybeSingle();
+  const data = r.data;
   box.innerHTML = data ? renderCard(data) : '<div class="empty">Öğrenci bulunamadı.</div>';
 }
 
@@ -673,16 +679,16 @@ async function openClass(c){
   const box = $('#klBody'); box.innerHTML = '<div class="empty">Yükleniyor...</div>';
   let [cpRes, stRes] = await Promise.all([
     supabase.from('class_points').select('*').eq('class', c).maybeSingle(),
-    supabase.from('profiles').select('id,username,rank,points,avatar_url').eq('class', c).order('points', { ascending:false })
+    supabase.from('public_profiles').select('id,username,rank,avatar_url').eq('class', c).order('username', { ascending:true })
   ]);
-  if(stRes.error) stRes = await supabase.from('profiles').select('id,username,rank,points').eq('class', c).order('points', { ascending:false });
+  if(stRes.error) stRes = await supabase.from('profiles').select('id,username,rank,avatar_url').eq('class', c).order('username', { ascending:true });
   if(curCls !== c) return;
   const list = stRes.data || [];
   const head = `<div class="cpbox"><div class="cp"><i style="background:${CCOL[c]||'#8a96b1'}"></i><span>${escapeHtml(c)} Sınıfı<small>${list.length} öğrenci</small></span><b>${cpRes.data ? fmt(cpRes.data.points) : '—'}</b><em>Pt</em></div></div>`;
   let body;
   if(stRes.error) body = '<div class="empty">Öğrenci listesi yüklenemedi.</div>';
   else if(!list.length) body = '<div class="empty">Bu sınıfta henüz öğrenci yok.</div>';
-  else body = list.map((p,i) => `<div class="rk${i===0?' first':''}" data-sid="${escapeHtml(p.id)}">${(typeof p.avatar_url==='string' && p.avatar_url.startsWith('https://')) ? `<img class="mini" src="${escapeHtml(p.avatar_url)}" alt="">` : `<span class="mini ini">${escapeHtml((p.username||'?').slice(0,2).toUpperCase())}</span>`}<b>${i+1}. ${escapeHtml(p.username||'—')}${p.id===uid?' · Sen':''}</b><small class="kr">${escapeHtml(p.rank||'Üye')}</small><span>${fmt(p.points)} pt</span></div>`).join('');
+  else body = list.map((p,i) => `<div class="rk" data-sid="${escapeHtml(p.id)}">${(typeof p.avatar_url==='string' && p.avatar_url.startsWith('https://')) ? `<img class="mini" src="${escapeHtml(p.avatar_url)}" alt="">` : `<span class="mini ini">${escapeHtml((p.username||'?').slice(0,2).toUpperCase())}</span>`}<b>${escapeHtml(p.username||'—')}${p.id===uid?' · Sen':''}</b><small class="kr">${escapeHtml(p.rank||'Üye')}</small></div>`).join('');
   box.innerHTML = head + `<div class="sec"><div class="st"><span>Öğrenciler</span></div>${body}</div>`;
 }
 document.addEventListener('click', e => {
@@ -769,4 +775,4 @@ else{
 }
 </script>
 </body>
-</html>
+</html> 
