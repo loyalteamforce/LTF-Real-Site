@@ -29,15 +29,6 @@
   <div class="cosmic-beam"></div>
 </div>
 
-<div id="appLoading">
-  <div class="crest-wrap">
-    <div class="ring"></div>
-    <img class="crest-img" id="loaderLogo" src="crest.png" alt="Loyal Elite Force">
-    <div class="sweep"></div>
-  </div>
-  <div class="brand"><h1>LOYAL ELITE FORCE</h1></div>
-</div>
-
 <div id="authView">
   <div class="auth-card">
     <img class="auth-crest" src="crest.png" alt="Loyal Elite Force">
@@ -142,9 +133,7 @@
   // yavaş/başarısız ağ isteği vb. herhangi bir sebeple) hiç çalışmazsa
   // yükleme ekranı sonsuza kadar açık kalıp arkasını (küreyi) gizlemesin.
   window.__lefFallback = setTimeout(function(){
-    var loader = document.getElementById('appLoading');
     var authView = document.getElementById('authView');
-    if(loader){ loader.classList.add('done'); setTimeout(function(){ loader.style.display = 'none'; }, 700); }
     if(authView){ authView.style.display = 'flex'; }
   }, 3000);
 </script>
@@ -152,7 +141,6 @@
 <script type="module">
   import { supabase, usernameToEmail } from './config.js';
 
-  const loader = document.getElementById('appLoading');
   const authView = document.getElementById('authView');
   const CLASSES = ['A', 'B', 'C', 'D'];
   const CLASS_LIMIT = 25;
@@ -181,8 +169,6 @@
   function showAuth(){
     clearTimeout(window.__lefFallback);
     authView.style.display = 'flex';
-    loader.classList.add('done');
-    setTimeout(() => { loader.style.display = 'none'; }, 700);
   }
 
   // ---------- BOOT: zaten girişliyse doğrudan app.html'e yolla ----------
@@ -246,6 +232,7 @@
       msg.textContent = 'Kullanıcı adı veya şifre hatalı.';
       return;
     }
+    await window.playRegisterIntro();
     window.location.replace('app.html');
   });
 

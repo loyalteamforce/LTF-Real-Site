@@ -35,6 +35,7 @@
   #regIntro .ri-line{position:absolute;left:50%;top:50%;height:2px;width:0;background:linear-gradient(90deg,transparent,#e50914,transparent);
     box-shadow:0 0 20px #e50914;transform:translate(-50%,-50%);opacity:0;animation:riLine 1.1s ease .15s forwards}
   @keyframes riLine{0%{width:0;opacity:1}70%{width:90vw;opacity:1}100%{width:90vw;opacity:0}}
+  #regIntro .ri-crest{position:relative;width:clamp(70px,14vw,130px);margin-bottom:3vh;opacity:0;filter:drop-shadow(0 0 18px rgba(229,9,20,.85)) sepia(1) saturate(6) hue-rotate(-30px) brightness(.9);animation:riEn 1.2s ease 1s forwards}
   #regIntro .ri-skip{position:absolute;bottom:3vh;right:4vw;font:600 11px/1 sans-serif;letter-spacing:.25em;color:#5a1115;text-transform:uppercase}
   @media (prefers-reduced-motion:reduce){#regIntro .ri-streaks,#regIntro .ri-flash,#regIntro .ri-line{display:none}}
   `;
@@ -47,8 +48,8 @@
     }catch(e){}
   }
   // Kayıt butonuna basıldığı an (kullanıcı hareketi) sesi aç; tarayıcılar buna izin verir.
-  document.addEventListener('click', e => { if(e.target.closest('#registerBtn')) unlockAudio(); }, true);
-  document.addEventListener('submit', e => { if(e.target.id === 'registerForm') unlockAudio(); }, true);
+  document.addEventListener('click', e => { if(e.target.closest('#registerBtn, #loginBtn')) unlockAudio(); }, true);
+  document.addEventListener('submit', e => { if(e.target.id === 'registerForm' || e.target.id === 'loginForm') unlockAudio(); }, true);
 
   function sound(){
     if(!ctx) return;
@@ -92,7 +93,7 @@
       const el = document.createElement('div'); el.id = 'regIntro';
       const bars = Array.from({length: 11}, (_, i) => `<i style="animation-delay:${(Math.abs(5 - i) * .06).toFixed(2)}s"></i>`).join('');
       el.innerHTML = `<div class="ri-streaks">${bars}</div><div class="ri-line"></div><div class="ri-flash"></div>
-        <div class="ri-jp">ロイヤル・エリート・フォース</div>
+        <img class="ri-crest" src="crest.png" alt=""><div class="ri-jp">ロイヤル・エリート・フォース</div>
         <div class="ri-en">LOYAL ELITE FORCE</div>
         <div class="ri-sub">忠誠 ・ 規律 ・ 力</div>
         <div class="ri-skip">Geç ›</div>`;
@@ -101,8 +102,8 @@
       let done = false;
       const finish = () => {
         if(done) return; done = true;
-        el.classList.add('out');
-        setTimeout(() => { el.remove(); st.remove(); resolve(); }, 900);
+        try{ sessionStorage.setItem('ltfReveal','1'); }catch(e){}
+        resolve();
       };
       unlockAudio(); sound();
       el.addEventListener('click', finish);
@@ -110,4 +111,26 @@
       setTimeout(finish, 5600);
     });
   };
+
+  // ---- SİTE AÇILIŞI: ortadan çizgi, üst/alt perde yukarı-aşağı kayar ----
+  let go = false;
+  try{ go = sessionStorage.getItem('ltfReveal') === '1'; sessionStorage.removeItem('ltfReveal'); }catch(e){}
+  if(go){
+    const r = document.createElement('div');
+    r.id = 'ltfReveal';
+    r.innerHTML = `<style>
+      #ltfReveal{position:fixed;inset:0;z-index:99999;pointer-events:none;overflow:hidden}
+      #ltfReveal .h{position:absolute;left:0;right:0;height:50.2%;background:#000;transition:transform .95s cubic-bezier(.77,0,.18,1) .75s}
+      #ltfReveal .t{top:0}#ltfReveal .b{bottom:0}
+      #ltfReveal .l{position:absolute;left:50%;top:50%;height:2px;width:0;transform:translate(-50%,-50%);
+        background:linear-gradient(90deg,transparent,#e50914,#ff2a35,#e50914,transparent);box-shadow:0 0 22px 3px #e50914;
+        transition:width .6s cubic-bezier(.2,.8,.2,1) .1s,opacity .4s ease .85s}
+      #ltfReveal.go .l{width:100vw;opacity:0}
+      #ltfReveal.go .t{transform:translateY(-101%)}#ltfReveal.go .b{transform:translateY(101%)}
+    </style><div class="h t"></div><div class="h b"></div><div class="l"></div>`;
+    document.documentElement.appendChild(r);
+    const run = () => requestAnimationFrame(() => requestAnimationFrame(() => r.classList.add('go')));
+    (document.readyState === 'loading') ? addEventListener('DOMContentLoaded', run) : run();
+    setTimeout(() => r.remove(), 2400);
+  }
 })();
