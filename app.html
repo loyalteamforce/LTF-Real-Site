@@ -463,9 +463,7 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 <section class="page" id="oaa">
   <div class="ph"><button class="back" data-go="home">‹</button><div><h2>OAA Değerlendirme</h2><small>総合力 · Over All Ability</small></div></div>
   <div class="tabs"><span class="on" data-t="oaa1">Mevcut</span><span data-t="oaa2">Akademik Aralık</span></div>
-  <div class="pane on" id="oaa1"><div class="holo"><div class="oaa-h">Over All Ability<small>The Tokyo Metropolitan Advanced Nurturing High School</small></div><div class="ph-fr"></div>
-<div class="nm"><small>Grade&nbsp;&nbsp;&nbsp;Class</small><div class="gc">2 - <span class="u-cl">D</span></div><b class="u-name">—</b></div>
-  <div class="ev"><small>1. Yıl Değerlendirmesi</small><div class="g"><div class="s"><i>51</i><b>C</b></div><div class="s"><i>60</i><b>C+</b></div><div class="s"><i>37</i><b>D+</b></div><div class="s"><i>60</i><b>C+</b></div></div><div class="c">C</div></div></div></div>
+  <div class="pane on" id="oaa1"><div id="oaaCard"></div></div>
   <div class="pane" id="oaa2"><div class="holo"><h3>Akademik Puan Aralığı</h3>
   <div class="ag"><span>400 ve üzeri</span><b>A</b></div><div class="ag"><span>300 ~ 399</span><b>B</b></div><div class="ag"><span>250 ~ 299</span><b>C</b></div><div class="ag"><span>200 ~ 249</span><b>D</b></div><div class="ag"><span>150 ~ 199</span><b>E</b></div></div></div>
 </section>
@@ -626,6 +624,7 @@ function renderCard(p){
   </div></div>`;
 }
 function renderMyCard(){
+  const oc = $('#oaaCard'); if(oc) oc.innerHTML = renderCard(me || {});
   const box = $('#myCard'); if(!box) return;
   box.innerHTML = renderCard(me || {}) +
     `<div class="oaa-up"><label class="oaa-upb"><input type="file" id="avFile" accept="image/*" hidden>📷 Fotoğrafı değiştir</label></div><div class="msg" id="avMsg"></div>`;
