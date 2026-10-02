@@ -4,8 +4,8 @@
 // ============================================================
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-const SUPABASE_URL = "https://nwtuhhscntjgmerxxtcm.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_Jq6-4pbH81C6xlshfPArAQ_9OyaKCBS";
+const SUPABASE_URL = "https://mbyyuovlipbpioxtkjcp.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_LTLO2qA7KorZC944aF27fg_kKPJ-71Q";
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

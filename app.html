@@ -216,7 +216,7 @@ input{background:rgba(255,255,255,.75);color:#0b2350;border:1px solid #fff}
    Yüzen hap biçimli cam bar; aktif sekme etiketini yaylanarak açar.
    data-go ve .on mantığı aynen korundu (JS değişmedi). Masaüstünde yan menü kullanılır. */
 nav.nav{
-  left:50%; bottom:calc(14px + env(safe-area-inset-bottom)); width:auto; max-width:calc(100vw - 24px);
+  left:50%; right:auto; bottom:calc(14px + env(safe-area-inset-bottom)); width:max-content; max-width:calc(100vw - 24px);
   padding:9px; gap:4px; border-radius:999px; align-items:center; justify-content:center;
   border:0!important; isolation:isolate;
   background:transparent!important;
@@ -463,7 +463,37 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 <section class="page" id="oaa">
   <div class="ph"><button class="back" data-go="home">‹</button><div><h2>OAA Değerlendirme</h2><small>総合力 · Over All Ability</small></div></div>
   <div class="tabs"><span class="on" data-t="oaa1">Mevcut</span><span data-t="oaa2">Akademik Aralık</span></div>
-  <div class="pane on" id="oaa1"><div id="myCard"></div>
+  <div class="pane on" id="oaa1"><div class="holo"><div class="oaa-h">Over All Ability<small>The Tokyo Metropolitan Advanced Nurturing High School</small></div><div class="ph-fr"></div>
+<div class="nm"><small>Grade&nbsp;&nbsp;&nbsp;Class</small><div class="gc">2 - <span class="u-cl">D</span></div><b class="u-name">—</b></div>
+  <div class="ev"><small>1. Yıl Değerlendirmesi</small><div class="g"><div class="s"><i>51</i><b>C</b></div><div class="s"><i>60</i><b>C+</b></div><div class="s"><i>37</i><b>D+</b></div><div class="s"><i>60</i><b>C+</b></div></div><div class="c">C</div></div></div></div>
+  <div class="pane" id="oaa2"><div class="holo"><h3>Akademik Puan Aralığı</h3>
+  <div class="ag"><span>400 ve üzeri</span><b>A</b></div><div class="ag"><span>300 ~ 399</span><b>B</b></div><div class="ag"><span>250 ~ 299</span><b>C</b></div><div class="ag"><span>200 ~ 249</span><b>D</b></div><div class="ag"><span>150 ~ 199</span><b>E</b></div></div></div>
+</section>
+
+<section class="page" id="rank">
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Sınıf Sıralaması</h2><small>クラスポイント · Class Points</small></div></div>
+  <div class="tabs"><span class="on" data-t="rk1">Sınıf Puanı</span><span data-t="rk2">En İyi Gruplar</span></div>
+  <div class="pane on" id="rk1"><div class="cpbox rklist"><div class="empty">Yükleniyor...</div></div></div>
+  <div class="pane" id="rk2"><div class="sec"><div class="st"><span>En İyi Grup Listesi</span></div><table class="gtb"><tr><th>Sıra</th><th>Yıl</th><th>Grup Adı</th><th>Puanlar</th></tr>
+  <tr><td>1</td><td>3. Yıl</td><td>Nagumo Grubu</td><td>236</td></tr><tr><td>2</td><td>2. Yıl</td><td>Koenji Grubu</td><td>230</td></tr><tr><td>3</td><td>3. Yıl</td><td>Kiriyama Grubu</td><td>188</td></tr><tr><td>4</td><td>3. Yıl</td><td>Ochiai Grubu</td><td>167</td></tr><tr><td>5</td><td>3. Yıl</td><td>Mizoe Grubu</td><td>166</td></tr><tr><td>6</td><td>2. Yıl</td><td>Sakayanagi Grubu</td><td>161</td></tr></table></div></div>
+</section>
+
+<section class="page" id="exam">
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Özel Sınav</h2><small>特別試験 · Special Exam</small></div></div>
+  <div class="ttl">Tokyo İleri Düzey Gelişim Lisesi<small>Issız Ada Özel Sınavı</small></div>
+  <div class="holo"><h3>Görev: Gülle Atma</h3><div class="map" id="map"></div>
+  <p><b>Kategori:</b> Fiziksel</p><p><b>Katılım:</b> Görev belirdikten sonra 30 dakika içinde kaydolun.</p>
+  <p><b>Giriş gereksinimleri:</b> Üç veya daha fazla kişiden oluşan gruplar katılabilir. Altı grup kaydolduktan sonra kayıt biter.</p>
+  <p><b>Kazanma koşulları:</b> Toplam puanı en yüksek olan üçlü grup kazanır.</p>
+  <p><b>Ödüller:</b></p><ul><li>1. Sıra: 10 puan</li><li>2. Sıra: 5 puan</li><li>3. Sıra: 3 puan</li></ul></div>
+  <div class="holo"><h3>Deneme</h3><p>Özel sınavda verilen sınıf puanlarınızı %50 oranında artırabilirsiniz. Ancak grupların ilk %30'unda yer almazsanız, grubunuz bir ceza alacaktır. Ekstra puanlar okul tarafından sağlanacaktır.</p></div>
+  <div class="holo"><h3>Gizli Görev</h3><p>Görevin, Ayanokoji-kun'un Nisan ayı içinde okuldan atılmasını sağlamak.</p></div>
+  <div id="examBox"><div class="empty">Yükleniyor...</div></div>
+</section>
+
+<section class="page" id="profile">
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Öğrenci Profili</h2><small>生徒情報 · Student Profile</small></div></div>
+  <div id="myCard"></div>
   <div class="tabs"><span class="on" data-t="pf1">Bilgiler</span><span data-t="pf2">Puan</span><span data-t="pf3">Notlar</span></div>
   <div class="pane on" id="pf1"><div class="sec">
     <div class="row"><span class="t">Kullanıcı adı</span><span class="u-name">—</span></div>
