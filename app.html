@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Loyal Elite Force</title>
 <link rel="icon" href="favicon.ico">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@600;700&family=Orbitron:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root{--card:#0c1425;--line:rgba(120,160,255,.17);--ink:#eef2fb;--dim:#8a96b1;--red:#d1123f;--red2:#8f0d2c;--blue:#5b8cff;--gold:#e6be5a;--serif:'Noto Serif',serif;--sans:'Noto Sans',sans-serif}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -217,16 +217,16 @@ input{background:rgba(255,255,255,.75);color:#0b2350;border:1px solid #fff}
    data-go ve .on mantığı aynen korundu (JS değişmedi). Masaüstünde yan menü kullanılır. */
 nav.nav{
   left:50%; bottom:calc(14px + env(safe-area-inset-bottom)); width:auto; max-width:calc(100vw - 24px);
-  padding:7px; gap:4px; border-radius:999px; align-items:center; justify-content:center;
+  padding:9px; gap:4px; border-radius:999px; align-items:center; justify-content:center;
   border:0!important; isolation:isolate;
   background:transparent!important;
   -webkit-backdrop-filter:none!important; backdrop-filter:none!important;
-  box-shadow:0 22px 40px -18px rgba(0,25,70,.55),0 8px 20px -12px rgba(0,25,70,.4);
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.55),0 22px 40px -18px rgba(0,25,70,.55),0 8px 20px -12px rgba(0,25,70,.4);
   animation:navIn .55s cubic-bezier(.34,1.4,.64,1) both;
 }
 @keyframes navIn{from{opacity:0;transform:translateX(-50%) scale(.9)}to{opacity:1;transform:translateX(-50%) scale(1)}}
 nav.nav::before{
-  content:''; position:absolute; inset:5px; z-index:-1; pointer-events:none; border-radius:999px;
+  content:''; position:absolute; inset:8px; z-index:-1; pointer-events:none; border-radius:999px;
   background:rgba(255,255,255,.24);
   -webkit-backdrop-filter:blur(14px) saturate(170%) brightness(1.03); backdrop-filter:blur(14px) saturate(170%) brightness(1.03);
   box-shadow:inset 3px 3px .5px -3px rgba(255,255,255,.9),inset -3px -3px .5px -3px rgba(255,255,255,.85),
@@ -235,7 +235,7 @@ nav.nav::before{
 }
 nav.nav::after{
   content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; border-radius:999px;
-  box-sizing:border-box; padding:5px;
+  box-sizing:border-box; padding:8px;
   -webkit-mask-image:linear-gradient(#000,#000),linear-gradient(#000,#000); mask-image:linear-gradient(#000,#000),linear-gradient(#000,#000);
   -webkit-mask-clip:content-box,border-box; mask-clip:content-box,border-box;
   -webkit-mask-composite:xor; mask-composite:exclude;
@@ -272,6 +272,63 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 .kch.on{background:rgba(47,111,224,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}.kch:active{transform:scale(.97)}
 #klBody .cpbox{margin-bottom:12px}.rk .kr{font-size:11px;color:var(--dim);margin-right:4px}
 @media (min-width:900px){#klass.on{max-width:820px}}
+
+/* ===== OVER ALL ABILITY ÖĞRENCİ KARTI ===== */
+.oaa{--rc:#d1252f;max-width:372px;margin:6px auto 14px;padding:7px;border-radius:26px;position:relative;
+  background:linear-gradient(145deg,#f6f9fb,#aeb7c0 38%,#eef2f5 58%,#98a2ac);
+  box-shadow:0 18px 40px -16px rgba(10,40,90,.6),0 0 0 1px rgba(255,255,255,.65),0 0 26px rgba(91,170,255,.28)}
+.oaa.rc-c{--rc:#e3b53a}.oaa.rc-d{--rc:#7fa6c9}
+.oaa-b{position:relative;overflow:hidden;border-radius:20px;padding:14px;color:#0d2a55;
+  background:linear-gradient(165deg,#d3ecf9 0%,#92c7e6 45%,#6cadd8 100%);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.55),inset 0 0 30px rgba(255,255,255,.28)}
+.oaa-b::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(112deg,transparent 30%,rgba(255,255,255,.2) 30.4%,rgba(255,255,255,.2) 41%,transparent 41.4%),
+  linear-gradient(112deg,transparent 43%,rgba(255,255,255,.38) 43.2%,rgba(255,255,255,.38) 43.9%,transparent 44.1%)}
+.oaa-t{font:600 25px/1 Orbitron,var(--sans);text-align:center;letter-spacing:1px;color:rgba(255,255,255,.5);-webkit-text-stroke:1.3px #5f9cd0;margin-top:2px}
+.oaa-s{text-align:center;font:italic 600 10.5px/1.35 var(--serif);color:#5d88b3;margin:7px 0 10px}
+.oaa-in{padding:10px 8px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.14);
+  background-image:radial-gradient(rgba(255,255,255,.35) 1px,transparent 1.2px);background-size:5px 5px}
+.oaa-ph{position:relative;margin:4px 8px 14px;aspect-ratio:4/3}
+.oaa-ph::before,.oaa-ph::after{content:'';position:absolute;width:30px;height:30px;border:4px solid #25b4ee;pointer-events:none;z-index:2}
+.oaa-ph::before{left:-6px;top:-6px;border-right:0;border-bottom:0}
+.oaa-ph::after{right:-6px;bottom:-6px;border-left:0;border-top:0}
+.oaa-img{position:absolute;inset:0;background:#d3d6f0 center/cover no-repeat;box-shadow:inset 0 0 0 2px rgba(255,255,255,.7),0 2px 6px rgba(20,60,110,.3);overflow:hidden}
+.oaa-img img{width:100%;height:100%;object-fit:cover;display:block}
+.oaa-nm{--c:14px;position:relative;display:flex;align-items:center;gap:8px;margin:0 2px;padding:12px 14px 12px 16px;background:#fff;
+  clip-path:polygon(var(--c) 0,calc(100% - var(--c)) 0,100% var(--c),100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,var(--c) 100%,0 calc(100% - var(--c)),0 var(--c))}
+.oaa-nm::before{content:'';position:absolute;inset:2px;clip-path:inherit;background:linear-gradient(180deg,#e3f3fb,#bcdcee)}
+.oaa-nm>*{position:relative}
+.oaa-gc{flex:none;text-align:left}
+.oaa-gc small{display:block;font:500 7.5px var(--sans);letter-spacing:1px;color:#4a6f96;white-space:nowrap}
+.oaa-gc span{font:500 19px var(--serif);color:#27507f;white-space:nowrap}
+.oaa-nn{flex:1;min-width:0;text-align:center}
+.oaa-n{font:600 23px/1.15 var(--serif);letter-spacing:2px;color:#fbfeff;text-shadow:0 1px 0 #4f83b5,0 0 7px rgba(50,110,170,.55);overflow-wrap:anywhere}
+.oaa-r{margin-top:2px;font:500 8.5px var(--sans);letter-spacing:2.5px;color:#5b84ad}
+.oaa-ab{position:relative;margin-top:12px;padding:32px 8px 10px;border-radius:4px;background:linear-gradient(160deg,#9096a0,#585e66)}
+.oaa-ah{position:absolute;left:0;top:0;padding:6px 28px 6px 10px;font:700 10px var(--sans);color:#262a2e;background:linear-gradient(90deg,#c9cdd1,#e8ebed);clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%)}
+.oaa-grid{display:grid;grid-template-columns:1fr 100px 1fr;align-items:center;gap:6px}
+.oaa-col{display:grid;gap:9px}
+.oaa-bx{position:relative;display:flex;align-items:center;justify-content:flex-end;height:46px;padding:0 8px 0 24px;border-radius:5px;color:#fff;
+  background:linear-gradient(160deg,#4d89c5,#2b5e9a);box-shadow:inset 0 0 0 1px rgba(190,225,255,.55),0 2px 4px rgba(0,0,0,.3)}
+.oaa-bx u{position:absolute;left:0;top:0;bottom:0;width:17px;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;font:600 7.5px var(--sans);text-decoration:none;color:#d4e8fa;background:rgba(10,40,90,.5);border-radius:5px 0 0 5px}
+.oaa-bx em{position:absolute;left:21px;top:4px;font:500 9.5px var(--sans);font-style:normal;color:#d4e8fa}
+.oaa-bx b{font:500 31px/1 var(--serif)}
+.oaa-bx sup,.oaa-ct sup{font-size:.42em;vertical-align:top;position:relative;top:.15em;margin-left:1px}
+.oaa-ct{position:relative;width:100px;height:100px;display:flex;align-items:center;justify-content:center}
+.oaa-ct i{position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 25deg,var(--rc) 0 60%,transparent 60% 64%,var(--rc) 64% 86%,transparent 86% 90%,var(--rc) 90%);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px));mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px));
+  filter:drop-shadow(0 0 4px rgba(0,0,0,.35))}
+.oaa-ct small{position:absolute;top:17px;font:600 9px var(--sans);color:#eceff2;letter-spacing:1px}
+.oaa-ct b{margin-top:10px;font:600 54px/1 var(--serif);color:#f2f2f7;-webkit-text-stroke:2.5px var(--rc);paint-order:stroke fill}
+.oaa-ct b sup{font-size:.36em;-webkit-text-stroke:1.5px var(--rc)}
+.oaa-up{display:flex;justify-content:center;margin:0 0 6px}
+.oaa-upb{padding:10px 20px;border-radius:999px;border:1px solid rgba(255,255,255,.75);background:rgba(255,255,255,.4);color:var(--ink);font:700 13px var(--sans);cursor:pointer}
+.oaa-upb:active{transform:scale(.97)}
+#myCard+.msg,#avMsg{text-align:center;margin-bottom:12px}
+.rk .mini{flex:none;width:30px;height:30px;border-radius:50%;object-fit:cover;margin-right:8px;border:1px solid rgba(255,255,255,.8)}
+.rk .mini.ini{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.5);color:#0b2350;font:700 11px var(--sans)}
+.rk[data-sid]{cursor:pointer}
 </style>
 </head>
 <body>
@@ -372,6 +429,11 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
   <div id="klBody"></div>
 </section>
 
+<section class="page" id="student">
+  <div class="ph"><button class="back" data-go="klass">‹</button><div><h2>Öğrenci Kartı</h2><small>生徒情報 · Student Card</small></div></div>
+  <div id="stCard"></div>
+</section>
+
 <section class="page" id="points">
   <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Puanlarım</h2><small>ポイント · Points</small></div></div>
   <div class="box" style="margin-bottom:12px"><div class="l">Bakiye</div><div class="v"><span class="p-now">—</span><em>pt</em></div></div>
@@ -401,39 +463,7 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 <section class="page" id="oaa">
   <div class="ph"><button class="back" data-go="home">‹</button><div><h2>OAA Değerlendirme</h2><small>総合力 · Over All Ability</small></div></div>
   <div class="tabs"><span class="on" data-t="oaa1">Mevcut</span><span data-t="oaa2">Akademik Aralık</span></div>
-  <div class="pane on" id="oaa1"><div class="holo"><div class="oaa-h">Over All Ability<small>The Tokyo Metropolitan Advanced Nurturing High School</small></div><div class="ph-fr"></div>
-<div class="nm"><small>Grade&nbsp;&nbsp;&nbsp;Class</small><div class="gc">2 - <span class="u-cl">D</span></div><b class="u-name">—</b></div>
-  <div class="ev"><small>1. Yıl Değerlendirmesi</small><div class="g"><div class="s"><i>51</i><b>C</b></div><div class="s"><i>60</i><b>C+</b></div><div class="s"><i>37</i><b>D+</b></div><div class="s"><i>60</i><b>C+</b></div></div><div class="c">C</div></div></div></div>
-  <div class="pane" id="oaa2"><div class="holo"><h3>Akademik Puan Aralığı</h3>
-  <div class="ag"><span>400 ve üzeri</span><b>A</b></div><div class="ag"><span>300 ~ 399</span><b>B</b></div><div class="ag"><span>250 ~ 299</span><b>C</b></div><div class="ag"><span>200 ~ 249</span><b>D</b></div><div class="ag"><span>150 ~ 199</span><b>E</b></div></div></div>
-</section>
-
-<section class="page" id="rank">
-  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Sınıf Sıralaması</h2><small>クラスポイント · Class Points</small></div></div>
-  <div class="tabs"><span class="on" data-t="rk1">Sınıf Puanı</span><span data-t="rk2">En İyi Gruplar</span></div>
-  <div class="pane on" id="rk1"><div class="cpbox rklist"><div class="empty">Yükleniyor...</div></div></div>
-  <div class="pane" id="rk2"><div class="sec"><div class="st"><span>En İyi Grup Listesi</span></div><table class="gtb"><tr><th>Sıra</th><th>Yıl</th><th>Grup Adı</th><th>Puanlar</th></tr>
-  <tr><td>1</td><td>3. Yıl</td><td>Nagumo Grubu</td><td>236</td></tr><tr><td>2</td><td>2. Yıl</td><td>Koenji Grubu</td><td>230</td></tr><tr><td>3</td><td>3. Yıl</td><td>Kiriyama Grubu</td><td>188</td></tr><tr><td>4</td><td>3. Yıl</td><td>Ochiai Grubu</td><td>167</td></tr><tr><td>5</td><td>3. Yıl</td><td>Mizoe Grubu</td><td>166</td></tr><tr><td>6</td><td>2. Yıl</td><td>Sakayanagi Grubu</td><td>161</td></tr></table></div></div>
-</section>
-
-<section class="page" id="exam">
-  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Özel Sınav</h2><small>特別試験 · Special Exam</small></div></div>
-  <div class="ttl">Tokyo İleri Düzey Gelişim Lisesi<small>Issız Ada Özel Sınavı</small></div>
-  <div class="holo"><h3>Görev: Gülle Atma</h3><div class="map" id="map"></div>
-  <p><b>Kategori:</b> Fiziksel</p><p><b>Katılım:</b> Görev belirdikten sonra 30 dakika içinde kaydolun.</p>
-  <p><b>Giriş gereksinimleri:</b> Üç veya daha fazla kişiden oluşan gruplar katılabilir. Altı grup kaydolduktan sonra kayıt biter.</p>
-  <p><b>Kazanma koşulları:</b> Toplam puanı en yüksek olan üçlü grup kazanır.</p>
-  <p><b>Ödüller:</b></p><ul><li>1. Sıra: 10 puan</li><li>2. Sıra: 5 puan</li><li>3. Sıra: 3 puan</li></ul></div>
-  <div class="holo"><h3>Deneme</h3><p>Özel sınavda verilen sınıf puanlarınızı %50 oranında artırabilirsiniz. Ancak grupların ilk %30'unda yer almazsanız, grubunuz bir ceza alacaktır. Ekstra puanlar okul tarafından sağlanacaktır.</p></div>
-  <div class="holo"><h3>Gizli Görev</h3><p>Görevin, Ayanokoji-kun'un Nisan ayı içinde okuldan atılmasını sağlamak.</p></div>
-  <div id="examBox"><div class="empty">Yükleniyor...</div></div>
-</section>
-
-<section class="page" id="profile">
-  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Öğrenci Profili</h2><small>生徒情報 · Student Profile</small></div></div>
-  <div class="holo"><div class="oaa-h">Student Card<small>The Tokyo Metropolitan Advanced Nurturing High School</small></div><div class="ph-fr"></div>
-<div class="nm"><small>Grade&nbsp;&nbsp;&nbsp;Class</small><div class="gc">2 - <span class="u-cl">D</span></div><b class="u-name">—</b></div></div>
-  <div class="av"><i class="u-ini">?</i><div><div style="font:700 19px var(--serif)" class="u-name">—</div><small style="color:var(--dim)">Sınıf: <span class="u-cl">—</span> · <span class="u-rank">Üye</span></small></div></div>
+  <div class="pane on" id="oaa1"><div id="myCard"></div>
   <div class="tabs"><span class="on" data-t="pf1">Bilgiler</span><span data-t="pf2">Puan</span><span data-t="pf3">Notlar</span></div>
   <div class="pane on" id="pf1"><div class="sec">
     <div class="row"><span class="t">Kullanıcı adı</span><span class="u-name">—</span></div>
@@ -496,6 +526,7 @@ async function loadProfile(){
   setAll('.u-cls', me.class ? me.class + ' Sınıfı' : ''); setAll('.u-ini', (me.username || '?').slice(0,2).toUpperCase());
   setAll('#hPts', fmt(me.points)); setAll('.p-now', fmt(me.points));
   $('#hCls').textContent = me.class ? me.class + ' Sınıfı' : 'Class Points';
+  renderMyCard();
 }
 async function loadTx(){
   const { data } = await supabase.from('point_transactions').select('*')
@@ -531,6 +562,79 @@ async function loadRank(){
   $('#hClsPts').textContent = mine ? fmt(mine.points) : '—';
 }
 
+/* ---------- OVER ALL ABILITY KARTI ---------- */
+const LET=[[95,'A+'],[90,'A'],[85,'A-'],[80,'B+'],[70,'B'],[65,'B-'],[60,'C+'],[50,'C'],[45,'C-'],[40,'D+'],[30,'D'],[0,'D-']];
+const letterOf = n => (LET.find(x => n >= x[0]) || [0,'D-'])[1];
+const lhtml = l => l[0] + (l[1] ? `<sup>${l[1]}</sup>` : '');
+function hash32(str){ let h = 2166136261; for(const ch of String(str)){ h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+// Gerçek değerler profiles tablosundaki academic/physical/adaptability/social sütunlarından okunur;
+// yoksa kullanıcıya özgü sabit (rastgele olmayan) bir başlangıç değeri üretilir.
+function abilities(p){
+  const g = (k, salt) => {
+    const v = p[k];
+    if(v !== null && v !== undefined && v !== '' && Number.isFinite(+v)) return Math.max(0, Math.min(100, Math.round(+v)));
+    return 42 + hash32((p.id || p.username || 'x') + salt) % 44;
+  };
+  return { ac:g('academic','a'), ph:g('physical','p'), ad:g('adaptability','t'), so:g('social','s') };
+}
+const SIL = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120'><rect width='160' height='120' fill='%23d3d6f0'/><circle cx='80' cy='46' r='24' fill='%238f95c4'/><path d='M30 120c4-30 26-42 50-42s46 12 50 42z' fill='%238f95c4'/></svg>";
+function renderCard(p){
+  const ab = abilities(p), avg = Math.round((ab.ac + ab.ph + ab.ad + ab.so) / 4), ov = letterOf(avg);
+  const rc = ov[0] === 'C' ? 'rc-c' : (ov[0] === 'D' || ov[0] === 'E') ? 'rc-d' : 'rc-a';
+  const url = typeof p.avatar_url === 'string' && p.avatar_url.startsWith('https://') ? p.avatar_url : '';
+  const name = escapeHtml(p.username || '—');
+  const bx = (jp, n) => { const l = letterOf(n); return `<div class="oaa-bx"><u>${jp}</u><em>${n}</em><b>${lhtml(l)}</b></div>`; };
+  return `<div class="oaa ${rc}"><div class="oaa-b">
+    <div class="oaa-t">Over All Ability</div>
+    <div class="oaa-s">The Loyal Elite Force<br>Advanced Nurturing Force</div>
+    <div class="oaa-in"><div class="oaa-ph"><div class="oaa-img" style="background-image:url(&quot;${SIL}&quot;)">${url ? `<img src="${escapeHtml(url)}" alt="${name}" onerror="this.remove()">` : ''}</div></div>
+    <div class="oaa-nm"><div class="oaa-gc"><small>Grade&nbsp;&nbsp;&nbsp;Class</small><span>2 - ${escapeHtml(p.class || '—')}</span></div><div class="oaa-nn"><div class="oaa-n">${name}</div><div class="oaa-r">${escapeHtml((p.rank || 'Üye').toUpperCase())}</div></div></div></div>
+    <div class="oaa-ab"><div class="oaa-ah">1年成績評価</div>
+      <div class="oaa-grid"><div class="oaa-col">${bx('学力', ab.ac)}${bx('機転思考力', ab.ad)}</div>
+      <div class="oaa-ct"><i></i><small>総合力</small><b>${lhtml(ov)}</b></div>
+      <div class="oaa-col">${bx('身体能力', ab.ph)}${bx('社会貢献性', ab.so)}</div></div></div>
+  </div></div>`;
+}
+function renderMyCard(){
+  const box = $('#myCard'); if(!box) return;
+  box.innerHTML = renderCard(me || {}) +
+    `<div class="oaa-up"><label class="oaa-upb"><input type="file" id="avFile" accept="image/*" hidden>📷 Fotoğrafı değiştir</label></div><div class="msg" id="avMsg"></div>`;
+}
+async function resizeToBlob(file, W, H){
+  const url = URL.createObjectURL(file);
+  try{
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('Görsel okunamadı.')); i.src = url; });
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const r = Math.max(W / img.width, H / img.height), w = img.width * r, h = img.height * r;
+    cv.getContext('2d').drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+    return await new Promise((res, rej) => cv.toBlob(b => b ? res(b) : rej(new Error('Görsel işlenemedi.')), 'image/jpeg', 0.86));
+  } finally { URL.revokeObjectURL(url); }
+}
+document.addEventListener('change', async e => {
+  if(e.target.id !== 'avFile' || !e.target.files[0]) return;
+  const m = $('#avMsg'); m.className = 'msg'; m.textContent = 'Yükleniyor...';
+  try{
+    const blob = await resizeToBlob(e.target.files[0], 480, 360);
+    const path = uid + '.jpg';
+    const up = await supabase.storage.from('avatars').upload(path, blob, { upsert:true, contentType:'image/jpeg', cacheControl:'60' });
+    if(up.error) throw up.error;
+    const pub = supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl + '?v=' + Date.now();
+    const { error } = await supabase.from('profiles').update({ avatar_url: pub }).eq('id', uid);
+    if(error) throw error;
+    me.avatar_url = pub; renderMyCard();
+    const m2 = $('#avMsg'); m2.className = 'msg ok'; m2.textContent = 'Fotoğraf güncellendi.';
+  } catch(err){
+    m.className = 'msg err';
+    m.textContent = 'Fotoğraf yüklenemedi: ' + (err.message || err) + ' (Supabase\'de "avatars" deposu ve avatar_url sütunu gerekli.)';
+  }
+});
+async function openStudent(id){
+  if(id === uid){ go('profile'); return; }
+  go('student'); const box = $('#stCard'); box.innerHTML = '<div class="empty">Yükleniyor...</div>';
+  const { data } = await supabase.from('profiles').select('*').eq('id', id).maybeSingle();
+  box.innerHTML = data ? renderCard(data) : '<div class="empty">Öğrenci bulunamadı.</div>';
+}
+
 /* ---------- SINIF DETAYI: sınıftaki öğrenciler ---------- */
 const CCOL={A:'#f2d44f',B:'#3d8bff',C:'#d65ad6',D:'#3fd6a0'};
 let curCls = null;
@@ -538,21 +642,23 @@ async function openClass(c){
   curCls = c; go('klass');
   $$('.kch').forEach(b => b.classList.toggle('on', b.dataset.k === c));
   const box = $('#klBody'); box.innerHTML = '<div class="empty">Yükleniyor...</div>';
-  const [cpRes, stRes] = await Promise.all([
+  let [cpRes, stRes] = await Promise.all([
     supabase.from('class_points').select('*').eq('class', c).maybeSingle(),
-    supabase.from('profiles').select('id,username,rank,points').eq('class', c).order('points', { ascending:false })
+    supabase.from('profiles').select('id,username,rank,points,avatar_url').eq('class', c).order('points', { ascending:false })
   ]);
+  if(stRes.error) stRes = await supabase.from('profiles').select('id,username,rank,points').eq('class', c).order('points', { ascending:false });
   if(curCls !== c) return;
   const list = stRes.data || [];
   const head = `<div class="cpbox"><div class="cp"><i style="background:${CCOL[c]||'#8a96b1'}"></i><span>${escapeHtml(c)} Sınıfı<small>${list.length} öğrenci</small></span><b>${cpRes.data ? fmt(cpRes.data.points) : '—'}</b><em>Pt</em></div></div>`;
   let body;
   if(stRes.error) body = '<div class="empty">Öğrenci listesi yüklenemedi.</div>';
   else if(!list.length) body = '<div class="empty">Bu sınıfta henüz öğrenci yok.</div>';
-  else body = list.map((p,i) => `<div class="rk${i===0?' first':''}"><b>${i+1}. ${escapeHtml(p.username||'—')}${p.id===uid?' · Sen':''}</b><small class="kr">${escapeHtml(p.rank||'Üye')}</small><span>${fmt(p.points)} pt</span></div>`).join('');
+  else body = list.map((p,i) => `<div class="rk${i===0?' first':''}" data-sid="${escapeHtml(p.id)}">${(typeof p.avatar_url==='string' && p.avatar_url.startsWith('https://')) ? `<img class="mini" src="${escapeHtml(p.avatar_url)}" alt="">` : `<span class="mini ini">${escapeHtml((p.username||'?').slice(0,2).toUpperCase())}</span>`}<b>${i+1}. ${escapeHtml(p.username||'—')}${p.id===uid?' · Sen':''}</b><small class="kr">${escapeHtml(p.rank||'Üye')}</small><span>${fmt(p.points)} pt</span></div>`).join('');
   box.innerHTML = head + `<div class="sec"><div class="st"><span>Öğrenciler</span></div>${body}</div>`;
 }
 document.addEventListener('click', e => {
   const r = e.target.closest('.cp[data-cls]'); if(r){ openClass(r.dataset.cls); return; }
+  const st = e.target.closest('.rk[data-sid]'); if(st){ openStudent(st.dataset.sid); return; }
   const k = e.target.closest('.kch'); if(k) openClass(k.dataset.k);
 });
 let exam = null, cdTimer = null;
