@@ -18,7 +18,7 @@ h1,h2,.brand{font-family:var(--serif)}
 .ph{display:flex;align-items:center;gap:10px;margin:-14px -14px 14px;padding:13px 14px;border-bottom:1px solid var(--line)}
 .ph h2{font-size:17px}.ph small{display:block;font-size:10px;color:var(--dim)}
 .back{background:none;border:none;color:var(--ink);font-size:24px;cursor:pointer;line-height:1}
-.hero{height:200px;border-radius:14px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:flex-end;padding:16px 18px;background:linear-gradient(180deg,transparent 35%,rgba(6,10,20,.92)),url(hero.jpg) 45% center/cover no-repeat;margin-bottom:12px}
+.hero{min-height:230px;border-radius:14px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:flex-end;padding:16px 18px 40px;background:linear-gradient(180deg,transparent 35%,rgba(6,10,20,.92)),url(hero.jpg) 45% center/cover no-repeat;margin-bottom:12px}
 .hero h1{font-size:19px;line-height:1.3;text-shadow:0 2px 10px #000}.hero p{margin-top:4px;font-size:12.5px;color:#d5dcee;text-shadow:0 1px 6px #000}
 .pts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .box{border:1px solid var(--line);background:linear-gradient(160deg,rgba(28,48,92,.5),var(--card));border-radius:14px;padding:12px 14px}
@@ -69,7 +69,7 @@ label{font-size:12px;color:var(--dim);display:block;margin-bottom:5px}.msg{margi
   .side .me{margin-top:auto;padding:12px 8px 0;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim)}.side .me b{display:block;color:var(--ink);font-size:14px}
   .page{padding:32px 40px;max-width:1180px}
   .ph{margin:0 0 22px;padding:0 0 14px}.ph h2{font-size:24px}
-  .hero{height:300px;padding:26px 30px}.hero h1{font-size:30px}.hero p{font-size:15px}
+  .hero{min-height:320px;padding:26px 30px 52px}.hero h1{font-size:30px}.hero p{font-size:15px}
   #home.on{display:grid;grid-template-columns:1fr 1fr;gap:16px}#home .hero,#home .pts{grid-column:1/-1;margin:0}
   #home .sec{margin:0}.pts .box .v{font-size:28px}
   .q{grid-template-columns:repeat(3,1fr)}
@@ -104,7 +104,7 @@ body{background:linear-gradient(rgba(255,255,255,.14) 1px,transparent 1px) 0 0/4
 .brand{color:#0b2350}
 .sec,.box,.rk,.cd,.q button{background:rgba(255,255,255,.5);border:2px solid rgba(255,255,255,.8);box-shadow:0 0 18px rgba(60,140,255,.28);color:var(--ink)}
 .rk.first{background:rgba(255,224,150,.6)}
-.hero{background:linear-gradient(160deg,#4b3a86,#8a5aa8)!important;border:2px solid #fff;color:#fff;box-shadow:0 0 28px rgba(150,120,255,.5)}
+.hero{background:linear-gradient(180deg,rgba(30,20,70,.05) 30%,rgba(30,20,70,.78)),url(hero.jpg) 45% center/cover no-repeat,linear-gradient(160deg,#4b3a86,#8a5aa8)!important;border:2px solid #fff;color:#fff;box-shadow:0 0 28px rgba(150,120,255,.5)}
 .hero h1,.hero p{color:#fff}
 .tabs .on,.side button.on{color:#0b2350!important}
 .side button:hover{color:#0b2350}
@@ -211,6 +211,67 @@ input{background:rgba(255,255,255,.75);color:#0b2350;border:1px solid #fff}
   .sec,.box,.rk,.cd,.cpbox,.holo{ transition:none; }
   .sec:hover,.box:hover,.rk:hover,.cd:hover,.cpbox:hover,.holo:hover{ transform:none; }
 }
+
+/* ===== LIQUID GLASS BOTTOM NAV (bottom-nav-bar bileşeninin saf CSS uyarlaması) =====
+   Yüzen hap biçimli cam bar; aktif sekme etiketini yaylanarak açar.
+   data-go ve .on mantığı aynen korundu (JS değişmedi). Masaüstünde yan menü kullanılır. */
+nav.nav{
+  left:50%; bottom:calc(14px + env(safe-area-inset-bottom)); width:auto; max-width:calc(100vw - 24px);
+  padding:7px; gap:4px; border-radius:999px; align-items:center; justify-content:center;
+  border:0!important; isolation:isolate;
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important; backdrop-filter:none!important;
+  box-shadow:0 22px 40px -18px rgba(0,25,70,.55),0 8px 20px -12px rgba(0,25,70,.4);
+  animation:navIn .55s cubic-bezier(.34,1.4,.64,1) both;
+}
+@keyframes navIn{from{opacity:0;transform:translateX(-50%) scale(.9)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+nav.nav::before{
+  content:''; position:absolute; inset:5px; z-index:-1; pointer-events:none; border-radius:999px;
+  background:rgba(255,255,255,.24);
+  -webkit-backdrop-filter:blur(14px) saturate(170%) brightness(1.03); backdrop-filter:blur(14px) saturate(170%) brightness(1.03);
+  box-shadow:inset 3px 3px .5px -3px rgba(255,255,255,.9),inset -3px -3px .5px -3px rgba(255,255,255,.85),
+    inset 1px 1px 1px -.5px rgba(255,255,255,.6),inset -1px -1px 1px -.5px rgba(255,255,255,.6),
+    inset 0 0 6px 6px rgba(255,255,255,.12),inset 0 0 2px 2px rgba(255,255,255,.06);
+}
+nav.nav::after{
+  content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; border-radius:999px;
+  box-sizing:border-box; padding:5px;
+  -webkit-mask-image:linear-gradient(#000,#000),linear-gradient(#000,#000); mask-image:linear-gradient(#000,#000),linear-gradient(#000,#000);
+  -webkit-mask-clip:content-box,border-box; mask-clip:content-box,border-box;
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  -webkit-backdrop-filter:blur(1px) saturate(172%) brightness(1.07); backdrop-filter:blur(1px) saturate(172%) brightness(1.07);
+  background:linear-gradient(125deg,rgba(90,215,255,.38),transparent 36%,transparent 64%,rgba(255,110,200,.32));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 0 1px rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.14);
+}
+.gl-refract nav.nav::after{
+  -webkit-backdrop-filter:url(#gl-rim) blur(1px) saturate(172%) brightness(1.07); backdrop-filter:url(#gl-rim) blur(1px) saturate(172%) brightness(1.07);
+}
+nav.nav button{
+  flex:none; flex-direction:row; gap:0; height:40px; min-width:44px; padding:0 12px; border-radius:999px;
+  justify-content:center; color:rgba(11,35,80,.66); font:700 12px var(--sans);
+  transition:background .2s,color .2s,gap .3s,transform .15s; -webkit-tap-highlight-color:transparent;
+}
+nav.nav button:hover{ background:rgba(255,255,255,.34); }
+nav.nav button:active{ transform:scale(.97); }
+nav.nav button:focus-visible{ outline:2px solid #fff; outline-offset:1px; }
+nav.nav button.on{
+  gap:8px; color:#0b2350; background:rgba(47,111,224,.24);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.75),inset 0 0 10px rgba(255,255,255,.35),0 2px 8px -2px rgba(33,80,184,.35);
+}
+nav.nav button.on::after{ display:none; }
+nav.nav .nl{ display:grid; grid-template-columns:0fr; opacity:0; transition:grid-template-columns .45s cubic-bezier(.34,1.4,.64,1),opacity .19s; }
+nav.nav .nl>span{ min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
+@media (prefers-reduced-motion:reduce){ nav.nav{animation:none} nav.nav .nl,nav.nav button{transition:none} }
+
+/* ===== SINIF DETAYI ===== */
+.cp[data-cls]{cursor:pointer}.cp u{text-decoration:none;color:var(--dim);margin-left:2px;font-size:20px}
+.cp small{display:block;font:500 11px var(--sans);color:var(--dim);margin-top:2px}
+.kchips{display:flex;gap:8px;margin-bottom:12px}
+.kch{flex:1;padding:10px 0;border-radius:999px;border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.35);color:var(--ink);font:700 14px var(--sans);cursor:pointer;transition:background .2s,transform .15s}
+.kch.on{background:rgba(47,111,224,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}.kch:active{transform:scale(.97)}
+#klBody .cpbox{margin-bottom:12px}.rk .kr{font-size:11px;color:var(--dim);margin-right:4px}
+@media (min-width:900px){#klass.on{max-width:820px}}
 </style>
 </head>
 <body>
@@ -305,6 +366,12 @@ input{background:rgba(255,255,255,.75);color:#0b2350;border:1px solid #fff}
   </div>
 </section>
 
+<section class="page" id="klass">
+  <div class="ph"><button class="back" data-go="rank">‹</button><div><h2>Sınıflar</h2><small>クラス · Classes</small></div></div>
+  <div class="kchips"><button class="kch" data-k="A">A</button><button class="kch" data-k="B">B</button><button class="kch" data-k="C">C</button><button class="kch" data-k="D">D</button></div>
+  <div id="klBody"></div>
+</section>
+
 <section class="page" id="points">
   <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Puanlarım</h2><small>ポイント · Points</small></div></div>
   <div class="box" style="margin-bottom:12px"><div class="l">Bakiye</div><div class="v"><span class="p-now">—</span><em>pt</em></div></div>
@@ -384,10 +451,10 @@ input{background:rgba(255,255,255,.75);color:#0b2350;border:1px solid #fff}
 </section>
 
 <nav class="nav">
-  <button data-go="home" class="on"><svg class="i" viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v9H4z"/></svg>Ana Sayfa</button>
-  <button data-go="news"><svg class="i" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/></svg>Duyurular</button>
-  <button data-go="sched"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Program</button>
-  <button data-go="menu"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Menü</button>
+  <button data-go="home" class="on"><svg class="i" viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v9H4z"/></svg><span class="nl"><span>Ana Sayfa</span></span></button>
+  <button data-go="news"><svg class="i" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/></svg><span class="nl"><span>Duyurular</span></span></button>
+  <button data-go="sched"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span class="nl"><span>Program</span></span></button>
+  <button data-go="menu"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="nl"><span>Menü</span></span></button>
 </nav>
 </div>
 
@@ -451,14 +518,43 @@ async function loadAnn(){
   });
 }
 async function loadRank(){
-  const { data } = await supabase.from('class_points').select('*').order('points', { ascending:false });
+  const [{ data }, { data: pr }] = await Promise.all([
+    supabase.from('class_points').select('*').order('points', { ascending:false }),
+    supabase.from('profiles').select('class')
+  ]);
   const COL={A:'#f2d44f',B:'#3d8bff',C:'#d65ad6',D:'#3fd6a0'};
+  const cnt={}; (pr||[]).forEach(p => { if(p.class) cnt[p.class] = (cnt[p.class]||0) + 1; });
   const rows = (data && data.length) ? data : [{class:'A',points:1206},{class:'B',points:578},{class:'C',points:571},{class:'D',points:551}];
-  const html = rows.map(c => `<div class="cp"><i style="background:${COL[c.class]||'#8a96b1'}"></i><span>${escapeHtml(c.class)} Sınıfı</span><b>${fmt(c.points)}</b><em>Pt</em></div>`).join('');
+  const html = rows.map(c => `<div class="cp" data-cls="${escapeHtml(c.class)}"><i style="background:${COL[c.class]||'#8a96b1'}"></i><span>${escapeHtml(c.class)} Sınıfı<small>${cnt[c.class]||0} öğrenci</small></span><b>${fmt(c.points)}</b><em>Pt</em><u>›</u></div>`).join('');
   $$('.rklist').forEach(b => b.innerHTML = html);
   const mine = (data || []).find(c => c.class === me?.class);
   $('#hClsPts').textContent = mine ? fmt(mine.points) : '—';
 }
+
+/* ---------- SINIF DETAYI: sınıftaki öğrenciler ---------- */
+const CCOL={A:'#f2d44f',B:'#3d8bff',C:'#d65ad6',D:'#3fd6a0'};
+let curCls = null;
+async function openClass(c){
+  curCls = c; go('klass');
+  $$('.kch').forEach(b => b.classList.toggle('on', b.dataset.k === c));
+  const box = $('#klBody'); box.innerHTML = '<div class="empty">Yükleniyor...</div>';
+  const [cpRes, stRes] = await Promise.all([
+    supabase.from('class_points').select('*').eq('class', c).maybeSingle(),
+    supabase.from('profiles').select('id,username,rank,points').eq('class', c).order('points', { ascending:false })
+  ]);
+  if(curCls !== c) return;
+  const list = stRes.data || [];
+  const head = `<div class="cpbox"><div class="cp"><i style="background:${CCOL[c]||'#8a96b1'}"></i><span>${escapeHtml(c)} Sınıfı<small>${list.length} öğrenci</small></span><b>${cpRes.data ? fmt(cpRes.data.points) : '—'}</b><em>Pt</em></div></div>`;
+  let body;
+  if(stRes.error) body = '<div class="empty">Öğrenci listesi yüklenemedi.</div>';
+  else if(!list.length) body = '<div class="empty">Bu sınıfta henüz öğrenci yok.</div>';
+  else body = list.map((p,i) => `<div class="rk${i===0?' first':''}"><b>${i+1}. ${escapeHtml(p.username||'—')}${p.id===uid?' · Sen':''}</b><small class="kr">${escapeHtml(p.rank||'Üye')}</small><span>${fmt(p.points)} pt</span></div>`).join('');
+  box.innerHTML = head + `<div class="sec"><div class="st"><span>Öğrenciler</span></div>${body}</div>`;
+}
+document.addEventListener('click', e => {
+  const r = e.target.closest('.cp[data-cls]'); if(r){ openClass(r.dataset.cls); return; }
+  const k = e.target.closest('.kch'); if(k) openClass(k.dataset.k);
+});
 let exam = null, cdTimer = null;
 async function loadExam(){
   const box = $('#examBox');
