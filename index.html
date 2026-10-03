@@ -112,7 +112,7 @@
 
   <script>
     // ---------- Yükleniyor yazısı: site hangi dildeyse o dilde ----------
-    // Dil sırası: 1) kayıtlı site dili (localStorage), 2) <html lang>, 3) tarayıcı dili.
+    // Dil: kayıtlı site dili (localStorage 'lang'), yoksa Türkçe.
     // Yeni dil eklemek için aşağıdaki listeye bir satır eklemen yeterli.
     (function(){
       var WORDS = {
@@ -122,20 +122,13 @@
         ko:'로딩 중',  zh:'加载中',      hi:'लोड हो रहा है', id:'Memuat',  sv:'Laddar'
       };
 
+      // app.html dili localStorage'da 'lang' anahtarıyla saklıyor (tr / en / ru / ja)
+      // ve kayıt yoksa Türkçe açıyor; burada da aynısı yapılır.
       function pickLang(){
-        var cand = [];
-        try{
-          ['lang','language','siteLang','site_lang','ltfLang','locale'].forEach(function(k){
-            var v = localStorage.getItem(k); if(v) cand.push(v);
-          });
-        }catch(e){}
-        cand.push(document.documentElement.lang);
-        cand.push(navigator.language);
-        for(var i = 0; i < cand.length; i++){
-          var c = (cand[i] || '').toLowerCase().split(/[-_]/)[0];
-          if(WORDS[c]) return c;
-        }
-        return 'tr';
+        var v = null;
+        try{ v = localStorage.getItem('lang'); }catch(e){}
+        v = (v || '').toLowerCase().split(/[-_]/)[0];
+        return WORDS[v] ? v : 'tr';
       }
 
       var lang = pickLang();
