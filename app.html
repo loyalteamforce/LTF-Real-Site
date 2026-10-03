@@ -326,6 +326,12 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 .rk .mini{flex:none;width:30px;height:30px;border-radius:50%;object-fit:cover;margin-right:8px;border:1px solid rgba(255,255,255,.8)}
 .rk .mini.ini{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.5);color:#0b2350;font:700 11px var(--sans)}
 .rk[data-sid]{cursor:pointer}
+.qc{margin-top:12px}.qc .qq{font:700 14px/1.4 var(--sans);margin-bottom:8px}
+.qo{display:flex;gap:9px;align-items:center;padding:10px 12px;margin-top:6px;border-radius:12px;border:1px solid rgba(160,200,255,.28);cursor:pointer;font-size:13.5px}
+.qo:has(input:checked){background:rgba(90,160,255,.22);border-color:#7fb4ff}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font:700 10.5px var(--sans);letter-spacing:.08em;background:rgba(90,160,255,.22);margin-left:6px}
+.badge.red{background:rgba(230,50,70,.28);color:#ff8d9d}.badge.ok{background:rgba(40,190,120,.25);color:#7df0b5}
+.big{font:800 40px var(--serif);text-align:center;margin:8px 0}
 </style>
 </head>
 <body>
@@ -474,15 +480,7 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 </section>
 
 <section class="page" id="exam">
-  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Özel Sınav</h2><small>特別試験 · Special Exam</small></div></div>
-  <div class="ttl">Tokyo İleri Düzey Gelişim Lisesi<small>Issız Ada Özel Sınavı</small></div>
-  <div class="holo"><h3>Görev: Gülle Atma</h3><div class="map" id="map"></div>
-  <p><b>Kategori:</b> Fiziksel</p><p><b>Katılım:</b> Görev belirdikten sonra 30 dakika içinde kaydolun.</p>
-  <p><b>Giriş gereksinimleri:</b> Üç veya daha fazla kişiden oluşan gruplar katılabilir. Altı grup kaydolduktan sonra kayıt biter.</p>
-  <p><b>Kazanma koşulları:</b> Toplam puanı en yüksek olan üçlü grup kazanır.</p>
-  <p><b>Ödüller:</b></p><ul><li>1. Sıra: 10 puan</li><li>2. Sıra: 5 puan</li><li>3. Sıra: 3 puan</li></ul></div>
-  <div class="holo"><h3>Deneme</h3><p>Özel sınavda verilen sınıf puanlarınızı %50 oranında artırabilirsiniz. Ancak grupların ilk %30'unda yer almazsanız, grubunuz bir ceza alacaktır. Ekstra puanlar okul tarafından sağlanacaktır.</p></div>
-  <div class="holo"><h3>Gizli Görev</h3><p>Görevin, Ayanokoji-kun'un Nisan ayı içinde okuldan atılmasını sağlamak.</p></div>
+  <div class="ph"><button class="back" data-go="home">‹</button><div><h2>Şu Anki Sınavlar</h2><small>現在の試験 · Current Exams</small></div></div>
   <div id="examBox"><div class="empty">Yükleniyor...</div></div>
 </section>
 
@@ -500,9 +498,8 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 </section>
 
 <section class="page" id="results">
-  <div class="ph"><button class="back" data-go="menu">‹</button><div><h2>Sınav Sonuçları</h2><small>Sınav Sonuç Duyurusu · Matematik</small></div></div>
-  <div class="sec"><div class="st"><span>Matematik</span></div>
-  <div class="sc"><span>Ayanokoji Kiyotaka</span><b>100 puan</b></div><div class="sc"><span>Horikita Suzune</span><b>87 puan</b></div><div class="sc"><span>Öğrenci 3</span><b>84 puan</b></div><div class="sc"><span>Öğrenci 4</span><b>80 puan</b></div><div class="sc"><span>Öğrenci 5</span><b>79 puan</b></div><div class="sc"><span>Öğrenci 6</span><b>77 puan</b></div></div>
+  <div class="ph"><button class="back" data-go="menu">‹</button><div><h2>Sonuçlar</h2><small>試験結果 · Exam Results</small></div></div>
+  <div id="resBox"><div class="empty">Yükleniyor...</div></div>
 </section>
 
 <nav class="nav">
@@ -531,6 +528,7 @@ function go(id){
   window.scrollTo(0, 0);
   if(id === 'history' || id === 'profile') loadTx();
   if(id === 'exam') loadExam();
+  if(id === 'results') loadResults();
 }
 document.addEventListener('click', async e => {
   const t = e.target.closest('.tabs span[data-t]');
@@ -695,30 +693,83 @@ document.addEventListener('click', e => {
   const st = e.target.closest('.rk[data-sid]'); if(st){ openStudent(st.dataset.sid); return; }
   const k = e.target.closest('.kch'); if(k) openClass(k.dataset.k);
 });
-let exam = null, cdTimer = null;
+let exTimer = null;
+const pctTxt = p => '%' + (+p).toFixed(1).replace('.0','');
 async function loadExam(){
+  clearInterval(exTimer);
   const box = $('#examBox');
-  const { data } = await supabase.from('exams').select('*').order('created_at', { ascending:false }).limit(1);
-  exam = data?.[0];
-  if(!exam){ box.innerHTML = '<div class="sec"><div class="empty">Şu an açık özel sınav yok.</div></div>'; return; }
-  box.innerHTML = `<div class="ex">Şu an devam eden özel sınav</div>
-    <div class="sec"><div style="font:700 19px var(--serif)">${escapeHtml(exam.title)}</div>
-    ${exam.description ? `<div style="color:var(--dim);font-size:12.5px;margin-top:6px">${escapeHtml(exam.description)}</div>` : ''}
-    <div class="row"><span class="t">Katılım ücreti</span><span>${fmt(exam.entry_cost)} pt</span></div></div>
-    ${exam.deadline ? '<div class="cd"><small>Kalan süre</small><br><b id="cdv">—</b></div>' : ''}
-    <button class="cta" id="joinBtn">Sınava Katıl ›</button><div class="msg" id="examMsg"></div>`;
-  clearInterval(cdTimer);
-  if(exam.deadline){
-    const tick = () => { let s = Math.max(0, Math.floor((new Date(exam.deadline) - Date.now())/1000));
-      $('#cdv').textContent = `${Math.floor(s/86400)}g ${Math.floor(s%86400/3600)}s ${Math.floor(s%3600/60)}dk ${s%60}sn`; };
-    tick(); cdTimer = setInterval(tick, 1000);
-  }
-  $('#joinBtn').onclick = async () => {
-    const m = $('#examMsg'); m.className = 'msg';
-    const { error } = await supabase.rpc('join_exam', { p_exam_id: exam.id });
-    m.className = 'msg ' + (error ? 'err' : 'ok'); m.textContent = error ? error.message : 'Sınava katıldın.';
-    if(!error){ loadProfile(); loadTx(); }
+  box.innerHTML = '<div class="empty">Yükleniyor...</div>';
+  const [{ data: ex }, { data: mine }] = await Promise.all([
+    supabase.from('exams').select('*').eq('status', 'active').order('created_at', { ascending:false }),
+    supabase.from('exam_results').select('*').eq('user_id', uid)
+  ]);
+  const done = {}; (mine || []).forEach(r => { if(r.submitted_at) done[r.exam_id] = r; });
+  const open = (ex || []).filter(e => !e.deadline || new Date(e.deadline) > new Date());
+  if(!open.length){ box.innerHTML = '<div class="sec"><div class="empty">Şu an aktif sınav yok.</div></div>'; return; }
+  box.innerHTML = open.map(e => { const r = done[e.id]; return `<div class="sec" style="margin-bottom:12px">
+    <div style="font:700 19px var(--serif)">${escapeHtml(e.title)}<span class="badge">${e.kind === 'written' ? 'YAZILI' : 'ÖZEL SINAV'}</span></div>
+    ${e.description ? `<div style="color:var(--dim);font-size:12.5px;margin-top:6px">${escapeHtml(e.description)}</div>` : ''}
+    ${e.kind === 'written' ? `<div class="row"><span class="t">Süre</span><span>${e.time_limit_min} dk</span></div><div class="row"><span class="t">Geçme sınırı</span><span>%${e.pass_percent}</span></div>` : `<div class="row"><span class="t">Katılım ücreti</span><span>${fmt(e.entry_cost)} pt</span></div>`}
+    ${e.deadline ? `<div class="row"><span class="t">Son tarih</span><span>${fdate(e.deadline)}</span></div>` : ''}
+    ${r ? `<div class="msg ok" style="display:block">Tamamlandı: ${r.score}/${r.total} (${pctTxt(r.percent)}) · sonuçlar açıklanınca Sonuçlar sayfasında.</div>`
+        : `<button class="cta" data-ex="${e.id}">${e.kind === 'written' ? 'Sınava Başla ›' : 'Sınava Katıl ›'}</button><div class="msg" data-m="${e.id}"></div>`}
+  </div>`; }).join('');
+  box.querySelectorAll('[data-ex]').forEach(btn => btn.onclick = async () => {
+    const e = open.find(x => String(x.id) === btn.dataset.ex), m = box.querySelector(`[data-m="${e.id}"]`);
+    if(e.kind !== 'written'){
+      const { error } = await supabase.rpc('join_exam', { p_exam_id: e.id });
+      m.className = 'msg ' + (error ? 'err' : 'ok'); m.textContent = error ? error.message : 'Sınava katıldın.';
+      if(!error){ loadProfile(); loadTx(); } return;
+    }
+    if(!confirm('Sınava başlıyorsun. Süre hemen işlemeye başlar ve sınav tekrar alınamaz. Devam?')) return;
+    const { data, error } = await supabase.rpc('start_exam', { p_exam_id: String(e.id) });
+    if(error){ m.className = 'msg err'; m.textContent = error.message; return; }
+    runExam(e, data);
+  });
+}
+function runExam(e, d){
+  const box = $('#examBox'); let left = d.time_left, sent = false;
+  box.innerHTML = `<div class="sec"><div style="font:700 18px var(--serif)">${escapeHtml(e.title)}</div>
+    <div class="cd"><small>Kalan süre</small><br><b id="exT">—</b></div>
+    ${d.questions.map((q, i) => `<div class="qc"><div class="qq">${i+1}. ${escapeHtml(q.q)}</div>${q.options.map((o, k) =>
+      `<label class="qo"><input type="radio" name="q${q.id}" value="${k}">${escapeHtml(o)}</label>`).join('')}</div>`).join('')}
+    <button class="cta" id="exSend" style="margin-top:16px">Sınavı Bitir ve Gönder</button><div class="msg" id="exMsg"></div></div>`;
+  const send = async () => {
+    if(sent) return; sent = true; clearInterval(exTimer);
+    const ans = {}; d.questions.forEach(q => { const c = box.querySelector(`input[name="q${q.id}"]:checked`); if(c) ans[q.id] = +c.value; });
+    const { data: r, error } = await supabase.rpc('submit_exam', { p_exam_id: String(e.id), p_answers: ans });
+    if(error){ sent = false; $('#exMsg').className = 'msg err'; $('#exMsg').textContent = error.message; return; }
+    box.innerHTML = `<div class="sec"><div style="font:700 18px var(--serif)">${escapeHtml(e.title)}</div>
+      <div class="big">${r.score} / ${r.total}</div><div style="text-align:center">${pctTxt(r.percent)}</div>
+      <div class="msg ${r.passed ? 'ok' : 'err'}" style="display:block;margin-top:12px">${r.late ? 'Süre dolduğu için cevapların sayılmadı. ' : ''}${r.passed ? 'Geçtin. Sınıf ortalamana katkın sayıldı.' : 'Kırmızı Bölge! Puanın geçme sınırının altında kaldı.'}</div>
+      <button class="cta" id="exBack" style="margin-top:14px">Sınavlara Dön</button></div>`;
+    $('#exBack').onclick = loadExam;
   };
+  const tick = () => { $('#exT').textContent = `${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`; if(left-- <= 0) send(); };
+  tick(); exTimer = setInterval(tick, 1000);
+  $('#exSend').onclick = () => { if(confirm('Sınavı göndermek istiyor musun?')) send(); };
+}
+
+/* ---------- SONUÇLAR ---------- */
+async function loadResults(){
+  const box = $('#resBox');
+  const { data: ex } = await supabase.from('exams').select('id,title,pass_percent').eq('status', 'finished').order('created_at', { ascending:false }).limit(10);
+  if(!ex?.length){ box.innerHTML = '<div class="sec"><div class="empty">Henüz açıklanmış sınav sonucu yok.</div></div>'; return; }
+  const ids = ex.map(e => e.id);
+  const [{ data: cr }, { data: rs }] = await Promise.all([
+    supabase.from('exam_class_results').select('*').in('exam_id', ids).order('rank'),
+    supabase.from('exam_results').select('exam_id,user_id,username,class,score,total,percent').in('exam_id', ids).not('submitted_at', 'is', null).order('percent', { ascending:false })
+  ]);
+  box.innerHTML = ex.map(e => {
+    const cls = (cr || []).filter(c => c.exam_id === e.id), st = (rs || []).filter(r => r.exam_id === e.id);
+    return `<div class="sec" style="margin-bottom:14px"><div class="st"><span>${escapeHtml(e.title)}</span></div>
+      <div style="font:700 12px var(--sans);letter-spacing:.1em;margin:10px 0 4px;color:var(--dim)">SINIF SIRALAMASI</div>
+      ${cls.map(c => `<div class="sc"><span>${c.rank}. ${escapeHtml(c.class)} Sınıfı <small>ort. ${pctTxt(c.avg)}</small></span><b style="color:${c.cp_delta >= 0 ? '#7df0b5' : '#ff8d9d'}">${c.cp_delta > 0 ? '+' : ''}${c.cp_delta} CP</b></div>`).join('')}
+      <div style="font:700 12px var(--sans);letter-spacing:.1em;margin:14px 0 4px;color:var(--dim)">ÖĞRENCİ SIRALAMASI</div>
+      ${st.slice(0, 10).map((r, i) => `<div class="sc"${r.user_id === uid ? ' style="font-weight:800"' : ''}><span>${i+1}. ${escapeHtml(r.username || '—')} <small>${escapeHtml(r.class || '')}</small></span><b>${r.score}/${r.total} · ${pctTxt(r.percent)}</b></div>`).join('')}
+      ${(() => { const m = st.findIndex(r => r.user_id === uid); return m > 9 ? `<div class="sc" style="font-weight:800"><span>${m+1}. Sen</span><b>${st[m].score}/${st[m].total} · ${pctTxt(st[m].percent)}</b></div>` : ''; })()}
+      ${st.filter(r => r.percent < e.pass_percent).length ? `<div class="msg err" style="display:block;margin-top:10px">Kırmızı Bölge (%${e.pass_percent} altı): ${st.filter(r => r.percent < e.pass_percent).map(r => escapeHtml(r.username || '—')).join(', ')}</div>` : ''}
+    </div>`; }).join('');
 }
 
 /* ---------- PUAN İŞLEMLERİ ---------- */
