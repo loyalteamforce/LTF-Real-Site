@@ -282,9 +282,6 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 .oaa-b{position:relative;overflow:hidden;border-radius:20px;padding:14px;color:#0d2a55;
   background:linear-gradient(165deg,#d3ecf9 0%,#92c7e6 45%,#6cadd8 100%);
   box-shadow:inset 0 0 0 2px rgba(255,255,255,.55),inset 0 0 30px rgba(255,255,255,.28)}
-.oaa-b::after{content:'';position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(112deg,transparent 30%,rgba(255,255,255,.2) 30.4%,rgba(255,255,255,.2) 41%,transparent 41.4%),
-  linear-gradient(112deg,transparent 43%,rgba(255,255,255,.38) 43.2%,rgba(255,255,255,.38) 43.9%,transparent 44.1%)}
 .oaa-t{font:600 25px/1 Orbitron,var(--sans);text-align:center;letter-spacing:1px;color:rgba(255,255,255,.5);-webkit-text-stroke:1.3px #5f9cd0;margin-top:2px}
 .oaa-s{text-align:center;font:italic 600 10.5px/1.35 var(--serif);color:#5d88b3;margin:7px 0 10px}
 .oaa-in{padding:10px 8px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.14);
@@ -596,15 +593,15 @@ const LET=[[95,'A+'],[90,'A'],[85,'A-'],[80,'B+'],[70,'B'],[65,'B-'],[60,'C+'],[
 const letterOf = n => (LET.find(x => n >= x[0]) || [0,'D-'])[1];
 const lhtml = l => l[0] + (l[1] ? `<sup>${l[1]}</sup>` : '');
 function hash32(str){ let h = 2166136261; for(const ch of String(str)){ h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
-// Gerçek değerler profiles tablosundaki academic/physical/adaptability/social sütunlarından okunur;
-// yoksa kullanıcıya özgü sabit (rastgele olmayan) bir başlangıç değeri üretilir.
+// 4 puan (akademik, fiziksel, adaptasyon, sosyal) Supabase'deki profiles tablosundan okunur:
+// academic / physical / adaptability / social  (0-100). Ortadaki genel puan (総合力)
+// bu dördünün ortalamasından otomatik hesaplanır. Değer girilmemişse 0 sayılır.
 function abilities(p){
-  const g = (k, salt) => {
+  const g = k => {
     const v = p[k];
-    if(v !== null && v !== undefined && v !== '' && Number.isFinite(+v)) return Math.max(0, Math.min(100, Math.round(+v)));
-    return 42 + hash32((p.id || p.username || 'x') + salt) % 44;
+    return (v !== null && v !== undefined && v !== '' && Number.isFinite(+v)) ? Math.max(0, Math.min(100, Math.round(+v))) : 0;
   };
-  return { ac:g('academic','a'), ph:g('physical','p'), ad:g('adaptability','t'), so:g('social','s') };
+  return { ac:g('academic'), ph:g('physical'), ad:g('adaptability'), so:g('social') };
 }
 const SIL = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120'><rect width='160' height='120' fill='%23d3d6f0'/><circle cx='80' cy='46' r='24' fill='%238f95c4'/><path d='M30 120c4-30 26-42 50-42s46 12 50 42z' fill='%238f95c4'/></svg>";
 function renderCard(p){
