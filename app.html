@@ -278,7 +278,6 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 .oaa{--rc:#d1252f;max-width:372px;margin:6px auto 14px;padding:7px;border-radius:26px;position:relative;
   background:linear-gradient(145deg,#f6f9fb,#aeb7c0 38%,#eef2f5 58%,#98a2ac);
   box-shadow:0 18px 40px -16px rgba(10,40,90,.6),0 0 0 1px rgba(255,255,255,.65),0 0 26px rgba(91,170,255,.28)}
-.oaa.rc-c{--rc:#e3b53a}.oaa.rc-d{--rc:#7fa6c9}
 .oaa-b{position:relative;overflow:hidden;border-radius:20px;padding:14px;color:#0d2a55;
   background:linear-gradient(165deg,#d3ecf9 0%,#92c7e6 45%,#6cadd8 100%);
   box-shadow:inset 0 0 0 2px rgba(255,255,255,.55),inset 0 0 30px rgba(255,255,255,.28)}
@@ -606,11 +605,13 @@ function abilities(p){
 const SIL = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120'><rect width='160' height='120' fill='%23d3d6f0'/><circle cx='80' cy='46' r='24' fill='%238f95c4'/><path d='M30 120c4-30 26-42 50-42s46 12 50 42z' fill='%238f95c4'/></svg>";
 function renderCard(p){
   const ab = abilities(p), avg = Math.round((ab.ac + ab.ph + ab.ad + ab.so) / 4), ov = letterOf(avg);
-  const rc = ov[0] === 'C' ? 'rc-c' : (ov[0] === 'D' || ov[0] === 'E') ? 'rc-d' : 'rc-a';
+  // Ortadaki halkanın ve harfin rengi nota göre değişir: A+ (yeşil) → D- (kırmızı), her harf/+/- ayrı renk.
+  const gi = LET.findIndex(x => avg >= x[0]), gn = LET.length - 1;
+  const rc = `hsl(${Math.round(150 - 150 * (gi < 0 ? gn : gi) / gn)},88%,48%)`;
   const url = typeof p.avatar_url === 'string' && p.avatar_url.startsWith('https://') ? p.avatar_url : '';
   const name = escapeHtml(p.username || '—');
   const bx = (jp, n) => { const l = letterOf(n); return `<div class="oaa-bx"><u>${jp}</u><em>${n}</em><b>${lhtml(l)}</b></div>`; };
-  return `<div class="oaa ${rc}"><div class="oaa-b">
+  return `<div class="oaa" style="--rc:${rc}"><div class="oaa-b">
     <div class="oaa-t">Over All Ability</div>
     <div class="oaa-s">The Loyal Elite Force<br>Advanced Nurturing Force</div>
     <div class="oaa-in"><div class="oaa-ph"><div class="oaa-img" style="background-image:url(&quot;${SIL}&quot;)">${url ? `<img src="${escapeHtml(url)}" alt="${name}" onerror="this.remove()">` : ''}</div></div>
