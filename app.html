@@ -343,6 +343,18 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 .board .br{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #9aa6b5;border-top:0;background:#f7f9fc;font-weight:700}
 .board .br:nth-of-type(even){background:#d9dfe8}.board .br em{font-style:normal;width:26px;font-weight:800}.board .br span{flex:1}.board .br small{display:block;font:600 10px var(--sans);opacity:.6}
 .board .br b{font-size:20px}.board .br.me{outline:2px solid #2a6fe0}.board .br.red b{color:#c01830}.board .br.red{background:#f6d5da}
+.qb{position:relative;margin-top:12px;padding:14px;border-radius:14px;border:6px solid #aeb7c4;overflow:hidden;
+ background:linear-gradient(rgba(255,255,255,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.09) 1px,transparent 1px),linear-gradient(135deg,#123596,#2f86e6 48%,#1745b0);background-size:26px 26px,26px 26px,auto;
+ box-shadow:inset 0 0 44px rgba(130,210,255,.55),0 12px 30px rgba(0,0,0,.4)}
+.qbox,.ao{color:#fff;border:2px solid #fff;border-radius:6px;background:linear-gradient(180deg,#4b3bcb,#2b1f87);box-shadow:0 0 14px rgba(190,205,255,.85),inset 0 0 20px rgba(165,145,255,.5);font-family:'Yu Mincho','Hiragino Mincho ProN','Shippori Mincho',serif}
+.qbox{padding:12px 14px}.qn{font-weight:800;font-size:clamp(14px,3.6vw,20px);text-shadow:0 0 8px rgba(170,190,255,.9)}
+.qt{margin-top:6px;font-weight:800;font-size:clamp(15px,4.4vw,26px);line-height:1.5;text-shadow:0 0 10px rgba(170,190,255,.95)}
+.ag2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;transition:opacity .7s ease,transform .7s ease}
+.ag2.hide{opacity:0;transform:translateY(14px);pointer-events:none}
+.ao{display:flex;align-items:center;gap:8px;min-height:62px;padding:10px 12px;font-weight:800;font-size:clamp(13px,3.7vw,20px);cursor:pointer;text-align:left}
+.ao i{font-style:normal;opacity:.9}.ao.on{background:linear-gradient(180deg,#8d7bff,#5a46e0);box-shadow:0 0 22px #fff,inset 0 0 22px rgba(255,255,255,.55)}
+.qwait{margin-top:12px;text-align:center;font:600 12px var(--sans);letter-spacing:.12em;color:#fff;opacity:.85;animation:qpulse 1.2s ease-in-out infinite}.qwait.gone{display:none}
+@keyframes qpulse{50%{opacity:.35}}
 </style>
 </head>
 <body>
@@ -742,7 +754,7 @@ function runExam(e, d){
   const box = $('#examBox'), Q = d.questions, ans = {}, L = ['A','B','C','D']; let left = d.time_left, i = 0, sent = false;
   const mmss = () => `${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;
   const send = async () => {
-    if(sent) return; sent = true; clearInterval(exTimer);
+    if(sent) return; sent = true; clearInterval(exTimer); clearTimeout(rv);
     const { data: r, error } = await supabase.rpc('submit_exam', { p_exam_id: String(e.id), p_answers: ans });
     if(error){ sent = false; const m = $('#exMsg'); if(m){ m.className = 'msg err'; m.textContent = error.message; } return; }
     box.innerHTML = `<div class="sec"><div style="font:700 18px var(--serif)">${escapeHtml(e.title)}</div>
@@ -751,14 +763,23 @@ function runExam(e, d){
       <button class="cta" id="exBack" style="margin-top:14px">Sınavlara Dön</button></div>`;
     $('#exBack').onclick = loadExam;
   };
-  const draw = () => { const q = Q[i];
-    box.innerHTML = `<div class="sec"><div class="cd"><small>Soru ${i+1} / ${Q.length} · Kalan süre</small><br><b id="exT">${mmss()}</b></div>
-      <div class="qbig">${escapeHtml(q.q)}</div>
-      <div class="ag">${L.map(l => `<button class="ab${ans[q.id] === l ? ' on' : ''}" data-l="${l}"><i>${l}</i><span>${escapeHtml(q[l.toLowerCase()] || '')}</span></button>`).join('')}</div>
-      <div class="nv"><button id="pv" ${i ? '' : 'disabled'}>‹ Geri</button><button id="nx">${i < Q.length - 1 ? 'İleri ›' : 'Bitir ✓'}</button></div><div class="msg" id="exMsg"></div></div>`;
-    box.querySelectorAll('.ab').forEach(b => b.onclick = () => { ans[q.id] = b.dataset.l; if(i < Q.length - 1) setTimeout(() => { i++; draw(); }, 220); else draw(); });
+  const lg = () => { try{ return lang; }catch(e){ return 'tr'; } };
+  const TT = {
+    tr:{ q:n => `Soru ${n}`, left:'Kalan süre', bk:'‹ Geri', nx:'İleri ›', fin:'Bitir ✓', wait:'Şıklar birazdan gelecek…' },
+    en:{ q:n => `Question ${n}`, left:'Time left', bk:'‹ Back', nx:'Next ›', fin:'Finish ✓', wait:'Choices are coming…' },
+    ru:{ q:n => `Вопрос ${n}`, left:'Осталось', bk:'‹ Назад', nx:'Далее ›', fin:'Завершить ✓', wait:'Варианты появятся…' },
+    ja:{ q:n => `第${n}問`, left:'残り時間', bk:'‹ 戻る', nx:'次へ ›', fin:'終了 ✓', wait:'選択肢が表示されます…' } };
+  const shown = new Set(); let rv = null;
+  const draw = () => { const q = Q[i], t = TT[lg()] || TT.tr, seen = shown.has(q.id); clearTimeout(rv);
+    box.innerHTML = `<div class="sec"><div class="cd"><small>${t.left}</small><br><b id="exT">${mmss()}</b></div>
+      <div class="qb"><div class="qbox"><div class="qn">${t.q(i+1)} <small style="opacity:.7">(${i+1}/${Q.length})</small></div><div class="qt">${escapeHtml(q.q)}</div></div>
+      <div class="ag2${seen ? '' : ' hide'}" id="agr">${L.map(l => `<button class="ao${ans[q.id] === l ? ' on' : ''}" data-l="${l}"><i>${l} :</i><span>${escapeHtml(q[l.toLowerCase()] || '')}</span></button>`).join('')}</div>
+      <div class="qwait${seen ? ' gone' : ''}" id="qw">${t.wait}</div></div>
+      <div class="nv"><button id="pv" ${i ? '' : 'disabled'}>${t.bk}</button><button id="nx">${i < Q.length - 1 ? t.nx : t.fin}</button></div><div class="msg" id="exMsg"></div></div>`;
+    if(!seen) rv = setTimeout(() => { shown.add(q.id); const g = $('#agr'); if(g) g.classList.remove('hide'); const w = $('#qw'); if(w) w.classList.add('gone'); }, 3800);
+    box.querySelectorAll('.ao').forEach(b => b.onclick = () => { if(!shown.has(q.id)) return; ans[q.id] = b.dataset.l; if(i < Q.length - 1) setTimeout(() => { i++; draw(); }, 260); else draw(); });
     $('#pv').onclick = () => { i--; draw(); };
-    $('#nx').onclick = () => { if(i < Q.length - 1){ i++; draw(); } else { const n = Q.length - Object.keys(ans).length; if(confirm(n ? `${n} soruyu boş bıraktın. Yine de göndermek istiyor musun?` : 'Sınavı göndermek istiyor musun?')) send(); } };
+    $('#nx').onclick = () => { if(!shown.has(q.id)) return; if(i < Q.length - 1){ i++; draw(); } else { const n = Q.length - Object.keys(ans).length; if(confirm(n ? `${n} soruyu boş bıraktın. Yine de göndermek istiyor musun?` : 'Sınavı göndermek istiyor musun?')) send(); } };
   };
   draw();
   exTimer = setInterval(() => { left--; const t = $('#exT'); if(t) t.textContent = mmss(); if(left <= 0) send(); }, 1000);
