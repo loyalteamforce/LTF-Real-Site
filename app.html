@@ -355,6 +355,7 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 .ao i{font-style:normal;opacity:.9}.ao.on{background:linear-gradient(180deg,#8d7bff,#5a46e0);box-shadow:0 0 22px #fff,inset 0 0 22px rgba(255,255,255,.55)}
 .qwait{margin-top:12px;text-align:center;font:600 12px var(--sans);letter-spacing:.12em;color:#fff;opacity:.85;animation:qpulse 1.2s ease-in-out infinite}.qwait.gone{display:none}
 @keyframes qpulse{50%{opacity:.35}}
+.ao{transition:opacity .45s ease,transform .45s ease,background .2s ease,box-shadow .2s ease}.ao.pre{opacity:0;transform:translateY(14px) scale(.96);pointer-events:none}
 </style>
 </head>
 <body>
@@ -757,7 +758,7 @@ function runExam(e, d){
   const box = $('#examBox'), Q = d.questions, ans = {}, L = ['A','B','C','D']; let left = d.time_left, i = 0, sent = false;
   const mmss = () => `${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;
   const send = async () => {
-    if(sent) return; sent = true; clearInterval(exTimer); clearTimeout(rv);
+    if(sent) return; sent = true; clearInterval(exTimer); rv.forEach(clearTimeout);
     const { data: r, error } = await supabase.rpc('submit_exam', { p_exam_id: String(e.id), p_answers: ans });
     if(error){ sent = false; const m = $('#exMsg'); if(m){ m.className = 'msg err'; m.textContent = error.message; } return; }
     box.innerHTML = `<div class="sec"><div style="font:700 18px var(--serif)">${escapeHtml(e.title)}</div>
@@ -772,13 +773,16 @@ function runExam(e, d){
     en:{ q:n => `Question ${n}`, left:'Time left', bk:'‹ Back', nx:'Next ›', fin:'Finish ✓', wait:'Choices are coming…' },
     ru:{ q:n => `Вопрос ${n}`, left:'Осталось', bk:'‹ Назад', nx:'Далее ›', fin:'Завершить ✓', wait:'Варианты появятся…' },
     ja:{ q:n => `第${n}問`, left:'残り時間', bk:'‹ 戻る', nx:'次へ ›', fin:'終了 ✓', wait:'選択肢が表示されます…' } };
-  const shown = new Set(); let rv = null;
-  const draw = () => { const q = Q[i], t = TT[lg()] || TT.tr, seen = shown.has(q.id); clearTimeout(rv);
+  const shown = new Set(); let rv = [];
+  const draw = () => { const q = Q[i], t = TT[lg()] || TT.tr, seen = shown.has(q.id); rv.forEach(clearTimeout); rv = [];
     box.innerHTML = `<div class="sec"><div class="cd"><small>${t.left}</small><br><b id="exT">${mmss()}</b></div>
       <div class="qb"><div class="qbox"><div class="qn">${t.q(i+1)} <small style="opacity:.7">(${i+1}/${Q.length})</small></div><div class="qt">${escapeHtml(q.q)}</div></div>
-      <div class="ag2${seen ? '' : ' hide'}" id="agr">${L.map(l => `<button class="ao${ans[q.id] === l ? ' on' : ''}" data-l="${l}"><i>${l} :</i><span>${escapeHtml(q[l.toLowerCase()] || '')}</span></button>`).join('')}</div></div>
+      <div class="ag2" id="agr">${L.map(l => `<button class="ao${ans[q.id] === l ? ' on' : ''}${seen ? '' : ' pre'}" data-l="${l}"><i>${l} :</i><span>${escapeHtml(q[l.toLowerCase()] || '')}</span></button>`).join('')}</div></div>
       <div class="nv"><button id="pv" ${i ? '' : 'disabled'}>${t.bk}</button><button id="nx">${i < Q.length - 1 ? t.nx : t.fin}</button></div><div class="msg" id="exMsg"></div></div>`;
-    if(!seen) rv = setTimeout(() => { shown.add(q.id); const g = $('#agr'); if(g) g.classList.remove('hide'); const w = $('#qw'); if(w) w.classList.add('gone'); }, 3800);
+    // 1 sn bekle, sonra şıklar A, B, C, D sırasıyla gelsin
+    if(!seen){ const bs = [...box.querySelectorAll('.ao')];
+      bs.forEach((el, k) => rv.push(setTimeout(() => { el.classList.remove('pre'); if(k === bs.length - 1) shown.add(q.id); }, 1000 + k * 380)));
+    }
     box.querySelectorAll('.ao').forEach(b => b.onclick = () => { if(!shown.has(q.id)) return; ans[q.id] = b.dataset.l; if(i < Q.length - 1) setTimeout(() => { i++; draw(); }, 260); else draw(); });
     $('#pv').onclick = () => { i--; draw(); };
     $('#nx').onclick = () => { if(!shown.has(q.id)) return; if(i < Q.length - 1){ i++; draw(); } else { const n = Q.length - Object.keys(ans).length; if(confirm(n ? `${n} soruyu boş bıraktın. Yine de göndermek istiyor musun?` : 'Sınavı göndermek istiyor musun?')) send(); } };
