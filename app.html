@@ -718,7 +718,10 @@ document.addEventListener('click', e => {
 });
 let exTimer = null;
 const pctTxt = p => '%' + (+p).toFixed(1).replace('.0','');
-async function loadExam(){
+const showErr = (box, what, e) => { console.error(what, e); box.innerHTML = `<div class="sec"><div class="empty">${what}: ${escapeHtml((e && e.message) || String(e))}</div></div>`; };
+async function loadResults(){ try{ await _loadResults(); }catch(e){ showErr($('#resBox'), 'Sonuçlar yüklenemedi', e); } }
+async function loadExam(){ try{ await _loadExam(); }catch(e){ showErr($('#examBox'), 'Sınavlar yüklenemedi', e); } }
+async function _loadExam(){
   clearInterval(exTimer);
   const box = $('#examBox');
   box.innerHTML = '<div class="empty">Yükleniyor...</div>';
@@ -785,9 +788,10 @@ function runExam(e, d){
 }
 
 /* ---------- SONUÇLAR (Classroom of the Elite sonuç tahtası) ---------- */
-async function loadResults(){
+async function _loadResults(){
   const box = $('#resBox');
-  const { data: ex } = await supabase.from('exams').select('id,title,pass_percent').eq('status', 'finished').order('created_at', { ascending:false }).limit(10);
+  const { data: ex, error: exErr } = await supabase.from('exams').select('id,title,pass_percent').eq('status', 'finished').order('created_at', { ascending:false }).limit(10);
+  if(exErr) throw exErr;
   if(!ex?.length){ box.innerHTML = '<div class="sec"><div class="empty">Henüz açıklanmış sınav sonucu yok.</div></div>'; return; }
   const ids = ex.map(e => e.id);
   const [{ data: cr }, { data: rs }] = await Promise.all([
