@@ -748,7 +748,6 @@ async function _loadExam(){
       m.className = 'msg ' + (error ? 'err' : 'ok'); m.textContent = error ? error.message : 'Sınava katıldın.';
       if(!error){ loadProfile(); loadTx(); } return;
     }
-    if(!confirm('Sınava başlıyorsun. Süre hemen işlemeye başlar ve sınav tekrar alınamaz. Devam?')) return;
     const { data, error } = await supabase.rpc('start_exam', { p_exam_id: String(e.id) });
     if(error){ m.className = 'msg err'; m.textContent = error.message; return; }
     runExam(e, data);
@@ -779,13 +778,13 @@ function runExam(e, d){
       <div class="qb"><div class="qbox"><div class="qn">${t.q(i+1)} <small style="opacity:.7">(${i+1}/${Q.length})</small></div><div class="qt">${escapeHtml(q.q)}</div></div>
       <div class="ag2" id="agr">${L.map(l => `<button class="ao${ans[q.id] === l ? ' on' : ''}${seen ? '' : ' pre'}" data-l="${l}"><i>${l} :</i><span>${escapeHtml(q[l.toLowerCase()] || '')}</span></button>`).join('')}</div></div>
       <div class="nv"><button id="pv" ${i ? '' : 'disabled'}>${t.bk}</button><button id="nx">${i < Q.length - 1 ? t.nx : t.fin}</button></div><div class="msg" id="exMsg"></div></div>`;
-    // 1 sn bekle, sonra şıklar A, B, C, D sırasıyla gelsin
+    // Bekleme yok: şıklar hemen A, B, C, D sırasıyla gelsin
     if(!seen){ const bs = [...box.querySelectorAll('.ao')];
-      bs.forEach((el, k) => rv.push(setTimeout(() => { el.classList.remove('pre'); if(k === bs.length - 1) shown.add(q.id); }, 1000 + k * 380)));
+      bs.forEach((el, k) => rv.push(setTimeout(() => { el.classList.remove('pre'); if(k === bs.length - 1) shown.add(q.id); }, k * 300)));
     }
     box.querySelectorAll('.ao').forEach(b => b.onclick = () => { if(!shown.has(q.id)) return; ans[q.id] = b.dataset.l; if(i < Q.length - 1) setTimeout(() => { i++; draw(); }, 260); else draw(); });
     $('#pv').onclick = () => { i--; draw(); };
-    $('#nx').onclick = () => { if(!shown.has(q.id)) return; if(i < Q.length - 1){ i++; draw(); } else { const n = Q.length - Object.keys(ans).length; if(confirm(n ? `${n} soruyu boş bıraktın. Yine de göndermek istiyor musun?` : 'Sınavı göndermek istiyor musun?')) send(); } };
+    $('#nx').onclick = () => { if(!shown.has(q.id)) return; if(i < Q.length - 1){ i++; draw(); } else send(); };
   };
   draw();
   exTimer = setInterval(() => { left--; const t = $('#exT'); if(t) t.textContent = mmss(); if(left <= 0) send(); }, 1000);
