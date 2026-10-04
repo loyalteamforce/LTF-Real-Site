@@ -72,11 +72,11 @@
   @keyframes riPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
 
   #regIntro .ri-jp{position:relative;display:flex;justify-content:center;flex-wrap:nowrap;
-    font-family:'Shippori Mincho','Yu Mincho','MS Mincho',serif;font-weight:800;font-size:clamp(26px,7.4vw,84px);
-    color:#e50914;white-space:nowrap}
+    font-family:'Shippori Mincho','Yu Mincho','MS Mincho',serif;font-weight:800;font-size:clamp(16px,5.2vw,84px);
+    color:#e50914;white-space:nowrap;max-width:96vw}
   #regIntro .ri-jp span{display:inline-block;opacity:0;transform:scale(1.8) translateY(-8px);filter:blur(14px);
     text-shadow:0 0 18px rgba(229,9,20,.9),0 0 60px rgba(229,9,20,.55),0 3px 0 #5c0005;
-    animation:riLetter 1.1s cubic-bezier(.16,.9,.2,1) forwards;margin:0 .02em}
+    animation:riLetter 1.1s cubic-bezier(.16,.9,.2,1) forwards;margin:0 .01em}
   @keyframes riLetter{0%{opacity:0;transform:scale(1.8) translateY(-8px);filter:blur(14px)}
     60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:scale(1) translateY(0);filter:blur(0)}}
 
@@ -86,18 +86,18 @@
     background-size:250% 100%;background-position:150% 0;opacity:0;animation:riSweep 1.5s ease-in-out 7.1s forwards}
   @keyframes riSweep{0%{opacity:1;background-position:150% 0}100%{opacity:1;background-position:-50% 0}}
 
-  #regIntro .ri-en{margin-top:2.6vh;font-family:'Cinzel Decorative',serif;font-weight:900;font-size:clamp(13px,3.4vw,30px);
-    letter-spacing:.55em;color:#ff2a35;opacity:0;padding-left:.55em;text-shadow:0 0 14px rgba(229,9,20,.8);
+  #regIntro .ri-en{margin-top:2.6vh;font-family:'Cinzel Decorative',serif;font-weight:900;font-size:clamp(11px,3.2vw,30px);
+    letter-spacing:.4em;color:#ff2a35;opacity:0;padding-left:.4em;max-width:96vw;text-shadow:0 0 14px rgba(229,9,20,.8);
     animation:riEn 1.8s cubic-bezier(.2,.8,.2,1) 5.2s forwards}
-  @keyframes riEn{0%{opacity:0;letter-spacing:1.2em;filter:blur(6px)}100%{opacity:1;letter-spacing:.55em;filter:blur(0)}}
+  @keyframes riEn{0%{opacity:0;letter-spacing:.9em;filter:blur(6px)}100%{opacity:1;letter-spacing:.4em;filter:blur(0)}}
 
   #regIntro .ri-rule{margin-top:2.6vh;height:1px;width:0;background:linear-gradient(90deg,transparent,#a30a12,transparent);
     animation:riRule 1.6s ease 6.1s forwards}
   @keyframes riRule{to{width:min(60vw,420px)}}
 
   #regIntro .ri-sub{margin-top:2.4vh;font-family:'Shippori Mincho',serif;font-size:clamp(12px,2.6vw,20px);
-    letter-spacing:.9em;color:#b30b14;opacity:0;padding-left:.9em;animation:riSub 1.6s ease 6.4s forwards}
-  @keyframes riSub{0%{opacity:0;letter-spacing:1.4em}100%{opacity:.95;letter-spacing:.9em}}
+    letter-spacing:.6em;color:#b30b14;opacity:0;padding-left:.6em;max-width:96vw;animation:riSub 1.6s ease 6.4s forwards}
+  @keyframes riSub{0%{opacity:0;letter-spacing:1em}100%{opacity:.95;letter-spacing:.6em}}
 
   /* son: kırmızı beyaz parlama ve kararma */
   #regIntro .ri-end{position:absolute;inset:0;background:radial-gradient(circle,rgba(255,70,80,.55),transparent 60%);opacity:0;

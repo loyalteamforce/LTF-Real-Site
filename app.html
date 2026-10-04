@@ -332,6 +332,17 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 .badge{display:inline-block;padding:2px 9px;border-radius:20px;font:700 10.5px var(--sans);letter-spacing:.08em;background:rgba(90,160,255,.22);margin-left:6px}
 .badge.red{background:rgba(230,50,70,.28);color:#ff8d9d}.badge.ok{background:rgba(40,190,120,.25);color:#7df0b5}
 .big{font:800 40px var(--serif);text-align:center;margin:8px 0}
+.qbig{font:700 17px/1.5 var(--sans);margin:14px 0}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:104px;padding:12px 8px;border-radius:16px;border:1px solid rgba(160,200,255,.35);background:rgba(90,160,255,.1);color:inherit;font:600 14px/1.3 var(--sans);cursor:pointer;text-align:center}
+.ab i{font:800 20px var(--serif);font-style:normal;opacity:.85}.ab.on{background:rgba(90,160,255,.4);border-color:#9cc8ff;box-shadow:0 0 18px rgba(110,170,255,.45)}
+.nv{display:flex;justify-content:space-between;margin-top:14px}.nv button{padding:10px 16px;border-radius:12px;border:1px solid rgba(160,200,255,.35);background:none;color:inherit;font:700 13px var(--sans);cursor:pointer}.nv button:disabled{opacity:.3}
+.board{margin-bottom:16px;padding:14px;border-radius:8px;background:linear-gradient(#eef2f7,#cdd6e1);color:#10151c;font-family:'Yu Mincho','Hiragino Mincho ProN','Shippori Mincho',serif;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.board .bh{border:2px solid #10151c;padding:8px 12px;font-weight:800;font-size:18px;background:#fff}.board .bh small{display:block;font:600 10px var(--sans);letter-spacing:.14em;opacity:.6}
+.board .bs{text-align:center;font-weight:800;font-size:30px;margin:12px 0 8px}.board .bt{font:700 11px var(--sans);letter-spacing:.14em;margin:14px 0 4px;opacity:.65}
+.board .br{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #9aa6b5;border-top:0;background:#f7f9fc;font-weight:700}
+.board .br:nth-of-type(even){background:#d9dfe8}.board .br em{font-style:normal;width:26px;font-weight:800}.board .br span{flex:1}.board .br small{display:block;font:600 10px var(--sans);opacity:.6}
+.board .br b{font-size:20px}.board .br.me{outline:2px solid #2a6fe0}.board .br.red b{color:#c01830}.board .br.red{background:#f6d5da}
 </style>
 </head>
 <body>
@@ -728,29 +739,32 @@ async function loadExam(){
   });
 }
 function runExam(e, d){
-  const box = $('#examBox'); let left = d.time_left, sent = false;
-  box.innerHTML = `<div class="sec"><div style="font:700 18px var(--serif)">${escapeHtml(e.title)}</div>
-    <div class="cd"><small>Kalan süre</small><br><b id="exT">—</b></div>
-    ${d.questions.map((q, i) => `<div class="qc"><div class="qq">${i+1}. ${escapeHtml(q.q)}</div>${q.options.map((o, k) =>
-      `<label class="qo"><input type="radio" name="q${q.id}" value="${k}">${escapeHtml(o)}</label>`).join('')}</div>`).join('')}
-    <button class="cta" id="exSend" style="margin-top:16px">Sınavı Bitir ve Gönder</button><div class="msg" id="exMsg"></div></div>`;
+  const box = $('#examBox'), Q = d.questions, ans = {}, L = ['A','B','C','D']; let left = d.time_left, i = 0, sent = false;
+  const mmss = () => `${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;
   const send = async () => {
     if(sent) return; sent = true; clearInterval(exTimer);
-    const ans = {}; d.questions.forEach(q => { const c = box.querySelector(`input[name="q${q.id}"]:checked`); if(c) ans[q.id] = +c.value; });
     const { data: r, error } = await supabase.rpc('submit_exam', { p_exam_id: String(e.id), p_answers: ans });
-    if(error){ sent = false; $('#exMsg').className = 'msg err'; $('#exMsg').textContent = error.message; return; }
+    if(error){ sent = false; const m = $('#exMsg'); if(m){ m.className = 'msg err'; m.textContent = error.message; } return; }
     box.innerHTML = `<div class="sec"><div style="font:700 18px var(--serif)">${escapeHtml(e.title)}</div>
       <div class="big">${r.score} / ${r.total}</div><div style="text-align:center">${pctTxt(r.percent)}</div>
       <div class="msg ${r.passed ? 'ok' : 'err'}" style="display:block;margin-top:12px">${r.late ? 'Süre dolduğu için cevapların sayılmadı. ' : ''}${r.passed ? 'Geçtin. Sınıf ortalamana katkın sayıldı.' : 'Kırmızı Bölge! Puanın geçme sınırının altında kaldı.'}</div>
       <button class="cta" id="exBack" style="margin-top:14px">Sınavlara Dön</button></div>`;
     $('#exBack').onclick = loadExam;
   };
-  const tick = () => { $('#exT').textContent = `${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`; if(left-- <= 0) send(); };
-  tick(); exTimer = setInterval(tick, 1000);
-  $('#exSend').onclick = () => { if(confirm('Sınavı göndermek istiyor musun?')) send(); };
+  const draw = () => { const q = Q[i];
+    box.innerHTML = `<div class="sec"><div class="cd"><small>Soru ${i+1} / ${Q.length} · Kalan süre</small><br><b id="exT">${mmss()}</b></div>
+      <div class="qbig">${escapeHtml(q.q)}</div>
+      <div class="ag">${L.map(l => `<button class="ab${ans[q.id] === l ? ' on' : ''}" data-l="${l}"><i>${l}</i><span>${escapeHtml(q[l.toLowerCase()] || '')}</span></button>`).join('')}</div>
+      <div class="nv"><button id="pv" ${i ? '' : 'disabled'}>‹ Geri</button><button id="nx">${i < Q.length - 1 ? 'İleri ›' : 'Bitir ✓'}</button></div><div class="msg" id="exMsg"></div></div>`;
+    box.querySelectorAll('.ab').forEach(b => b.onclick = () => { ans[q.id] = b.dataset.l; if(i < Q.length - 1) setTimeout(() => { i++; draw(); }, 220); else draw(); });
+    $('#pv').onclick = () => { i--; draw(); };
+    $('#nx').onclick = () => { if(i < Q.length - 1){ i++; draw(); } else { const n = Q.length - Object.keys(ans).length; if(confirm(n ? `${n} soruyu boş bıraktın. Yine de göndermek istiyor musun?` : 'Sınavı göndermek istiyor musun?')) send(); } };
+  };
+  draw();
+  exTimer = setInterval(() => { left--; const t = $('#exT'); if(t) t.textContent = mmss(); if(left <= 0) send(); }, 1000);
 }
 
-/* ---------- SONUÇLAR ---------- */
+/* ---------- SONUÇLAR (Classroom of the Elite sonuç tahtası) ---------- */
 async function loadResults(){
   const box = $('#resBox');
   const { data: ex } = await supabase.from('exams').select('id,title,pass_percent').eq('status', 'finished').order('created_at', { ascending:false }).limit(10);
@@ -762,13 +776,12 @@ async function loadResults(){
   ]);
   box.innerHTML = ex.map(e => {
     const cls = (cr || []).filter(c => c.exam_id === e.id), st = (rs || []).filter(r => r.exam_id === e.id);
-    return `<div class="sec" style="margin-bottom:14px"><div class="st"><span>${escapeHtml(e.title)}</span></div>
-      <div style="font:700 12px var(--sans);letter-spacing:.1em;margin:10px 0 4px;color:var(--dim)">SINIF SIRALAMASI</div>
-      ${cls.map(c => `<div class="sc"><span>${c.rank}. ${escapeHtml(c.class)} Sınıfı <small>ort. ${pctTxt(c.avg)}</small></span><b style="color:${c.cp_delta >= 0 ? '#7df0b5' : '#ff8d9d'}">${c.cp_delta > 0 ? '+' : ''}${c.cp_delta} CP</b></div>`).join('')}
-      <div style="font:700 12px var(--sans);letter-spacing:.1em;margin:14px 0 4px;color:var(--dim)">ÖĞRENCİ SIRALAMASI</div>
-      ${st.slice(0, 10).map((r, i) => `<div class="sc"${r.user_id === uid ? ' style="font-weight:800"' : ''}><span>${i+1}. ${escapeHtml(r.username || '—')} <small>${escapeHtml(r.class || '')}</small></span><b>${r.score}/${r.total} · ${pctTxt(r.percent)}</b></div>`).join('')}
-      ${(() => { const m = st.findIndex(r => r.user_id === uid); return m > 9 ? `<div class="sc" style="font-weight:800"><span>${m+1}. Sen</span><b>${st[m].score}/${st[m].total} · ${pctTxt(st[m].percent)}</b></div>` : ''; })()}
-      ${st.filter(r => r.percent < e.pass_percent).length ? `<div class="msg err" style="display:block;margin-top:10px">Kırmızı Bölge (%${e.pass_percent} altı): ${st.filter(r => r.percent < e.pass_percent).map(r => escapeHtml(r.username || '—')).join(', ')}</div>` : ''}
+    return `<div class="board"><div class="bh">特別試験　結果発表<small>SINAV SONUÇ DUYURUSU</small></div>
+      <div class="bs">${escapeHtml(e.title)}</div>
+      ${st.map((r, i) => `<div class="br${r.user_id === uid ? ' me' : ''}${r.percent < e.pass_percent ? ' red' : ''}"><em>${i+1}</em><span>${escapeHtml(r.username || '—')}<small>クラス ${escapeHtml(r.class || '')}</small></span><b>${Math.round(r.percent)}点</b></div>`).join('')}
+      <div class="bt">クラス順位 · SINIF SIRALAMASI</div>
+      ${cls.map(c => `<div class="br"><em>${c.rank}</em><span>${escapeHtml(c.class)} Sınıfı<small>ortalama ${Math.round(c.avg)}点</small></span><b style="color:${c.cp_delta >= 0 ? '#0b8a4a' : '#c01830'}">${c.cp_delta > 0 ? '+' : ''}${c.cp_delta} CP</b></div>`).join('')}
+      ${st.some(r => r.percent < e.pass_percent) ? `<div class="bt" style="color:#c01830">赤点 · KIRMIZI BÖLGE (%${e.pass_percent} altı)</div>` : ''}
     </div>`; }).join('');
 }
 
