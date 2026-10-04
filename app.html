@@ -773,8 +773,7 @@ function runExam(e, d){
   const draw = () => { const q = Q[i], t = TT[lg()] || TT.tr, seen = shown.has(q.id); clearTimeout(rv);
     box.innerHTML = `<div class="sec"><div class="cd"><small>${t.left}</small><br><b id="exT">${mmss()}</b></div>
       <div class="qb"><div class="qbox"><div class="qn">${t.q(i+1)} <small style="opacity:.7">(${i+1}/${Q.length})</small></div><div class="qt">${escapeHtml(q.q)}</div></div>
-      <div class="ag2${seen ? '' : ' hide'}" id="agr">${L.map(l => `<button class="ao${ans[q.id] === l ? ' on' : ''}" data-l="${l}"><i>${l} :</i><span>${escapeHtml(q[l.toLowerCase()] || '')}</span></button>`).join('')}</div>
-      <div class="qwait${seen ? ' gone' : ''}" id="qw">${t.wait}</div></div>
+      <div class="ag2${seen ? '' : ' hide'}" id="agr">${L.map(l => `<button class="ao${ans[q.id] === l ? ' on' : ''}" data-l="${l}"><i>${l} :</i><span>${escapeHtml(q[l.toLowerCase()] || '')}</span></button>`).join('')}</div></div>
       <div class="nv"><button id="pv" ${i ? '' : 'disabled'}>${t.bk}</button><button id="nx">${i < Q.length - 1 ? t.nx : t.fin}</button></div><div class="msg" id="exMsg"></div></div>`;
     if(!seen) rv = setTimeout(() => { shown.add(q.id); const g = $('#agr'); if(g) g.classList.remove('hide'); const w = $('#qw'); if(w) w.classList.add('gone'); }, 3800);
     box.querySelectorAll('.ao').forEach(b => b.onclick = () => { if(!shown.has(q.id)) return; ans[q.id] = b.dataset.l; if(i < Q.length - 1) setTimeout(() => { i++; draw(); }, 260); else draw(); });

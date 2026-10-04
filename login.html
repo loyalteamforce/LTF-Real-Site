@@ -96,14 +96,14 @@
       <div class="field">
         <label for="regPassword">Şifre</label>
         <div class="pw-field">
-          <input type="password" id="regPassword" autocomplete="new-password" minlength="6" required>
+          <input type="password" id="regPassword" autocomplete="new-password" minlength="8" required>
           <button type="button" class="pw-toggle" data-target="regPassword">👁</button>
         </div>
       </div>
       <div class="field">
         <label for="regPassword2">Şifre (Tekrar)</label>
         <div class="pw-field">
-          <input type="password" id="regPassword2" autocomplete="new-password" minlength="6" required>
+          <input type="password" id="regPassword2" autocomplete="new-password" minlength="8" required>
           <button type="button" class="pw-toggle" data-target="regPassword2">👁</button>
         </div>
       </div>
@@ -179,13 +179,13 @@
   // rastgele seçilir, hepsi doluysa en az doluya düşer.
   async function pickRandomClass(){
     try {
-      let r = await supabase.from('public_profiles').select('class');
-      if(r.error) r = await supabase.from('profiles').select('class');
-      const { data, error } = r;
+      // Giriş yapmamış kullanıcı profil listesini okuyamaz; sadece sınıf sayılarını veren
+      // güvenli fonksiyon kullanılır (oaa-puanlar.sql içinde tanımlı).
+      const { data, error } = await supabase.rpc('class_counts');
       if(error || !data) throw error || new Error('no data');
       const counts = {};
       CLASSES.forEach(c => counts[c] = 0);
-      data.forEach(p => { if(p.class && counts[p.class] !== undefined) counts[p.class]++; });
+      data.forEach(p => { if(p.class && counts[p.class] !== undefined) counts[p.class] = Number(p.n); });
       const open = CLASSES.filter(c => counts[c] < CLASS_LIMIT);
       if(open.length) return open[Math.floor(Math.random() * open.length)];
       // hepsi doluysa en az doluyu seç
@@ -282,8 +282,8 @@
       msg.classList.add('error'); msg.textContent = 'Geçerli bir kullanıcı adı gir.';
       return;
     }
-    if(password.length < 6){
-      msg.classList.add('error'); msg.textContent = 'Şifre en az 6 karakter olmalı.';
+    if(password.length < 8){
+      msg.classList.add('error'); msg.textContent = 'Şifre en az 8 karakter olmalı.';
       return;
     }
     if(password !== password2){
