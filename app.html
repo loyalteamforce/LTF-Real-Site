@@ -357,6 +357,38 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 @keyframes qpulse{50%{opacity:.35}}
 .ao{transition:opacity .45s ease,transform .45s ease,background .2s ease,box-shadow .2s ease}.ao.pre{opacity:0;transform:translateY(14px) scale(.96);pointer-events:none}
 </style>
+<style>
+/* ===== Mühürlü Oda: tam ekran sinematik açılış ===== */
+.og-hint{position:absolute;z-index:2;left:0;right:0;bottom:10px;text-align:center;font-size:11.5px;letter-spacing:.14em;color:rgba(255,255,255,.72);text-shadow:0 1px 6px #000;pointer-events:none}
+#galFx{position:fixed;inset:0;z-index:10000;display:none;background:#fff;overflow:hidden;overscroll-behavior:none}
+#galFx.on{display:block}
+#galFx .gf-stage{position:absolute;inset:0;background:#02050c;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
+#galFx .gf-stage.rot{inset:auto;top:0;left:100%;transform:rotate(90deg);transform-origin:0 0}
+.gf-galaxy,.gf-gallery{position:absolute;inset:0;opacity:0;transition:opacity 2.2s ease .2s}
+.gf-galaxy{background:radial-gradient(ellipse at 50% 55%,#0b1226 0%,#03060f 60%,#000 100%)}
+.rev .gf-gallery,.rev .gf-galaxy{opacity:1}
+.gf-film{position:absolute;inset:0;pointer-events:none;overflow:hidden;opacity:0;transition:opacity 2s;background:radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,.72) 100%)}
+.gf-film::after{content:'';position:absolute;inset:-50%;opacity:.08;mix-blend-mode:screen;animation:gfGrain .8s steps(6) infinite;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+@keyframes gfGrain{0%{transform:translate(0,0)}20%{transform:translate(-6%,4%)}40%{transform:translate(5%,-7%)}60%{transform:translate(-4%,-3%)}80%{transform:translate(7%,6%)}100%{transform:translate(0,0)}}
+.rev .gf-film{opacity:1}
+.gf-bar{position:absolute;left:0;right:0;height:7%;background:#000;pointer-events:none;transform:scaleY(0);transition:transform 1.6s cubic-bezier(.22,1,.36,1) .4s}
+.gf-top{top:0;transform-origin:top}.gf-bot{bottom:0;transform-origin:bottom}
+.rev .gf-bar{transform:scaleY(1)}
+.gf-title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;pointer-events:none;opacity:0;text-align:center}
+.gf-title small{font:400 11px 'Cinzel Decorative',var(--serif);letter-spacing:.5em;color:var(--gold);text-indent:.5em}
+.gf-title b{font:700 clamp(22px,5vw,44px) 'Cinzel Decorative',var(--serif);letter-spacing:.3em;text-indent:.3em;text-transform:uppercase;color:#fff;text-shadow:0 2px 24px rgba(91,140,255,.55)}
+.rev .gf-title{animation:gfTitle 4.4s ease .9s both}
+@keyframes gfTitle{0%{opacity:0;transform:scale(1.05)}25%{opacity:1}75%{opacity:1}100%{opacity:0;transform:scale(1)}}
+.gf-hint{position:absolute;bottom:10%;left:0;right:0;text-align:center;font:400 12px 'Cinzel Decorative',var(--serif);letter-spacing:.22em;color:rgba(255,255,255,.6);opacity:0;pointer-events:none}
+.rev .gf-hint{animation:gfHint 5s ease 5.2s both}
+@keyframes gfHint{0%,100%{opacity:0}20%,70%{opacity:1}}
+.gf-white{position:absolute;inset:0;z-index:5;background:#fff;transition:opacity 2s ease}
+.rev .gf-white{opacity:0;pointer-events:none}
+.gf-x{position:absolute;top:10px;right:12px;z-index:9;width:38px;height:38px;border-radius:50%;border:0;background:rgba(120,120,120,.16);color:#888;font-size:16px;line-height:1;cursor:pointer;transition:color 1s,background 1s}
+.rev .gf-x{color:#fff;background:rgba(255,255,255,.14)}
+@media (prefers-reduced-motion:reduce){.gf-film::after{animation:none}}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="container-glass" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed="1" result="turbulence"/><feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise"/><feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="70" xChannelSelector="R" yChannelSelector="B" result="displaced"/><feGaussianBlur in="displaced" stdDeviation="4" result="finalBlur"/><feComposite in="finalBlur" in2="finalBlur" operator="over"/></filter></defs></svg>
@@ -418,6 +450,7 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
       <button data-go="profile"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.6 3.6-5.4 7.5-5.4s6.7 1.8 7.5 5.4"/></svg>Profil</button>
     </div>
   </div>
+  <div class="sec"><div class="st"><span>Mühürlü Oda</span></div><div id="orbitGallery" style="height:300px;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse at center,rgba(91,140,255,.10),transparent 70%);position:relative;cursor:pointer" role="button" tabindex="0"><div class="og-hint">Mührü kırmak için dokun</div></div></div>
   <div class="sec"><div class="st"><span>Sınıf Sıralaması</span><a data-go="rank">Detay ›</a></div><div class="cpbox rklist"><div class="empty">Yükleniyor...</div></div></div>
 </section>
 
@@ -840,9 +873,9 @@ a.ontimeupdate = () => { if(a.duration) $('#barFill').style.width = (a.currentTi
   for(let r=1;r<=10;r++){ h+=`<div class="h">${r}</div>`; for(const c of 'ABCDEFGHIJ') h+=`<div class="${P.includes(c+r)?'p':''}"></div>`; } if(m) m.innerHTML=h; }
 
 /* ---------- DİL ---------- */
-const D={en:{'Ana Sayfa':'Home','Duyurular':'Announcements','Puanlarım':'My Points','OAA Değerlendirme':'OAA Evaluation','Sınıf Sıralaması':'Class Ranking','Özel Sınav':'Special Exam','Sınav Sonuçları':'Exam Results','Program':'Schedule','Şarkılarımız':'Our Songs','Profil':'Profile','Menü':'Menu','Dil':'Language','Öğrenci Profili':'Student Profile','Hoş geldin,':'Welcome,','Burası yalnızca özel insanların toplandığı yer.':'A place only for special people.','Kişisel Puan':'Private Points','Sınıf Puanı':'Class Points','Son İşlemler':'Recent Activity','Son Duyurular':'Latest Announcements','Hızlı Menü':'Quick Menu','Tümünü gör ›':'See all ›','Yükleniyor...':'Loading...','Bakiye':'Balance','Günlük Ödül':'Daily Reward','Puan Gönder':'Send Points','Gönder':'Send','Kullanıcı Adı':'Username','Miktar':'Amount','Mevcut':'Current','Akademik Aralık':'Academic Range','Akademik Puan Aralığı':'Academic Score Range','400 ve üzeri':'400 and above','1. Yıl Değerlendirmesi':'Year 1 Evaluation','Sınıf':'Class','Rütbe':'Rank','Puan':'Points','Bilgiler':'Info','Notlar':'Notes','Sıralama':'Ranking','Şarkılar':'Songs','Sınıfı':'Class','En İyi Gruplar':'Top Groups','En İyi Grup Listesi':'Top Group List','Sıra':'Rank','Yıl':'Year','Grup Adı':'Group','Puanlar':'Points','Matematik':'Mathematics','Sınav Sonuç Duyurusu · Matematik':'Exam Results · Mathematics','Tokyo İleri Düzey Gelişim Lisesi':'Tokyo Metropolitan Advanced Nurturing High School','Issız Ada Özel Sınavı':'Deserted Island Special Exam','Görev: Gülle Atma':'Mission: Shot Put','Kategori:':'Category:','Fiziksel':'Physical','Akademik':'Academic','Katılım:':'Participation:','Görev belirdikten sonra 30 dakika içinde kaydolun.':'Register within 30 minutes after the mission appears.','Giriş gereksinimleri:':'Entry requirements:','Üç veya daha fazla kişiden oluşan gruplar katılabilir. Altı grup kaydolduktan sonra kayıt biter.':'Groups of three or more can join. Registration closes once six groups have signed up.','Kazanma koşulları:':'Winning conditions:','Toplam puanı en yüksek olan üçlü grup kazanır.':'The group of three with the highest total points wins.','Ödüller:':'Rewards:','1. Sıra: 10 puan':'1st place: 10 points','2. Sıra: 5 puan':'2nd place: 5 points','3. Sıra: 3 puan':'3rd place: 3 points','Deneme':'Trial',"Özel sınavda verilen sınıf puanlarınızı %50 oranında artırabilirsiniz. Ancak grupların ilk %30'unda yer almazsanız, grubunuz bir ceza alacaktır. Ekstra puanlar okul tarafından sağlanacaktır.":'You can increase the class points awarded in the special exam by 50%. However, if you do not place in the top 30% of groups, your group will receive a penalty. The extra points are provided by the school.','Gizli Görev':'Secret Mission',"Görevin, Ayanokoji-kun'un Nisan ayı içinde okuldan atılmasını sağlamak.":"Your mission is to get Ayanokoji-kun expelled from school within April.",'Sınava Katıl ›':'Join Exam ›','Duyuru yok.':'No announcements.','Henüz işlem yok.':'No activity yet.'},
-ru:{'Ana Sayfa':'Главная','Duyurular':'Объявления','Puanlarım':'Мои очки','OAA Değerlendirme':'Оценка OAA','Sınıf Sıralaması':'Рейтинг классов','Özel Sınav':'Особый экзамен','Sınav Sonuçları':'Результаты экзаменов','Program':'Расписание','Şarkılarımız':'Наши песни','Profil':'Профиль','Menü':'Меню','Dil':'Язык','Öğrenci Profili':'Профиль ученика','Hoş geldin,':'Добро пожаловать,','Burası yalnızca özel insanların toplandığı yer.':'Место только для особенных людей.','Kişisel Puan':'Личные очки','Sınıf Puanı':'Очки класса','Son İşlemler':'Последние операции','Son Duyurular':'Последние объявления','Hızlı Menü':'Быстрое меню','Tümünü gör ›':'Показать все ›','Yükleniyor...':'Загрузка...','Bakiye':'Баланс','Günlük Ödül':'Ежедневная награда','Puan Gönder':'Отправить очки','Gönder':'Отправить','Kullanıcı Adı':'Имя пользователя','Miktar':'Сумма','Mevcut':'Текущие','Akademik Aralık':'Академ. диапазон','Akademik Puan Aralığı':'Диапазон академических баллов','400 ve üzeri':'400 и выше','1. Yıl Değerlendirmesi':'Оценка 1-го курса','Sınıf':'Класс','Rütbe':'Звание','Puan':'Очки','Bilgiler':'Данные','Notlar':'Заметки','Sıralama':'Рейтинг','Şarkılar':'Песни','Sınıfı':'класс','En İyi Gruplar':'Лучшие группы','En İyi Grup Listesi':'Список лучших групп','Sıra':'Место','Yıl':'Курс','Grup Adı':'Группа','Puanlar':'Очки','Matematik':'Математика','Sınav Sonuç Duyurusu · Matematik':'Результаты экзамена · Математика','Tokyo İleri Düzey Gelişim Lisesi':'Токийская высшая школа развития','Issız Ada Özel Sınavı':'Особый экзамен на необитаемом острове','Görev: Gülle Atma':'Задание: толкание ядра','Kategori:':'Категория:','Fiziksel':'Физическая','Akademik':'Академическая','Katılım:':'Участие:','Görev belirdikten sonra 30 dakika içinde kaydolun.':'Зарегистрируйтесь в течение 30 минут после появления задания.','Giriş gereksinimleri:':'Требования:','Üç veya daha fazla kişiden oluşan gruplar katılabilir. Altı grup kaydolduktan sonra kayıt biter.':'Участвуют группы от трёх человек. Регистрация закрывается после шести групп.','Kazanma koşulları:':'Условия победы:','Toplam puanı en yüksek olan üçlü grup kazanır.':'Побеждает тройка с наибольшей суммой очков.','Ödüller:':'Награды:','1. Sıra: 10 puan':'1 место: 10 очков','2. Sıra: 5 puan':'2 место: 5 очков','3. Sıra: 3 puan':'3 место: 3 очка','Deneme':'Испытание',"Özel sınavda verilen sınıf puanlarınızı %50 oranında artırabilirsiniz. Ancak grupların ilk %30'unda yer almazsanız, grubunuz bir ceza alacaktır. Ekstra puanlar okul tarafından sağlanacaktır.":'Вы можете увеличить очки класса за особый экзамен на 50%. Но если ваша группа не войдёт в первые 30%, она получит штраф. Дополнительные очки предоставляет школа.','Gizli Görev':'Тайное задание',"Görevin, Ayanokoji-kun'un Nisan ayı içinde okuldan atılmasını sağlamak.":'Твоё задание — добиться исключения Аянокоджи-куна из школы в течение апреля.','Sınava Katıl ›':'Участвовать ›','Duyuru yok.':'Объявлений нет.','Henüz işlem yok.':'Операций пока нет.'},
-ja:{'Ana Sayfa':'ホーム','Duyurular':'お知らせ','Puanlarım':'ポイント','OAA Değerlendirme':'総合力評価','Sınıf Sıralaması':'クラスポイント','Özel Sınav':'特別試験','Sınav Sonuçları':'試験結果発表','Program':'予定','Şarkılarımız':'楽曲','Profil':'プロフィール','Menü':'メニュー','Dil':'言語','Öğrenci Profili':'生徒情報','Kişisel Puan':'プライベートポイント','Sınıf Puanı':'クラスポイント','Son İşlemler':'最近の履歴','Son Duyurular':'最新のお知らせ','Hızlı Menü':'クイックメニュー','Mevcut':'現在','Akademik Aralık':'学力範囲','Akademik Puan Aralığı':'学力判定基準','Sınıfı':'クラス','En İyi Gruplar':'上位グループ','En İyi Grup Listesi':'上位グループ一覧','Matematik':'数学','Issız Ada Özel Sınavı':'無人島特別試験','Tokyo İleri Düzey Gelişim Lisesi':'東京都高度育成高等学校','Görev: Gülle Atma':'課題「砲丸投げ」','Deneme':'試練','Gizli Görev':'極秘任務','Fiziksel':'身体能力','Akademik':'学力','Sıra':'順位','Yıl':'学年','Grup Adı':'グループ名','Puanlar':'点数','Ödüller:':'報酬:','Bakiye':'残高','Yükleniyor...':'読み込み中...'}};
+const D={en:{'Mühürlü Oda':'The Sealed Room','Mührü kırmak için dokun':'Tap to break the seal','Sürükleyerek çevir':'Drag to rotate','Ana Sayfa':'Home','Duyurular':'Announcements','Puanlarım':'My Points','OAA Değerlendirme':'OAA Evaluation','Sınıf Sıralaması':'Class Ranking','Özel Sınav':'Special Exam','Sınav Sonuçları':'Exam Results','Program':'Schedule','Şarkılarımız':'Our Songs','Profil':'Profile','Menü':'Menu','Dil':'Language','Öğrenci Profili':'Student Profile','Hoş geldin,':'Welcome,','Burası yalnızca özel insanların toplandığı yer.':'A place only for special people.','Kişisel Puan':'Private Points','Sınıf Puanı':'Class Points','Son İşlemler':'Recent Activity','Son Duyurular':'Latest Announcements','Hızlı Menü':'Quick Menu','Tümünü gör ›':'See all ›','Yükleniyor...':'Loading...','Bakiye':'Balance','Günlük Ödül':'Daily Reward','Puan Gönder':'Send Points','Gönder':'Send','Kullanıcı Adı':'Username','Miktar':'Amount','Mevcut':'Current','Akademik Aralık':'Academic Range','Akademik Puan Aralığı':'Academic Score Range','400 ve üzeri':'400 and above','1. Yıl Değerlendirmesi':'Year 1 Evaluation','Sınıf':'Class','Rütbe':'Rank','Puan':'Points','Bilgiler':'Info','Notlar':'Notes','Sıralama':'Ranking','Şarkılar':'Songs','Sınıfı':'Class','En İyi Gruplar':'Top Groups','En İyi Grup Listesi':'Top Group List','Sıra':'Rank','Yıl':'Year','Grup Adı':'Group','Puanlar':'Points','Matematik':'Mathematics','Sınav Sonuç Duyurusu · Matematik':'Exam Results · Mathematics','Tokyo İleri Düzey Gelişim Lisesi':'Tokyo Metropolitan Advanced Nurturing High School','Issız Ada Özel Sınavı':'Deserted Island Special Exam','Görev: Gülle Atma':'Mission: Shot Put','Kategori:':'Category:','Fiziksel':'Physical','Akademik':'Academic','Katılım:':'Participation:','Görev belirdikten sonra 30 dakika içinde kaydolun.':'Register within 30 minutes after the mission appears.','Giriş gereksinimleri:':'Entry requirements:','Üç veya daha fazla kişiden oluşan gruplar katılabilir. Altı grup kaydolduktan sonra kayıt biter.':'Groups of three or more can join. Registration closes once six groups have signed up.','Kazanma koşulları:':'Winning conditions:','Toplam puanı en yüksek olan üçlü grup kazanır.':'The group of three with the highest total points wins.','Ödüller:':'Rewards:','1. Sıra: 10 puan':'1st place: 10 points','2. Sıra: 5 puan':'2nd place: 5 points','3. Sıra: 3 puan':'3rd place: 3 points','Deneme':'Trial',"Özel sınavda verilen sınıf puanlarınızı %50 oranında artırabilirsiniz. Ancak grupların ilk %30'unda yer almazsanız, grubunuz bir ceza alacaktır. Ekstra puanlar okul tarafından sağlanacaktır.":'You can increase the class points awarded in the special exam by 50%. However, if you do not place in the top 30% of groups, your group will receive a penalty. The extra points are provided by the school.','Gizli Görev':'Secret Mission',"Görevin, Ayanokoji-kun'un Nisan ayı içinde okuldan atılmasını sağlamak.":"Your mission is to get Ayanokoji-kun expelled from school within April.",'Sınava Katıl ›':'Join Exam ›','Duyuru yok.':'No announcements.','Henüz işlem yok.':'No activity yet.'},
+ru:{'Mühürlü Oda':'Запечатанная комната','Mührü kırmak için dokun':'Нажмите, чтобы сорвать печать','Sürükleyerek çevir':'Проведите, чтобы вращать','Ana Sayfa':'Главная','Duyurular':'Объявления','Puanlarım':'Мои очки','OAA Değerlendirme':'Оценка OAA','Sınıf Sıralaması':'Рейтинг классов','Özel Sınav':'Особый экзамен','Sınav Sonuçları':'Результаты экзаменов','Program':'Расписание','Şarkılarımız':'Наши песни','Profil':'Профиль','Menü':'Меню','Dil':'Язык','Öğrenci Profili':'Профиль ученика','Hoş geldin,':'Добро пожаловать,','Burası yalnızca özel insanların toplandığı yer.':'Место только для особенных людей.','Kişisel Puan':'Личные очки','Sınıf Puanı':'Очки класса','Son İşlemler':'Последние операции','Son Duyurular':'Последние объявления','Hızlı Menü':'Быстрое меню','Tümünü gör ›':'Показать все ›','Yükleniyor...':'Загрузка...','Bakiye':'Баланс','Günlük Ödül':'Ежедневная награда','Puan Gönder':'Отправить очки','Gönder':'Отправить','Kullanıcı Adı':'Имя пользователя','Miktar':'Сумма','Mevcut':'Текущие','Akademik Aralık':'Академ. диапазон','Akademik Puan Aralığı':'Диапазон академических баллов','400 ve üzeri':'400 и выше','1. Yıl Değerlendirmesi':'Оценка 1-го курса','Sınıf':'Класс','Rütbe':'Звание','Puan':'Очки','Bilgiler':'Данные','Notlar':'Заметки','Sıralama':'Рейтинг','Şarkılar':'Песни','Sınıfı':'класс','En İyi Gruplar':'Лучшие группы','En İyi Grup Listesi':'Список лучших групп','Sıra':'Место','Yıl':'Курс','Grup Adı':'Группа','Puanlar':'Очки','Matematik':'Математика','Sınav Sonuç Duyurusu · Matematik':'Результаты экзамена · Математика','Tokyo İleri Düzey Gelişim Lisesi':'Токийская высшая школа развития','Issız Ada Özel Sınavı':'Особый экзамен на необитаемом острове','Görev: Gülle Atma':'Задание: толкание ядра','Kategori:':'Категория:','Fiziksel':'Физическая','Akademik':'Академическая','Katılım:':'Участие:','Görev belirdikten sonra 30 dakika içinde kaydolun.':'Зарегистрируйтесь в течение 30 минут после появления задания.','Giriş gereksinimleri:':'Требования:','Üç veya daha fazla kişiden oluşan gruplar katılabilir. Altı grup kaydolduktan sonra kayıt biter.':'Участвуют группы от трёх человек. Регистрация закрывается после шести групп.','Kazanma koşulları:':'Условия победы:','Toplam puanı en yüksek olan üçlü grup kazanır.':'Побеждает тройка с наибольшей суммой очков.','Ödüller:':'Награды:','1. Sıra: 10 puan':'1 место: 10 очков','2. Sıra: 5 puan':'2 место: 5 очков','3. Sıra: 3 puan':'3 место: 3 очка','Deneme':'Испытание',"Özel sınavda verilen sınıf puanlarınızı %50 oranında artırabilirsiniz. Ancak grupların ilk %30'unda yer almazsanız, grubunuz bir ceza alacaktır. Ekstra puanlar okul tarafından sağlanacaktır.":'Вы можете увеличить очки класса за особый экзамен на 50%. Но если ваша группа не войдёт в первые 30%, она получит штраф. Дополнительные очки предоставляет школа.','Gizli Görev':'Тайное задание',"Görevin, Ayanokoji-kun'un Nisan ayı içinde okuldan atılmasını sağlamak.":'Твоё задание — добиться исключения Аянокоджи-куна из школы в течение апреля.','Sınava Katıl ›':'Участвовать ›','Duyuru yok.':'Объявлений нет.','Henüz işlem yok.':'Операций пока нет.'},
+ja:{'Mühürlü Oda':'封印の間','Mührü kırmak için dokun':'タップして封印を解く','Sürükleyerek çevir':'ドラッグして回転','Ana Sayfa':'ホーム','Duyurular':'お知らせ','Puanlarım':'ポイント','OAA Değerlendirme':'総合力評価','Sınıf Sıralaması':'クラスポイント','Özel Sınav':'特別試験','Sınav Sonuçları':'試験結果発表','Program':'予定','Şarkılarımız':'楽曲','Profil':'プロフィール','Menü':'メニュー','Dil':'言語','Öğrenci Profili':'生徒情報','Kişisel Puan':'プライベートポイント','Sınıf Puanı':'クラスポイント','Son İşlemler':'最近の履歴','Son Duyurular':'最新のお知らせ','Hızlı Menü':'クイックメニュー','Mevcut':'現在','Akademik Aralık':'学力範囲','Akademik Puan Aralığı':'学力判定基準','Sınıfı':'クラス','En İyi Gruplar':'上位グループ','En İyi Grup Listesi':'上位グループ一覧','Matematik':'数学','Issız Ada Özel Sınavı':'無人島特別試験','Tokyo İleri Düzey Gelişim Lisesi':'東京都高度育成高等学校','Görev: Gülle Atma':'課題「砲丸投げ」','Deneme':'試練','Gizli Görev':'極秘任務','Fiziksel':'身体能力','Akademik':'学力','Sıra':'順位','Yıl':'学年','Grup Adı':'グループ名','Puanlar':'点数','Ödüller:':'報酬:','Bakiye':'残高','Yükleniyor...':'読み込み中...'}};
 let lang=localStorage.getItem('lang')||'tr', busy=false;
 function applyLang(){ busy=true; document.documentElement.lang=lang;
   const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT); let n;
@@ -864,5 +897,167 @@ else{
   loadTx(); loadAnn(); loadRank();
 }
 </script>
+<div id="galFx" aria-hidden="true">
+  <div class="gf-stage" id="gfStage">
+    <div class="gf-galaxy" id="gfGalaxy"></div>
+    <div class="gf-gallery" id="gfGallery"></div>
+    <div class="gf-film"></div>
+    <div class="gf-bar gf-top"></div><div class="gf-bar gf-bot"></div>
+    <div class="gf-title"><small>LOYAL ELITE FORCE</small><b>Mühürlü Oda</b></div>
+    <div class="gf-hint">Sürükleyerek çevir</div>
+    <div class="gf-white"></div>
+    <button class="gf-x" id="gfClose" type="button" aria-label="Kapat">✕</button>
+  </div>
+</div>
+<script type="module">
+import { mountOrbitGallery } from './orbit-gallery.js';
+import { mountMilkyWay } from './milky-way.js';
+
+const IMAGES = ['crest.png', 'hero.jpg', 'trailer-cover.jpg'];
+const card  = document.getElementById('orbitGallery');
+const fx    = document.getElementById('galFx');
+const stage = document.getElementById('gfStage');
+const host  = document.getElementById('gfGallery');
+const galaxyHost = document.getElementById('gfGalaxy');
+const coarse = matchMedia('(pointer:coarse)');
+let st = null;   // açık oturum: { timers, audio, fs }
+
+/* Gerçek kayıt: sitenin klasörüne 'london-bridge.mp3' koyarsan o çalınır (ilk 7 sn).
+   Dosya yoksa aşağıdaki müzik kutusu melodisi çalar. */
+let songBuffer = null;
+try{
+  const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  if(OAC) fetch('london-bridge.mp3').then(r => r.ok ? r.arrayBuffer() : null)
+    .then(buf => buf && new OAC(1, 1, 44100).decodeAudioData(buf))
+    .then(ab => { if(ab) songBuffer = ab; }).catch(() => {});
+}catch(e){}
+
+/* ---------- Londra Köprüsü: müzik kutusu sesi + yankı (WebAudio, dosya gerekmez) ---------- */
+function playMelody(){
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if(!AC) return null;
+  const ctx = new AC(); if(ctx.resume) ctx.resume();
+  const master = ctx.createGain(); master.gain.value = 0.35; master.connect(ctx.destination);
+  const dry = ctx.createGain(); dry.gain.value = 0.7; dry.connect(master);
+  if(songBuffer){                                      // gerçek kayıt varsa onu çal
+    const src = ctx.createBufferSource(); src.buffer = songBuffer; src.connect(master);
+    const len = Math.min(7, songBuffer.duration), t0 = ctx.currentTime + 3;
+    master.gain.value = 0.55;                          // kayıt yumuşak ama duyulur seviyede
+    master.gain.setValueAtTime(0.55, t0 + len - 1);
+    master.gain.linearRampToValueAtTime(0.0001, t0 + len);
+    src.start(t0); src.stop(t0 + len + 0.05);
+    return { dur: 3 + len, stop(){ try{ ctx.close(); }catch(e){} } };
+  }
+  const send = ctx.createGain();                       // yankı hattı
+  [[0.38, 0.5, 0.65], [0.61, 0.4, 0.4]].forEach(([time, fbk, lvl]) => {
+    const dl = ctx.createDelay(1); dl.delayTime.value = time;
+    const fb = ctx.createGain(); fb.gain.value = fbk;
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400;
+    const wet = ctx.createGain(); wet.gain.value = lvl;
+    send.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(master);
+  });
+  function note(f, t0){
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.45, t0 + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.3);
+    const o1 = ctx.createOscillator(); o1.type = 'triangle'; o1.frequency.value = f;
+    const o2 = ctx.createOscillator(); o2.type = 'sine'; o2.frequency.value = f * 3;
+    const g2 = ctx.createGain(); g2.gain.value = 0.12; o2.connect(g2); g2.connect(g);
+    o1.connect(g); g.connect(dry); g.connect(send);
+    o1.start(t0); o2.start(t0); o1.stop(t0 + 1.4); o2.stop(t0 + 1.4);
+  }
+  const F = { C: 261.63, D: 293.66, E: 329.63, F: 349.23, G: 392, A: 440 };
+  const L1 = [['G',3],['A',1],['G',2],['F',2],['E',2],['F',2],['G',4]];
+  const L2 = [['D',3],['E',1],['F',4],['E',3],['F',1],['G',4]];
+  const L4 = [['D',2],['G',2],['E',2],['C',6]];
+  const SEQ = [].concat(L1, L2, L1, L4);
+  const EIGHTH = 0.19;                                 // doğal (yavaş) hız, ~11 sn
+  let t = ctx.currentTime + 3;                         // önce 3 sn sessiz beyaz ekran
+  SEQ.forEach(([n, len]) => { note(F[n] * 2, t); t += len * EIGHTH; });
+  const dur = t - ctx.currentTime;                     // toplam ~10 sn (3 sessiz + 7 melodi)
+  master.gain.setValueAtTime(0.35, t);                  // bitince yankı da sessizce sönsün
+  master.gain.linearRampToValueAtTime(0.0001, t + 1.0);
+  return { dur, stop(){ try{ ctx.close(); }catch(e){} } };
+}
+
+/* ---------- Mobilde dikey tutuluyorsa sahneyi 90° çevir (yatay görünüm) ---------- */
+function syncRot(){
+  const rot = coarse.matches && innerHeight > innerWidth;
+  stage.classList.toggle('rot', rot);
+  stage.style.width  = rot ? innerHeight + 'px' : '';
+  stage.style.height = rot ? innerWidth  + 'px' : '';
+}
+addEventListener('resize', () => { if(st) syncRot(); });
+
+function openGallery(){
+  if(st) return;
+  st = { timers: [], audio: null, fs: false };
+  fx.classList.add('on'); fx.classList.remove('rev'); fx.setAttribute('aria-hidden', 'false');
+  document.documentElement.style.overflow = 'hidden';
+  syncRot();
+
+  st.audio = playMelody();                             // dokunuş anında başlat (ses izni için)
+
+  if(coarse.matches && fx.requestFullscreen){          // mobilde tam ekran + yatay kilit
+    fx.requestFullscreen({ navigationUI: 'hide' }).then(() => {
+      if(!st) return;
+      st.fs = true;
+      if(screen.orientation && screen.orientation.lock){
+        screen.orientation.lock('landscape').catch(() => {}).then(syncRot);
+      }
+    }).catch(() => {});
+  }
+
+  const dur = st.audio ? st.audio.dur : 8;
+  // Samanyolu'nu ve büyük galeriyi müzik bitmeden hazırla (beyazın altında)
+  st.timers.push(setTimeout(() => {
+    galaxyHost.innerHTML = '';
+    try{ st.galaxyOk = mountMilkyWay(galaxyHost, { rotationSpeed: 0.35, particleSize: 0.6 }); }catch(e){ st.galaxyOk = false; }
+  }, Math.max(0, (dur - 4) * 1000)));
+  st.timers.push(setTimeout(() => {
+    host.innerHTML = '';
+    mountOrbitGallery(host, {
+      images: IMAGES, imageCount: 16, imageSize: 3.0, cameraZ: 17,
+      starCount: st.galaxyOk ? 0 : 2600,               // galaksi yoksa yedek yıldızlar
+      touchAction: 'none', isRotated: () => stage.classList.contains('rot')
+    });
+  }, Math.max(0, (dur - 1.5) * 1000)));
+  // Müzik bitince beyaz yavaşça açılır, galeri sessizce belirir
+  st.timers.push(setTimeout(() => { fx.classList.add('rev'); }, (dur + 0.3) * 1000));
+}
+
+function closeGallery(){
+  if(!st) return;
+  const s = st; st = null;
+  s.timers.forEach(clearTimeout);
+  if(s.audio) s.audio.stop();
+  if(host.__orbitDispose){ host.__orbitDispose(); host.__orbitDispose = null; }
+  host.innerHTML = '';
+  if(galaxyHost.__milkyDispose){ galaxyHost.__milkyDispose(); galaxyHost.__milkyDispose = null; }
+  galaxyHost.innerHTML = '';
+  fx.classList.remove('on', 'rev'); fx.setAttribute('aria-hidden', 'true');
+  document.documentElement.style.overflow = '';
+  stage.classList.remove('rot'); stage.style.width = stage.style.height = '';
+  if(document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
+}
+
+document.addEventListener('fullscreenchange', () => { if(st && st.fs && !document.fullscreenElement) closeGallery(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeGallery(); });
+document.getElementById('gfClose').addEventListener('click', closeGallery);
+
+/* ---------- Ana sayfadaki küçük önizleme ---------- */
+let ok = false;
+try{ ok = mountOrbitGallery(card, { images: IMAGES, interactive: false }); }catch(e){ console.warn('Galeri yüklenemedi:', e); }
+const sec = card.closest('.sec');
+if(!ok){ sec.style.display = 'none'; }
+else {
+  sec.style.cursor = 'pointer';
+  sec.addEventListener('click', openGallery);
+  card.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openGallery(); } });
+}
+</script>
+<script src="scroll-fx.js" defer></script>
 </body>
 </html>
