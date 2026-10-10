@@ -426,7 +426,7 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
   <button data-go="results"><svg class="i" viewBox="0 0 24 24"><path d="M5 20V9M12 20V4M19 20v-7"/></svg>Sınav Sonuçları</button>
   <button data-go="sched"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Program</button>
   <button data-go="songs"><svg class="i" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>Şarkılarımız</button>
-  <button data-go="ai"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M9 10h6"/></svg>NaphielAI</button>
+  <button data-go="ai"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M9 10h6"/></svg>Naphiel AI</button>
   <button data-go="profile"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.6 3.6-5.4 7.5-5.4s6.7 1.8 7.5 5.4"/></svg>Profil</button>
   <div class="me"><b class="u-name">—</b><span class="u-cls"></span><br><div class="lang"><div class="gl" tabindex="0" role="button" aria-label="Dil"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><div class="opts"><div data-lang="tr">Türkçe</div><div data-lang="en">English</div><div data-lang="ru">Русский</div><div data-lang="ja">日本語</div></div></div></div>
 </aside>
@@ -479,7 +479,7 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
     <div class="row link" data-go="exam">Özel Sınav</div>
     <div class="row link" data-go="results">Sınav Sonuçları</div>
     <div class="row link" data-go="songs">Şarkılarımız</div>
-    <div class="row link" data-go="ai">NaphielAI</div>
+    <div class="row link" data-go="ai">Naphiel AI</div>
     <div class="row link" data-go="profile">Öğrenci Profili</div>
     <div class="row"><span class="t">Dil</span><div class="lang"><div class="gl" tabindex="0" role="button" aria-label="Dil"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><div class="opts"><div data-lang="tr">Türkçe</div><div data-lang="en">English</div><div data-lang="ru">Русский</div><div data-lang="ja">日本語</div></div></div></div>
   </div>
@@ -562,55 +562,71 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 </section>
 
 <style>
-#ai .ai-wrap{position:relative;display:flex;flex-direction:column;height:clamp(520px,calc(100dvh - 150px),920px);border-radius:20px;overflow:hidden;border:1px solid rgba(120,170,255,.2);
-  background:radial-gradient(ellipse at 50% 0%,#2358b8 0%,#0f3277 36%,#071638 68%,#030a1d 100%)}
-#ai .ai-wrap::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.9;
-  background-image:radial-gradient(1.2px 1.2px at 12% 22%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 28% 12%,#cfe3ff 50%,transparent 51%),radial-gradient(1.4px 1.4px at 72% 18%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 86% 34%,#cfe3ff 50%,transparent 51%),radial-gradient(1px 1px at 44% 30%,#fff 50%,transparent 51%),radial-gradient(1.2px 1.2px at 62% 8%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 8% 46%,#cfe3ff 50%,transparent 51%),radial-gradient(1px 1px at 93% 12%,#fff 50%,transparent 51%)}
-#ai .ai-moon{position:absolute;top:9%;left:50%;width:74px;height:74px;margin-left:-37px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle at 35% 35%,#fff 0%,#dcecff 45%,#9cc4f5 100%);box-shadow:0 0 50px 14px rgba(150,200,255,.5),0 0 140px 50px rgba(80,140,255,.3)}
-#ai .ai-back{position:absolute;top:12px;left:12px;z-index:3;width:36px;height:36px;border-radius:10px;border:1px solid rgba(140,170,220,.3);background:rgba(0,0,0,.35);color:#fff;font-size:20px;cursor:pointer}
-#ai .ai-hero{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 20px 0}
-#ai .ai-hero h1{font-size:clamp(30px,6vw,44px);font-weight:600;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.4)}
-#ai .ai-hero p{margin-top:8px;color:#d3e4ff;font-size:14.5px}
-#ai .ai-chat{position:relative;z-index:1;flex:1;overflow-y:auto;display:none;flex-direction:column;gap:10px;padding:58px 14px 10px;scrollbar-width:thin}
-#ai .ai-wrap.chatting .ai-chat{display:flex}
-#ai .ai-wrap.chatting .ai-hero,#ai .ai-wrap.chatting .ai-chips{display:none}
-#ai .b{max-width:min(85%,640px);padding:10px 14px;border-radius:14px;font-size:14.5px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word;color:#fff}
-#ai .b.u{align-self:flex-end;background:rgba(47,107,255,.45);border:1px solid rgba(130,170,255,.45)}
-#ai .b.a{align-self:flex-start;background:rgba(0,0,0,.5);border:1px solid rgba(140,170,220,.25);backdrop-filter:blur(8px)}
-#ai .b.wait{opacity:.65;font-style:italic}
-#ai .ai-dock{position:relative;z-index:2;width:100%;max-width:760px;margin:0 auto;padding:0 14px 14px}
-#ai .ai-box{background:rgba(0,0,0,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(130,160,210,.4);border-radius:14px}
-#ai .ai-box textarea{display:block;width:100%;min-height:48px;max-height:150px;padding:14px 16px 4px;resize:none;border:none;outline:none;background:transparent;color:#fff;font:inherit;font-size:16px;line-height:1.4}
-#ai .ai-box textarea::placeholder{color:#8fa6c8}
-#ai .ai-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 10px 10px 16px}
-#ai .ai-info{font-size:12px;color:#9fb6d8;min-height:16px}
-#ai .ai-info.err{color:#ff9b9b}
-#ai #aiBtn{width:38px;height:36px;display:grid;place-items:center;border:none;border-radius:10px;cursor:pointer;background:#2f6bff;color:#fff;transition:background .2s}
-#ai #aiBtn:disabled{background:#3a4658;color:#8d99ab;cursor:not-allowed}
-#ai .ai-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px}
-#ai .ai-chip{padding:8px 13px;border-radius:999px;border:1px solid rgba(140,170,220,.4);background:rgba(0,0,0,.4);color:#cfe0ff;font-size:12.5px;cursor:pointer;transition:background .2s,color .2s}
-#ai .ai-chip:hover{background:rgba(47,107,255,.35);color:#fff}
+body.ai-open{overflow:hidden}
+/* ---- Açılış: 5 sn siyah ekran, 2. saniyede LEF logosu ---- */
+#aiIntro{display:none;position:fixed;inset:0;z-index:10001;background:#000;align-items:center;justify-content:center;cursor:pointer}
+#aiIntro.play,#aiIntro.out{display:flex}
+#aiIntro.out{animation:aiOut .6s ease forwards}
+#aiIntro img{width:min(46vw,230px);height:auto;opacity:0;animation:aiLogo 2.8s ease 2s both;filter:drop-shadow(0 0 24px rgba(190,220,255,.25))}
+#aiIntro small{position:absolute;bottom:28px;left:0;right:0;text-align:center;color:rgba(255,255,255,.35);font-size:12px;letter-spacing:.12em;opacity:0;animation:aiHint 1s ease 1s forwards}
+@keyframes aiLogo{0%{opacity:0;transform:scale(.92)}35%{opacity:1;transform:scale(1)}85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.03)}}
+@keyframes aiHint{to{opacity:1}}
+@keyframes aiOut{to{opacity:0}}
+/* ---- Naphiel AI sayfası (Ruixen Moon Chat'in açık mavi karşılığı) ---- */
+#ai{--hue:-62deg;display:none;position:fixed;inset:0;z-index:9000;flex-direction:column;align-items:center;overflow:hidden;color:#fff;background:#2a63c9}
+#ai.on{display:flex}
+#ai .ai-bgc{position:absolute;inset:0;background:
+  radial-gradient(circle at 50% 24%,rgba(255,255,255,.9) 0,rgba(205,235,255,.6) 4%,rgba(130,195,255,.3) 13%,transparent 36%),
+  linear-gradient(180deg,#8fd0ff 0%,#4f9cf0 38%,#2a63c9 72%,#123a8c 100%)}
+#ai .ai-bgi{position:absolute;inset:0;background:url("https://cdn.21st.dev/assets/mirror/c3/c333918af688a4a8a3d004652e6c0ee219457a9d84d380eeb31f513d4b59a09f.png") center/cover no-repeat;filter:hue-rotate(var(--hue)) saturate(.95) brightness(1.18)}
+#ai .ai-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,20,60,.12),rgba(0,20,60,.5))}
+#ai .ai-back{position:absolute;top:14px;left:14px;z-index:5;width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.35);backdrop-filter:blur(8px);color:#fff;font-size:22px;line-height:1;cursor:pointer}
+#ai .ai-hero{position:relative;z-index:1;flex:1;width:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 20px}
+#ai .ai-hero h1{font-size:2.25rem;font-weight:600;color:#fff;text-shadow:0 2px 12px rgba(0,30,80,.45)}
+#ai .ai-hero p{margin-top:.5rem;color:#eaf3ff;font-size:15px;text-shadow:0 1px 8px rgba(0,30,80,.4)}
+#ai .ai-chat{position:relative;z-index:1;flex:1;width:100%;max-width:48rem;overflow-y:auto;display:none;flex-direction:column;gap:10px;padding:70px 16px 10px;scrollbar-width:thin}
+#ai.chatting .ai-chat{display:flex}
+#ai.chatting .ai-hero,#ai.chatting .ai-chips{display:none}
+#ai .b{max-width:min(88%,640px);padding:10px 14px;border-radius:14px;font-size:14.5px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word;color:#fff}
+#ai .b.u{align-self:flex-end;background:rgba(30,100,230,.6);border:1px solid rgba(190,220,255,.5)}
+#ai .b.a{align-self:flex-start;background:rgba(0,20,60,.55);border:1px solid rgba(190,220,255,.3);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#ai .b.wait{opacity:.7;font-style:italic}
+#ai .ai-dock{position:relative;z-index:2;width:100%;max-width:48rem;padding:0 16px;margin-bottom:20vh}
+#ai.chatting .ai-dock{margin-bottom:16px}
+#ai .ai-box{background:rgba(0,0,0,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(200,225,255,.4);border-radius:12px}
+#ai .ai-box textarea{display:block;width:100%;min-height:48px;max-height:150px;padding:12px 16px;resize:none;border:none;outline:none;background:transparent;color:#fff;font:inherit;font-size:15px;line-height:1.4;overflow:hidden}
+#ai .ai-box textarea::placeholder{color:#a3b8d6}
+#ai .ai-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 12px 12px 16px}
+#ai .ai-info{font-size:12px;color:#b9cdea;min-height:16px}
+#ai .ai-info.err{color:#ffb3b3}
+#ai #aiBtn{display:grid;place-items:center;padding:8px 12px;border:none;border-radius:8px;cursor:pointer;background:#2f7bff;color:#fff;transition:background .2s}
+#ai #aiBtn:disabled{background:#404040;color:#a3a3a3;cursor:not-allowed}
+#ai .ai-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:24px}
+#ai .ai-chip{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;border:1px solid rgba(220,235,255,.45);background:rgba(0,0,0,.5);color:#d4d4d4;font-size:12px;cursor:pointer;transition:background .2s,color .2s}
+#ai .ai-chip:hover{background:rgba(255,255,255,.22);color:#fff}
+@media (max-width:600px){#ai .ai-dock{margin-bottom:12vh}#ai .ai-chips{gap:8px;margin-top:16px}}
 </style>
-<section class="page" id="ai">
-  <div class="ai-wrap" id="aiWrap">
-    <div class="ai-moon"></div>
-    <button class="ai-back" data-go="menu" aria-label="Geri">‹</button>
-    <div class="ai-hero"><h1>NaphielAI</h1><p>Aklındaki her şeyi sor, birlikte çözelim.</p></div>
-    <div class="ai-chat" id="aiChat"></div>
-    <div class="ai-dock">
-      <form class="ai-box" id="aiForm">
-        <textarea id="aiInput" rows="1" maxlength="1000" placeholder="Bir şey yaz..."></textarea>
-        <div class="ai-foot"><span class="ai-info" id="aiMsg"></span>
-          <button type="submit" id="aiBtn" disabled aria-label="Gönder"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div>
-      </form>
-      <div class="ai-chips">
-        <button type="button" class="ai-chip" data-q="Kendini kısaca tanıt.">Kendini tanıt</button>
-        <button type="button" class="ai-chip" data-q="Sınavlara nasıl verimli çalışırım?">Sınav çalışma planı</button>
-        <button type="button" class="ai-chip" data-q="Kod yazmama yardım eder misin?">Kod yardımı</button>
-        <button type="button" class="ai-chip" data-q="Bana kısa bir motivasyon sözü ver.">Motivasyon</button>
-        <button type="button" class="ai-chip" data-q="Bana ilginç bir bilgi anlat.">İlginç bilgi</button>
-      </div>
+<div id="aiIntro"><img src="crest.png" alt=""><small>Atlamak için dokun</small></div>
+<section id="ai">
+  <div class="ai-bgc"></div><div class="ai-bgi"></div><div class="ai-scrim"></div>
+  <button class="ai-back" data-go="home" aria-label="Geri">‹</button>
+  <div class="ai-hero"><div><h1>Naphiel AI</h1><p>Her şeyi sor, yazmaya başla.</p></div></div>
+  <div class="ai-chat" id="aiChat"></div>
+  <div class="ai-dock">
+    <form class="ai-box" id="aiForm">
+      <textarea id="aiInput" rows="1" maxlength="1000" placeholder="İsteğini yaz..."></textarea>
+      <div class="ai-foot"><span class="ai-info" id="aiMsg"></span>
+        <button type="submit" id="aiBtn" disabled aria-label="Gönder"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div>
+    </form>
+    <div class="ai-chips">
+        <button type="button" class="ai-chip" data-q="LTF'yi kısaca anlat."><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z</svg><span>LTF Hakkında</span></button>
+        <button type="button" class="ai-chip" data-q="Kod yazmama yardım eder misin?"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">m16 18 6-6-6-6M8 6l-6 6 6 6</svg><span>Kod Yardımı</span></button>
+        <button type="button" class="ai-chip" data-q="Sınavlara verimli çalışmak için bir plan öner."><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z</svg><span>Çalışma Planı</span></button>
+        <button type="button" class="ai-chip" data-q="Anime temalı, karanlık ama umut dolu bir şarkı için fikir ver."><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5</svg><span>Müzik Fikri</span></button>
+        <button type="button" class="ai-chip" data-q="LTF için logo ve renk fikirleri ver."><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z</svg><span>Tasarım Fikri</span></button>
+        <button type="button" class="ai-chip" data-q="Bir web sitesi yapmak için nereden başlamalıyım?"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M8 21h8M12 17v4</svg><span>Web Sitesi</span></button>
+        <button type="button" class="ai-chip" data-q="LTF için küçük bir ortak proje fikri öner."><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z</svg><span>Proje Fikri</span></button>
+        <button type="button" class="ai-chip" data-q="Bana kısa bir motivasyon sözü ver."><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5l-5.4 3 1.2-6L3.3 9.3l6.1-.7z</svg><span>Motivasyon</span></button>
     </div>
   </div>
 </section>
@@ -634,6 +650,9 @@ let me = null, uid = null;
 /* ---------- YÖNLENDİRME & SEKMELER ---------- */
 const MOBILE_TAB = { home:'home', news:'news', sched:'sched' };
 function go(id){
+  const aiWas = $('#ai').classList.contains('on');
+  $('#ai').classList.toggle('on', id === 'ai'); document.body.classList.toggle('ai-open', id === 'ai');
+  if(id === 'ai' && !aiWas) aiIntro();
   $$('.page').forEach(p => p.classList.toggle('on', p.id === id));
   $$('.side button').forEach(b => b.classList.toggle('on', b.dataset.go === id));
   const nt = MOBILE_TAB[id] || 'menu';
@@ -655,6 +674,16 @@ document.addEventListener('click', async e => {
   const g = e.target.closest('[data-go]'); if(g) go(g.dataset.go);
 });
 
+/* ---------- NaphielAI açılış animasyonu ---------- */
+document.body.appendChild($('#aiIntro')); document.body.appendChild($('#ai'));
+let aiIntroT = null;
+function aiIntro(){
+  const o = $('#aiIntro'); clearTimeout(aiIntroT);
+  o.className = ''; void o.offsetWidth; o.className = 'play';
+  const end = () => { clearTimeout(aiIntroT); o.className = 'out'; aiIntroT = setTimeout(() => { o.className = ''; }, 600); };
+  o.onclick = end;
+  aiIntroT = setTimeout(end, 5000);
+}
 /* ---------- NaphielAI (DeepSeek, Edge Function üzerinden, akışlı) ---------- */
 let aiLoaded = false, aiBusy = false;
 function aiAdd(cls, text){
@@ -672,13 +701,13 @@ async function loadAi(){
     .order('created_at', { ascending:false }).limit(20);
   const rows = (data || []).reverse();
   rows.forEach(m => aiAdd(m.role === 'user' ? 'u' : 'a', m.content));
-  if(rows.length){ $('#aiWrap').classList.add('chatting'); $('#aiChat').scrollTop = $('#aiChat').scrollHeight; }
+  if(rows.length){ $('#ai').classList.add('chatting'); $('#aiChat').scrollTop = $('#aiChat').scrollHeight; }
 }
 async function aiSend(text){
   text = (text || '').trim();
   if(!text || aiBusy) return;
   aiBusy = true; aiInfo('');
-  $('#aiWrap').classList.add('chatting');
+  $('#ai').classList.add('chatting');
   $('#aiInput').value = ''; aiFit();
   aiAdd('u', text);
   const bub = aiAdd('a wait', 'Yazıyor...');
