@@ -677,13 +677,25 @@ document.addEventListener('click', async e => {
 /* ---------- NaphielAI açılış animasyonu ---------- */
 document.body.appendChild($('#aiIntro')); document.body.appendChild($('#ai'));
 let aiIntroT = null;
+/* Ses: london-bridge'in 3 sn'lik kesiti. Dosyanın başında 2 sn sessizlik var, böylece ses tam 2. saniyede (logoyla) başlar
+   ve tıklama anında çalıştırıldığı için tarayıcı engellemez. */
+const aiAudioEl = new Audio('ai-intro.mp3'); aiAudioEl.preload = 'auto';
+function aiSoundStop(){ try { aiAudioEl.pause(); } catch(_){} }
+function aiSound(){
+  try {
+    aiAudioEl.currentTime = 0; aiAudioEl.volume = 0.9;
+    const pr = aiAudioEl.play(); if(pr && pr.catch) pr.catch(() => {});
+  } catch(_){}
+}
 function aiIntro(){
   const o = $('#aiIntro'); clearTimeout(aiIntroT);
   o.className = ''; void o.offsetWidth; o.className = 'play';
-  const end = () => { clearTimeout(aiIntroT); o.className = 'out'; aiIntroT = setTimeout(() => { o.className = ''; }, 600); };
+  aiSound();
+  const end = () => { clearTimeout(aiIntroT); aiSoundStop(); o.className = 'out'; aiIntroT = setTimeout(() => { o.className = ''; }, 600); };
   o.onclick = end;
   aiIntroT = setTimeout(end, 5000);
 }
+
 /* ---------- NaphielAI (DeepSeek, Edge Function üzerinden, akışlı) ---------- */
 let aiLoaded = false, aiBusy = false;
 function aiAdd(cls, text){
