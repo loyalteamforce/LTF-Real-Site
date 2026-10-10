@@ -8,6 +8,8 @@ const SUPABASE_URL = "https://mbyyuovlipbpioxtkjcp.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_LTLO2qA7KorZC944aF27fg_kKPJ-71Q";
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const FUNCTIONS_URL = SUPABASE_URL + '/functions/v1'; // NaphielAI için
+export { SUPABASE_ANON_KEY };
 
 const EMAIL_DOMAIN = '@lefmembers.com';
 

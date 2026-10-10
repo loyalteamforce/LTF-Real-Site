@@ -426,7 +426,7 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
   <button data-go="results"><svg class="i" viewBox="0 0 24 24"><path d="M5 20V9M12 20V4M19 20v-7"/></svg>Sınav Sonuçları</button>
   <button data-go="sched"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Program</button>
   <button data-go="songs"><svg class="i" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>Şarkılarımız</button>
-  <button data-go="ai"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M9 10h6"/></svg>Yapay Zeka</button>
+  <button data-go="ai"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M9 10h6"/></svg>NaphielAI</button>
   <button data-go="profile"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.6 3.6-5.4 7.5-5.4s6.7 1.8 7.5 5.4"/></svg>Profil</button>
   <div class="me"><b class="u-name">—</b><span class="u-cls"></span><br><div class="lang"><div class="gl" tabindex="0" role="button" aria-label="Dil"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><div class="opts"><div data-lang="tr">Türkçe</div><div data-lang="en">English</div><div data-lang="ru">Русский</div><div data-lang="ja">日本語</div></div></div></div>
 </aside>
@@ -479,7 +479,7 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
     <div class="row link" data-go="exam">Özel Sınav</div>
     <div class="row link" data-go="results">Sınav Sonuçları</div>
     <div class="row link" data-go="songs">Şarkılarımız</div>
-    <div class="row link" data-go="ai">Yapay Zeka</div>
+    <div class="row link" data-go="ai">NaphielAI</div>
     <div class="row link" data-go="profile">Öğrenci Profili</div>
     <div class="row"><span class="t">Dil</span><div class="lang"><div class="gl" tabindex="0" role="button" aria-label="Dil"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><div class="opts"><div data-lang="tr">Türkçe</div><div data-lang="en">English</div><div data-lang="ru">Русский</div><div data-lang="ja">日本語</div></div></div></div>
   </div>
@@ -562,21 +562,56 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 </section>
 
 <style>
-#ai .chat{display:flex;flex-direction:column;gap:10px;min-height:260px;max-height:55vh;overflow-y:auto;padding:4px 2px 10px}
-#ai .b{max-width:85%;padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
-#ai .b.u{align-self:flex-end;background:rgba(209,18,63,.22);border:1px solid rgba(209,18,63,.35)}
-#ai .b.a{align-self:flex-start;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}
-#ai .b.a.wait{opacity:.6;font-style:italic}
-#ai .send{display:flex;gap:8px;margin-top:8px}
-#ai .send input{flex:1;margin:0}
-#ai .send .cta{margin:0;width:auto;padding:0 18px}
+#ai .ai-wrap{position:relative;display:flex;flex-direction:column;height:clamp(520px,calc(100dvh - 150px),920px);border-radius:20px;overflow:hidden;border:1px solid rgba(120,170,255,.2);
+  background:radial-gradient(ellipse at 50% 0%,#2358b8 0%,#0f3277 36%,#071638 68%,#030a1d 100%)}
+#ai .ai-wrap::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.9;
+  background-image:radial-gradient(1.2px 1.2px at 12% 22%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 28% 12%,#cfe3ff 50%,transparent 51%),radial-gradient(1.4px 1.4px at 72% 18%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 86% 34%,#cfe3ff 50%,transparent 51%),radial-gradient(1px 1px at 44% 30%,#fff 50%,transparent 51%),radial-gradient(1.2px 1.2px at 62% 8%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 8% 46%,#cfe3ff 50%,transparent 51%),radial-gradient(1px 1px at 93% 12%,#fff 50%,transparent 51%)}
+#ai .ai-moon{position:absolute;top:9%;left:50%;width:74px;height:74px;margin-left:-37px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 35% 35%,#fff 0%,#dcecff 45%,#9cc4f5 100%);box-shadow:0 0 50px 14px rgba(150,200,255,.5),0 0 140px 50px rgba(80,140,255,.3)}
+#ai .ai-back{position:absolute;top:12px;left:12px;z-index:3;width:36px;height:36px;border-radius:10px;border:1px solid rgba(140,170,220,.3);background:rgba(0,0,0,.35);color:#fff;font-size:20px;cursor:pointer}
+#ai .ai-hero{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 20px 0}
+#ai .ai-hero h1{font-size:clamp(30px,6vw,44px);font-weight:600;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.4)}
+#ai .ai-hero p{margin-top:8px;color:#d3e4ff;font-size:14.5px}
+#ai .ai-chat{position:relative;z-index:1;flex:1;overflow-y:auto;display:none;flex-direction:column;gap:10px;padding:58px 14px 10px;scrollbar-width:thin}
+#ai .ai-wrap.chatting .ai-chat{display:flex}
+#ai .ai-wrap.chatting .ai-hero,#ai .ai-wrap.chatting .ai-chips{display:none}
+#ai .b{max-width:min(85%,640px);padding:10px 14px;border-radius:14px;font-size:14.5px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word;color:#fff}
+#ai .b.u{align-self:flex-end;background:rgba(47,107,255,.45);border:1px solid rgba(130,170,255,.45)}
+#ai .b.a{align-self:flex-start;background:rgba(0,0,0,.5);border:1px solid rgba(140,170,220,.25);backdrop-filter:blur(8px)}
+#ai .b.wait{opacity:.65;font-style:italic}
+#ai .ai-dock{position:relative;z-index:2;width:100%;max-width:760px;margin:0 auto;padding:0 14px 14px}
+#ai .ai-box{background:rgba(0,0,0,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(130,160,210,.4);border-radius:14px}
+#ai .ai-box textarea{display:block;width:100%;min-height:48px;max-height:150px;padding:14px 16px 4px;resize:none;border:none;outline:none;background:transparent;color:#fff;font:inherit;font-size:16px;line-height:1.4}
+#ai .ai-box textarea::placeholder{color:#8fa6c8}
+#ai .ai-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 10px 10px 16px}
+#ai .ai-info{font-size:12px;color:#9fb6d8;min-height:16px}
+#ai .ai-info.err{color:#ff9b9b}
+#ai #aiBtn{width:38px;height:36px;display:grid;place-items:center;border:none;border-radius:10px;cursor:pointer;background:#2f6bff;color:#fff;transition:background .2s}
+#ai #aiBtn:disabled{background:#3a4658;color:#8d99ab;cursor:not-allowed}
+#ai .ai-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px}
+#ai .ai-chip{padding:8px 13px;border-radius:999px;border:1px solid rgba(140,170,220,.4);background:rgba(0,0,0,.4);color:#cfe0ff;font-size:12.5px;cursor:pointer;transition:background .2s,color .2s}
+#ai .ai-chip:hover{background:rgba(47,107,255,.35);color:#fff}
 </style>
 <section class="page" id="ai">
-  <div class="ph"><button class="back" data-go="menu">‹</button><div><h2>Yapay Zeka</h2><small>LEF AI</small></div></div>
-  <div class="sec">
-    <div class="chat" id="aiChat"></div>
-    <form class="send" id="aiForm"><input id="aiInput" maxlength="1000" autocomplete="off" placeholder="LEF AI'ya bir şey sor..."><button class="cta" id="aiBtn">Gönder</button></form>
-    <div class="msg" id="aiMsg"></div>
+  <div class="ai-wrap" id="aiWrap">
+    <div class="ai-moon"></div>
+    <button class="ai-back" data-go="menu" aria-label="Geri">‹</button>
+    <div class="ai-hero"><h1>NaphielAI</h1><p>Aklındaki her şeyi sor, birlikte çözelim.</p></div>
+    <div class="ai-chat" id="aiChat"></div>
+    <div class="ai-dock">
+      <form class="ai-box" id="aiForm">
+        <textarea id="aiInput" rows="1" maxlength="1000" placeholder="Bir şey yaz..."></textarea>
+        <div class="ai-foot"><span class="ai-info" id="aiMsg"></span>
+          <button type="submit" id="aiBtn" disabled aria-label="Gönder"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div>
+      </form>
+      <div class="ai-chips">
+        <button type="button" class="ai-chip" data-q="Kendini kısaca tanıt.">Kendini tanıt</button>
+        <button type="button" class="ai-chip" data-q="Sınavlara nasıl verimli çalışırım?">Sınav çalışma planı</button>
+        <button type="button" class="ai-chip" data-q="Kod yazmama yardım eder misin?">Kod yardımı</button>
+        <button type="button" class="ai-chip" data-q="Bana kısa bir motivasyon sözü ver.">Motivasyon</button>
+        <button type="button" class="ai-chip" data-q="Bana ilginç bir bilgi anlat.">İlginç bilgi</button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -589,7 +624,7 @@ nav.nav button.on .nl{ grid-template-columns:1fr; opacity:1; }
 </div>
 
 <script type="module">
-import { supabase, escapeHtml } from './config.js';
+import { supabase, escapeHtml, FUNCTIONS_URL, SUPABASE_ANON_KEY } from './config.js';
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const fmt = n => (n ?? 0).toLocaleString('tr-TR');
 const fdate = s => new Date(s).toLocaleDateString('tr-TR', { day:'2-digit', month:'2-digit', year:'numeric' });
@@ -620,47 +655,63 @@ document.addEventListener('click', async e => {
   const g = e.target.closest('[data-go]'); if(g) go(g.dataset.go);
 });
 
-/* ---------- YAPAY ZEKA (DeepSeek, Edge Function üzerinden) ---------- */
+/* ---------- NaphielAI (DeepSeek, Edge Function üzerinden, akışlı) ---------- */
 let aiLoaded = false, aiBusy = false;
-function aiBubble(cls, text){
+function aiAdd(cls, text){
   const d = document.createElement('div'); d.className = 'b ' + cls; d.textContent = text;
   const box = $('#aiChat'); box.appendChild(d); box.scrollTop = box.scrollHeight; return d;
 }
+function aiInfo(t, err){ const m = $('#aiMsg'); m.textContent = t || ''; m.classList.toggle('err', !!err); }
+function aiFit(){
+  const t = $('#aiInput'); t.style.height = '48px'; t.style.height = Math.min(t.scrollHeight, 150) + 'px';
+  $('#aiBtn').disabled = aiBusy || !t.value.trim();
+}
 async function loadAi(){
   if(aiLoaded) return; aiLoaded = true;
-  aiBubble('a', 'Merhaba, ben LEF AI. Birlik, puanlar, sınavlar ya da herhangi bir konuda soru sorabilirsin.');
   const { data } = await supabase.from('ai_messages').select('role,content')
     .order('created_at', { ascending:false }).limit(20);
-  (data || []).reverse().forEach(m => aiBubble(m.role === 'user' ? 'u' : 'a', m.content));
+  const rows = (data || []).reverse();
+  rows.forEach(m => aiAdd(m.role === 'user' ? 'u' : 'a', m.content));
+  if(rows.length){ $('#aiWrap').classList.add('chatting'); $('#aiChat').scrollTop = $('#aiChat').scrollHeight; }
 }
-document.addEventListener('submit', async e => {
-  if(e.target.id !== 'aiForm') return;
-  e.preventDefault();
-  if(aiBusy) return;
-  const inp = $('#aiInput'), msg = $('#aiMsg'), text = inp.value.trim();
-  if(!text) return;
-  msg.className = 'msg'; msg.textContent = '';
-  inp.value = ''; aiBubble('u', text);
-  const wait = aiBubble('a wait', 'Düşünüyor...');
-  aiBusy = true; $('#aiBtn').disabled = true;
+async function aiSend(text){
+  text = (text || '').trim();
+  if(!text || aiBusy) return;
+  aiBusy = true; aiInfo('');
+  $('#aiWrap').classList.add('chatting');
+  $('#aiInput').value = ''; aiFit();
+  aiAdd('u', text);
+  const bub = aiAdd('a wait', 'Yazıyor...');
   try {
-    const { data, error } = await supabase.functions.invoke('ai-chat', { body: { message: text } });
-    let reply = data && data.reply, err = data && data.error;
-    if(error){
-      try { const j = await error.context.json(); err = j.error; } catch(_){ err = 'Bağlantı hatası.'; }
+    const { data: { session } } = await supabase.auth.getSession();
+    if(!session) throw new Error('Giriş yapmalısın.');
+    const r = await fetch(FUNCTIONS_URL + '/ai-chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token, apikey: SUPABASE_ANON_KEY },
+      body: JSON.stringify({ message: text })
+    });
+    if(!r.ok){ let j = {}; try{ j = await r.json(); }catch(_){} throw new Error(j.error || 'Bir hata oluştu.'); }
+    const rem = r.headers.get('X-Remaining');
+    const rd = r.body.getReader(), dec = new TextDecoder(); let out = '';
+    while(true){
+      const { done, value } = await rd.read(); if(done) break;
+      out += dec.decode(value, { stream:true });
+      bub.className = 'b a'; bub.textContent = out;
+      $('#aiChat').scrollTop = $('#aiChat').scrollHeight;
     }
-    if(reply){
-      wait.className = 'b a'; wait.textContent = reply;
-      if(typeof data.remaining === 'number') msg.textContent = 'Bugün kalan hakkın: ' + data.remaining;
-    } else {
-      wait.remove(); msg.className = 'msg error'; msg.textContent = err || 'Bir hata oluştu.';
-    }
-  } catch(_){
-    wait.remove(); msg.className = 'msg error'; msg.textContent = 'Bağlantı hatası.';
+    if(!out.trim()) throw new Error('Boş cevap geldi, tekrar dene.');
+    if(rem !== null) aiInfo('Bugün kalan hakkın: ' + rem);
+  } catch(err){
+    bub.remove(); aiInfo(err.message || 'Bağlantı hatası.', true);
   }
-  aiBusy = false; $('#aiBtn').disabled = false;
-  $('#aiChat').scrollTop = $('#aiChat').scrollHeight;
+  aiBusy = false; aiFit();
+}
+document.addEventListener('input', e => { if(e.target.id === 'aiInput') aiFit(); });
+document.addEventListener('keydown', e => {
+  if(e.target.id === 'aiInput' && e.key === 'Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); aiSend(e.target.value); }
 });
+document.addEventListener('submit', e => { if(e.target.id === 'aiForm'){ e.preventDefault(); aiSend($('#aiInput').value); } });
+document.addEventListener('click', e => { const c = e.target.closest('.ai-chip'); if(c) aiSend(c.dataset.q); });
 
 /* ---------- VERİ ---------- */
 async function loadProfile(){
