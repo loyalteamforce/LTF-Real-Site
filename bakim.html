@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Bakımdayız | Loyal Elite Force</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:#123a8c;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#fff}
+.bgc{position:fixed;inset:0;background:radial-gradient(circle at 50% 20%,rgba(255,255,255,.85) 0,rgba(205,235,255,.55) 4%,rgba(130,195,255,.28) 13%,transparent 36%),linear-gradient(180deg,#8fd0ff 0%,#4f9cf0 38%,#2a63c9 72%,#123a8c 100%)}
+.bgi{position:fixed;inset:0;background:url("https://cdn.21st.dev/assets/mirror/c3/c333918af688a4a8a3d004652e6c0ee219457a9d84d380eeb31f513d4b59a09f.png") center/cover no-repeat;filter:hue-rotate(-62deg) saturate(.95) brightness(1.18)}
+.scrim{position:fixed;inset:0;background:linear-gradient(180deg,rgba(0,20,60,.15),rgba(0,20,60,.55))}
+#wrap{position:relative;z-index:1;height:100dvh;display:flex;flex-direction:column;align-items:center;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.head{text-align:center;padding:22px 20px 0}
+.head img{width:84px;height:84px;object-fit:contain;filter:drop-shadow(0 0 18px rgba(200,225,255,.35))}
+.head h1{margin-top:6px;font-size:15px;font-weight:700;letter-spacing:.38em;text-indent:.38em;text-shadow:0 2px 10px rgba(0,30,80,.5)}
+.head p{margin-top:8px;font-size:13px;color:#e4f0ff;max-width:420px;line-height:1.5;text-shadow:0 1px 8px rgba(0,30,80,.45)}
+#wrap.chatting .head img{width:44px;height:44px}
+#wrap.chatting .head p{display:none}
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 20px}
+.hero h2{font-size:2.25rem;font-weight:600;text-shadow:0 2px 12px rgba(0,30,80,.45)}
+.hero p{margin-top:.5rem;color:#eaf3ff;font-size:15px}
+#wrap.chatting .hero,#wrap.chatting .chips{display:none}
+.chat{flex:1;width:100%;max-width:48rem;overflow-y:auto;display:none;flex-direction:column;gap:10px;padding:16px 16px 10px;scrollbar-width:thin}
+#wrap.chatting .chat{display:flex}
+.b{max-width:min(88%,640px);padding:10px 14px;border-radius:14px;font-size:14.5px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
+.b.u{align-self:flex-end;background:rgba(30,100,230,.6);border:1px solid rgba(190,220,255,.5)}
+.b.a{align-self:flex-start;background:rgba(0,20,60,.55);border:1px solid rgba(190,220,255,.3);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.b.wait{opacity:.7;font-style:italic}
+.dock{width:100%;max-width:48rem;padding:0 16px;margin-bottom:12vh}
+#wrap.chatting .dock{margin-bottom:16px}
+.box{background:rgba(0,0,0,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(200,225,255,.4);border-radius:12px}
+.box textarea{display:block;width:100%;min-height:48px;max-height:150px;padding:12px 16px;resize:none;border:none;outline:none;background:transparent;color:#fff;font:inherit;font-size:16px;line-height:1.4;overflow:hidden}
+.box textarea::placeholder{color:#a3b8d6}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 12px 12px 16px}
+.info{font-size:12px;color:#b9cdea;min-height:16px}.info.err{color:#ffb3b3}
+#btn{display:grid;place-items:center;padding:8px 12px;border:none;border-radius:8px;cursor:pointer;background:#2f7bff;color:#fff}
+#btn:disabled{background:#404040;color:#a3a3a3;cursor:not-allowed}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:18px}
+.chip{padding:8px 16px;border-radius:999px;border:1px solid rgba(220,235,255,.45);background:rgba(0,0,0,.5);color:#d4d4d4;font-size:12px;cursor:pointer}
+.chip:hover{background:rgba(255,255,255,.22);color:#fff}
+</style>
+</head>
+<body>
+<div class="bgc"></div><div class="bgi"></div><div class="scrim"></div>
+<main id="wrap">
+  <header class="head">
+    <img src="crest.png" alt="Loyal Elite Force">
+    <h1>BAKIMDAYIZ</h1>
+    <p>Site şu anda bakımda. Çok yakında geri döneceğiz. Bu sürede sadece Naphiel AI ile sohbet edebilirsin.</p>
+  </header>
+  <section class="hero"><h2>Naphiel AI</h2><p>Her şeyi sor, yazmaya başla.</p></section>
+  <div class="chat" id="chat"></div>
+  <div class="dock">
+    <form class="box" id="form">
+      <textarea id="input" rows="1" maxlength="1000" placeholder="İsteğini yaz..."></textarea>
+      <div class="foot"><span class="info" id="msg"></span>
+        <button type="submit" id="btn" disabled aria-label="Gönder"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div>
+    </form>
+    <div class="chips">
+      <button type="button" class="chip" data-q="Kendini kısaca tanıt.">Kendini tanıt</button>
+      <button type="button" class="chip" data-q="LTF'yi kısaca anlat.">LTF Hakkında</button>
+      <button type="button" class="chip" data-q="Site ne zaman açılır?">Site ne zaman açılır?</button>
+      <button type="button" class="chip" data-q="Bana ilginç bir bilgi anlat.">İlginç bilgi</button>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+const $ = s => document.querySelector(s);
+let sb = null, FN = '', KEY = '';
+try { const m = await import('./config.js'); sb = m.supabase; FN = m.FUNCTIONS_URL; KEY = m.SUPABASE_ANON_KEY; } catch(e){ console.warn(e); }
+
+const hist = []; let busy = false;
+function add(cls, text){ const d = document.createElement('div'); d.className = 'b ' + cls; d.textContent = text;
+  const c = $('#chat'); c.appendChild(d); c.scrollTop = c.scrollHeight; return d; }
+function info(t, err){ const m = $('#msg'); m.textContent = t || ''; m.classList.toggle('err', !!err); }
+function fit(){ const t = $('#input'); t.style.height = '48px'; t.style.height = Math.min(t.scrollHeight, 150) + 'px'; $('#btn').disabled = busy || !t.value.trim(); }
+
+async function send(text){
+  text = (text || '').trim(); if(!text || busy) return;
+  busy = true; info(''); $('#wrap').classList.add('chatting');
+  $('#input').value = ''; fit(); add('u', text);
+  const bub = add('a wait', 'Yazıyor...');
+  try {
+    if(!FN) throw new Error('Sunucuya ulaşılamıyor. Biraz sonra tekrar dene.');
+    let token = null;
+    try { const { data: { session } } = await sb.auth.getSession(); token = session && session.access_token; } catch(_){}
+    let r;
+    try {
+      r = await fetch(FN + '/ai-chat', { method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: KEY, Authorization: 'Bearer ' + (token || KEY) },
+        body: JSON.stringify({ message: text, history: hist.slice(-6) }) });
+    } catch(_){ throw new Error('Sunucuya ulaşılamıyor. Biraz sonra tekrar dene.'); }
+    if(!r.ok){ let j = {}; try { j = await r.json(); } catch(_){} throw new Error(j.error || 'Bir hata oluştu.'); }
+    const rem = r.headers.get('X-Remaining');
+    const rd = r.body.getReader(), dec = new TextDecoder(); let out = '';
+    while(true){ const { done, value } = await rd.read(); if(done) break;
+      out += dec.decode(value, { stream: true }); bub.className = 'b a'; bub.textContent = out;
+      $('#chat').scrollTop = $('#chat').scrollHeight; }
+    if(!out.trim()) throw new Error('Boş cevap geldi, tekrar dene.');
+    hist.push({ role: 'user', content: text }, { role: 'assistant', content: out.trim() });
+    if(rem !== null) info('Bugün kalan hakkın: ' + rem);
+  } catch(err){ bub.remove(); info(err.message || 'Bağlantı hatası.', true); }
+  busy = false; fit();
+}
+$('#input').addEventListener('input', fit);
+$('#input').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); send(e.target.value); } });
+$('#form').addEventListener('submit', e => { e.preventDefault(); send($('#input').value); });
+document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => send(c.dataset.q)));
+</script>
+</body>
+</html>
