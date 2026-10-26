@@ -700,7 +700,7 @@ function aiFit(){
 async function loadAi(){
   if(aiLoaded) return; aiLoaded = true;
   const { data } = await supabase.from('ai_messages').select('role,content')
-    .order('created_at', { ascending:false }).limit(20);
+    .order('id', { ascending:false }).limit(20);
   const rows = (data || []).reverse();
   rows.forEach(m => aiAdd(m.role === 'user' ? 'u' : 'a', m.content));
   if(rows.length){ $('#ai').classList.add('chatting'); $('#aiChat').scrollTop = $('#aiChat').scrollHeight; }
