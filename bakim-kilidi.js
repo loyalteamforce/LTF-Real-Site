@@ -5,7 +5,7 @@
 // Siteyi tekrar açmak için SADECE aşağıdaki true'yu false yap ve bu dosyayı yükle.
 // ============================================================
 (function () {
-  var BAKIM = true;
+  var BAKIM = false;
   if (!BAKIM) return;
   if (location.pathname.indexOf('bakim') !== -1) return;   // bakım sayfasında dönme
   document.documentElement.style.visibility = 'hidden';     // yönlenirken sayfa görünmesin

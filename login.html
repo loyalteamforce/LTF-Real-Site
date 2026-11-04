@@ -41,123 +41,173 @@
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700;800&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="shortcut icon" href="favicon.ico">
-<link rel="stylesheet" href="style.css?v=7">
+<style>
+/* ======================================================================
+   GİRİŞ / KAYIT — cam kart tasarımı (21st.dev "modern-stunning-sign-in"
+   bileşeninin saf CSS karşılığı; React / Tailwind gerekmez).
+   Bu sayfa artık style.css kullanmaz, tüm stil burada. Arka plan düz #121212.
+   ====================================================================== */
+*{ margin:0; padding:0; box-sizing:border-box; }
+html,body{ height:100%; overflow:hidden; overscroll-behavior:none; background:#121212; color:#fff;
+  font-family:'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing:antialiased; }
+::selection{ background:rgba(255,255,255,.25); color:#fff; }
+
+/* ---------- Sayfa düzeni ---------- */
+#authView{
+  display:none; position:relative; z-index:1;
+  height:100vh; height:100dvh; padding:16px;
+  flex-direction:column; align-items:center; justify-content:center;
+  padding-top:max(16px, env(safe-area-inset-top)); padding-bottom:max(16px, env(safe-area-inset-bottom));
+}
+
+/* ---------- Cam kart ---------- */
+.si-card{
+  position:relative; width:100%; max-width:384px; max-height:100%;
+  display:flex; flex-direction:column; align-items:center;
+  padding:32px; border-radius:24px;
+  background:linear-gradient(to right, rgba(255,255,255,.063), rgba(18,18,18,.9));
+  border:1px solid rgba(255,255,255,.06);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  box-shadow:0 25px 50px -12px rgba(0,0,0,.6);
+  overflow-y:auto; scrollbar-width:none;
+  animation:siIn .7s cubic-bezier(.2,.8,.2,1) both;
+}
+.si-card::-webkit-scrollbar{ display:none; }
+@keyframes siIn{ from{ opacity:0; transform:translateY(14px) scale(.985); } to{ opacity:1; transform:none; } }
+
+.si-brand{ display:block; width:100%; max-width:300px; height:auto; flex:none; margin:-4px auto 24px;
+  filter:drop-shadow(0 6px 20px rgba(255,255,255,.07)); user-select:none; -webkit-user-drag:none; }
+
+/* ---------- Form ---------- */
+.si-form{ display:none; width:100%; flex-direction:column; gap:16px; }
+.si-form.active{ display:flex; animation:siFade .35s ease both; }
+@keyframes siFade{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+.si-fields{ display:flex; flex-direction:column; gap:12px; width:100%; }
+.si-sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+.si-input{ width:100%; padding:12px 20px; border:none; border-radius:12px;
+  background:rgba(255,255,255,.1); color:#fff; font:inherit; font-size:14px; line-height:1.4;
+  transition:box-shadow .2s, background .2s; }
+.si-input::placeholder{ color:#d1d5db; }
+.si-input:focus{ outline:none; box-shadow:0 0 0 2px #9ca3af; background:rgba(255,255,255,.12); }
+.si-input:-webkit-autofill{ -webkit-text-fill-color:#fff; transition:background-color 9999s; box-shadow:0 0 0 1000px rgba(60,60,60,.9) inset; }
+
+.si-pw{ position:relative; }
+.si-pw .si-input{ padding-right:48px; }
+.pw-toggle{ position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  width:36px; height:36px; display:grid; place-items:center; border:none; border-radius:50%;
+  background:none; color:#d1d5db; opacity:.7; cursor:pointer; transition:opacity .2s, background .2s; }
+.pw-toggle:hover, .pw-toggle.showing{ opacity:1; background:rgba(255,255,255,.08); }
+.pw-toggle svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.pw-toggle .si-eye-off{ display:none; }
+.pw-toggle.showing .si-eye{ display:none; }
+.pw-toggle.showing .si-eye-off{ display:block; }
+
+.username-warning{ font-size:11px; line-height:1.4; color:#d6b36a; text-align:left; padding:0 4px; }
+.msg{ min-height:0; font-size:13px; line-height:1.4; text-align:left; }
+.msg:empty{ display:none; }
+.msg.error{ color:#f87171; }
+.msg.ok{ color:#6ee7a0; }
+
+.si-hr{ border:0; border-top:1px solid rgba(255,255,255,.1); width:100%; }
+
+/* ---------- Düğme ---------- */
+.btn{ position:relative; overflow:hidden; width:100%; padding:12px 20px; border:none; border-radius:999px;
+  background:rgba(255,255,255,.1); color:#fff; font:inherit; font-size:14px; font-weight:500; cursor:pointer;
+  box-shadow:0 1px 3px rgba(0,0,0,.4); transition:background .2s, transform .15s; }
+.btn:hover{ background:rgba(255,255,255,.2); }
+.btn:active{ transform:scale(.985); }
+.btn:disabled{ opacity:.5; cursor:not-allowed; }
+.btn-ripple{ position:absolute; border-radius:50%; background:rgba(255,255,255,.28); pointer-events:none;
+  transform:translate(-50%,-50%) scale(0); animation:siRipple .7s ease-out forwards; }
+@keyframes siRipple{ to{ transform:translate(-50%,-50%) scale(2.6); opacity:0; } }
+
+/* ---------- Alt bağlantı ---------- */
+.si-switch{ width:100%; text-align:center; margin-top:-4px; font-size:12px; color:#9ca3af; }
+.si-switch button{ background:none; border:none; padding:0; font:inherit; color:rgba(255,255,255,.8);
+  text-decoration:underline; cursor:pointer; }
+.si-switch button:hover{ color:#fff; }
+
+
+/* ---------- Küçük ekranlar ---------- */
+@media (max-width:640px){
+  .si-card{ padding:26px 22px; }
+  .si-input{ font-size:16px; }          /* iOS odaklanınca yakınlaştırmasın */
+}
+@media (max-height:720px){
+  .si-brand{ max-width:210px; margin-bottom:14px; }
+  .si-card{ padding-top:22px; padding-bottom:22px; }
+}
+@media (max-height:620px){ .username-warning{ display:none; } }
+@media (prefers-reduced-motion:reduce){
+  .si-card, .si-form.active{ animation:none; }
+}
+</style>
 </head>
 <body>
 
-<div class="cosmic-bg" aria-hidden="true">
-  <div class="flow-paths"><svg id="flowPathsSvg" viewBox="0 0 696 316" preserveAspectRatio="xMidYMid slice"></svg></div>
-  <div class="cosmic-arc cosmic-arc-upper"></div>
-  <div class="cosmic-arc cosmic-arc-lower"></div>
-  <div class="cosmic-beam"></div>
-</div>
-
 <div id="authView">
-  <div class="auth-card">
-    <img class="auth-crest" src="crest.png" alt="Loyal Elite Force">
-    <h1>LOYAL ELITE FORCE</h1>
-    <p class="auth-about" style="margin:8px 0 0;font-size:12px;line-height:1.5;color:rgba(255,255,255,.62);">Loyal Team Force (LTF) resmi birlik topluluğu. Sınıflar, puan sistemi, sınavlar ve görevler seni bekliyor.</p>
-
-    <div class="tabs">
-      <button class="tab active" data-tab="login">GİRİŞ</button>
-      <button class="tab" data-tab="register">KAYIT OL</button>
-    </div>
+  <div class="si-card">
+    <img class="si-brand" src="lef-logo.png" alt="Loyal Elite Force" width="900" height="585">
+    <h1 class="si-sr">Loyal Elite Force</h1>
 
     <!-- ===== LOGIN ===== -->
-    <form class="form-block active" id="loginForm">
-      <div class="field">
-        <label for="loginUsername">Kullanıcı Adı</label>
-        <input type="text" id="loginUsername" autocomplete="username" required>
-      </div>
-      <div class="field">
-        <label for="loginPassword">Şifre</label>
-        <div class="pw-field">
-          <input type="password" id="loginPassword" autocomplete="current-password" required>
-          <button type="button" class="pw-toggle" data-target="loginPassword">👁</button>
+    <form class="si-form active" id="loginForm" data-mode="login">
+      <div class="si-fields">
+        <label class="si-sr" for="loginUsername">Kullanıcı Adı</label>
+        <input class="si-input" type="text" id="loginUsername" placeholder="Kullanıcı adı" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+        <label class="si-sr" for="loginPassword">Şifre</label>
+        <div class="si-pw">
+          <input class="si-input" type="password" id="loginPassword" placeholder="Şifre" autocomplete="current-password" required>
+          <button type="button" class="pw-toggle" data-target="loginPassword" aria-label="Şifreyi göster / gizle">
+            <svg class="si-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="si-eye-off" viewBox="0 0 24 24"><path d="M9.9 5.2A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6A17 17 0 0 0 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.4-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="M2 2l20 20"/></svg>
+          </button>
         </div>
+        <div class="msg" id="loginMsg"></div>
       </div>
+      <hr class="si-hr">
       <button type="submit" class="btn" id="loginBtn">Giriş Yap</button>
-      <div class="msg" id="loginMsg"></div>
+      <div class="si-switch">Hesabın yok mu? <button type="button" data-switch="register">Kayıt ol, ücretsiz!</button></div>
     </form>
 
     <!-- ===== REGISTER ===== -->
-    <form class="form-block" id="registerForm">
-      <div class="field">
-        <label for="regUsername">Kullanıcı Adı</label>
-        <input type="text" id="regUsername" autocomplete="username" required>
+    <form class="si-form" id="registerForm" data-mode="register">
+      <div class="si-fields">
+        <label class="si-sr" for="regUsername">Kullanıcı Adı</label>
+        <input class="si-input" type="text" id="regUsername" placeholder="Kullanıcı adı" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
         <div class="username-warning">Sadece küçük harf, rakam, "_" ve "." kullanılabilir. Boşluk ve Türkçe karakterler otomatik temizlenir.</div>
-      </div>
-      <div class="field">
-        <label for="regPassword">Şifre</label>
-        <div class="pw-field">
-          <input type="password" id="regPassword" autocomplete="new-password" minlength="8" required>
-          <button type="button" class="pw-toggle" data-target="regPassword">👁</button>
+        <label class="si-sr" for="regPassword">Şifre</label>
+        <div class="si-pw">
+          <input class="si-input" type="password" id="regPassword" placeholder="Şifre (en az 8 karakter)" autocomplete="new-password" minlength="8" required>
+          <button type="button" class="pw-toggle" data-target="regPassword" aria-label="Şifreyi göster / gizle">
+            <svg class="si-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="si-eye-off" viewBox="0 0 24 24"><path d="M9.9 5.2A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6A17 17 0 0 0 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.4-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="M2 2l20 20"/></svg>
+          </button>
         </div>
-      </div>
-      <div class="field">
-        <label for="regPassword2">Şifre (Tekrar)</label>
-        <div class="pw-field">
-          <input type="password" id="regPassword2" autocomplete="new-password" minlength="8" required>
-          <button type="button" class="pw-toggle" data-target="regPassword2">👁</button>
+        <label class="si-sr" for="regPassword2">Şifre (Tekrar)</label>
+        <div class="si-pw">
+          <input class="si-input" type="password" id="regPassword2" placeholder="Şifre (tekrar)" autocomplete="new-password" minlength="8" required>
+          <button type="button" class="pw-toggle" data-target="regPassword2" aria-label="Şifreyi göster / gizle">
+            <svg class="si-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="si-eye-off" viewBox="0 0 24 24"><path d="M9.9 5.2A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6A17 17 0 0 0 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.4-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="M2 2l20 20"/></svg>
+          </button>
         </div>
+        <div class="msg" id="registerMsg"></div>
       </div>
+      <hr class="si-hr">
       <button type="submit" class="btn" id="registerBtn">Kayıt Ol</button>
-      <div class="msg" id="registerMsg"></div>
+      <div class="si-switch">Zaten hesabın var mı? <button type="button" data-switch="login">Giriş yap</button></div>
     </form>
-
   </div>
 </div>
-
-<script>
-(function(){
-  var svg = document.getElementById('flowPathsSvg');
-  if(!svg) return;
-  var ns = 'http://www.w3.org/2000/svg';
-
-  function buildPaths(position){
-    var count = window.innerWidth < 640 ? 14 : 22;
-    for(var i = 0; i < count; i++){
-      var d =
-        'M-' + (380 - i * 5 * position) + ' -' + (189 + i * 6) +
-        'C-' + (380 - i * 5 * position) + ' -' + (189 + i * 6) +
-        ' -' + (312 - i * 5 * position) + ' ' + (216 - i * 6) +
-        ' ' + (152 - i * 5 * position) + ' ' + (343 - i * 6) +
-        'C' + (616 - i * 5 * position) + ' ' + (470 - i * 6) +
-        ' ' + (684 - i * 5 * position) + ' ' + (875 - i * 6) +
-        ' ' + (684 - i * 5 * position) + ' ' + (875 - i * 6);
-      var path = document.createElementNS(ns, 'path');
-      path.setAttribute('d', d);
-      path.setAttribute('stroke', 'rgba(191,227,255,' + (0.05 + i * 0.018).toFixed(3) + ')');
-      path.setAttribute('stroke-width', (0.5 + i * 0.03).toFixed(2));
-      path.setAttribute('fill', 'none');
-      path.setAttribute('class', 'flow-path');
-      path.style.animationDuration = (18 + Math.random() * 14).toFixed(1) + 's';
-      path.style.animationDelay = '-' + (Math.random() * 20).toFixed(1) + 's';
-      svg.appendChild(path);
-    }
-  }
-  buildPaths(1);
-  buildPaths(-1);
-})();
-</script>
-
-<script type="module">
-  // Mavi kara delik arka planı (WebGL2). Başarısız olursa eski akan çizgiler kalır.
-  import { mountEtchedAccretion } from './etched-accretion.js';
-  try {
-    const bg = document.querySelector('.cosmic-bg');
-    if (bg && mountEtchedAccretion(bg, window.innerWidth < window.innerHeight ? { center: [0.5, 0.14], holeSize: 0.045 } : { center: [0.2, 0.48] })) {
-      bg.querySelectorAll('.flow-paths, .cosmic-beam, .cosmic-arc').forEach(el => el.style.display = 'none');
-    }
-  } catch(e){ console.warn('Arka plan yüklenemedi:', e); }
-</script>
 
 <script>
   // Güvenlik ağı: modül script'i (Supabase importu, file:// üzerinden CORS,
@@ -217,25 +267,39 @@
     showAuth();
   })();
 
-  // ---------- TABS ----------
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.form-block').forEach(f => f.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById(tab.dataset.tab + 'Form').classList.add('active');
-    });
-  });
 
-  // ---------- PASSWORD TOGGLE ----------
-  document.querySelectorAll('.pw-toggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const input = document.getElementById(btn.dataset.target);
-      const showing = input.type === 'text';
-      input.type = showing ? 'password' : 'text';
-      btn.classList.toggle('showing', !showing);
-    });
-  });
+  // ---------- Giriş/kayıt sonrası: site arka planda yüklenir (en fazla ~15 sn beklenir) ----------
+  function preloadApp(){
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    const jobs = [];
+    ['app.html', 'bakim-kilidi.js'].forEach(u => jobs.push(fetch(u).then(r => r.blob()).catch(() => {})));
+    ['lef-logo.png', 'crest.png'].forEach(u => jobs.push(new Promise(res => {
+      const i = new Image(); i.onload = i.onerror = () => res(); i.src = u;
+    })));
+    return Promise.race([Promise.all(jobs), wait(15000)]);
+  }
+
+  function showLoadScreen(){
+    const d = document.createElement('div');
+    d.id = 'loadScreen';
+    d.style.cssText = 'position:fixed;inset:0;z-index:100000;background:#000;display:grid;place-items:center;opacity:0;transition:opacity .35s ease';
+    d.innerHTML = '<style>@keyframes lefPulse{0%,100%{opacity:.5;transform:scale(.97)}50%{opacity:1;transform:scale(1)}}</style>' +
+      '<img src="crest.png" alt="" style="width:clamp(90px,18vw,150px);height:auto;animation:lefPulse 1.8s ease-in-out infinite;transition:opacity .45s ease">';
+    document.body.appendChild(d);
+    requestAnimationFrame(() => { d.style.opacity = '1'; });
+    return d;
+  }
+
+  // Giriş/kayıt başarılı → siyah ekran + arma, site arka planda yüklenir,
+  // hazır olunca arma kaybolur ve site açılır. (Ses / uzun intro yok.)
+  async function enterSite(){
+    const screen = showLoadScreen();
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    await Promise.all([preloadApp(), wait(900)]);       // en az 0,9 sn: yanıp sönme olmasın
+    screen.querySelector('img').style.opacity = '0';     // arma kaybolur
+    await wait(450);
+    window.location.replace('app.html');
+  }
 
   // ---------- LOGIN ----------
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -263,8 +327,7 @@
       msg.textContent = 'Kullanıcı adı veya şifre hatalı.';
       return;
     }
-    await window.playRegisterIntro();
-    window.location.replace('app.html');
+    await enterSite();
   });
 
   // ---------- REGISTER ----------
@@ -324,19 +387,37 @@
     btn.disabled = false; btn.textContent = 'Kayıt Ol';
 
     if(signUpData?.session){
-      await window.playRegisterIntro();
-      window.location.replace('app.html');
+      await enterSite();
     } else {
-      msg.classList.add('ok');
-      msg.textContent = 'Kayıt oluşturuldu. Şimdi giriş yapabilirsin.';
-      document.querySelector('.tab[data-tab="login"]').click();
+      setMode('login');
       document.getElementById('loginUsername').value = username;
+      const lm = document.getElementById('loginMsg');
+      lm.className = 'msg ok';
+      lm.textContent = 'Kayıt oluşturuldu. Şimdi giriş yapabilirsin.';
     }
   });
 </script>
 
 <script>
-  // ---------- LIQUID METAL BUTTON: tıklama dalgası (ripple) ----------
+  // ---------- Arayüz davranışları (Supabase yüklenmese de çalışsın diye ayrı script) ----------
+  function setMode(mode){
+    document.querySelectorAll('.si-form').forEach(function(f){ f.classList.toggle('active', f.dataset.mode === mode); });
+    document.getElementById('loginMsg').textContent = '';
+    document.getElementById('registerMsg').textContent = '';
+  }
+  document.querySelectorAll('[data-switch]').forEach(function(b){
+    b.addEventListener('click', function(){ setMode(b.dataset.switch); });
+  });
+  document.querySelectorAll('.pw-toggle').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var input = document.getElementById(btn.dataset.target);
+      var showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      btn.classList.toggle('showing', !showing);
+    });
+  });
+
+  // ---------- Düğme tıklama dalgası (ripple) ----------
   document.addEventListener('click', function(e){
     var btn = e.target.closest('.btn');
     if(!btn || btn.disabled) return;
@@ -351,8 +432,6 @@
     setTimeout(function(){ ripple.remove(); }, 700);
   });
 </script>
-
-<script type="module" src="reg-intro.js"></script>
 
 </body>
 </html>
