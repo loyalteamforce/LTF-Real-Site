@@ -148,6 +148,24 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .mg-pg em{ position:absolute; right:10px; bottom:6px; font:600 12px system-ui; color:#555; }
 .mg-end{ text-align:center; color:#9ca3af; font-size:14px; padding:12px 0; }
 @media (prefers-reduced-motion:reduce){ .mg-track{ animation:none; overflow-x:auto; } .mg-belt{ overflow-x:auto; } }
+
+/* ---- Supabase profil eklemeleri ---- */
+#v-profil [hidden]{ display:none !important; }
+.pf-banner img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.pf-av:disabled{ cursor:default; }
+.pf-av:disabled .pf-cam{ display:none; }
+.pf-role{ display:inline-block; margin-top:4px; padding:1px 9px; border:1px solid currentColor; border-radius:999px; font-size:11px; font-weight:600; }
+.pf-color{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:10px 14px 0; font-size:12px; color:#9ca3af; }
+.pf-color .sw{ width:22px; height:22px; min-width:22px; padding:0; border-radius:50%; border:2px solid rgba(255,255,255,.25); cursor:pointer; }
+.pf-color input[type=color]{ width:30px; height:26px; padding:0; border:none; background:none; cursor:pointer; }
+.pf-search{ margin:0 0 14px; }
+.pf-res{ margin-top:6px; border-radius:12px; background:#1b1b1f; border:1px solid rgba(255,255,255,.1); overflow:hidden; }
+.pf-it{ display:flex; align-items:center; gap:10px; width:100%; padding:8px 12px; border:none; background:transparent; color:#fff; font:inherit; font-size:14px; text-align:left; cursor:pointer; }
+.pf-it:hover{ background:rgba(255,255,255,.08); }
+.pf-it img, .pf-it i{ width:32px; height:32px; border-radius:50%; object-fit:cover; background:#26262b; flex:none; }
+.pf-it small{ display:block; color:#9ca3af; font-size:11px; }
+.pf-empty{ padding:12px; font-size:13px; color:#9ca3af; }
+.pf-back{ margin:0 0 10px; }
 </style>
 </head>
 <body>
@@ -169,9 +187,16 @@ html,body{ min-height:100%; background:#121212; color:#fff;
   <section class="view" id="v-kesfet"><h2>Keşfet</h2></section>
   <section class="view" id="v-kutuphane"><h2>Kütüphane</h2></section>
   <section class="view" id="v-profil" aria-label="Profil">
+    <div class="pf-search">
+      <label class="mg-search"><svg viewBox="0 0 18 18"><circle cx="8" cy="8" r="5.25"/><line x1="11.9" y1="11.9" x2="15.5" y2="15.5"/></svg>
+        <input id="pfQ" type="search" placeholder="Üye ara (isim veya 8 haneli ID)" autocomplete="off" maxlength="30"></label>
+      <div class="pf-res" id="pfRes" hidden></div>
+    </div>
+    <button type="button" class="bio-btn pf-back" id="pfBack" hidden>&larr; Profilime dön</button>
     <div class="pf-banner" id="pfBan">
+      <img id="pfBanImg" alt="" hidden>
       <video id="pfVid" muted loop autoplay playsinline hidden></video>
-      <button type="button" class="pf-btn" id="pfAdd"><svg viewBox="0 0 18 18"><rect x="2" y="4" width="10" height="10" rx="2"/><path d="m12 8 4-2.5v7L12 10"/></svg>Arka plan videosu ekle</button>
+      <button type="button" class="pf-btn" id="pfAdd"><svg viewBox="0 0 18 18"><rect x="2" y="4" width="10" height="10" rx="2"/><path d="m12 8 4-2.5v7L12 10"/></svg>Banner ekle (foto / video)</button>
       <div class="pf-tools" id="pfTools" hidden>
         <button type="button" class="pf-btn" id="pfChg">Değiştir</button>
         <button type="button" class="pf-btn" id="pfDel">Kaldır</button>
@@ -185,9 +210,22 @@ html,body{ min-height:100%; background:#121212; color:#fff;
       </button>
       <div class="pf-info">
         <div class="pf-name"><span id="pfNick"></span><button type="button" class="pf-ed" id="pfEd" aria-label="İsmi düzenle"><svg viewBox="0 0 18 18"><path d="M3 15l.7-3L12 3.7a1.4 1.4 0 0 1 2 0l.3.3a1.4 1.4 0 0 1 0 2L6 14.3z"/></svg></button></div>
+        <div class="pf-role" id="pfRole" hidden></div>
         <div class="pf-id" id="pfId"></div>
         <p class="pf-note" id="pfNote"></p>
       </div>
+    </div>
+    <div class="pf-color" id="pfColorRow" hidden>
+      <span>İsim rengi:</span>
+      <button type="button" class="sw" data-color="#ffffff" style="background:#ffffff" aria-label="Beyaz"></button>
+      <button type="button" class="sw" data-color="#ef4444" style="background:#ef4444" aria-label="Kırmızı"></button>
+      <button type="button" class="sw" data-color="#f97316" style="background:#f97316" aria-label="Turuncu"></button>
+      <button type="button" class="sw" data-color="#facc15" style="background:#facc15" aria-label="Sarı"></button>
+      <button type="button" class="sw" data-color="#22c55e" style="background:#22c55e" aria-label="Yeşil"></button>
+      <button type="button" class="sw" data-color="#38bdf8" style="background:#38bdf8" aria-label="Mavi"></button>
+      <button type="button" class="sw" data-color="#a78bfa" style="background:#a78bfa" aria-label="Mor"></button>
+      <button type="button" class="sw" data-color="#f472b6" style="background:#f472b6" aria-label="Pembe"></button>
+      <input type="color" id="pfColorIn" value="#ffffff" aria-label="Özel renk">
     </div>
     <div class="bio" id="bio">
       <div class="bio-top"><span>Biyografi</span><button type="button" class="pf-ed" id="bioEd" aria-label="Biyografiyi düzenle"><svg viewBox="0 0 18 18"><path d="M3 15l.7-3L12 3.7a1.4 1.4 0 0 1 2 0l.3.3a1.4 1.4 0 0 1 0 2L6 14.3z"/></svg></button></div>
@@ -239,7 +277,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     </div>
     <p class="pf-msg" id="pfMsg" role="status"></p>
     <input type="file" id="pfFImg" accept="image/*" hidden>
-    <input type="file" id="pfFVid" accept="video/*" hidden>
+    <input type="file" id="pfFVid" accept="image/*,video/*" hidden>
   </section>
 </main>
 
@@ -462,119 +500,45 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 </script>
 
 <script type="module">
-  import { supabase } from './config.js';
+  import { supabase, FUNCTIONS_URL } from './config.js';
 
-  // ---------- Profil: isim (7 günde en fazla 2 kez), 8 haneli ID, profil fotoğrafı, arka plan videosu ----------
-  // Veriler şimdilik bu cihazda saklanır (foto/ad: localStorage, video: IndexedDB).
-  const LIMIT = 2, WINDOW = 7 * 24 * 60 * 60 * 1000;
+  // ---------- PROFİL (Supabase): herkes birbirinin profilini görür ----------
+  // Foto/banner: Storage (avatars, banners). Metinler: profiles tablosu. Kurulum: supabase-kurulum.sql
+  const BASE = FUNCTIONS_URL.replace('/functions/v1', '');
+  const LIMIT = 2, WINDOW = 7 * 24 * 60 * 60 * 1000, BIO_MAX = 500, MAX_VID = 100 * 1024 * 1024;
   const $ = id => document.getElementById(id);
-  let uid = 'misafir', name = '';
+  const msg = t => { $('pfMsg').textContent = t || ''; };
+  const HEX = /^#[0-9a-f]{6}$/i;
+  const safeUrl = u => (typeof u === 'string' && u.indexOf(BASE + '/storage/v1/object/public/') === 0) ? u : null;
+
+  let uid = null, uname = '';
   try {
     const { data: { session } } = await supabase.auth.getSession();
-    if(session){ uid = session.user.id; name = (session.user.email || '').split('@')[0] || ''; }
+    if(session){ uid = session.user.id; uname = (session.user.email || '').split('@')[0] || ''; }
   } catch(e){}
-  const K = 'lefprofil:' + uid;
-  const load = () => { try { return JSON.parse(localStorage.getItem(K)) || {}; } catch(e){ return {}; } };
-  const save = d => { try { localStorage.setItem(K, JSON.stringify(d)); return true; } catch(e){ return false; } };
-  const msg = t => { $('pfMsg').textContent = t || ''; };
 
-  // Herkese hesabından üretilen sabit 8 haneli ID (her cihazda aynı çıkar)
-  function makeId(str){
-    let h1 = 5381, h2 = 52711;
-    for(let i = 0; i < str.length; i++){ const c = str.charCodeAt(i); h1 = ((h1 * 33) ^ c) >>> 0; h2 = ((h2 * 31) + c) >>> 0; }
-    return String(10000000 + ((h1 * 4096 + h2) % 90000000));
+  const roles = {};
+  try { const { data } = await supabase.from('roles').select('*'); (data || []).forEach(r => { roles[r.key] = r; }); } catch(e){}
+
+  async function fetchProfile(id){
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', id).maybeSingle();
+    if(error) throw error;
+    return data;
   }
 
-  let d = load();
-  d.id = makeId(uid);
-  if(!d.nick) d.nick = name;                       // varsayılan: kayıt olduğun ad
-  if(!Array.isArray(d.changes)) d.changes = [];
-  save(d);
-  $('pfId').textContent = 'ID: ' + d.id;
-
-  const recent = () => d.changes.filter(t => typeof t === 'number' && Date.now() - t < WINDOW);
-  function refresh(){
-    const r = recent(), left = LIMIT - r.length;
-    $('pfNick').textContent = d.nick;
-    $('pfEd').style.display = left > 0 ? '' : 'none';
-    if(left > 0){
-      $('pfNote').textContent = 'İsmini 7 günde ' + LIMIT + ' kez değiştirebilirsin. Kalan hakkın: ' + left;
-    } else {
-      const next = new Date(Math.min.apply(null, r) + WINDOW);
-      $('pfNote').textContent = 'İsim değiştirme hakkın doldu. Tekrar değiştirebileceğin zaman: ' +
-        next.toLocaleString('tr-TR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+  let me = null;
+  try {
+    me = await fetchProfile(uid);
+    if(!me){
+      await supabase.from('profiles').insert({ id: uid, username: uname, display_name: uname });
+      me = await fetchProfile(uid);
     }
-  }
-  refresh();
+  } catch(e){ msg('Profil yüklenemedi. supabase-kurulum.sql çalıştırıldı mı?'); }
+  let d = me || { id: uid, username: uname, display_name: uname, bio: '', name_color: '#ffffff', role: 'member', name_changes: [] };
+  const isMe = () => d.id === uid;
 
-  // İsim düzenleme
-  $('pfEd').addEventListener('click', () => {
-    if(recent().length >= LIMIT){ refresh(); return; }
-    msg('');
-    const inp = document.createElement('input'); inp.maxLength = 20; inp.value = d.nick; inp.setAttribute('aria-label', 'İsim');
-    const span = $('pfNick'); span.replaceWith(inp); $('pfEd').style.display = 'none'; inp.focus(); inp.select();
-    let done = false;
-    const fin = ok => {
-      if(done) return; done = true;
-      const v = inp.value.trim();
-      inp.replaceWith(span);
-      if(ok && v && v !== d.nick && recent().length < LIMIT){
-        const old = { nick: d.nick, changes: d.changes };
-        d.nick = v; d.changes = recent().concat(Date.now());
-        if(!save(d)){ d.nick = old.nick; d.changes = old.changes; msg('İsim kaydedilemedi, depolama dolu olabilir.'); }
-      }
-      refresh();
-    };
-    inp.addEventListener('keydown', e => { if(e.key === 'Enter') fin(true); if(e.key === 'Escape') fin(false); });
-    inp.addEventListener('blur', () => fin(true));
-  });
+  const recent = () => (d.name_changes || []).map(t => new Date(t).getTime()).filter(t => Date.now() - t < WINDOW);
 
-  // Profil fotoğrafı (256px'e küçültülüp kare kırpılır)
-  function showImg(src){ $('pfImg').src = src; $('pfImg').hidden = false; $('pfPh').style.display = 'none'; }
-  if(d.photo) showImg(d.photo);
-  $('pfAv').addEventListener('click', () => $('pfFImg').click());
-  $('pfFImg').addEventListener('change', async e => {
-    const f = e.target.files[0]; e.target.value = ''; if(!f) return; msg('');
-    try {
-      const bmp = await createImageBitmap(f), S = 256, c = document.createElement('canvas'); c.width = c.height = S;
-      const m = Math.min(bmp.width, bmp.height);
-      c.getContext('2d').drawImage(bmp, (bmp.width - m) / 2, (bmp.height - m) / 2, m, m, 0, 0, S, S);
-      d.photo = c.toDataURL('image/jpeg', 0.85);
-      if(!save(d)) return msg('Fotoğraf kaydedilemedi, depolama dolu.');
-      showImg(d.photo);
-    } catch(err){ msg('Bu dosya fotoğraf olarak açılamadı.'); }
-  });
-
-  // Arka plan videosu (IndexedDB'de saklanır)
-  const idb = () => new Promise((ok, no) => { const r = indexedDB.open('lef-profil', 1);
-    r.onupgradeneeded = () => r.result.createObjectStore('v'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); });
-  const vGet = async () => { try { const db = await idb(); return await new Promise(ok => { const q = db.transaction('v').objectStore('v').get(K); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); } catch(e){ return null; } };
-  const vSet = async b => { const db = await idb(); return new Promise((ok, no) => { const t = db.transaction('v', 'readwrite'); t.objectStore('v').put(b, K); t.oncomplete = ok; t.onerror = () => no(t.error); }); };
-  const vDel = async () => { try { const db = await idb(); db.transaction('v', 'readwrite').objectStore('v').delete(K); } catch(e){} };
-
-  let url = null;
-  function showVid(blob){
-    if(url) URL.revokeObjectURL(url);
-    url = blob ? URL.createObjectURL(blob) : null;
-    const v = $('pfVid');
-    if(url){ v.src = url; v.hidden = false; v.play().catch(() => {}); } else { v.removeAttribute('src'); v.load(); v.hidden = true; }
-    $('pfBan').classList.toggle('has', !!url);
-    $('pfAdd').hidden = !!url; $('pfTools').hidden = !url;
-  }
-  const b0 = await vGet(); if(b0) showVid(b0);
-  const pick = () => $('pfFVid').click();
-  $('pfAdd').addEventListener('click', pick); $('pfChg').addEventListener('click', pick);
-  $('pfDel').addEventListener('click', async () => { await vDel(); showVid(null); msg(''); });
-  $('pfFVid').addEventListener('change', async e => {
-    const f = e.target.files[0]; e.target.value = ''; if(!f) return; msg('');
-    if(!f.type.startsWith('video/')) return msg('Lütfen bir video dosyası seç.');
-    if(f.size > 100 * 1024 * 1024) return msg('Video en fazla 100 MB olabilir.');
-    try { await vSet(f); showVid(f); } catch(err){ msg('Video kaydedilemedi, depolama dolu olabilir.'); }
-  });
-  // ---------- Biyografi: farklı yazı tipi, boyut, renk, kalın/italik, hizalama ----------
-  // Güvenlik: kaydedilen/gösterilen her şey bioClean'den geçer. Sadece izin verilen etiket ve stiller kalır,
-  // script, resim, bağlantı, onclick vb. hepsi atılır. (Başkalarının profilini gösterirken de güvenli.)
-  const BIO_MAX = 500;
   // BIO-CLEAN-START
   const BIO_FONTS = {
     'system-ui': "system-ui,-apple-system,'Segoe UI',sans-serif",
@@ -631,31 +595,195 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     const box = bioSanitize(d.bio);
     bioView.replaceChildren();
     if(box.textContent.trim()){ bioView.classList.remove('empty'); while(box.firstChild) bioView.appendChild(box.firstChild); }
-    else { bioView.classList.add('empty'); bioView.textContent = 'Henüz bir biyografi yazmadın.'; }
+    else { bioView.classList.add('empty'); bioView.textContent = isMe() ? 'Henüz bir biyografi yazmadın.' : 'Biyografi yok.'; }
   }
-  bioRender();
-
   function bioCount(){
     const box = bioSanitize(bioEditor.innerHTML), len = box.textContent.length, over = len > BIO_MAX || box.innerHTML.length > 8000;
     bioCnt.textContent = len + '/' + BIO_MAX; bioCnt.classList.toggle('over', over); bioSave.disabled = over;
-    return { html: box.innerHTML, over };
+    return { over: over, html: box.innerHTML };
   }
   function bioOpen(){
-    msg('');
-    bioEditor.replaceChildren();
+    if(!isMe()) return;
+    msg(''); bioEditor.replaceChildren();
     const box = bioSanitize(d.bio); while(box.firstChild) bioEditor.appendChild(box.firstChild);
-    bioView.hidden = true; bioEdit.hidden = false; $('bioEd').style.display = 'none';
+    bioView.hidden = true; bioEdit.hidden = false; $('bioEd').hidden = true;
     bioCount(); bioEditor.focus();
   }
-  function bioClose(){ bioEdit.hidden = true; bioView.hidden = false; $('bioEd').style.display = ''; }
+  function bioClose(){ bioEdit.hidden = true; bioView.hidden = false; $('bioEd').hidden = !isMe(); }
   $('bioEd').addEventListener('click', bioOpen);
   $('bioCancel').addEventListener('click', bioClose);
-  bioSave.addEventListener('click', () => {
-    const r = bioCount(); if(r.over) return;
-    const old = d.bio; d.bio = r.html;
-    if(!save(d)){ d.bio = old; msg('Biyografi kaydedilemedi, depolama dolu olabilir.'); return; }
+  bioSave.addEventListener('click', async () => {
+    const r = bioCount(); if(r.over || !isMe()) return;
+    bioSave.disabled = true;
+    const { error } = await supabase.from('profiles').update({ bio: r.html }).eq('id', uid);
+    bioSave.disabled = false;
+    if(error){ msg('Biyografi kaydedilemedi: ' + error.message); return; }
+    d.bio = r.html; if(me) me.bio = r.html;
     bioRender(); bioClose();
   });
+
+  // ---------- Ekrana çiz ----------
+  function render(){
+    const mine = isMe();
+    bioClose();
+    // isim + renk + rol
+    const nick = $('pfNick'); if(nick){ nick.textContent = d.display_name || d.username || ''; nick.style.color = HEX.test(d.name_color || '') ? d.name_color : ''; }
+    const r = roles[d.role], re = $('pfRole');
+    if(r && d.role !== 'member'){ re.textContent = r.label; re.style.color = HEX.test(r.color) ? r.color : '#fff'; re.hidden = false; } else { re.hidden = true; }
+    $('pfId').textContent = 'ID: ' + (d.public_id || '—') + (d['class'] ? ' · Sınıf ' + d['class'] : '');
+    // isim hakkı
+    const left = LIMIT - recent().length;
+    $('pfEd').hidden = !mine || left <= 0;
+    if(!mine){ $('pfNote').textContent = ''; }
+    else if(left > 0){ $('pfNote').textContent = 'İsmini 7 günde ' + LIMIT + ' kez değiştirebilirsin. Kalan hakkın: ' + left; }
+    else {
+      const next = new Date(Math.min.apply(null, recent()) + WINDOW);
+      $('pfNote').textContent = 'İsim değiştirme hakkın doldu. Tekrar değiştirebileceğin zaman: ' +
+        next.toLocaleString('tr-TR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+    }
+    // isim rengi satırı
+    $('pfColorRow').hidden = !(mine && (!roles[d.role] || roles[d.role].can_color !== false));
+    // avatar
+    const au = safeUrl(d.avatar_url);
+    if(au){ $('pfImg').src = au; $('pfImg').hidden = false; $('pfPh').style.display = 'none'; }
+    else { $('pfImg').removeAttribute('src'); $('pfImg').hidden = true; $('pfPh').style.display = ''; }
+    $('pfAv').disabled = !mine;
+    // banner (foto veya video)
+    const bu = safeUrl(d.banner_url), v = $('pfVid'), im = $('pfBanImg');
+    v.pause(); v.removeAttribute('src'); v.load(); v.hidden = true;
+    im.removeAttribute('src'); im.hidden = true;
+    if(bu && d.banner_type === 'video'){ v.src = bu; v.hidden = false; v.play().catch(() => {}); }
+    else if(bu){ im.src = bu; im.hidden = false; }
+    $('pfBan').classList.toggle('has', !!bu);
+    $('pfAdd').hidden = !mine || !!bu;
+    $('pfTools').hidden = !mine || !bu;
+    $('pfBack').hidden = mine;
+    $('bioEd').hidden = !mine;
+    bioRender();
+  }
+  render();
+
+  // ---------- İsim düzenleme (sunucuda 7 günde 2 kez) ----------
+  $('pfEd').addEventListener('click', () => {
+    if(!isMe() || recent().length >= LIMIT){ render(); return; }
+    msg('');
+    const inp = document.createElement('input'); inp.maxLength = 20; inp.value = d.display_name || ''; inp.setAttribute('aria-label', 'İsim');
+    const span = $('pfNick'); span.replaceWith(inp); $('pfEd').hidden = true; inp.focus(); inp.select();
+    let done = false;
+    const fin = async ok => {
+      if(done) return; done = true;
+      const val = inp.value.trim();
+      inp.replaceWith(span);
+      if(ok && val && val !== d.display_name){
+        const { error } = await supabase.rpc('change_display_name', { new_name: val });
+        if(error){ msg(error.message); }
+        else { try { me = await fetchProfile(uid); d = me; } catch(e){} }
+      }
+      render();
+    };
+    inp.addEventListener('keydown', e => { if(e.key === 'Enter') fin(true); if(e.key === 'Escape') fin(false); });
+    inp.addEventListener('blur', () => fin(true));
+  });
+
+  // ---------- İsim rengi ----------
+  async function setColor(c){
+    if(!isMe() || !HEX.test(c)) return;
+    msg('');
+    const { error } = await supabase.from('profiles').update({ name_color: c }).eq('id', uid);
+    if(error){ msg('Renk kaydedilemedi: ' + error.message); return; }
+    d.name_color = c; if(me) me.name_color = c; render();
+  }
+  $('pfColorRow').addEventListener('click', e => { const b = e.target.closest('button[data-color]'); if(b) setColor(b.dataset.color); });
+  $('pfColorIn').addEventListener('change', e => setColor(e.target.value));
+
+  // ---------- Profil fotoğrafı: 256px kare kırp -> Storage 'avatars' ----------
+  $('pfAv').addEventListener('click', () => { if(isMe()) $('pfFImg').click(); });
+  $('pfFImg').addEventListener('change', async e => {
+    const f = e.target.files[0]; e.target.value = ''; if(!f || !isMe()) return; msg('');
+    try {
+      const bmp = await createImageBitmap(f), S = 256, c = document.createElement('canvas'); c.width = c.height = S;
+      const m = Math.min(bmp.width, bmp.height);
+      c.getContext('2d').drawImage(bmp, (bmp.width - m) / 2, (bmp.height - m) / 2, m, m, 0, 0, S, S);
+      const blob = await new Promise(ok => c.toBlob(ok, 'image/jpeg', 0.85));
+      msg('Fotoğraf yükleniyor...');
+      const path = uid + '/avatar.jpg';
+      const up = await supabase.storage.from('avatars').upload(path, blob, { upsert: true, contentType: 'image/jpeg', cacheControl: '3600' });
+      if(up.error) throw up.error;
+      const url = supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl + '?v=' + Date.now();
+      const { error } = await supabase.from('profiles').update({ avatar_url: url }).eq('id', uid);
+      if(error) throw error;
+      d.avatar_url = url; if(me) me.avatar_url = url; msg(''); render();
+    } catch(err){ msg('Fotoğraf yüklenemedi: ' + (err.message || 'bu dosya açılamadı')); }
+  });
+
+  // ---------- Banner: foto veya video -> Storage 'banners' ----------
+  const bannerPath = u => { const m = String(u || '').split('/banners/')[1]; return m ? decodeURIComponent(m.split('?')[0]) : null; };
+  const pick = () => { if(isMe()) $('pfFVid').click(); };
+  $('pfAdd').addEventListener('click', pick); $('pfChg').addEventListener('click', pick);
+  $('pfDel').addEventListener('click', async () => {
+    if(!isMe()) return; msg('');
+    const old = bannerPath(d.banner_url);
+    const { error } = await supabase.from('profiles').update({ banner_url: null, banner_type: null }).eq('id', uid);
+    if(error){ msg('Banner kaldırılamadı: ' + error.message); return; }
+    if(old) supabase.storage.from('banners').remove([old]);
+    d.banner_url = null; d.banner_type = null; render();
+  });
+  $('pfFVid').addEventListener('change', async e => {
+    const f = e.target.files[0]; e.target.value = ''; if(!f || !isMe()) return; msg('');
+    const vid = f.type.indexOf('video/') === 0, img = f.type.indexOf('image/') === 0;
+    if(!vid && !img) return msg('Lütfen bir foto veya video seç.');
+    if(f.size > MAX_VID) return msg('Dosya en fazla 100 MB olabilir.');
+    const ext = ({ 'video/webm': 'webm', 'video/quicktime': 'mov', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/jpeg': 'jpg' })[f.type] || (vid ? 'mp4' : 'jpg');
+    const path = uid + '/banner-' + Date.now() + '.' + ext, old = bannerPath(d.banner_url);
+    try {
+      msg('Yükleniyor, lütfen bekle...');
+      const up = await supabase.storage.from('banners').upload(path, f, { contentType: f.type, cacheControl: '3600' });
+      if(up.error) throw up.error;
+      const url = supabase.storage.from('banners').getPublicUrl(path).data.publicUrl;
+      const type = vid ? 'video' : 'image';
+      const { error } = await supabase.from('profiles').update({ banner_url: url, banner_type: type }).eq('id', uid);
+      if(error) throw error;
+      if(old) supabase.storage.from('banners').remove([old]);
+      d.banner_url = url; d.banner_type = type; if(me){ me.banner_url = url; me.banner_type = type; }
+      msg(''); render();
+    } catch(err){ msg('Yüklenemedi: ' + (err.message || 'bilinmeyen hata')); }
+  });
+
+  // ---------- Üye ara + başkasının profilini aç ----------
+  let qTimer = null;
+  const res = $('pfRes');
+  function hideRes(){ res.hidden = true; res.replaceChildren(); }
+  $('pfQ').addEventListener('input', () => {
+    clearTimeout(qTimer);
+    const q = $('pfQ').value.trim().replace(/[^\p{L}\p{N}_.]/gu, '');
+    if(q.length < 2){ hideRes(); return; }
+    qTimer = setTimeout(async () => {
+      let f = 'username.ilike.%' + q + '%,display_name.ilike.%' + q + '%';
+      if(/^\d{8}$/.test(q)) f += ',public_id.eq.' + q;
+      const { data, error } = await supabase.from('profiles')
+        .select('id,username,display_name,public_id,avatar_url,name_color,role').or(f).limit(8);
+      res.replaceChildren();
+      if(error || !data || !data.length){
+        const p = document.createElement('div'); p.className = 'pf-empty'; p.textContent = error ? 'Arama başarısız.' : 'Kimse bulunamadı.'; res.appendChild(p);
+      } else data.forEach(u => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'pf-it';
+        const au = safeUrl(u.avatar_url), av = document.createElement(au ? 'img' : 'i'); if(au){ av.src = au; av.alt = ''; }
+        const t = document.createElement('span'), n = document.createElement('b'), s = document.createElement('small');
+        n.textContent = u.display_name || u.username; if(HEX.test(u.name_color || '')) n.style.color = u.name_color;
+        s.textContent = 'ID: ' + (u.public_id || '—') + (roles[u.role] && u.role !== 'member' ? ' · ' + roles[u.role].label : '');
+        t.append(n, s); b.append(av, t);
+        b.addEventListener('click', async () => {
+          try {
+            const p = await fetchProfile(u.id); if(!p) return;
+            d = p; msg(''); hideRes(); $('pfQ').value = ''; render(); window.scrollTo(0, 0);
+          } catch(e){ msg('Profil açılamadı.'); }
+        });
+        res.appendChild(b);
+      });
+      res.hidden = false;
+    }, 300);
+  });
+  $('pfBack').addEventListener('click', () => { if(me){ d = me; msg(''); render(); } });
 
   // Seçili metni sakla (açılır menüler odağı çaldığı için), sonra geri yükle
   let bioRng = null;
