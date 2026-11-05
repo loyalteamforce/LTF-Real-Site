@@ -45,7 +45,7 @@
       ['b', "Hm? Geldin mi. Beklemiyordum, sadece ekranın bu köşesine bakıyordum. Evet, tesadüf."],
       ['s', "Ben Ardevyl, birliğin kalkanı! ...Evet, bu siteyi korumak benim işim. Teşekkür etmene gerek yok, etme!"],
       ['n', "Oo, giriş yapmışsın. İyi, yoksa kapıda bekletecektim. Şaka! ...Sanırım."],
-      ['a', "Hmph. Yine mi buradasın? Peki. İhtiyacın olursa bana dokunabilirsin. Ama sadece ihtiyacın olursa!"]
+      ['a', "Hmph. Yine mi buradasın? Peki. İhtiyacın olursa sohbet düğmesi hemen şurada. Ama sadece ihtiyacın olursa!"]
     ],
     night: [
       ['z', "Saat kaç oldu farkında mısın? Uyumayacak mısın? ...Endişelenmiyorum, sadece göz altlarına yazık."],
@@ -78,7 +78,7 @@
     ],
     mangaScroll: [
       ['o', "Bu kadar kaydırdın, parmağın yorulmadı mı? Ben olsam seçerdim artık."],
-      ['a', "Kaydırıyorsun, kaydırıyorsun... Bir tanesine dokun artık!"]
+      ['a', "Kaydırıyorsun, kaydırıyorsun... Bir tanesini aç artık!"]
     ],
     search: [
       ['n', "Ne arıyorsun? Söylemezsen bulamam. Zaten ben aramıyorum."],
@@ -230,14 +230,6 @@
       ['z', "Hâlâ orada mısın? ...Sorduğum için değil, ekran donmuş sandım."],
       ['z', "Sessizlik... Ben de dinleniyorum. Dinlenmiyorum, nöbetteyim!"]
     ],
-    poke: [
-      ['a', "Hey! Dokunma öyle!"],
-      ['a', "Ne var?! ...Ne istiyorsun?"],
-      ['b', "Bir daha dokunursan... bir şey yapmam ama ters bakarım!"],
-      ['a', "Dokunmanı sevdim demedim!"],
-      ['b', "Y-yeter! Sürekli dokunma, kalkanım çizilir!"],
-      ['a', "Tamam, ben gidiyorum! Peh!"]
-    ],
     chatHello: [
       ['n', "Hmph, konuşmak mı istiyorsun? Peki... ama sadece sorman gerekeni sor!"],
       ['b', "Geldin demek. Buyur, dinliyorum. Merak ettiğimden değil, görevim bu!"]
@@ -251,6 +243,50 @@
       "Seçtim, buyur. Teşekkür etmene gerek yok. Etsen de olur."
     ]
   };
+
+  /* ---------- EK SÖZLER: günün saati, laf sokmalar ---------- */
+  P.morning = [
+    ['z', "Günaydın... Çok erken değil mi? Neyse, kalkan da kahve içer. İçmez ama."],
+    ['h', "Sabah sabah site mi? Güzel. Moralin yüksek olsun, benimki zaten hep yüksek! ...Değil."]
+  ];
+  P.evening = [
+    ['s', "Akşam oldu, manga zamanı! Hayır, önermiyorum. Ama önerebilirim."],
+    ['n', "İyi akşamlar. Gün nasıl geçti? Sormak istememiştim, ağzımdan kaçtı."]
+  ];
+  P.roast = [
+    ['s', "Ne kadar terbiyesizsin, Taha gibi! ...Neyse, sana demedim, aklıma o geldi."],
+    ['a', "Quartex'in 'beş dakikaya oradayım'ı, benim için artık bir ölçü birimi."],
+    ['s', "Narancia'nın ortaya çıkış saati hâlâ bilinmiyor. Bilim insanları araştırıyor."],
+    ['n', "Kemal yine kendinden emin konuşuyordur. Yanılıyordur ama çok emin."],
+    ['z', "Rai şu an muhtemelen 'bir dakika' diyerek yarım saat geçirmiştir."],
+    ['b', "Thoya'nın bahaneleri kalkanımdan sağlam. Ben kalkanım, ben bilirim."],
+    ['a', "Taha'nın terbiyesi mi? Yok öyle bir şey, kayıp ilanı verdim."],
+    ['s', "Bugün kime laf sokayım? Taha, Quartex, Narancia, Kemal, Rai, Thoya... Hepsi sıraya girsin."]
+  ];
+  var CASTN = { taha: 'Taha', quartex: 'Quartex', narancia: 'Narancia', kemal: 'Kemal', rai: 'Rai', thoya: 'Thoya' };
+  var ROAST = {
+    taha: ["Ne kadar terbiyesizsin, Taha gibi! Taha'nın terbiyesi kalkanımdan bile delik deşik.", "Taha sahneye çıkmadan alkış bekler. Alkışı da kendi başlatır.", "Taha bir gün sessiz kalsa nöbeti bırakırım. Merak etme, bırakmayacağım.", "Taha'ya laf yetiştirmek, kalkanla yağmuru durdurmaya benzer: mümkün ama komik."],
+    quartex: ["Quartex'in planı hep 'sonra bakarız'. Sonra da hiç bakılmaz.", "Quartex kendini gizemli sanıyor. Gizemi, geç kalmasından ibaret.", "Quartex ismi kulağa çok havalı geliyor. Sahibi hariç, şaka şaka!", "Quartex'e 'gel' demek, kediyi çağırmak gibi. Gelirse tesadüf."],
+    narancia: ["Narancia'nın ortaya çıkış zamanı, kargo teslimatı kadar belirsiz.", "Narancia kalabalıkta en yüksek sesle susan insandır. Bunu yetenek sanıyor.", "Narancia'ya göre 'hemen geliyorum' ile 'yarın görüşürüz' aynı cümle.", "Narancia bir şey yapmaya karar verdiğinde ben de emekli olmuş olurum."],
+    kemal: ["Kemal'in kendinden emin hali ile doğru bilgi oranı ters orantılı.", "Kemal haritayı ters tutup 'yol bu tarafmış' diyen tiptir.", "Kemal bir şeyi bilmiyorsa bile bilen birinden daha yüksek sesle anlatır.", "Kemal'e 'dur' demek, rüzgâra 'esme' demek gibi."],
+    rai: ["Rai o kadar sakin ki dünya yansa 'bir dakika' der.", "Rai'nin 'geliyorum' demesi, ben kalkanımı cilalayana kadar gelmiyor demek.", "Rai bir kararı üç günde verir, ertesi gün vazgeçer.", "Rai uykuyu o kadar ciddiye alıyor ki bence resmî görevi var."],
+    thoya: ["Thoya'nın bahaneleri kalkanımın savunmasından sağlam.", "Thoya mesaj atar, cevabı beklemez, sonra neden cevap vermedin diye kızar.", "Thoya'nın 'şimdi bakarım'ı, bir mevsim sürüyor.", "Thoya ortadan kaybolmayı sanata çevirdi. Müzeye koymak lazım."]
+  };
+  var TAIL = [" Şaka şaka, hepsini severim. ...Yani öyle zannediyorum.", " Bunu ona söyleme, kalkanım çizilir.", " Hmph, ben sadece gerçeği söyledim!", ""];
+  var JOKES = [
+    "Kalkan neden asla kavga etmez? Çünkü hep karşı tarafı savunur... Tamam, güldün, fark ettim.",
+    "Manga okurken neden uyuyakalıyorsun? Çünkü en iyi sahne hep sonraki bölümde. Hmph, klasik.",
+    "Bir tsundere'ye 'seviyorum' demişler. 'Aptal!' demiş, sonra üç gün küsmüş. Yani aynı ben, hayır, ben değilim!",
+    "Taha neden saat takmaz? Çünkü hep bir şey için geç kalır, saat de utanır.",
+    "Wi-Fi ile Quartex'in ortak yönü? İkisi de lazım olduğunda yok."
+  ];
+  var FAL = [
+    "Bugün bir manga seni bekliyor. Okumazsan kırılırım. Fal bu, ben değil!",
+    "Yakında eski bir arkadaşından mesaj gelecek. Cevap vermesen de olur... Yok, ver.",
+    "Falın diyor ki: bu akşam aşk mangası, yarın savaş. Bence de.",
+    "Kalbin ağır, omzun yüklü. Biraz ara ver, ben nöbetteyim.",
+    "Falda Taha çıktı. Kötü haber: yine gürültü var."
+  ];
 
   /* ---------- YÜZ (SVG) ---------- */
   var DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>' +
@@ -327,14 +363,14 @@
 
     /* dock düğmesi */
     '.ag-dockbtn svg .ag-dot{fill:currentColor;stroke:none}' +
-    '.ag-dockbtn[aria-expanded="true"]{color:#fff;background:rgba(255,255,255,.18)}' +
+    '.ag-dockbtn[hidden]{display:none}.ag-dockbtn[aria-expanded="true"]{color:#fff}' +
 
     /* sohbet paneli */
-    '.agc{position:fixed;z-index:66;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));width:min(390px,calc(100vw - 20px));height:min(470px,calc(100dvh - 150px));display:flex;flex-direction:column;border-radius:26px;overflow:hidden;' +
-      'font:400 13.5px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;opacity:0;pointer-events:none;transform:translate(-50%,16px) scale(.96);' +
+    '.agc{position:fixed;z-index:66;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));width:min(640px,calc(100vw - 16px));height:min(740px,calc(100dvh - 120px));display:flex;flex-direction:column;border-radius:26px;overflow:hidden;' +
+      'font:400 15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;opacity:0;pointer-events:none;transform:translate(-50%,16px) scale(.96);' +
       'transition:opacity .25s ease,transform .45s cubic-bezier(.23,1,.32,1)}' +
     '.agc.on{opacity:1;pointer-events:auto;transform:translate(-50%,0) scale(1)}' +
-    '@media (min-width:900px){.agc{left:96px;bottom:24px;transform:translate(0,16px) scale(.96)}.agc.on{transform:none}}' +
+    '@media (min-width:900px){.agc{left:96px;bottom:24px;width:min(720px,calc(100vw - 120px));height:min(860px,calc(100dvh - 48px));transform:translate(0,16px) scale(.96)}.agc.on{transform:none}}' +
     '.agc>*{position:relative}' +
     '.agc-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.16)}' +
     '.agc-id{display:flex;align-items:center;gap:6px}' +
@@ -351,7 +387,7 @@
     '.agc-reco{display:none}' +
     '.agc.reco-on .agc-msgs,.agc.reco-on .agc-comp{display:none}' +
     '.agc.reco-on .agc-reco{display:flex}' +
-    '.agc-b{max-width:86%;padding:8px 12px;border-radius:16px;white-space:pre-wrap;word-wrap:break-word;animation:agUp .4s cubic-bezier(.23,1,.32,1) both}' +
+    '.agc-b{max-width:92%;padding:10px 14px;border-radius:18px;font-size:15px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word;animation:agUp .4s cubic-bezier(.23,1,.32,1) both}' +
     '.agc-b.u{align-self:flex-end;background:rgba(47,123,255,.5);border:1px solid rgba(190,220,255,.5)}' +
     '.agc-b.a{align-self:flex-start;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}' +
     '.agc-b.w{opacity:.7;font-style:italic}' +
@@ -362,7 +398,7 @@
     '.agc-fld:focus-within{border-color:rgba(255,255,255,.5)}' +
     '.agc-fld input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#fff;font:inherit;font-size:16px}' +
     '.agc-fld input::placeholder{color:rgba(255,255,255,.5)}' +
-    '.agc-send{flex:none;width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:50%;background:#fff;color:#111;cursor:pointer;transition:transform .2s,background .2s,color .2s}' +
+    '.agc-send{flex:none;width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:50%;background:#fff;color:#111;cursor:pointer;transition:transform .2s,background .2s,color .2s}' +
     '.agc-send:disabled{background:rgba(255,255,255,.2);color:rgba(255,255,255,.55);cursor:not-allowed}' +
     '.agc-send:enabled:active{transform:scale(.94)}' +
     '.agc-info{min-height:16px;padding:4px 6px 0;font-size:11.5px;opacity:.7}.agc-info.err{color:#ffb3b3;opacity:1}' +
@@ -375,6 +411,9 @@
     '.agc-more{align-self:center;padding:7px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:13px;cursor:pointer}' +
     '.agc-more:hover{background:rgba(255,255,255,.24)}' +
 
+    '.agc-chips{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none}.agc-chips::-webkit-scrollbar{display:none}' +
+    '.agc-chips button{flex:none;padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}.agc-chips button:hover{background:rgba(255,255,255,.26)}' +
+    '.agc-cv{position:relative;overflow:hidden}.agc-cv svg{position:absolute;inset:0;width:100%;height:100%}.agc-b .agc-go{display:block;margin-top:8px}' +
     '@media (prefers-reduced-motion:reduce){.ag,.agc{transition:none}.ag-body,.ag-svg .eye{animation:none}.ag.talk .ag-bub,.agc-b{animation:none}}';
 
   var st = document.createElement('style');
@@ -413,7 +452,7 @@
     '</div>' +
     '<div class="agc-msgs" id="agMsgs"></div>' +
     '<div class="agc-reco" id="agReco"></div>' +
-    '<div class="agc-comp"><form class="agc-fld" id="agForm">' +
+    '<div class="agc-comp"><div class="agc-chips" id="agChips"></div><form class="agc-fld" id="agForm">' +
       '<input id="agIn" type="text" maxlength="500" autocomplete="off" placeholder="Ardevyl\'e bir şey yaz..." aria-label="Ardevyl\'e mesaj">' +
       '<button type="submit" class="agc-send" id="agSend" disabled aria-label="Gönder"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>' +
     '</form><div class="agc-info" id="agInfo"></div></div>';
@@ -444,6 +483,15 @@
   var activityAt = Date.now(), idleSaid = false;
 
   function mode() { return store('ardevyl_mode') || 'on'; }
+  function enabled() { return store('lef_ardevyl') !== '0'; }
+  function applyEnabled() {
+    var on = enabled();
+    dockBtn.hidden = !on;
+    if (!on) { closeChat(); retreat(); root.hidden = true; } else scheduleAmbient();
+    if (window.__dockInd) window.__dockInd(false);
+  }
+  window.addEventListener('ardevyl-toggle', function () { applyEnabled(); if (enabled()) setTimeout(function () { sayPool('greet', { force: true, prio: 3 }); }, 500); });
+  window.addEventListener('storage', function (e) { if (e.key === 'lef_ardevyl') applyEnabled(); });
   function modeLabel() { return { on: 'Sık', low: 'Az', off: 'Sus' }[mode()] || 'Sık'; }
   modeBtn.textContent = modeLabel();
 
@@ -529,7 +577,7 @@
   function say(line, o) {
     o = o || {};
     var prio = o.prio || 1;
-    if (!line) return false;
+    if (!line || !enabled()) return false;
     if (!o.force) {
       if (mode() === 'off') return false;
       if (chatOpen) return false;
@@ -578,19 +626,8 @@
   });
   el.bub.addEventListener('click', function () { retreat(); });
 
-  /* dokunma tepkisi */
-  el.body.addEventListener('click', function () {
-    pokes++;
-    clearTimeout(pokeT);
-    pokeT = setTimeout(function () { pokes = 0; }, 9000);
-    var idx = Math.min(pokes - 1, P.poke.length - 1);
-    say(P.poke[idx], { force: true, prio: 3 });
-    if (pokes >= P.poke.length) {
-      quietUntil = Date.now() + 90000;
-      pokes = 0;
-      setTimeout(retreat, 2600);
-    }
-  });
+  /* maskota basınca sohbet açılır */
+  el.body.addEventListener('click', function () { openChat(); });
 
   /* ---------- manga önerisi ---------- */
   function recommend(more) {
@@ -632,12 +669,13 @@
   function syncSend() { sendBtn.disabled = busy || !inp.value.trim(); }
 
   function openChat() {
-    if (chatOpen) return;
+    if (chatOpen || !enabled()) return;
     chatOpen = true;
     retreat();
     chat.removeAttribute('inert');
     chat.classList.add('on');
     dockBtn.setAttribute('aria-expanded', 'true');
+    if (window.__dockInd) window.__dockInd(false);
     if (!msgs.children.length) {
       var h = pick('chatHello', P.chatHello);
       setMood(h[0]);
@@ -651,6 +689,7 @@
     chat.classList.remove('on');
     chat.setAttribute('inert', '');
     dockBtn.setAttribute('aria-expanded', 'false');
+    if (window.__dockInd) window.__dockInd(false);
   }
   dockBtn.addEventListener('click', function (e) { e.stopPropagation(); chatOpen ? closeChat() : openChat(); });
   $('.agc-x', chat).addEventListener('click', closeChat);
@@ -697,6 +736,8 @@
       var cv = document.createElement('div'); cv.className = 'agc-cv';
       cv.style.setProperty('--c1', m.node.style.getPropertyValue('--c1'));
       cv.style.setProperty('--c2', m.node.style.getPropertyValue('--c2'));
+      var art = m.node.querySelector('.mg-art');
+      if (art) cv.insertAdjacentHTML('afterbegin', art.outerHTML.replace(/(id="|url\(#)g(\d+)/g, '$1gc$2'));
       var t = document.createElement('div'); t.className = 'agc-ct';
       var b = document.createElement('b'); b.textContent = m.title;
       var s = document.createElement('small'); s.textContent = m.genre;
@@ -711,6 +752,35 @@
     recoBox.appendChild(more);
   }
 
+  /* ---------- sohbet: hızlı düğmeler + yerel komutlar (sunucuya gitmez) ---------- */
+  var chipBox = $('#agChips');
+  ['Manga öner', 'Şaka yap', 'Fal bak', 'Yazı tura', 'Kim terbiyesiz?', "Taha'ya laf sok", "Quartex'e laf sok", "Narancia'ya laf sok", "Kemal'e laf sok", "Rai'ye laf sok", "Thoya'ya laf sok"].forEach(function (t) {
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = t;
+    b.addEventListener('click', function () { send(t); });
+    chipBox.appendChild(b);
+  });
+  function nameIn(t) {
+    for (var k in CASTN) if (new RegExp('(^|[^a-zçğıöşü])' + k).test(t)) return k;
+    return null;
+  }
+  function roastOf(k) { return pick('rs' + k, ROAST[k]) + pick('tail', TAIL); }
+  function randName() { var ks = Object.keys(CASTN); return ks[rnd(ks.length)]; }
+  function local(text) {
+    var t = text.toLocaleLowerCase('tr'), n = nameIn(t), y, m;
+    if (/yaz[ıi] ?tura/.test(t)) { y = rnd(2); return { m: 's', t: (y ? 'Yazı' : 'Tura') + ' geldi. ' + (y ? 'Şansın varmış. Yanlış anlama, istatistik.' : 'Hmph, sanki umurumdaydı.') }; }
+    if (/\bzar\b/.test(t)) return { m: 'h', t: 'Zar: ' + (1 + rnd(6)) + '. Beğenmediysen tekrar at, ben saymam.' };
+    if (/\bfal\b/.test(t)) return { m: 'b', t: pick('fal', FAL) };
+    if (/şaka|fıkra/.test(t)) return { m: 's', t: pick('jk', JOKES) };
+    if (/kim.*(terbiyesiz|saygısız|arsız)|(terbiyesiz|saygısız).*kim/.test(t)) { y = randName(); return { m: 'a', t: 'Ne kadar terbiyesiz diye soruyorsun... Bence ' + CASTN[y] + '. ' + roastOf(y) }; }
+    if (n && /laf|sal|sok|dalga|ez\b|yak|rezil|anlat|hakkında|ne diyor/.test(t)) return { m: 's', t: roastOf(n) };
+    if (/laf (sok|sal)|roast/.test(t)) { y = randName(); return { m: 's', t: roastOf(y) }; }
+    if (/manga.*(öner|öneri|ver|bul)|(öner|öneri).*manga/.test(t)) {
+      m = randomManga();
+      if (m) return { m: 'h', t: "'" + m.title + "' dene. Seçtim diye değil, gerçekten iyi göründüğü için!", btn: { t: 'Hemen aç', f: function () { openManga(m.title); } } };
+    }
+    return null;
+  }
+
   inp.addEventListener('input', syncSend);
   $('#agForm').addEventListener('submit', function (e) { e.preventDefault(); send(inp.value); });
 
@@ -720,6 +790,17 @@
     busy = true; setInfo('');
     inp.value = ''; syncSend();
     addMsg('u', text);
+    var lc = local(text);
+    if (lc) {
+      var lb = addMsg('a w', 'Yazıyor...');
+      setTimeout(function () {
+        lb.className = 'agc-b a'; lb.textContent = lc.t; setMood(lc.m || 's');
+        if (lc.btn) { var gb = document.createElement('button'); gb.type = 'button'; gb.className = 'agc-go'; gb.textContent = lc.btn.t; gb.addEventListener('click', lc.btn.f); lb.appendChild(gb); }
+        history.push({ role: 'user', content: text }, { role: 'assistant', content: lc.t });
+        msgs.scrollTop = msgs.scrollHeight; busy = false; syncSend();
+      }, 400 + rnd(500));
+      return;
+    }
     var bub = addMsg('a w', 'Yazıyor...');
     setMood('n');
     try {
@@ -730,7 +811,7 @@
       var view = curView();
       var msg = text;
       if (!SERVER_PERSONA) {
-        msg = '[Sen "Ardevyl"sin: LTF sitesinin kalkan şeklindeki tsundere maskotusun. Türkçe, en çok 3 cümle konuş; ilgini "Hmph", "y-yanlış anlama" gibi kalıplarla gizle ama yardımcı ol. Kullanıcı "' + view + '" sekmesinde.] ' + text;
+        msg = '[Sen "Ardevyl"sin: LTF sitesinin kalkan şeklindeki tsundere maskotusun. Türkçe konuş, en çok 5 cümle; "Hmph", "y-yanlış anlama" gibi kalıplar kullan ama yardımcı ol. Esprili, alaycı ve doğrudan ol, çekingen olma. Topluluktaki arkadaşlar Taha, Quartex, Narancia, Kemal, Rai ve Thoya hakkında dostça, abartılı şakalar ve hafif laf sokmalar yapabilirsin (huy abartısı, geç kalma, gevezelik gibi komik konular; küfür, dış görünüş, aile, din, ırk ya da cinsellik üzerinden hakaret yok). Kullanıcı kaba ya da yaramaz davranırsa "Ne kadar terbiyesizsin, Taha gibi!" tarzı tepki ver. Kullanıcı "' + view + '" sekmesinde.] ' + text;
       }
       var r;
       try {
@@ -979,6 +1060,7 @@
     if (document.hidden || chatOpen || readerOpen) return;
     if (stBox && stBox.classList.contains('on')) return;
     var v = curView(), r = Math.random();
+    if (Math.random() < .14) { sayPool('roast', { prio: 1 }); return; }
     if (v === 'manga') {
       if (r < .35) recommend(true);
       else sayPool('mangaAmb', { prio: 1 });
@@ -1013,10 +1095,11 @@
   setTimeout(function () {
     if (readerOpen) return;
     var night = h >= 0 && h < 5;
-    sayPool(night ? 'night' : 'greet', { prio: 2 });
+    sayPool(night ? 'night' : h < 11 ? 'morning' : h >= 18 ? 'evening' : 'greet', { prio: 2 });
   }, 2400);
   setTimeout(function () { onView(curView(), true); }, 13000);
   scheduleAmbient();
+  applyEnabled();
 
   /* dışarıdan kullanım: Ardevyl.say(['b','Merhaba!']) */
   window.Ardevyl = {
