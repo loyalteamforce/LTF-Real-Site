@@ -92,6 +92,15 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .mg-rd-t small{ display:block; font-size:12px; font-weight:400; color:#9ca3af; }
 .mg-tx-h{ max-width:640px; margin:0 auto 18px; padding:0 20px; font-size:22px; font-weight:700; }
 .mg-tx{ max-width:640px; margin:0 auto 18px; padding:0 20px; font-size:17px; line-height:1.85; color:#e5e7eb; }
+.mg-cast{ max-width:640px; margin:0 auto 20px; padding:0 20px; }
+.mg-cast summary{ display:inline-block; list-style:none; cursor:pointer; padding:6px 14px; border-radius:999px; font-size:13px; color:#9ca3af; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); }
+.mg-cast summary::-webkit-details-marker{ display:none; }
+.mg-cast summary::after{ content:" \25BE"; }
+.mg-cast[open] summary::after{ content:" \25B4"; }
+.mg-cast div{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.mg-cast span{ padding:5px 11px; border-radius:12px; background:rgba(255,255,255,.06); font-size:12px; color:#e5e7eb; line-height:1.35; }
+.mg-cast span b{ display:block; font-size:13px; }
+.mg-cast span small{ color:#9ca3af; font-size:11px; }
 /* ===== PROFİL SEKMESİ ===== */
 .pf-banner{ position:relative; aspect-ratio:3/1; min-height:130px; border-radius:14px; overflow:hidden; display:grid; place-items:center;
   background:linear-gradient(135deg,#1f1f23,#2a1520); border:1px dashed rgba(255,255,255,.18); }
@@ -381,9 +390,9 @@ html,body{ min-height:100%; background:#121212; color:#fff;
       savas: 'Bu hikâye, sancakların altında verilen büyük bir mücadelenin hikâyesi.'
     };
     var CH = {
-      ask: ['İlk Bakış','Söylenmeyen Sözler','Veda ve Yeniden Başlangıç'],
-      intikam: ['Yemin','Hesaplaşmanın Eşiği','Son Hamle'],
-      savas: ['Sancak Yükselir','Barut ve Gölge','Şafak Vakti']
+      ask: ['İlk Bakış','Söylenmeyen Sözler','Yağmurlu Akşam','Kıskançlığın Gölgesi','Yarım Kalan Mektup','Beklenmeyen Veda','Geri Dönen Yol','Yeniden Başlangıç'],
+      intikam: ['Yemin','Eski Bir Defter','Gölgelerin Peşinde','Maskelerin Düştüğü Gece','Tuzak','Hesaplaşmanın Eşiği','Bedel','Son Hamle'],
+      savas: ['Sancak Yükselir','İlk Çatışma','Siperin Ardında','Barut ve Gölge','Kuşatma','Geri Çekilmeyenler','Karanlık Gece','Şafak Vakti']
     };
     // {a} {b} {c}: karakter adları (hep ek almadan kullanılır), {x}: manga adı
     var POOL = {
@@ -401,7 +410,23 @@ html,body{ min-height:100%; background:#121212; color:#fff;
         'Veda saati geldiğinde {a} ve {b} sarılıp zamanı durdurmak istedi.',
         '{a}, bütün korkularına rağmen kalbinin gerçek adını söyledi; karşısında {b} nefesini tuttu.',
         '{c} sırrı sakladı, çünkü {a} ile {b} için doğru zamanın henüz gelmediğini biliyordu.',
-        'O akşam kar yağarken {a}, {b} için bıraktığı tek bir kırmızı iplikle yetindi.'
+        'O akşam kar yağarken {a}, {b} için bıraktığı tek bir kırmızı iplikle yetindi.',
+        '{a} her sabah okul kapısında {b} için aynı köşede bekliyor, bunu kimseye itiraf etmiyordu.',
+        '{b} cebindeki küçük notu defalarca okudu; yazan tek satır bütün gün {a} için kalbinde yankılandı.',
+        'Festival gecesi fenerler yanarken {a} ve {b} kalabalığın ortasında yalnız kaldı.',
+        '{c} iki arkadaşını aynı sofraya oturtmak için küçük bir hile planladı.',
+        '“Bana bir şans ver,” dedi {a}; {b} cevap yerine gözlerini yere indirdi.',
+        '{a} ile {b} arasındaki sessizlik, söylenen her sözden daha yüksek sesle konuşuyordu.',
+        'Eski bir fotoğraf yere düştü; {b} içindeki çocuk yüzüne bakınca {a} kalbinin hızlandığını hissetti.',
+        '{c}, geceler süren dertleşmelerin ardından {a} için doğru kararı fısıldadı.',
+        'Çay buharının ardında {b} gülümserken {a} bütün cümlelerini unuttu.',
+        '{a}, {b} uğruna ilk kez kuralları çiğnemeyi göze aldı.',
+        'Tren perona girerken {b} arkasına bakmadı; {a} ise adımlarını saymaya başladı.',
+        '{c}, kıskançlık krizini görüp {a} ile {b} için sessiz bir barış ortamı hazırladı.',
+        'Yağmurdan sonra çıkan gökkuşağının altında {a} ve {b} aynı anda aynı şeyi diledi.',
+        '{b}, yıllar sonra aynı sokakta {a} ile karşılaşınca zamanın hiç geçmediğini hissetti.',
+        '{a} defterinin son sayfasına yalnızca {b} için bir cümle yazdı ve defteri sessizce bıraktı.',
+        'Gece yarısı kapı çalındığında {a} ile {b} arasındaki mesafe bir adıma indi.'
       ],
       intikam: [
         '{a}, yıllar önce yaşananların hesabını sormak için sabırla bu günü bekledi.',
@@ -417,7 +442,23 @@ html,body{ min-height:100%; background:#121212; color:#fff;
         'Tuzağın içine düşenin {a} değil, {c} olduğu çok geç fark edildi.',
         '{b}, affetmenin intikamdan daha zor olduğunu ilk kez o gece anladı.',
         'Kapının ardında bekleyen {c} için bu gece, yıllardır süren kinin son perdesiydi.',
-        '{a} elindeki tek ipucunu {b} ile birleştirdiğinde bütün parçalar yerine oturdu.'
+        '{a} elindeki tek ipucunu {b} ile birleştirdiğinde bütün parçalar yerine oturdu.',
+        '{a}, intikamın tatlı değil, boğucu bir yük olduğunu fark etmeye başlamıştı.',
+        '{b} eski bir defteri açtı; içindeki her isim bir hesabın kapanacağı günü gösteriyordu.',
+        '{c}, karanlık sokakta iz bırakmadan ilerlerken arkasında yalnızca {a} için bir işaret bıraktı.',
+        '“Beni yanlış tanıdın,” dedi {b}, gülümseyerek ve masadaki kâğıdı çevirdi.',
+        '{a} ile {b} aynı odada, aynı yalanı bilerek sustular.',
+        'Yağmurlu gecede {c}, yıllardır aradığı sırrın tek tanığıyla karşılaştı.',
+        '{a} elindeki kılıcın ağırlığını ilk kez gerçekten hissetti; {b} bunu görüp sessizce yaklaştı.',
+        '{b}, ihanetin ardında yatan gerçek sebebi öğrenince şaşkınlıktan donup kaldı.',
+        'Bir mektup, bir yüzük ve iki yarım cümle; {c} bütün parçaları masaya dizdi.',
+        '{a}, eski dostunun peşinden giderken bile içinde bir yerde affetmek istedi.',
+        'Tuzak kurulduğu gece {b} ve {c} aynı kapının iki ucunda beklediler.',
+        '“Kimse masum değil,” dedi {a}; {b} ilk kez buna itiraz edemedi.',
+        '{c} yıllarca taşıdığı suçu itiraf ederken {a} dişlerini sıktı.',
+        'Kale avlusunda ilerleyen {b}, arkasındaki ayak seslerinin {a} olduğunu geç anladı.',
+        '{a} intikamını almak üzereyken {c} araya girip bir soru sordu: bunun sonunda kim kalacak?',
+        '{b} bütün planın bozulduğunu anladığında bile soğukkanlılığını kaybetmedi.'
       ],
       savas: [
         'Sancak yükselirken {a} ordunun önüne geçti ve tek bir emir verdi: “İlerleyin!”',
@@ -433,7 +474,23 @@ html,body{ min-height:100%; background:#121212; color:#fff;
         'Ordugâhta yanan ateşin başında {b} ve {c} evlerini anlatıp yarını beklediler.',
         '{a}, komuta çadırında haritayı incelerken {b} için güvenli bir kaçış yolu çizdi.',
         'Şafak söktüğünde {c} yorgun ama dik, zaferin ilk ışığına baktı.',
-        'Kimse kazananı bilmiyordu; ama {a} ile {b} son nefeslerine kadar direneceklerdi.'
+        'Kimse kazananı bilmiyordu; ama {a} ile {b} son nefeslerine kadar direneceklerdi.',
+        'Davullar çalarken {a} ordusuna dönüp tek bir söz verdi: kimse geride kalmayacak.',
+        '{b} hendekte yatan yaralıya su verirken top sesleri çok yakınından geçti.',
+        '{c}, gece yarısı haritayı yeniden çizip ordunun yönünü değiştirdi.',
+        'Sis kalktığında {a} ve {b} karşılarındaki düşman saflarını ilk kez net gördü.',
+        'Kervan tehlikeli geçitten geçerken {c} her taşın arkasına tek tek baktı.',
+        '{a}, ölen arkadaşının sancağını omzuna alıp ilerlemeye devam etti.',
+        'Ordugâhta {b} ile {c} sabaha kadar çıkış planını tartıştı.',
+        '“Kaleyi tutacağız,” dedi {a}; surlardaki herkes silahına sarıldı.',
+        '{b} elindeki ok bittiğinde bile yerini bırakmadı.',
+        'Okların yağdığı gecede {c} sağlık çadırında dinlenmeden çalıştı.',
+        '{a} ile {c}, komuta çadırında barış için son bir teklif hazırladı.',
+        'Dağ geçidinde {b} düşman keşif birliğini fark edip uyarı ışığını yaktı.',
+        'Savaşın ortasında bile {a}, evinden gelen son mektubu cebinde taşıyordu.',
+        '{c} nöbet değişiminde {b} için sıcak bir çorba bıraktı; küçük şeyler orduyu ayakta tutuyordu.',
+        'Kuşatmanın yedinci gününde {a} bile geri çekilmenin akıllıca olup olmadığını düşündü.',
+        'Surlar sarsılırken {b} ve {a} birbirinin sırtını kollayarak ilerledi.'
       ],
       gen: [
         '{x} hikâyesi işte bu sessiz kararla gerçekten başlıyordu.',
@@ -443,7 +500,19 @@ html,body{ min-height:100%; background:#121212; color:#fff;
         'Sokak lambaları tek tek yanarken şehir başka bir yüze bürünüyordu.',
         '{b} ile {c} bir an göz göze geldi; söylenmeyen onca şey o bakışta saklıydı.',
         'Uzaktan gelen çan sesi, yaklaşan değişimin habercisi gibiydi.',
-        'Rüzgâr yönünü değiştirdiğinde herkes yolculuğun yeni bir aşamaya geçtiğini anladı.'
+        'Rüzgâr yönünü değiştirdiğinde herkes yolculuğun yeni bir aşamaya geçtiğini anladı.',
+        'Bir an için zaman durmuş gibiydi.',
+        'Gökyüzü kararırken şehrin üzerine ağır bir sessizlik çöktü.',
+        '{a} geçmişin yükünü omuzlarında hissetti ama geri adım atmadı.',
+        'Kimse o gece uyumadı; herkesin aklında aynı soru dönüp duruyordu.',
+        'Soğuk bir rüzgâr esti ve eski yapraklar sokağa dağıldı.',
+        '{b} derin bir iç çekti, çünkü bu yolun kolay bitmeyeceğini biliyordu.',
+        'Uzaktan bir kuş sesi duyuldu ve herkes kısa bir an için nefesini tuttu.',
+        '{x} adı o gün şehirde fısıltıyla anılmaya başladı.',
+        '{c} pencereden dışarı baktı; sokaklar hâlâ aynıydı ama her şey değişmişti.',
+        'Masadaki mum sönmek üzereydi, ama kimse yerinden kalkmadı.',
+        '{a} ile {b} aynı anda konuşmaya başlayıp aynı anda sustu.',
+        'Hayat bazen tek bir kararın etrafında dönerdi ve o gün o karardı.'
       ]
     };
 
@@ -458,23 +527,27 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 
     function openReader(m, btn){
       lastBtn = btn;
-      document.getElementById('mgRdT').innerHTML = '<span></span><small>3 bölüm</small>';
+      document.getElementById('mgRdT').innerHTML = '<span></span><small>8 bölüm</small>';
       document.querySelector('#mgRdT span').textContent = m[0];
       rdB.innerHTML = '';
       var seed = 0; for(var q = 0; q < m[0].length; q++) seed = (seed * 31 + m[0].charCodeAt(q)) % 9973;
       function rnd(){ seed = (seed * 48271 + 11) % 2147483647; return seed; }
+      // bu mangada yer alan karakterler: 5 ile 8 arası, her manga için farklı
+      var cast = CAST.slice();
+      for(var x0 = cast.length - 1; x0 > 0; x0--){ var j0 = rnd() % (x0 + 1), t0 = cast[x0]; cast[x0] = cast[j0]; cast[j0] = t0; }
+      cast = cast.slice(0, 5 + rnd() % 4);
       var queue = [];
       function name(used){                       // sıradaki karakter: herkes eşit sıklıkta, bir cümlede tekrar etmez
         for(var t = 0; t < 40; t++){
           if(!queue.length){
-            queue = CAST.slice();
+            queue = cast.slice();
             for(var x = queue.length - 1; x > 0; x--){ var j = rnd() % (x + 1), tmp = queue[x]; queue[x] = queue[j]; queue[j] = tmp; }
           }
           var c = queue.pop();
           if(used.indexOf(c) === -1) return c;
           queue.unshift(c);
         }
-        return CAST[0];
+        return cast[0];
       }
       function fill(s){
         var used = [], map = {};
@@ -487,28 +560,29 @@ html,body{ min-height:100%; background:#121212; color:#fff;
       var lastT = [];
       function sentence(){
         var tpl;
-        for(var tr = 0; tr < 12; tr++){             // aynı cümle yakın aralıkta tekrar etmesin
+        for(var tr = 0; tr < 16; tr++){             // aynı cümle yakın aralıkta tekrar etmesin
           var r = rnd() % 10, pool = r < 6 ? POOL[m[4]] : r < 9 ? POOL[m[5]] : POOL.gen;
           tpl = pool[rnd() % pool.length];
           if(lastT.indexOf(tpl) === -1) break;
         }
-        lastT.push(tpl); if(lastT.length > 8) lastT.shift();
+        lastT.push(tpl); if(lastT.length > 14) lastT.shift();
         return fill(tpl);
       }
       function h(text){ var e = document.createElement('h3'); e.className = 'mg-tx-h'; e.textContent = text; rdB.appendChild(e); }
       function p(text){ var e = document.createElement('p'); e.className = 'mg-tx'; e.textContent = text; rdB.appendChild(e); return e; }
 
-      h('Karakterler');
-      var off = rnd() % CAST.length, roles = ROLES[m[4]];
-      CAST.forEach(function(c, idx){
-        var e = p(''); e.style.marginBottom = '8px';
-        var b = document.createElement('b'); b.textContent = c;
-        e.appendChild(b); e.appendChild(document.createTextNode(' — ' + roles[(idx + off) % roles.length]));
+      var det = document.createElement('details'); det.className = 'mg-cast';
+      var sum = document.createElement('summary'); sum.textContent = 'Karakterler (' + cast.length + ')'; det.appendChild(sum);
+      var wrap = document.createElement('div'), off = rnd() % 17, roles = ROLES[m[4]];
+      cast.forEach(function(c, idx){
+        var chip = document.createElement('span'), b = document.createElement('b'), sm = document.createElement('small');
+        b.textContent = c; sm.textContent = roles[(idx + off) % roles.length];
+        chip.appendChild(b); chip.appendChild(sm); wrap.appendChild(chip);
       });
-      p(INTRO[m[4]]);
+      det.appendChild(wrap); rdB.appendChild(det);
       CH[m[4]].forEach(function(title, ci){
         h('Bölüm ' + (ci + 1) + ': ' + title);
-        for(var pi = 0; pi < 12; pi++){
+        for(var pi = 0; pi < 16; pi++){
           var t = [], n = 3 + rnd() % 2;
           for(var s = 0; s < n; s++) t.push(sentence());
           p(t.join(' '));
