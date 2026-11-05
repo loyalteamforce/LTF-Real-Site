@@ -55,6 +55,16 @@ html,body{ min-height:100%; background:#121212; color:#fff;
   opacity:0; transform:translateY(5px); transition:opacity .2s ease, transform .2s ease, left .2s ease; }
 .dock-tip.on{ opacity:1; transform:none; }
 
+/* Masaüstü (geniş ekran): menü solda dikey durur, gizlenmez. Mobilde alttaki menü aynen kalır. */
+@media (min-width:900px){
+  body{ padding-left:88px; }
+  #app{ padding:32px 24px 48px; }
+  .dock, .dock.is-hidden{ left:16px; top:50%; bottom:auto; transform:translateY(-50%); opacity:1; pointer-events:auto; }
+  .dock-bar{ flex-direction:column; padding:7px 5px; gap:6px; }
+  .dock-tip{ bottom:auto; transform:translateX(-5px); }
+  .dock-tip.on{ transform:none; }
+}
+
 @media (prefers-reduced-motion:reduce){
   .dock, .dock-tip, .view.on{ transition:none; animation:none; }
 }
@@ -111,7 +121,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .pf-btn:hover{ background:rgba(0,0,0,.75); }
 .pf-btn svg{ width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
 .pf-tools{ position:absolute; right:10px; bottom:10px; z-index:1; display:flex; gap:8px; }
-.pf-head{ display:flex; align-items:flex-end; gap:14px; padding:0 14px; margin-top:-46px; position:relative; z-index:2; }
+.pf-head{ display:flex; align-items:flex-start; gap:14px; padding:0 14px; margin-top:-46px; position:relative; z-index:2; }
 .pf-av{ position:relative; flex:none; width:92px; height:92px; padding:0; border-radius:50%; overflow:hidden; cursor:pointer; display:grid; place-items:center; color:#9ca3af;
   background:#26262b; border:5px solid #121212; }
 .pf-av img{ width:100%; height:100%; object-fit:cover; display:block; }
@@ -120,7 +130,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .pf-av .pf-cam{ position:absolute; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.55); opacity:0; transition:opacity .2s; color:#fff; }
 .pf-av:hover .pf-cam, .pf-av:focus-visible .pf-cam{ opacity:1; }
 .pf-av:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
-.pf-info{ min-width:0; padding-bottom:6px; }
+.pf-info{ min-width:0; padding-top:52px; }
 .pf-name{ display:flex; align-items:center; gap:6px; font-size:20px; font-weight:700; line-height:1.2; }
 .pf-name span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .pf-name input{ width:min(220px,60vw); padding:4px 8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.08); color:#fff; font:inherit; outline:none; }
@@ -329,6 +339,12 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     function showTip(btn){
       tip.textContent = btn.dataset.label;
       tip.classList.add('on');
+      if(window.matchMedia('(min-width:900px)').matches){   // masaüstü: etiket butonun sağında
+        tip.style.left = (bar.offsetWidth + 12) + 'px';
+        tip.style.top = (btn.offsetTop + (btn.offsetHeight - tip.offsetHeight) / 2) + 'px';
+        return;
+      }
+      tip.style.top = '';
       var bw = bar.offsetWidth, tw = tip.offsetWidth;
       var left = btn.offsetLeft + (btn.offsetWidth - tw) / 2;
       tip.style.left = Math.max(0, Math.min(left, bw - tw)) + 'px';
@@ -379,10 +395,12 @@ html,body{ min-height:100%; background:#121212; color:#fff;
       intikam:[['#7f1d1d','#1e1b4b'],['#b91c1c','#431407'],['#450a0a','#18181b'],['#991b1b','#0f172a']],
       savas:  [['#166534','#052e16'],['#475569','#0f172a'],['#a16207','#3f1d0b'],['#0369a1','#172554']]
     };
-    var ROLES = {
-      ask: ['sırrını saklayan âşık','mektupları taşıyan haberci','reddedilmiş ama vazgeçmeyen','yarım kalan sözün sahibi','ilk aşkını unutamayan','iki kalp arasında kalan','gizli hayran','her şeyi bilen en yakın arkadaş','sevdiği için uzaklara giden','geri dönüşü bekleyen','yanlış anlaşılmanın kurbanı','eski aşkıyla yüzleşen','kıskançlığıyla savaşan','gülüşüyle herkesi eriten','kalbini kapatmış yalnız','aşkına söz vermiş sadık','son şansını kullanan'],
-      intikam: ['intikam yemini eden','geçmişin hesabını soran','gölgelerden izleyen','ihaneti ilk keşfeden','sırları saklayan bilge','planı kuran zeki kafa','öfkesini zor tutan','yıllarca bekleyen','sahte dost','kaybettiklerinin yasını tutan','affetmeyi seçen','sessizce iz süren','borcunu ödemek isteyen','tuzağın içine düşen','haksızlığa uğramış','ipuçlarını birleştiren','son hamleyi yapan'],
-      savas: ['ordunun komutanı','ön safta savaşan','keskin nişancı','cephe habercisi','sağlık birliği başı','casus','kale muhafızı','strateji ustası','genç asker','gönüllü savaşçı','silah ustası','kervan koruyucusu','cesur öncü','teslim olmayan','barış arayan','ordugâh aşçısı','ateş hattındaki kardeş']
+    // Roller: her mangada "sıfat + rol" farklı birleşir; aynı mangada aynı rol iki kez çıkmaz
+    var TRAITS = ['sessiz','gözü pek','çekingen','inatçı','hayalperest','temkinli','şakacı','soğukkanlı','sadık','öfkeli','merhametli','gururlu','yorgun','kararlı','dikkatli','neşeli','gizemli','cesur'];
+    var NOUNS = {
+      ask: ['âşık','mektup taşıyıcı','dert ortağı','gizli hayran','eski sevgili','çocukluk arkadaşı','şarkı yazarı','arabulucu arkadaş','yeni gelen','sessiz gözlemci','rakip talip','kalp kırığı'],
+      intikam: ['intikamcı','muhbir','plan ustası','eski dost','tanık','suçlu','dedektif','gölge','yeminli koruyucu','hain','kâtip','iz sürücü'],
+      savas: ['komutan','nişancı','haberci','sağlıkçı','casus','muhafız','stratejist','genç asker','silah ustası','öncü','keşif eri','sancaktar']
     };
     var INTRO = {
       ask: 'Bu hikâye, söylenemeyen sözlerin ve cesaret isteyen bir sevginin hikâyesi.',
@@ -573,10 +591,11 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 
       var det = document.createElement('details'); det.className = 'mg-cast';
       var sum = document.createElement('summary'); sum.textContent = 'Karakterler (' + cast.length + ')'; det.appendChild(sum);
-      var wrap = document.createElement('div'), off = rnd() % 17, roles = ROLES[m[4]];
+      var wrap = document.createElement('div'), nouns = NOUNS[m[4]].concat(NOUNS[m[5]]);
+      for(var x1 = nouns.length - 1; x1 > 0; x1--){ var j1 = rnd() % (x1 + 1), t1 = nouns[x1]; nouns[x1] = nouns[j1]; nouns[j1] = t1; }
       cast.forEach(function(c, idx){
         var chip = document.createElement('span'), b = document.createElement('b'), sm = document.createElement('small');
-        b.textContent = c; sm.textContent = roles[(idx + off) % roles.length];
+        b.textContent = c; sm.textContent = TRAITS[rnd() % TRAITS.length] + ' ' + nouns[idx];
         chip.appendChild(b); chip.appendChild(sm); wrap.appendChild(chip);
       });
       det.appendChild(wrap); rdB.appendChild(det);
