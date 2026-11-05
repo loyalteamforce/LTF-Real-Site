@@ -299,7 +299,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     <div class="st-top"><b>Ayarlar</b><button type="button" id="stX" aria-label="Kapat">&times;</button></div>
     <div class="st-row"><span>Manga yazı boyutu</span><div class="st-seg" id="stFs"><button type="button" data-v="s">Küçük</button><button type="button" data-v="m">Normal</button><button type="button" data-v="l">Büyük</button></div></div>
     <div class="st-row"><span>Banner videosu kendiliğinden oynasın</span><button type="button" class="st-sw" id="stVid" role="switch" aria-checked="true" aria-label="Banner videosu"></button></div>
-    <div class="st-row"><span>Ardevyl (maskot ve sohbet)</span><button type="button" class="st-sw" id="stAg" role="switch" aria-checked="true" aria-label="Ardevyl"></button></div>
+    <div class="st-row"><span>Ardevyl maskotu<br><small style="color:#9ca3af;font-size:12px">Kapalıyken de alt menüden Ardevyl ile sohbet edebilirsin</small></span><button type="button" class="st-sw" id="stAg" role="switch" aria-checked="true" aria-label="Ardevyl maskotu"></button></div>
     <button type="button" class="st-out" id="stOut">Çıkış yap</button>
   </div>
 </div>
@@ -952,6 +952,8 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     $('pfGear').hidden = !mine;
     $('bioEd').hidden = !mine;
     bioRender();
+    window.__lefProfile = { id: d.id, mine: mine };          // friends.js bunu okur
+    window.dispatchEvent(new Event('lef-profile'));
   }
   render();
 
@@ -960,7 +962,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
   const stSync = () => {
     stFs.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === ST.get('fs', 'm')));
     stVid.setAttribute('aria-checked', ST.get('vid', '1') === '1' ? 'true' : 'false');
-    stAg.setAttribute('aria-checked', ST.get('ardevyl', '1') === '1' ? 'true' : 'false');
+    stAg.setAttribute('aria-checked', ST.get('mascot', ST.get('ardevyl', '1')) === '1' ? 'true' : 'false');
   };
   const stOpen = () => { stSync(); stBox.classList.add('on'); stBox.setAttribute('aria-hidden', 'false'); };
   const stClose = () => { stBox.classList.remove('on'); stBox.setAttribute('aria-hidden', 'true'); };
@@ -970,7 +972,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
   document.addEventListener('keydown', e => { if(e.key === 'Escape' && stBox.classList.contains('on')) stClose(); });
   stFs.addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if(!b) return; ST.set('fs', b.dataset.v); applyFs(); stSync(); });
   stVid.addEventListener('click', () => { ST.set('vid', ST.get('vid', '1') === '1' ? '0' : '1'); stSync(); render(); });
-  stAg.addEventListener('click', () => { ST.set('ardevyl', ST.get('ardevyl', '1') === '1' ? '0' : '1'); stSync(); window.dispatchEvent(new Event('ardevyl-toggle')); });
+  stAg.addEventListener('click', () => { ST.set('mascot', ST.get('mascot', ST.get('ardevyl', '1')) === '1' ? '0' : '1'); stSync(); window.dispatchEvent(new Event('ardevyl-toggle')); });
   $('stOut').addEventListener('click', async () => {
     try { await supabase.auth.signOut(); } catch(e){}
     window.location.replace('login.html');
@@ -1087,6 +1089,15 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     }, 300);
   });
   $('pfBack').addEventListener('click', () => { if(me){ d = me; msg(''); render(); } });
+  // Arkadaş listesinden bir profile git (friends.js tetikler)
+  window.addEventListener('lef-open-profile', async e => {
+    try {
+      const p = await fetchProfile(e.detail && e.detail.id); if(!p) return;
+      d = p; msg(''); render();
+      if(location.hash !== '#profil') location.hash = '#profil';
+      window.scrollTo(0, 0);
+    } catch(_){ msg('Profil açılamadı.'); }
+  });
 
   // Seçili metni sakla (açılır menüler odağı çaldığı için), sonra geri yükle
   let bioRng = null;
@@ -1121,6 +1132,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
   });
 </script>
 
+<script type="module" src="friends.js"></script>
 <script src="ardevyl.js"></script>
 </body>
 </html>

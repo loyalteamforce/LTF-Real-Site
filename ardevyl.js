@@ -448,7 +448,7 @@
     '<div class="agc-h">' +
       '<div class="agc-id"><span class="agc-av">' + FACE + '</span>' +
       '<div class="agc-tabs"><button type="button" data-tab="chat" aria-pressed="true">Sohbet</button><button type="button" data-tab="reco" aria-pressed="false">Öneriler</button></div></div>' +
-      '<div class="agc-act"><button type="button" class="agc-mode" aria-label="Ardevyl ne kadar sık çıksın">Sık</button><button type="button" class="agc-x" aria-label="Kapat">&times;</button></div>' +
+      '<div class="agc-act"><button type="button" class="agc-mode agc-new" aria-label="Yeni sohbet" title="Yeni sohbet">+ Yeni</button><button type="button" class="agc-mode" aria-label="Ardevyl ne kadar sık çıksın">Sık</button><button type="button" class="agc-x" aria-label="Kapat">&times;</button></div>' +
     '</div>' +
     '<div class="agc-msgs" id="agMsgs"></div>' +
     '<div class="agc-reco" id="agReco"></div>' +
@@ -458,7 +458,7 @@
     '</form><div class="agc-info" id="agInfo"></div></div>';
   document.body.appendChild(chat);
   var msgs = $('#agMsgs'), recoBox = $('#agReco'), inp = $('#agIn'), sendBtn = $('#agSend'), info = $('#agInfo');
-  var modeBtn = $('.agc-mode', chat);
+  var modeBtn = $('.agc-mode:not(.agc-new)', chat);
 
   /* ---------- DOM: alt menüye düğme ---------- */
   var dockBar = $('#dockBar');
@@ -483,15 +483,24 @@
   var activityAt = Date.now(), idleSaid = false;
 
   function mode() { return store('ardevyl_mode') || 'on'; }
-  function enabled() { return store('lef_ardevyl') !== '0'; }
+  /* enabled() = MASKOT açık mı. Sohbet (yapay zekâ) bundan bağımsız, her zaman açık. */
+  function enabled() {
+    var m = store('lef_mascot');
+    if (m === null) m = store('lef_ardevyl');          // eski ayarı olanlar için
+    return m !== '0';
+  }
   function applyEnabled() {
     var on = enabled();
-    dockBtn.hidden = !on;
-    if (!on) { closeChat(); retreat(); root.hidden = true; } else scheduleAmbient();
+    dockBtn.hidden = false;                             // sohbet düğmesi hep görünür
+    if (!on) { retreat(); root.hidden = true; }
+    else {
+      if (readerOpen) { root.hidden = false; root.classList.add('on'); }
+      scheduleAmbient();
+    }
     if (window.__dockInd) window.__dockInd(false);
   }
   window.addEventListener('ardevyl-toggle', function () { applyEnabled(); if (enabled()) setTimeout(function () { sayPool('greet', { force: true, prio: 3 }); }, 500); });
-  window.addEventListener('storage', function (e) { if (e.key === 'lef_ardevyl') applyEnabled(); });
+  window.addEventListener('storage', function (e) { if (e.key === 'lef_mascot' || e.key === 'lef_ardevyl') applyEnabled(); });
   function modeLabel() { return { on: 'Sık', low: 'Az', off: 'Sus' }[mode()] || 'Sık'; }
   modeBtn.textContent = modeLabel();
 
@@ -669,7 +678,7 @@
   function syncSend() { sendBtn.disabled = busy || !inp.value.trim(); }
 
   function openChat() {
-    if (chatOpen || !enabled()) return;
+    if (chatOpen) return;
     chatOpen = true;
     retreat();
     chat.removeAttribute('inert');
@@ -707,6 +716,16 @@
               off: "Sessizim. Ama sohbet düğmesi hep burada. ...Aklında olsun." }[next];
     sysMsg(t);
     if (next === 'on') scheduleAmbient();
+  });
+
+  /* yeni sohbet: konuşmayı temizler, baştan başlar */
+  $('.agc-new', chat).addEventListener('click', function () {
+    if (busy) { setInfo('Cevap yazılırken yeni sohbet açılamaz.', true); return; }
+    history = []; msgs.innerHTML = ''; setInfo('');
+    $$('.agc-tabs button', chat)[0].click();           // Sohbet sekmesine dön
+    var h = pick('chatHello', P.chatHello);
+    setMood(h[0]); addMsg('a', h[1]);
+    setTimeout(function () { inp.focus(); }, 50);
   });
 
   $$('.agc-tabs button', chat).forEach(function (b) {
@@ -954,6 +973,7 @@
     closeChat();
     rdState = { fired: {}, chap: -1, last: 0, lastScroll: Date.now(), lastTop: 0, lastT: Date.now(), fastN: 0, fastAt: 0, idleAt: Date.now(), prog: 0 };
     retreat();
+    if (!enabled()) { root.hidden = true; return; }      // maskot kapalıysa okurken çıkmasın
     root.dataset.pos = 'rd';
     root.hidden = false;
     setTimeout(function () {
@@ -1106,6 +1126,7 @@
     say: function (line, o) { return say(line, o || { prio: 2 }); },
     open: openChat,
     close: closeChat,
+    newChat: function () { var b = $('.agc-new', chat); if (b) b.click(); },
     recommend: function () { recommend(); }
   };
 })();
