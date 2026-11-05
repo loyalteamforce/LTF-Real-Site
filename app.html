@@ -13,7 +13,7 @@
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Oswald:wght@400;600&family=Pacifico&family=Playfair+Display:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Bebas+Neue&family=Caveat:wght@400;700&family=Cinzel:wght@400;700&family=Comfortaa:wght@400;700&family=Dancing+Script:wght@400;700&family=Josefin+Sans:wght@400;700&family=Lobster&family=Merriweather:wght@400;700&family=Oswald:wght@400;600&family=Pacifico&family=Playfair+Display:wght@400;700&family=Righteous&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html,body{ min-height:100%; background:#121212; color:#fff;
@@ -142,6 +142,10 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .bio-btn{ height:34px; padding:0 16px; margin-left:6px; border-radius:999px; border:1px solid rgba(255,255,255,.2); background:transparent; color:#fff; font:inherit; font-size:13px; cursor:pointer; }
 .bio-btn.pri{ background:#fff; color:#111; border-color:#fff; font-weight:600; }
 .bio-btn:disabled{ opacity:.4; cursor:not-allowed; }
+.bio-fonts{ display:flex; gap:8px; overflow-x:auto; padding:2px 0 10px; margin-bottom:6px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+.bio-fonts::-webkit-scrollbar{ display:none; }
+.bio-fonts button{ flex:none; height:36px; padding:0 14px; border-radius:999px; border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.07); color:#e5e7eb; font-size:15px; cursor:pointer; white-space:nowrap; }
+.bio-fonts button:hover{ background:rgba(255,255,255,.16); }
 .mg-rd-body{ flex:1; overflow-y:auto; overscroll-behavior:contain; padding:16px 0 40px; }
 .mg-pg{ position:relative; width:min(100%,560px); aspect-ratio:2/3; margin:0 auto 12px; padding:14px; display:grid; gap:10px; background:#f4f4f2; }
 .mg-pg i{ border:3px solid #111; background:linear-gradient(var(--a),var(--c1),var(--c2)); }
@@ -155,9 +159,6 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .pf-av:disabled{ cursor:default; }
 .pf-av:disabled .pf-cam{ display:none; }
 .pf-role{ display:inline-block; margin-top:4px; padding:1px 9px; border:1px solid currentColor; border-radius:999px; font-size:11px; font-weight:600; }
-.pf-color{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:10px 14px 0; font-size:12px; color:#9ca3af; }
-.pf-color .sw{ width:22px; height:22px; min-width:22px; padding:0; border-radius:50%; border:2px solid rgba(255,255,255,.25); cursor:pointer; }
-.pf-color input[type=color]{ width:30px; height:26px; padding:0; border:none; background:none; cursor:pointer; }
 .pf-search{ margin:0 0 14px; }
 .pf-res{ margin-top:6px; border-radius:12px; background:#1b1b1f; border:1px solid rgba(255,255,255,.1); overflow:hidden; }
 .pf-it{ display:flex; align-items:center; gap:10px; width:100%; padding:8px 12px; border:none; background:transparent; color:#fff; font:inherit; font-size:14px; text-align:left; cursor:pointer; }
@@ -189,7 +190,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
   <section class="view" id="v-profil" aria-label="Profil">
     <div class="pf-search">
       <label class="mg-search"><svg viewBox="0 0 18 18"><circle cx="8" cy="8" r="5.25"/><line x1="11.9" y1="11.9" x2="15.5" y2="15.5"/></svg>
-        <input id="pfQ" type="search" placeholder="Üye ara (isim veya 8 haneli ID)" autocomplete="off" maxlength="30"></label>
+        <input id="pfQ" type="search" placeholder="Üye ara" autocomplete="off" maxlength="30"></label>
       <div class="pf-res" id="pfRes" hidden></div>
     </div>
     <button type="button" class="bio-btn pf-back" id="pfBack" hidden>&larr; Profilime dön</button>
@@ -212,65 +213,13 @@ html,body{ min-height:100%; background:#121212; color:#fff;
         <div class="pf-name"><span id="pfNick"></span><button type="button" class="pf-ed" id="pfEd" aria-label="İsmi düzenle"><svg viewBox="0 0 18 18"><path d="M3 15l.7-3L12 3.7a1.4 1.4 0 0 1 2 0l.3.3a1.4 1.4 0 0 1 0 2L6 14.3z"/></svg></button></div>
         <div class="pf-role" id="pfRole" hidden></div>
         <div class="pf-id" id="pfId"></div>
-        <p class="pf-note" id="pfNote"></p>
       </div>
-    </div>
-    <div class="pf-color" id="pfColorRow" hidden>
-      <span>İsim rengi:</span>
-      <button type="button" class="sw" data-color="#ffffff" style="background:#ffffff" aria-label="Beyaz"></button>
-      <button type="button" class="sw" data-color="#ef4444" style="background:#ef4444" aria-label="Kırmızı"></button>
-      <button type="button" class="sw" data-color="#f97316" style="background:#f97316" aria-label="Turuncu"></button>
-      <button type="button" class="sw" data-color="#facc15" style="background:#facc15" aria-label="Sarı"></button>
-      <button type="button" class="sw" data-color="#22c55e" style="background:#22c55e" aria-label="Yeşil"></button>
-      <button type="button" class="sw" data-color="#38bdf8" style="background:#38bdf8" aria-label="Mavi"></button>
-      <button type="button" class="sw" data-color="#a78bfa" style="background:#a78bfa" aria-label="Mor"></button>
-      <button type="button" class="sw" data-color="#f472b6" style="background:#f472b6" aria-label="Pembe"></button>
-      <input type="color" id="pfColorIn" value="#ffffff" aria-label="Özel renk">
     </div>
     <div class="bio" id="bio">
       <div class="bio-top"><span>Biyografi</span><button type="button" class="pf-ed" id="bioEd" aria-label="Biyografiyi düzenle"><svg viewBox="0 0 18 18"><path d="M3 15l.7-3L12 3.7a1.4 1.4 0 0 1 2 0l.3.3a1.4 1.4 0 0 1 0 2L6 14.3z"/></svg></button></div>
       <div class="bio-view" id="bioView"></div>
       <div class="bio-edit" id="bioEdit" hidden>
-        <div class="bio-tb" id="bioTb">
-          <select id="bioFont" aria-label="Yazı tipi">
-            <option value="" selected disabled>Yazı tipi</option>
-            <option value="system-ui">Varsayılan</option>
-            <option value="Playfair Display" style="font-family:'Playfair Display',serif">Klasik</option>
-            <option value="Oswald" style="font-family:Oswald,sans-serif">Başlık</option>
-            <option value="Caveat" style="font-family:Caveat,cursive">El yazısı</option>
-            <option value="Pacifico" style="font-family:Pacifico,cursive">Süslü</option>
-            <option value="Space Mono" style="font-family:'Space Mono',monospace">Daktilo</option>
-          </select>
-          <select id="bioSize" aria-label="Yazı boyutu">
-            <option value="" selected disabled>Boyut</option>
-            <option value="2">Küçük</option>
-            <option value="3">Normal</option>
-            <option value="5">Büyük</option>
-            <option value="6">Çok büyük</option>
-            <option value="7">Dev</option>
-          </select>
-          <span class="sep"></span>
-          <button type="button" data-cmd="bold" aria-label="Kalın"><b>B</b></button>
-          <button type="button" data-cmd="italic" aria-label="İtalik"><i>I</i></button>
-          <button type="button" data-cmd="underline" aria-label="Altı çizili"><u>U</u></button>
-          <button type="button" data-cmd="strikeThrough" aria-label="Üstü çizili"><s>S</s></button>
-          <span class="sep"></span>
-          <button type="button" data-cmd="justifyLeft" aria-label="Sola hizala"><svg viewBox="0 0 18 18"><path d="M3 4h12M3 8h8M3 12h12M3 16h8"/></svg></button>
-          <button type="button" data-cmd="justifyCenter" aria-label="Ortala"><svg viewBox="0 0 18 18"><path d="M3 4h12M5 8h8M3 12h12M5 16h8"/></svg></button>
-          <button type="button" data-cmd="justifyRight" aria-label="Sağa hizala"><svg viewBox="0 0 18 18"><path d="M3 4h12M7 8h8M3 12h12M7 16h8"/></svg></button>
-          <span class="sep"></span>
-          <button type="button" class="sw" data-color="#ffffff" style="background:#ffffff" aria-label="Beyaz"></button>
-          <button type="button" class="sw" data-color="#9ca3af" style="background:#9ca3af" aria-label="Gri"></button>
-          <button type="button" class="sw" data-color="#ef4444" style="background:#ef4444" aria-label="Kırmızı"></button>
-          <button type="button" class="sw" data-color="#f97316" style="background:#f97316" aria-label="Turuncu"></button>
-          <button type="button" class="sw" data-color="#facc15" style="background:#facc15" aria-label="Sarı"></button>
-          <button type="button" class="sw" data-color="#22c55e" style="background:#22c55e" aria-label="Yeşil"></button>
-          <button type="button" class="sw" data-color="#38bdf8" style="background:#38bdf8" aria-label="Mavi"></button>
-          <button type="button" class="sw" data-color="#a78bfa" style="background:#a78bfa" aria-label="Mor"></button>
-          <button type="button" class="sw" data-color="#f472b6" style="background:#f472b6" aria-label="Pembe"></button>
-          <span class="sep"></span>
-          <button type="button" data-cmd="removeFormat" aria-label="Biçimi temizle">Temizle</button>
-        </div>
+        <div class="bio-fonts" id="bioTb" aria-label="Yazı tipi seç"></div>
         <div class="bio-ed" id="bioEditor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Biyografi" data-ph="Kendinden bahset..."></div>
         <div class="bio-foot"><span id="bioCnt">0/500</span><span><button type="button" class="bio-btn" id="bioCancel">İptal</button><button type="button" class="bio-btn pri" id="bioSave">Kaydet</button></span></div>
       </div>
@@ -405,64 +354,167 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 </script>
 
 <script>
-  // ---------- Manga sekmesi (taslak veriler, sonra Supabase'ten gelecek) ----------
+  // ---------- Manga sekmesi (yazı tabanlı; resimler sonra eklenecek, veriler sonra Supabase'ten gelebilir) ----------
   (function(){
-    var M = [
-      ['Gece Muhafızı','Aksiyon','#7f1d1d','#1e1b4b'],
-      ['Gümüş Kılıç','Fantastik','#0f766e','#1e293b'],
-      ['Son Okul Zili','Okul','#be185d','#4c1d95'],
-      ['Kızıl Ejderha','Macera','#b91c1c','#431407'],
-      ['Gölge Avcısı','Gizem','#1e3a8a','#020617'],
-      ['Yıldız Tozu','Romantik','#7e22ce','#be185d'],
-      ['Demir Yürek','Dram','#475569','#0f172a'],
-      ['Ay Tapınağı','Fantastik','#4338ca','#0c4a6e'],
-      ['Sokak Şampiyonu','Spor','#c2410c','#7c2d12'],
-      ['Kırık Taç','Tarih','#a16207','#3f1d0b'],
-      ['Mavi Fırtına','Aksiyon','#0369a1','#172554'],
-      ['Sessiz Orman','Gerilim','#166534','#052e16'],
-      ['Yarım Kalan Şarkı','Müzik','#9d174d','#1e1b4b'],
-      ['Kod Adı: Kelebek','Casusluk','#b45309','#18181b'],
-      ['Uzay Çiftliği','Komedi','#0e7490','#4c1d95']
-    ];
-    var SENT = [
-      'Sabah sisi şehrin üzerine ağır ağır çöktüğünde, kimse olacakları tahmin edemiyordu.',
-      'Eski kapının gıcırtısı koridorda yankılandı ve içerideki herkes bir anda sustu.',
-      '"Hazır mısın?" diye sordu, sesindeki titremeyi saklamaya çalışarak.',
-      'Cevap vermedi; sadece elindeki eski haritayı sıkıca kavrayıp ileri baktı.',
-      '{x} adı o gün ilk kez yüksek sesle söylendi ve havada tuhaf bir ağırlık bıraktı.',
-      'Yağmur damlaları çatıya vururken içeride bir mum sessizce titreşiyordu.',
-      'Uzaktan gelen çan sesi, yaklaşan değişimin habercisi gibiydi.',
-      'Bir an için geçmişin tüm yükü omuzlarına çöktü, sonra yavaşça geri çekildi.',
-      '"Bunu tek başına yapamazsın," dedi yanındaki, gülümsemeye çalışarak.',
-      'Adımları taş yolda çınlarken her birinde biraz daha cesaret topluyordu.',
-      'Pencereden sızan ay ışığı, masadaki yarım kalmış mektubu aydınlattı.',
-      'Hiçbiri o gece uyumadı; herkesin aklında aynı soru dönüp duruyordu.',
-      'Rüzgar yönünü değiştirdiğinde yolculuğun yeni bir aşamaya geçtiğini anladılar.',
-      '{x} hikayesi işte tam burada, sessiz bir kararla gerçekten başlıyordu.',
-      '"Geri dönmek istiyorsan şimdi söyle," dedi ve cevabı beklemeden yürümeye başladı.',
-      'Kalabalığın arasından süzülen bir gölge, kimsenin fark etmediği bir iz bıraktı.',
-      'Gözlerini kapattı, derin bir nefes aldı ve ne olursa olsun devam edeceğine söz verdi.',
-      'Sokak lambaları tek tek yanarken şehir başka bir yüze bürünüyordu.',
-      'Yıllardır sakladığı sırrı ilk kez birine anlatmak, beklediğinden çok daha hafifletici geldi.',
-      'Karşılarında duran kapının ardında ne olduğunu hiçbiri bilmiyordu, ama durmak da bir seçenek değildi.'
-    ];
+    var CAST = ['Taha','Kemal','Quartex','Narancia','Nihish','Thousand','Rai','Mehmet','Berru','Yusuf','Yiğit','Tamer','Rawen','Ekeo','Vanilya','Samet','Ekin'];
+    var NAME = { ask:'Aşk', intikam:'İntikam', savas:'Savaş' }, ORDER = ['ask','intikam','savas'];
+
+    // Her türden 12 manga: yeni bir manga eklemek için ilgili listeye başlık yazman yeterli.
+    var TITLES = {
+      ask:    ['Kırmızı İplik','Son Mektup','Yağmurdan Sonra','Kalbimin Kapısı','Veda Treni','Gümüş Yüzük','Yarım Kalan Şarkı','Sana Dönen Yol','Gece Yarısı Buluşması','Unutulmuş Çiçek','İki Kalp Bir Gölge','Ay Işığında Söz'],
+      intikam:['Kanlı Yemin','Gölgelerin Hesabı','Soğuk İntikam','Kırık Ayna','Zehirli Taç','Sessiz Kılıç','Küllerden Dönüş','Son Hesaplaşma','Karanlık Borç','Yıkılan Kale','Siyah Kuğu','Ölümsüz Kin'],
+      savas:  ['Çelik Fırtına','Kızıl Ufuk','Son Cephe','Demir Birlik','Alevli Sınır','Kan ve Barut','Sancak Altında','Sessiz Hendek','Gökyüzü Savaşçıları','Yıkık Surlar','Zafer Şafağı','Kırık Kılıçlar Çağı']
+    };
+    var PAL = {
+      ask:    [['#be185d','#4c1d95'],['#9d174d','#1e1b4b'],['#c026d3','#4c1d95'],['#e11d48','#4a044e']],
+      intikam:[['#7f1d1d','#1e1b4b'],['#b91c1c','#431407'],['#450a0a','#18181b'],['#991b1b','#0f172a']],
+      savas:  [['#166534','#052e16'],['#475569','#0f172a'],['#a16207','#3f1d0b'],['#0369a1','#172554']]
+    };
+    var ROLES = {
+      ask: ['sırrını saklayan âşık','mektupları taşıyan haberci','reddedilmiş ama vazgeçmeyen','yarım kalan sözün sahibi','ilk aşkını unutamayan','iki kalp arasında kalan','gizli hayran','her şeyi bilen en yakın arkadaş','sevdiği için uzaklara giden','geri dönüşü bekleyen','yanlış anlaşılmanın kurbanı','eski aşkıyla yüzleşen','kıskançlığıyla savaşan','gülüşüyle herkesi eriten','kalbini kapatmış yalnız','aşkına söz vermiş sadık','son şansını kullanan'],
+      intikam: ['intikam yemini eden','geçmişin hesabını soran','gölgelerden izleyen','ihaneti ilk keşfeden','sırları saklayan bilge','planı kuran zeki kafa','öfkesini zor tutan','yıllarca bekleyen','sahte dost','kaybettiklerinin yasını tutan','affetmeyi seçen','sessizce iz süren','borcunu ödemek isteyen','tuzağın içine düşen','haksızlığa uğramış','ipuçlarını birleştiren','son hamleyi yapan'],
+      savas: ['ordunun komutanı','ön safta savaşan','keskin nişancı','cephe habercisi','sağlık birliği başı','casus','kale muhafızı','strateji ustası','genç asker','gönüllü savaşçı','silah ustası','kervan koruyucusu','cesur öncü','teslim olmayan','barış arayan','ordugâh aşçısı','ateş hattındaki kardeş']
+    };
+    var INTRO = {
+      ask: 'Bu hikâye, söylenemeyen sözlerin ve cesaret isteyen bir sevginin hikâyesi.',
+      intikam: 'Bu hikâye, yıllarca beklenen bir hesaplaşmanın hikâyesi.',
+      savas: 'Bu hikâye, sancakların altında verilen büyük bir mücadelenin hikâyesi.'
+    };
+    var CH = {
+      ask: ['İlk Bakış','Söylenmeyen Sözler','Veda ve Yeniden Başlangıç'],
+      intikam: ['Yemin','Hesaplaşmanın Eşiği','Son Hamle'],
+      savas: ['Sancak Yükselir','Barut ve Gölge','Şafak Vakti']
+    };
+    // {a} {b} {c}: karakter adları (hep ek almadan kullanılır), {x}: manga adı
+    var POOL = {
+      ask: [
+        '{a}, {b} için yazdığı mektubu üçüncü kez yırtıp yeniden başladı.',
+        'Yağmur bastırdığında {a} ve {b} aynı çatının altına sığındı, ikisi de konuşmaya cesaret edemedi.',
+        '“Seni bekledim,” dedi {a}; bu cümlenin ağırlığı altında {b} bir adım geri çekildi.',
+        '{c} uzaktan izlerken iki kalbin aynı yola çıktığını fark edip sessizce gülümsedi.',
+        'Okulun eski bahçesinde {a} ile {b} kadar sessiz iki gölge daha yoktu.',
+        '{a} kıskançlığını saklamaya çalıştı, fakat {c} her şeyi gözlerinden okumuştu.',
+        '“Gidersen peşinden gelirim,” dedi {b}, sesi titreyerek.',
+        '{a}, {b} için yazdığı şarkıyı kimse duymasın diye çatı katında fısıltıyla söyledi.',
+        '{c}, arada kalan iki arkadaşına aşkın bazen cesaretten çok sabır istediğini hatırlattı.',
+        '{b} gözyaşlarını silip ilk kez içtenlikle gülümsedi; {a} bu gülüşü ömür boyu unutmayacaktı.',
+        'Veda saati geldiğinde {a} ve {b} sarılıp zamanı durdurmak istedi.',
+        '{a}, bütün korkularına rağmen kalbinin gerçek adını söyledi; karşısında {b} nefesini tuttu.',
+        '{c} sırrı sakladı, çünkü {a} ile {b} için doğru zamanın henüz gelmediğini biliyordu.',
+        'O akşam kar yağarken {a}, {b} için bıraktığı tek bir kırmızı iplikle yetindi.'
+      ],
+      intikam: [
+        '{a}, yıllar önce yaşananların hesabını sormak için sabırla bu günü bekledi.',
+        '“Hiçbir şeyi unutmadım,” dedi {a}; karşısındaki {b} bakışlarını kaçırdı.',
+        '{b}, planın her adımını bir satranç tahtası gibi kafasında kurmuştu.',
+        'Gölgelerin arasından {c} her hareketi izliyor, tek bir işaret bekliyordu.',
+        '{a} ve {b} aynı hedefe yürüyordu; ama ikisinin de gerçek sebebi birbirinden gizliydi.',
+        'Masadaki eski mektubu okuyan {c}, ihanetin kimden geldiğini sonunda anladı.',
+        '{a} bir an tereddüt etti; öfke ile adalet arasındaki çizgi hiç bu kadar ince olmamıştı.',
+        '“Bu hesap bugün kapanacak,” dedi {b} ve kılıcını kınından yavaşça çekti.',
+        'Sahte bir dostluğun maskesi düşerken {c} istemeden de olsa geri çekildi.',
+        '{a}, kaybettikleri için yas tutmayı bırakıp intikam yemini etti; {b} bunu duyunca yutkundu.',
+        'Tuzağın içine düşenin {a} değil, {c} olduğu çok geç fark edildi.',
+        '{b}, affetmenin intikamdan daha zor olduğunu ilk kez o gece anladı.',
+        'Kapının ardında bekleyen {c} için bu gece, yıllardır süren kinin son perdesiydi.',
+        '{a} elindeki tek ipucunu {b} ile birleştirdiğinde bütün parçalar yerine oturdu.'
+      ],
+      savas: [
+        'Sancak yükselirken {a} ordunun önüne geçti ve tek bir emir verdi: “İlerleyin!”',
+        '{b} siperin ardında nefesini tutup düşmanın ilk hamlesini bekledi.',
+        'Barut kokusu ufku kapladığında {a} ile {b} sırt sırta savaşmaya başladı.',
+        '{c}, yaralıları taşırken bile moraller yıkılmasın diye sürekli şakalaştı.',
+        '“Geri çekilmek yok,” dedi {a}; arkasındaki herkes sessizce başını salladı.',
+        'Kale surlarında nöbet tutan {b}, uzaktaki davul seslerini ilk duyan oldu.',
+        '{c} haritanın üstüne eğilip tek bir yol işaretledi; o yol bütün orduyu kurtaracaktı.',
+        'Gecenin ortasında {a} ve {c} sessizce düşman hattının arkasına süzüldü.',
+        '{b} elindeki kılıç kırılınca yere düşen sancağı alıp yoluna devam etti.',
+        'Savaşın en ağır anında {a}, barışın ne kadar pahalıya mal olduğunu düşündü.',
+        'Ordugâhta yanan ateşin başında {b} ve {c} evlerini anlatıp yarını beklediler.',
+        '{a}, komuta çadırında haritayı incelerken {b} için güvenli bir kaçış yolu çizdi.',
+        'Şafak söktüğünde {c} yorgun ama dik, zaferin ilk ışığına baktı.',
+        'Kimse kazananı bilmiyordu; ama {a} ile {b} son nefeslerine kadar direneceklerdi.'
+      ],
+      gen: [
+        '{x} hikâyesi işte bu sessiz kararla gerçekten başlıyordu.',
+        'Eski kapının gıcırtısı koridorda yankılandı ve herkes bir anda sustu.',
+        'Pencereden sızan ay ışığı masadaki yarım kalmış mektubu aydınlattı.',
+        '{a} derin bir nefes aldı ve ne olursa olsun devam edeceğine söz verdi.',
+        'Sokak lambaları tek tek yanarken şehir başka bir yüze bürünüyordu.',
+        '{b} ile {c} bir an göz göze geldi; söylenmeyen onca şey o bakışta saklıydı.',
+        'Uzaktan gelen çan sesi, yaklaşan değişimin habercisi gibiydi.',
+        'Rüzgâr yönünü değiştirdiğinde herkes yolculuğun yeni bir aşamaya geçtiğini anladı.'
+      ]
+    };
+
+    // 36 manga: aşk / intikam / savaş, ikinci tür dönüşümlü karışır
+    var M = [];
+    for(var i = 0; i < 12; i++) ORDER.forEach(function(k, ki){
+      var sec = ORDER[(ki + 1 + (i % 2)) % 3], p = PAL[k][i % 4];
+      M.push([TITLES[k][i], NAME[k] + ' / ' + NAME[sec], p[0], p[1], k, sec]);
+    });
+
     var rd = document.getElementById('mgRd'), rdB = document.getElementById('mgRdB'), lastBtn = null;
-    var LAY = ['1fr 1fr','1fr','1fr 1fr 1fr','1.4fr 1fr','1fr 1fr'];   // sayfa başına panel düzeni (taslak)
+
     function openReader(m, btn){
       lastBtn = btn;
-      document.getElementById('mgRdT').innerHTML = '<span></span><small>Bölüm 1</small>';
+      document.getElementById('mgRdT').innerHTML = '<span></span><small>3 bölüm</small>';
       document.querySelector('#mgRdT span').textContent = m[0];
       rdB.innerHTML = '';
       var seed = 0; for(var q = 0; q < m[0].length; q++) seed = (seed * 31 + m[0].charCodeAt(q)) % 9973;
       function rnd(){ seed = (seed * 48271 + 11) % 2147483647; return seed; }
-      var h = document.createElement('h3'); h.className = 'mg-tx-h'; h.textContent = 'Bölüm 1: Başlangıç'; rdB.appendChild(h);
-      for(var p = 0; p < 40; p++){
-        var para = document.createElement('p'); para.className = 'mg-tx'; var t = [], n = 3 + rnd() % 3;
-        for(var j = 0; j < n; j++) t.push(SENT[rnd() % SENT.length].replace('{x}', m[0]));
-        para.textContent = t.join(' ');
-        rdB.appendChild(para);
+      var queue = [];
+      function name(used){                       // sıradaki karakter: herkes eşit sıklıkta, bir cümlede tekrar etmez
+        for(var t = 0; t < 40; t++){
+          if(!queue.length){
+            queue = CAST.slice();
+            for(var x = queue.length - 1; x > 0; x--){ var j = rnd() % (x + 1), tmp = queue[x]; queue[x] = queue[j]; queue[j] = tmp; }
+          }
+          var c = queue.pop();
+          if(used.indexOf(c) === -1) return c;
+          queue.unshift(c);
+        }
+        return CAST[0];
       }
-      rdB.insertAdjacentHTML('beforeend', '<p class="mg-end">Bölüm sonu. Şimdilik taslak metin, sonra gerçek içerik gelecek.</p>');
+      function fill(s){
+        var used = [], map = {};
+        return s.replace(/\{([abcx])\}/g, function(_, k){
+          if(k === 'x') return m[0];
+          if(!map[k]){ map[k] = name(used); used.push(map[k]); }
+          return map[k];
+        });
+      }
+      var lastT = [];
+      function sentence(){
+        var tpl;
+        for(var tr = 0; tr < 12; tr++){             // aynı cümle yakın aralıkta tekrar etmesin
+          var r = rnd() % 10, pool = r < 6 ? POOL[m[4]] : r < 9 ? POOL[m[5]] : POOL.gen;
+          tpl = pool[rnd() % pool.length];
+          if(lastT.indexOf(tpl) === -1) break;
+        }
+        lastT.push(tpl); if(lastT.length > 8) lastT.shift();
+        return fill(tpl);
+      }
+      function h(text){ var e = document.createElement('h3'); e.className = 'mg-tx-h'; e.textContent = text; rdB.appendChild(e); }
+      function p(text){ var e = document.createElement('p'); e.className = 'mg-tx'; e.textContent = text; rdB.appendChild(e); return e; }
+
+      h('Karakterler');
+      var off = rnd() % CAST.length, roles = ROLES[m[4]];
+      CAST.forEach(function(c, idx){
+        var e = p(''); e.style.marginBottom = '8px';
+        var b = document.createElement('b'); b.textContent = c;
+        e.appendChild(b); e.appendChild(document.createTextNode(' — ' + roles[(idx + off) % roles.length]));
+      });
+      p(INTRO[m[4]]);
+      CH[m[4]].forEach(function(title, ci){
+        h('Bölüm ' + (ci + 1) + ': ' + title);
+        for(var pi = 0; pi < 12; pi++){
+          var t = [], n = 3 + rnd() % 2;
+          for(var s = 0; s < n; s++) t.push(sentence());
+          p(t.join(' '));
+        }
+      });
+      rdB.insertAdjacentHTML('beforeend', '<p class="mg-end">Bölüm sonu. Resimler yakında eklenecek.</p>');
       rd.classList.add('on'); rdB.scrollTop = 0; document.body.style.overflow = 'hidden';
       document.getElementById('mgBack').focus();
     }
@@ -505,6 +557,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
   // ---------- PROFİL (Supabase): herkes birbirinin profilini görür ----------
   // Foto/banner: Storage (avatars, banners). Metinler: profiles tablosu. Kurulum: supabase-kurulum.sql
   const BASE = FUNCTIONS_URL.replace('/functions/v1', '');
+  const COLS = 'id,username,display_name,role,avatar_url,banner_url,banner_type,bio,name_changes';   // public_id ve class bilerek yok
   const LIMIT = 2, WINDOW = 7 * 24 * 60 * 60 * 1000, BIO_MAX = 500, MAX_VID = 100 * 1024 * 1024;
   const $ = id => document.getElementById(id);
   const msg = t => { $('pfMsg').textContent = t || ''; };
@@ -521,7 +574,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
   try { const { data } = await supabase.from('roles').select('*'); (data || []).forEach(r => { roles[r.key] = r; }); } catch(e){}
 
   async function fetchProfile(id){
-    const { data, error } = await supabase.from('profiles').select('*').eq('id', id).maybeSingle();
+    const { data, error } = await supabase.from('profiles').select(COLS).eq('id', id).maybeSingle();
     if(error) throw error;
     return data;
   }
@@ -534,20 +587,40 @@ html,body{ min-height:100%; background:#121212; color:#fff;
       me = await fetchProfile(uid);
     }
   } catch(e){ msg('Profil yüklenemedi. supabase-kurulum.sql çalıştırıldı mı?'); }
-  let d = me || { id: uid, username: uname, display_name: uname, bio: '', name_color: '#ffffff', role: 'member', name_changes: [] };
+  let myPid = '';
+  try { const r = await supabase.rpc('my_public_id'); if(!r.error && r.data) myPid = String(r.data); } catch(e){}
+  let d = me || { id: uid, username: uname, display_name: uname, bio: '', role: 'member', name_changes: [] };
   const isMe = () => d.id === uid;
 
+  const limitText = () => {
+    const next = new Date(Math.min.apply(null, recent()) + WINDOW);
+    return 'İsmini 1 haftada en fazla ' + LIMIT + ' kez değiştirebilirsin. Tekrar değiştirebileceğin zaman: ' +
+      next.toLocaleString('tr-TR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+  };
   const recent = () => (d.name_changes || []).map(t => new Date(t).getTime()).filter(t => Date.now() - t < WINDOW);
 
   // BIO-CLEAN-START
   const BIO_FONTS = {
     'system-ui': "system-ui,-apple-system,'Segoe UI',sans-serif",
     'playfair display': "'Playfair Display',Georgia,serif",
+    'merriweather': "Merriweather,Georgia,serif",
+    'cinzel': "Cinzel,'Times New Roman',serif",
     'oswald': "Oswald,'Arial Narrow',sans-serif",
+    'bebas neue': "'Bebas Neue',Impact,sans-serif",
+    'anton': "Anton,Impact,sans-serif",
+    'bangers': "Bangers,Impact,cursive",
+    'righteous': "Righteous,'Trebuchet MS',sans-serif",
+    'comfortaa': "Comfortaa,'Trebuchet MS',sans-serif",
+    'josefin sans': "'Josefin Sans','Trebuchet MS',sans-serif",
     'caveat': "Caveat,'Segoe Script',cursive",
+    'dancing script': "'Dancing Script','Segoe Script',cursive",
     'pacifico': "Pacifico,'Brush Script MT',cursive",
+    'lobster': "Lobster,'Brush Script MT',cursive",
     'space mono': "'Space Mono',Consolas,monospace"
   };
+  const FONT_LIST = [['system-ui', 'Varsayılan'], ['Playfair Display', 'Klasik'], ['Merriweather', 'Kitap'], ['Cinzel', 'Antik'], ['Oswald', 'Başlık'],
+    ['Bebas Neue', 'Afiş'], ['Anton', 'Kalın'], ['Bangers', 'Çizgi roman'], ['Righteous', 'Modern'], ['Comfortaa', 'Yumuşak'], ['Josefin Sans', 'Zarif'],
+    ['Caveat', 'El yazısı'], ['Dancing Script', 'Kaligrafi'], ['Pacifico', 'Süslü'], ['Lobster', 'Retro'], ['Space Mono', 'Daktilo']];
   const BIO_SIZES = ['x-small', 'small', 'medium', 'large', 'x-large', 'xx-large', 'xxx-large'];
   const BIO_SIZE_NUM = { 1: 'x-small', 2: 'small', 3: 'medium', 4: 'large', 5: 'x-large', 6: 'xx-large', 7: 'xxx-large' };
   const BIO_SKIP = ['script', 'style', 'template', 'iframe', 'object', 'embed', 'svg', 'math', 'noscript', 'textarea', 'select'];
@@ -627,22 +700,11 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     const mine = isMe();
     bioClose();
     // isim + renk + rol
-    const nick = $('pfNick'); if(nick){ nick.textContent = d.display_name || d.username || ''; nick.style.color = HEX.test(d.name_color || '') ? d.name_color : ''; }
+    const nick = $('pfNick'); if(nick){ nick.textContent = d.display_name || d.username || ''; }
     const r = roles[d.role], re = $('pfRole');
     if(r && d.role !== 'member'){ re.textContent = r.label; re.style.color = HEX.test(r.color) ? r.color : '#fff'; re.hidden = false; } else { re.hidden = true; }
-    $('pfId').textContent = 'ID: ' + (d.public_id || '—') + (d['class'] ? ' · Sınıf ' + d['class'] : '');
-    // isim hakkı
-    const left = LIMIT - recent().length;
-    $('pfEd').hidden = !mine || left <= 0;
-    if(!mine){ $('pfNote').textContent = ''; }
-    else if(left > 0){ $('pfNote').textContent = 'İsmini 7 günde ' + LIMIT + ' kez değiştirebilirsin. Kalan hakkın: ' + left; }
-    else {
-      const next = new Date(Math.min.apply(null, recent()) + WINDOW);
-      $('pfNote').textContent = 'İsim değiştirme hakkın doldu. Tekrar değiştirebileceğin zaman: ' +
-        next.toLocaleString('tr-TR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
-    }
-    // isim rengi satırı
-    $('pfColorRow').hidden = !(mine && (!roles[d.role] || roles[d.role].can_color !== false));
+    $('pfId').textContent = (mine && myPid) ? 'ID: ' + myPid : '';   // ID sadece sahibine görünür
+    $('pfEd').hidden = !mine;
     // avatar
     const au = safeUrl(d.avatar_url);
     if(au){ $('pfImg').src = au; $('pfImg').hidden = false; $('pfPh').style.display = 'none'; }
@@ -665,7 +727,8 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 
   // ---------- İsim düzenleme (sunucuda 7 günde 2 kez) ----------
   $('pfEd').addEventListener('click', () => {
-    if(!isMe() || recent().length >= LIMIT){ render(); return; }
+    if(!isMe()) return;
+    if(recent().length >= LIMIT){ msg(limitText()); return; }   // uyarı sadece hak bitince (3. deneme) çıkar
     msg('');
     const inp = document.createElement('input'); inp.maxLength = 20; inp.value = d.display_name || ''; inp.setAttribute('aria-label', 'İsim');
     const span = $('pfNick'); span.replaceWith(inp); $('pfEd').hidden = true; inp.focus(); inp.select();
@@ -676,7 +739,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
       inp.replaceWith(span);
       if(ok && val && val !== d.display_name){
         const { error } = await supabase.rpc('change_display_name', { new_name: val });
-        if(error){ msg(error.message); }
+        if(error){ msg(/hakkin doldu/i.test(error.message) ? 'İsmini 1 haftada en fazla ' + LIMIT + ' kez değiştirebilirsin.' : error.message); }
         else { try { me = await fetchProfile(uid); d = me; } catch(e){} }
       }
       render();
@@ -684,17 +747,6 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     inp.addEventListener('keydown', e => { if(e.key === 'Enter') fin(true); if(e.key === 'Escape') fin(false); });
     inp.addEventListener('blur', () => fin(true));
   });
-
-  // ---------- İsim rengi ----------
-  async function setColor(c){
-    if(!isMe() || !HEX.test(c)) return;
-    msg('');
-    const { error } = await supabase.from('profiles').update({ name_color: c }).eq('id', uid);
-    if(error){ msg('Renk kaydedilemedi: ' + error.message); return; }
-    d.name_color = c; if(me) me.name_color = c; render();
-  }
-  $('pfColorRow').addEventListener('click', e => { const b = e.target.closest('button[data-color]'); if(b) setColor(b.dataset.color); });
-  $('pfColorIn').addEventListener('change', e => setColor(e.target.value));
 
   // ---------- Profil fotoğrafı: 256px kare kırp -> Storage 'avatars' ----------
   $('pfAv').addEventListener('click', () => { if(isMe()) $('pfFImg').click(); });
@@ -758,10 +810,9 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     const q = $('pfQ').value.trim().replace(/[^\p{L}\p{N}_.]/gu, '');
     if(q.length < 2){ hideRes(); return; }
     qTimer = setTimeout(async () => {
-      let f = 'username.ilike.%' + q + '%,display_name.ilike.%' + q + '%';
-      if(/^\d{8}$/.test(q)) f += ',public_id.eq.' + q;
+      const f = 'username.ilike.%' + q + '%,display_name.ilike.%' + q + '%';
       const { data, error } = await supabase.from('profiles')
-        .select('id,username,display_name,public_id,avatar_url,name_color,role').or(f).limit(8);
+        .select('id,username,display_name,avatar_url,role').or(f).limit(8);
       res.replaceChildren();
       if(error || !data || !data.length){
         const p = document.createElement('div'); p.className = 'pf-empty'; p.textContent = error ? 'Arama başarısız.' : 'Kimse bulunamadı.'; res.appendChild(p);
@@ -769,9 +820,10 @@ html,body{ min-height:100%; background:#121212; color:#fff;
         const b = document.createElement('button'); b.type = 'button'; b.className = 'pf-it';
         const au = safeUrl(u.avatar_url), av = document.createElement(au ? 'img' : 'i'); if(au){ av.src = au; av.alt = ''; }
         const t = document.createElement('span'), n = document.createElement('b'), s = document.createElement('small');
-        n.textContent = u.display_name || u.username; if(HEX.test(u.name_color || '')) n.style.color = u.name_color;
-        s.textContent = 'ID: ' + (u.public_id || '—') + (roles[u.role] && u.role !== 'member' ? ' · ' + roles[u.role].label : '');
-        t.append(n, s); b.append(av, t);
+        n.textContent = u.display_name || u.username;
+        t.append(n);
+        if(roles[u.role] && u.role !== 'member'){ s.textContent = roles[u.role].label; t.append(s); }
+        b.append(av, t);
         b.addEventListener('click', async () => {
           try {
             const p = await fetchProfile(u.id); if(!p) return;
@@ -793,20 +845,20 @@ html,body{ min-height:100%; background:#121212; color:#fff;
   });
   function bioExec(cmd, val){
     bioEditor.focus();
-    if(bioRng){ const sel = getSelection(); sel.removeAllRanges(); sel.addRange(bioRng); }
+    const sel = getSelection();
+    if(bioRng && !bioRng.collapsed && bioEditor.contains(bioRng.commonAncestorContainer)){ sel.removeAllRanges(); sel.addRange(bioRng); }
+    else { const r = document.createRange(); r.selectNodeContents(bioEditor); sel.removeAllRanges(); sel.addRange(r); }   // seçili yazı yoksa bütün biyografi
     document.execCommand('styleWithCSS', false, true);
     document.execCommand(cmd, false, val || null);
     bioCount();
   }
   const bioTb = $('bioTb');
-  bioTb.addEventListener('mousedown', e => { if(e.target.closest('button')) e.preventDefault(); });   // seçim kaybolmasın
-  bioTb.addEventListener('click', e => {
-    const b = e.target.closest('button'); if(!b) return;
-    if(b.dataset.cmd) bioExec(b.dataset.cmd);
-    else if(b.dataset.color) bioExec('foreColor', b.dataset.color);
+  FONT_LIST.forEach(f => {
+    const b = document.createElement('button'); b.type = 'button'; b.dataset.font = f[0]; b.textContent = f[1];
+    b.style.fontFamily = BIO_FONTS[f[0].toLowerCase()]; bioTb.appendChild(b);
   });
-  $('bioFont').addEventListener('change', e => { bioExec('fontName', e.target.value); e.target.selectedIndex = 0; });
-  $('bioSize').addEventListener('change', e => { bioExec('fontSize', e.target.value); e.target.selectedIndex = 0; });
+  bioTb.addEventListener('mousedown', e => { if(e.target.closest('button')) e.preventDefault(); });   // seçim kaybolmasın
+  bioTb.addEventListener('click', e => { const b = e.target.closest('button[data-font]'); if(b) bioExec('fontName', b.dataset.font); });
   bioEditor.addEventListener('input', () => {
     if(!bioEditor.textContent && !bioEditor.querySelector('br + *')) bioEditor.replaceChildren();   // boşsa ipucu yazısı görünsün
     bioCount();
