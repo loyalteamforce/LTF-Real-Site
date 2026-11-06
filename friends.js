@@ -179,6 +179,10 @@ import { supabase, FUNCTIONS_URL } from './config.js';
       var n = incoming().length;
       if (n) b.appendChild(dot(n));
       acts.appendChild(b);
+      var sc = btn('Sohbet', '', function () { window.dispatchEvent(new Event('lef-open-inbox')); });   // chat.js sohbet panelini açar
+      var un = window.__lefUnread | 0;
+      if (un) sc.appendChild(dot(un));
+      acts.appendChild(sc);
     } else {
       relButtons(cur.id).forEach(function (x) { acts.appendChild(x); });
     }
@@ -321,6 +325,7 @@ import { supabase, FUNCTIONS_URL } from './config.js';
     cur = window.__lefProfile || null;
     paintActs();
   });
+  window.addEventListener('lef-unread', function () { if (!sheetOpen) paintActs(); });   // chat.js okunmamış sayısını bildirir
   document.addEventListener('visibilitychange', function () {
     if (!document.hidden) loadRels().then(paintAll);
   });
