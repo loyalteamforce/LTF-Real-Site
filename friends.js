@@ -237,6 +237,7 @@ import { supabase, FUNCTIONS_URL } from './config.js';
       fl.forEach(function (r) {
         var id = otherId(r);
         list.appendChild(row(id, people[id], [
+          btn('Mesaj', 'pri', function () { openProfile(id); }),
           btn('Çıkar', '', function () { if (confirm('Arkadaşlıktan çıkarılsın mı?')) act('remove_friendship', { other: id }); })
         ]));
       });
@@ -302,6 +303,7 @@ import { supabase, FUNCTIONS_URL } from './config.js';
   }
 
   function paintAll() {
+    window.dispatchEvent(new Event('lef-rels'));   // chat.js arkadaşlık değişimini buradan duyar
     paintActs();
     if (sheetOpen) { if (tab === 'add') repaintSearchRows(); else paintSheet(); }
     paintBadgeOnly();
