@@ -291,8 +291,7 @@ html,body{ height:100%; overflow:hidden; overscroll-behavior:none; background:#1
     const d = document.createElement('div');
     d.id = 'loadScreen';
     d.style.cssText = 'position:fixed;inset:0;z-index:100000;background:#000;display:grid;place-items:center;opacity:0;transition:opacity .35s ease';
-    d.innerHTML = '<style>@keyframes lefPulse{0%,100%{opacity:.5;transform:scale(.97)}50%{opacity:1;transform:scale(1)}}</style>' +
-      '<img src="crest.png" alt="" style="width:clamp(90px,18vw,150px);height:auto;animation:lefPulse 1.8s ease-in-out infinite;transition:opacity .45s ease">';
+    d.innerHTML = '<img src="crest.png" alt="Loyal Elite Force" style="width:clamp(110px,24vw,190px);height:auto;transition:opacity .45s ease">';
     document.body.appendChild(d);
     requestAnimationFrame(() => { d.style.opacity = '1'; });
     return d;
@@ -301,11 +300,10 @@ html,body{ height:100%; overflow:hidden; overscroll-behavior:none; background:#1
   // Giriş/kayıt başarılı → siyah ekran + arma, site arka planda yüklenir,
   // hazır olunca arma kaybolur ve site açılır. (Ses / uzun intro yok.)
   async function enterSite(){
-    const screen = showLoadScreen();
+    showLoadScreen();
     const wait = ms => new Promise(r => setTimeout(r, ms));
-    await Promise.all([preloadApp(), wait(900)]);       // en az 0,9 sn: yanıp sönme olmasın
-    screen.querySelector('img').style.opacity = '0';     // arma kaybolur
-    await wait(450);
+    await Promise.all([preloadApp(), wait(2500)]);      // armayı en az 2,5 sn göster
+    try { sessionStorage.setItem('lefSplash', String(Date.now())); } catch(_){}   // app.html armayı tekrar göstermesin
     window.location.replace('app.html');
   }
 

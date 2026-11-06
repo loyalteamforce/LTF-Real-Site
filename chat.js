@@ -36,6 +36,8 @@ import { supabase, FUNCTIONS_URL } from './config.js';
     '.ch-top img,.ch-top i,.ch-in img,.ch-in i{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#2a2a30;flex:none}' +
     '.ch-top b{display:block;font-size:14.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
     '.ch-top small{display:block;font-size:12px;color:#9ca3af}' +
+    '.ch-snd{margin-left:auto;display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;flex:none}' +
+    '.ch-snd:hover{background:rgba(255,255,255,.16)}.ch-snd:focus-visible{outline:2px solid var(--ch-hi);outline-offset:2px}.ch-snd[aria-pressed=false]{color:#8b8f98}' +
     '.ch-log{height:min(48vh,340px);overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin}' +
     '.ch-day{align-self:center;margin:6px 0 2px;font-size:11.5px;color:#8b8f98}' +
     '.ch-b{max-width:78%;padding:8px 12px;border-radius:16px;font-size:14.5px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}' +
@@ -102,6 +104,64 @@ import { supabase, FUNCTIONS_URL } from './config.js';
     return !r.error && !!(r.data && r.data.length);
   }
 
+
+  /* ---------- ASMR sesleri (dosya yok, tarayıcıda üretilir) ---------- */
+  var AC = null, noiseBuf = null, lastTap = 0;
+  function sndOn() { try { return localStorage.getItem('lefChatSnd') !== '0'; } catch (_) { return true; } }
+  function setSnd(v) { try { localStorage.setItem('lefChatSnd', v ? '1' : '0'); } catch (_) {} }
+  function actx() {
+    if (!AC) { var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C(); }
+    if (AC.state === 'suspended') AC.resume();
+    return AC;
+  }
+  function noise(c) {
+    if (!noiseBuf) {
+      noiseBuf = c.createBuffer(1, Math.floor(c.sampleRate * 0.4), c.sampleRate);
+      var d = noiseBuf.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    return noiseBuf;
+  }
+  // Harfe basınca: yumuşak, kısa, hafif tok bir "tık"
+  function sndKey(soft) {
+    if (!sndOn()) return;
+    var now = Date.now(); if (now - lastTap < 25) return; lastTap = now;
+    var c = actx(); if (!c) return;
+    var t = c.currentTime, k = soft ? .6 : 1;
+    var src = c.createBufferSource(); src.buffer = noise(c); src.playbackRate.value = .8 + Math.random() * .4;
+    var bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = (soft ? 900 : 1300) + Math.random() * 500; bp.Q.value = .8;
+    var g = c.createGain();
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.13 * k, t + .004); g.gain.exponentialRampToValueAtTime(.001, t + .07);
+    src.connect(bp); bp.connect(g); g.connect(c.destination); src.start(t); src.stop(t + .1);
+    var o = c.createOscillator(); o.type = 'sine';
+    o.frequency.setValueAtTime(190 + Math.random() * 40, t); o.frequency.exponentialRampToValueAtTime(95, t + .07);
+    var og = c.createGain();
+    og.gain.setValueAtTime(0, t); og.gain.linearRampToValueAtTime(.09 * k, t + .004); og.gain.exponentialRampToValueAtTime(.001, t + .09);
+    o.connect(og); og.connect(c.destination); o.start(t); o.stop(t + .1);
+  }
+  // Gönderince / sesi açınca: yumuşak iki notalı çan + hafif hava esintisi
+  function sndChime(force) {
+    if (!force && !sndOn()) return;
+    var c = actx(); if (!c) return;
+    var t = c.currentTime;
+    [[523.25, 0], [783.99, .11]].forEach(function (n) {
+      var o = c.createOscillator(); o.type = 'sine'; o.frequency.value = n[0];
+      var o2 = c.createOscillator(); o2.type = 'sine'; o2.frequency.value = n[0] * 2;
+      var lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2200;
+      var g = c.createGain(), g2 = c.createGain(), s0 = t + n[1];
+      g.gain.setValueAtTime(0, s0); g.gain.linearRampToValueAtTime(.09, s0 + .03); g.gain.exponentialRampToValueAtTime(.001, s0 + 1.1);
+      g2.gain.value = .12;
+      o.connect(g); o2.connect(g2); g2.connect(g); g.connect(lp); lp.connect(c.destination);
+      o.start(s0); o2.start(s0); o.stop(s0 + 1.2); o2.stop(s0 + 1.2);
+    });
+    var src = c.createBufferSource(); src.buffer = noise(c);
+    var bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = .7;
+    bp.frequency.setValueAtTime(600, t); bp.frequency.exponentialRampToValueAtTime(2400, t + .3);
+    var wg = c.createGain();
+    wg.gain.setValueAtTime(0, t); wg.gain.linearRampToValueAtTime(.05, t + .08); wg.gain.exponentialRampToValueAtTime(.001, t + .35);
+    src.connect(bp); bp.connect(wg); wg.connect(c.destination); src.start(t); src.stop(t + .4);
+  }
+
   /* ---------- sohbet görünümü ---------- */
   function paintLog(stick) {
     if (!log) return;
@@ -151,7 +211,7 @@ import { supabase, FUNCTIONS_URL } from './config.js';
       errEl.textContent = 'Gönderilemedi. Arkadaş olduğunuzdan emin ol ve tekrar dene.';
       sendBtn.disabled = !input.value.trim(); return;
     }
-    input.value = ''; fit(); addMsg(r.data);
+    input.value = ''; fit(); addMsg(r.data); sndChime(false);
     input.focus();
   }
   function fit() {
@@ -169,7 +229,22 @@ import { supabase, FUNCTIONS_URL } from './config.js';
     var top = el('div', 'ch-top');
     var tx = el('div');
     tx.append(el('b', '', nameOf(p)), el('small', '', 'Arkadaşın · özel sohbet'));
-    top.append(avatar(p), tx);
+    var sb = el('button', 'ch-snd'); sb.type = 'button';
+    var ICON_ON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+    var ICON_OFF = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>';
+    function paintSnd() {
+      var on = sndOn();
+      sb.innerHTML = on ? ICON_ON : ICON_OFF;
+      sb.setAttribute('aria-pressed', on ? 'true' : 'false');
+      sb.setAttribute('aria-label', on ? 'Sohbet seslerini kapat' : 'Sohbet seslerini aç');
+      sb.title = on ? 'Sesleri kapat' : 'Sesleri aç';
+    }
+    sb.addEventListener('click', function () {
+      var on = !sndOn(); setSnd(on); paintSnd();
+      if (on) sndChime(true);                       // açınca yumuşak bir ses çalar
+    });
+    paintSnd();
+    top.append(avatar(p), tx, sb);
 
     log = el('div', 'ch-log');
     log.setAttribute('role', 'log'); log.setAttribute('aria-live', 'polite'); log.setAttribute('aria-label', nameOf(p) + ' ile mesajlar');
@@ -185,7 +260,10 @@ import { supabase, FUNCTIONS_URL } from './config.js';
     form.addEventListener('submit', function (e) { e.preventDefault(); send(); });
     input.addEventListener('input', fit);
     input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(); }
+      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(); return; }
+      if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key.length === 1 || e.key === 'Enter') sndKey(false);
+      else if (e.key === 'Backspace' || e.key === 'Delete') sndKey(true);
     });
 
     card.append(top, log, errEl, form);

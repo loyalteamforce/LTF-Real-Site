@@ -52,58 +52,13 @@
     display:flex; align-items:center; justify-content:center;
   }
 
-  /* ===== AI Loader (21st.dev "ai-loader" bileşeninin saf CSS/JS karşılığı) ===== */
-  .loader-wrapper{
-    color:#fff;
-    -webkit-user-select:none; user-select:none;
-    background-color:transparent;
-    border-radius:50%;
-    justify-content:center; align-items:center;
-    width:180px; height:180px;
-    font-family:Inter, sans-serif;
-    font-size:var(--loader-fs, 1.2em);
-    font-weight:300;
-    display:flex;
-    position:relative;
-  }
-  .loader{
-    aspect-ratio:1;
-    z-index:0;
-    background-color:transparent;
-    border-radius:50%;
-    width:100%;
-    animation:2s linear infinite loader-rotate;
-    position:absolute; top:0; left:0;
-  }
-  @keyframes loader-rotate{
-    0%{ transform:rotate(90deg);  box-shadow:inset 0 10px 20px #fff, inset 0 20px 30px #ad5fff, inset 0 60px 60px #471eec; }
-    50%{ transform:rotate(270deg); box-shadow:inset 0 10px 20px #fff, inset 0 20px 10px #d60a47, inset 0 40px 60px #311e80; }
-    to{ transform:rotate(450deg); box-shadow:inset 0 10px 20px #fff, inset 0 20px 30px #ad5fff, inset 0 60px 60px #471eec; }
-  }
-  .loader-letter{
-    opacity:0.4;
-    z-index:1;
-    border:none;
-    border-radius:50ch;
-    animation:2s infinite loader-letter-anim;
-    display:inline-block;
-    transform:translateY(0);
-  }
-  @keyframes loader-letter-anim{
-    0%,to{ opacity:0.4; transform:translateY(0); }
-    20%{ opacity:1; transform:scale(1.15); }
-    40%{ opacity:0.7; transform:translateY(0); }
-  }
-  @media (prefers-reduced-motion:reduce){
-    .loader, .loader-letter{ animation-duration:6s; }
-  }
+  .crest{ width:clamp(110px,24vw,190px); height:auto; opacity:0; transition:opacity .6s ease; }
+  .crest.on{ opacity:1; }
 </style>
 </head>
 <body>
 
-  <div class="loader-wrapper" id="loader" role="status" aria-live="polite">
-    <div class="loader"></div>
-  </div>
+  <img class="crest" id="crest" src="crest.png" alt="Loyal Elite Force">
 
   <noscript>
     <p style="color:#fff;font-family:sans-serif;text-align:center;position:absolute;bottom:20%;left:0;right:0;">
@@ -112,71 +67,27 @@
   </noscript>
 
   <script>
-    // ---------- Yükleniyor yazısı: site hangi dildeyse o dilde ----------
-    // Dil: kayıtlı site dili (localStorage 'lang'), yoksa Türkçe.
-    // Yeni dil eklemek için aşağıdaki listeye bir satır eklemen yeterli.
-    (function(){
-      var WORDS = {
-        tr:'Yükleniyor', en:'Loading',   de:'Laden',     fr:'Chargement', es:'Cargando',
-        it:'Caricamento', pt:'Carregando', nl:'Laden',    pl:'Ładowanie', ru:'Загрузка',
-        uk:'Завантаження', az:'Yüklənir', ar:'جارٍ التحميل', fa:'در حال بارگذاری', ja:'読み込み中',
-        ko:'로딩 중',  zh:'加载中',      hi:'लोड हो रहा है', id:'Memuat',  sv:'Laddar'
-      };
-
-      // app.html dili localStorage'da 'lang' anahtarıyla saklıyor (tr / en / ru / ja)
-      // ve kayıt yoksa Türkçe açıyor; burada da aynısı yapılır.
-      function pickLang(){
-        var v = null;
-        try{ v = localStorage.getItem('lang'); }catch(e){}
-        v = (v || '').toLowerCase().split(/[-_]/)[0];
-        return WORDS[v] ? v : 'tr';
-      }
-
-      var lang = pickLang();
-      var word = WORDS[lang];
-      var wrap = document.getElementById('loader');
-      wrap.setAttribute('aria-label', word);
-
-      // Arapça/Farsça bitişik yazıldığı için harf harf bölünmez, tek parça animasyonlanır.
-      var parts = (lang === 'ar' || lang === 'fa') ? [word] : Array.from(word);
-
-      // Uzun kelimelerde yazı çembere sığsın diye punto küçülür.
-      var fs = parts.length <= 8 ? 1.2 : parts.length <= 10 ? 1.2 : parts.length <= 12 ? 1.0 : 0.85;
-      wrap.style.setProperty('--loader-fs', fs + 'em');
-
-      var ring = wrap.querySelector('.loader');
-      parts.forEach(function(ch, i){
-        var s = document.createElement('span');
-        s.className = 'loader-letter';
-        s.style.animationDelay = (i * 0.1).toFixed(1) + 's';
-        s.textContent = ch === ' ' ? '\u00A0' : ch;
-        wrap.insertBefore(s, ring);
-      });
-    })();
-
-    // Güvenlik ağı: modül script'i herhangi bir sebeple (dosya eksik,
-    // ağ hatası, tarayıcı desteği vb.) çalışmazsa 4 saniye sonra
-    // yine de girişe yönlendir.
-    window.__lefFallback = setTimeout(function(){
-      window.location.replace('login.html');
-    }, 4000);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ document.getElementById('crest').classList.add('on'); }); });
+    // Güvenlik ağı: modül script'i çalışmazsa 6 saniye sonra girişe yönlendir.
+    window.__lefFallback = setTimeout(function(){ window.location.replace('login.html'); }, 6000);
   </script>
 
   <script type="module">
     import { supabase } from './config.js';
 
+    // Arma en az 2,5 sn görünür; oturum kontrolü bu sürede paralel yapılır.
+    const wait = ms => new Promise(r => setTimeout(r, ms));
     (async function boot(){
+      let session = null;
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        clearTimeout(window.__lefFallback);
-        if(session){
-          window.location.replace('app.html');
-        } else {
-          window.location.replace('login.html');
-        }
-      } catch(e){
-        clearTimeout(window.__lefFallback);
-        // Supabase erişilemezse yine de girişe yönlendir
+        const res = await Promise.all([supabase.auth.getSession(), wait(2500)]);
+        session = res[0].data.session;
+      } catch(e){ /* Supabase erişilemezse girişe yönlendir */ }
+      clearTimeout(window.__lefFallback);
+      if(session){
+        try { sessionStorage.setItem('lefSplash', String(Date.now())); } catch(_){}   // app.html armayı tekrar göstermesin
+        window.location.replace('app.html');
+      } else {
         window.location.replace('login.html');
       }
     })();
