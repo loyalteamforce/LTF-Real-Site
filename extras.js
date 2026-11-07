@@ -39,6 +39,7 @@ function give(n, why, game) {
     S.cap.n += n;
   }
   S.pts += n; toast('+' + n + ' puan · ' + why); save(); sync(); paint();
+  window.dispatchEvent(new CustomEvent('lef-x', { detail: { n, why, game: !!game } }));
 }
 function mark(k) {
   if (S.d.t !== day()) S.d = { t: day(), k: {} };
@@ -196,7 +197,7 @@ function xo(p) {
   p.onclick = e => { const t = e.target.closest('.x-t3'); if (!t || end || b[t.dataset.i]) return; b[t.dataset.i] = 'X';
     if (win('X')) return fin('Kazandın! 🎉', 5); if (b.every(Boolean)) return fin('Berabere.', 2);
     let m = find('O'); if (m < 0) m = find('X'); if (m < 0) m = !b[4] ? 4 : [0, 2, 6, 8, 1, 3, 5, 7].find(i => !b[i]);
-    b[m] = 'O'; if (win('O')) return fin('Yapay zeka kazandı.', 0); if (b.every(Boolean)) return fin('Berabere.', 2); draw(); };
+    b[m] = 'O'; if (win('O')) { window.dispatchEvent(new CustomEvent('lef-x', { detail: { why: 'XO-kayıp' } })); return fin('Yapay zeka kazandı.', 0); } if (b.every(Boolean)) return fin('Berabere.', 2); draw(); };
   draw();
 }
 
@@ -225,6 +226,13 @@ function lib() {
   $('#xll').onclick = e => { const s = e.target.closest('[data-s]'), d = e.target.closest('[data-d]');
     if (s) { const x = S.lib[s.dataset.s]; x.s = (x.s + 1) % 3; save(); lib(); } else if (d) { S.lib.splice(d.dataset.d, 1); save(); lib(); } };
 }
+
+/* ---------- Ardevyl için küçük API ---------- */
+window.__lefx = {
+  get pts() { return S.pts; }, get streak() { return S.streak; },
+  left() { const k = S.d.t === day() ? S.d.k : {}; return Object.keys(TASKS).filter(t => !k[t]).map(t => TASKS[t]); },
+  open(k) { location.hash = 'kesfet'; setTimeout(() => { if (FEAT[k]) openF(k); }, 80); }
+};
 
 /* ---------- başlat ---------- */
 home(); hub(); lib();

@@ -94,27 +94,28 @@
       ['n', "{n} tane buldum. Hayır, sen buldun. Ben sadece bakıyordum."]
     ],
     emptyHome: [
-      ['o', "Burası... boş mu? Ciddi misin? Ana sayfa bu mu yani?"],
-      ['a', "Yine boş. Hâlâ bir şey koyulmamış. Ben de burada boşluğa bakıyorum."],
-      ['a', "Ana sayfa hâlâ boş! Süsleyemem, ben kalkanım, dekoratör değil!"],
-      ['z', "Bu boşluğa bakmaktan sıkıldım. Manga'ya gitsene."]
+      ['h', "Ana sayfa artık dolu! Günlük görevlerine bak. Yapınca puan veriyor... sadece söylüyorum."],
+      ['s', "Günün sözünü okudun mu? Ben yazmadım, ama bayağı iyi. ...Tamam, ben seçtim."],
+      ['b', "Serini bozma, hmph. Her gün gelirsen bonus puan var. Beni görmeye gelmiş olmazsın tabii."],
+      ['n', "Görevler, söz, puan... Ana sayfa artık düzgün bir yer. Emeğim var, anladın mı!"]
     ],
     emptyExplore: [
-      ['o', "Keşfet diyorlar, keşfedecek bir şey yok! Boş yer mi ciddi misin?!"],
-      ['a', "Burası site mi yoksa beyaz kâğıt mı? Bir şey eklensin artık!"],
-      ['b', "Ben de keşfetmeyi bekliyordum... sadece merak ettim, tamam mı!"],
-      ['z', "Boşluk, boşluk, bir de boşluk. Ne zenginmiş burası."]
+      ['h', "Keşfet artık boş değil! Çark, sınav, oyunlar... Hemen dene, yoksa kırılırım. Biraz."],
+      ['s', "Hafıza oyununda beni geçebileceğini mi sanıyorsun? Hmph, dene bakalım."],
+      ['a', "Çarkı bugün çevirdin mi? Günde bir hak var, boşa harcama!"],
+      ['b', "Sıralamada kaçıncı olduğunu merak etmiyorum. Sadece bakıyorum. Sen de bak."]
     ],
     emptyLib: [
-      ['o', "Kütüphane boş! Kitapların yerine ben mi durayım? Hayır!"],
-      ['a', "Hiçbir şey kaydetmemişsin. Beğendiğin bir şey de mi yok? ...Ya da bana mı bakıyorsun?"],
-      ['b', "Raflar boş. Bir manga kaydet de ben de biraz sevineyim. Y-yani raflar sevinsin."],
-      ['s', "Kütüphane boş ama sen doluyorsun, öyle mi? ...Ne saçmaladım ben."]
+      ['h', "Kütüphane artık işe yarıyor! Okuduğun mangaları buraya yaz, ben de bilgi alayım. Meraktan değil!"],
+      ['b', "Bir manga ekle de görevin tamamlansın. Hayır, senin için değil. Puan için!"],
+      ['s', "Okuyorum, bitirdim, sırada... Üç durum, sonsuz bahane. Sen hangisindesin?"],
+      ['n', "Listeni güncel tut. Dağınık raf, kırık kalkan kadar kötü."]
     ],
     emptyAmb: [
-      ['a', "Hâlâ buradasın ve hâlâ boş. Artık başka sekmeye geçelim mi?"],
-      ['o', "Boş yer mi?! Ciddi misin?! Hâlâ?!"],
-      ['z', "Burada hiçbir şey olmuyor... Ben de uyuyayım o zaman."]
+      ['s', "Sıkıldıysan Keşfet'te oyun var. Ben izlerim. Yani hakemlik yaparım."],
+      ['h', "Bir görev daha yapsan tüm görevler tamam olur! ...Saymıyorum, sadece fark ettim."],
+      ['b', "Puanın nasıl gidiyor? Sorduysam merak ettiğimden değil, sadece kalkanlar bilgi sever!"],
+      ['a', "Hâlâ oyun oynamadıysan sana ne diyeceğimi bilemiyorum. Git, Keşfet'e!"]
     ],
     amb: [
       ['b', "Hâlâ buradasın ha... iyi. Yani, kötü değil."],
@@ -287,6 +288,60 @@
     "Kalbin ağır, omzun yüklü. Biraz ara ver, ben nöbetteyim.",
     "Falda Taha çıktı. Kötü haber: yine gürültü var."
   ];
+
+  /* ---------- YENİ: siteye eklenen özellikler için sözler ---------- */
+  P.xnew = [
+    ['h', "Sitede çok şey değişti! Keşfet'te çark, sınav ve oyunlar var, puanlar toplanıyor, yeni mangalar geldi. ...Bunu senin için yapmadım. Biraz yaptım."]
+  ];
+  P.xwheel = [
+    ['h', "Çarktan {n} puan! Şansın fena değil. ...Tebrik etmiyorum. Ettim. Neyse."],
+    ['s', "{n} puan kazandın! Yarın yine gel, çark seni bekliyor. Çark değil, ben bekliyorum."],
+    ['b', "{n} puan mı? Hmph, bu kadar şans normal değil. Hile yok, değil mi?!"]
+  ];
+  P.xq1 = [['h', "Sınavda {n}/5! Harikasın... yani fena değilsin. Yanlış anlama!"], ['s', "{n} doğru! Demek zekisin. Ben de bunu hep biliyordum."]];
+  P.xq2 = [['n', "Sınavda {n}/5. Orta. Ama pes etme, tekrar dene!"], ['b', "{n} doğru, fena değil. Bir daha dene, daha iyisini yaparsın. Sadece söylüyorum."]];
+  P.xq3 = [['a', "Sınavda {n}/5 mi? Hmph! Yine dene, yoksa bir daha sormam. Yalan, sorarım."], ['z', "{n} doğru... Bir mangayı okuyup biraz dinlen, sonra tekrar gel."]];
+  P.xgame = [
+    ['h', "{g} için {n} puan! Çabuk ve temiz bir iş. ...Alkışlamıyorum, el çırpıyorum. Farklı!"],
+    ['s', "Oyunda iyiydin. Bunu ben söylemiş olmayayım, ama iyiydin."],
+    ['b', "Hmph, şansın varmış. Bir tur daha oynarsan yine yenerim. Ben izleyeyim."]
+  ];
+  P.xlose = [
+    ['s', "XO'da yapay zekâ kazandı! Merak etme, ben de ilk başta kaybettim. ...Hiç oynamadım ama."],
+    ['a', "Yenildin mi? Ortadaki kareyi unutma, hmph! Tekrar dene."]
+  ];
+  P.xall = [
+    ['h', "TÜM GÖREVLER TAMAM! Bonus puanı hak ettin. ...Gurur duyuyorum. Sakın söyleme!"],
+    ['o', "Hepsini bitirdin mi?! Ben bile bu kadar çalışmam. Neyse, tebrikler."]
+  ];
+  P.xlib = [
+    ['h', "Kütüphaneye yeni bir şey eklendi. Güzel seçim, okumazsan haberim olur."],
+    ['b', "Listene ekledin ha. Ben de okurum belki. Ya da okumam. Düşünürüm."]
+  ];
+  P.xstreak = [
+    ['h', "{s} gündür üst üste geliyorsun! Serini bozma, hmph. Seni kaybetmek istemiyorum. Seri demek istedim."],
+    ['s', "{s} günlük seri. Bu kadar sadakat... Yani sitenin kapısı hep açık, ben de nöbetteyim."]
+  ];
+  P.xtasks = [
+    ['a', "{n} görevin daha var! Mesela '{t}'. Yapmazsan görev yapmadı sayılırsın!"],
+    ['s', "Bugünkü görevlerinden {n} tanesi duruyor. Ben olsam hemen halledip puanı alırdım."],
+    ['b', "Hâlâ yapmadığın {n} görev var. Hatırlatıyorum, merak ettiğimden değil!"]
+  ];
+  P.motiv = [
+    ['h', "Bugün zor olabilir, ama sen zorluklardan kaçanlardan değilsin. ...Bunu sadece bir kez söyleyeceğim."],
+    ['s', "Küçük adımlar da adımdır. Büyük adım atarsan yorulursun, ben de seni taşıyamam. Kalkanım hafif değil."],
+    ['b', "Moralin bozuksa bir oyun oyna ya da çarkı çevir. Yardım etmiyorum, sadece öneriyorum!"],
+    ['n', "Başarısız olursan yine dene. Başarırsan ben zaten biliyordum."]
+  ];
+  P.feat = {
+    rank: [['b', "Sıralamaya baktın ha. Kaçıncı olduğun beni ilgilendirmez. ...Ama yükselirsen söyle."]],
+    wheel: [['s', "Çark mı? Günde bir hak. Şansına güven, ama bana güvenme."], ['h', "Çevir bakalım! En çok 50 puan çıkabilir, hayal kurmak serbest."]],
+    quiz: [['n', "Sınav 5 soru. Doğru başına 4 puan. Kopya yok, ben her şeyi görürüm."], ['a', "Düşünerek cevap ver! Rastgele basarsan puanını düşüreceğim. Yalan, düşüremem."]],
+    mem: [['s', "Hafıza oyunu... Ben her çifti ilk seferde bulurum. Sen de dene."], ['b', "14 hamlede bitirirsen bonus puan var. Ben söylemedim!"]],
+    xo: [['a', "XO'da yapay zekâya karşı mı? Cesursun. Köşelerden başla, hmph."], ['s', "Ortadaki kareyi kapmayı unutma. Bu bedava ipucu, bir daha vermem."]],
+    rx: [['h', "Refleks testi! Yeşil olunca bas, erken basarsan kaybedersin. Ben saniyenin altında basarım."], ['n', "300 ms altı çok iyi. Telefonun ekranı kirliyse bahane olmaz!"]]
+  };
+  var GAMES = [['wheel', 'Günlük çark'], ['quiz', 'Sınav'], ['mem', 'Hafıza oyunu'], ['xo', 'XO'], ['rx', 'Refleks testi']];
 
   /* ---------- YÜZ (SVG) ---------- */
   var DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>' +
@@ -773,7 +828,7 @@
 
   /* ---------- sohbet: hızlı düğmeler + yerel komutlar (sunucuya gitmez) ---------- */
   var chipBox = $('#agChips');
-  ['Manga öner', 'Şaka yap', 'Fal bak', 'Yazı tura', 'Kim terbiyesiz?', "Taha'ya laf sok", "Quartex'e laf sok", "Narancia'ya laf sok", "Kemal'e laf sok", "Rai'ye laf sok", "Thoya'ya laf sok"].forEach(function (t) {
+  ['Manga öner', 'Yeni ne var?', 'Oyun öner', 'Puanım kaç?', 'Görevlerim', 'Motivasyon ver', 'Şaka yap', 'Fal bak', 'Yazı tura', 'Kim terbiyesiz?', "Taha'ya laf sok", "Quartex'e laf sok", "Narancia'ya laf sok", "Kemal'e laf sok", "Rai'ye laf sok", "Thoya'ya laf sok"].forEach(function (t) {
     var b = document.createElement('button'); b.type = 'button'; b.textContent = t;
     b.addEventListener('click', function () { send(t); });
     chipBox.appendChild(b);
@@ -786,6 +841,7 @@
   function randName() { var ks = Object.keys(CASTN); return ks[rnd(ks.length)]; }
   function local(text) {
     var t = text.toLocaleLowerCase('tr'), n = nameIn(t), y, m;
+    var xl = xLocal(t); if (xl) return xl;
     if (/yaz[ıi] ?tura/.test(t)) { y = rnd(2); return { m: 's', t: (y ? 'Yazı' : 'Tura') + ' geldi. ' + (y ? 'Şansın varmış. Yanlış anlama, istatistik.' : 'Hmph, sanki umurumdaydı.') }; }
     if (/\bzar\b/.test(t)) return { m: 'h', t: 'Zar: ' + (1 + rnd(6)) + '. Beğenmediysen tekrar at, ben saymam.' };
     if (/\bfal\b/.test(t)) return { m: 'b', t: pick('fal', FAL) };
@@ -830,7 +886,7 @@
       var view = curView();
       var msg = text;
       if (!SERVER_PERSONA) {
-        msg = '[Sen "Ardevyl"sin: LTF sitesinin kalkan şeklindeki tsundere maskotusun. Türkçe konuş, en çok 5 cümle; "Hmph", "y-yanlış anlama" gibi kalıplar kullan ama yardımcı ol. Esprili, alaycı ve doğrudan ol, çekingen olma. Topluluktaki arkadaşlar Taha, Quartex, Narancia, Kemal, Rai ve Thoya hakkında dostça, abartılı şakalar ve hafif laf sokmalar yapabilirsin (huy abartısı, geç kalma, gevezelik gibi komik konular; küfür, dış görünüş, aile, din, ırk ya da cinsellik üzerinden hakaret yok). Kullanıcı kaba ya da yaramaz davranırsa "Ne kadar terbiyesizsin, Taha gibi!" tarzı tepki ver. Kullanıcı "' + view + '" sekmesinde.] ' + text;
+        msg = '[Sen "Ardevyl"sin: LTF sitesinin kalkan şeklindeki tsundere maskotusun. Türkçe konuş, en çok 5 cümle; "Hmph", "y-yanlış anlama" gibi kalıplar kullan ama yardımcı ol. Esprili, alaycı ve doğrudan ol, çekingen olma. Topluluktaki arkadaşlar Taha, Quartex, Narancia, Kemal, Rai ve Thoya hakkında dostça, abartılı şakalar ve hafif laf sokmalar yapabilirsin (huy abartısı, geç kalma, gevezelik gibi komik konular; küfür, dış görünüş, aile, din, ırk ya da cinsellik üzerinden hakaret yok). Kullanıcı kaba ya da yaramaz davranırsa "Ne kadar terbiyesizsin, Taha gibi!" tarzı tepki ver. Kullanıcı "' + view + '" sekmesinde. ' + siteInfo() + '] ' + text;
       }
       var r;
       try {
@@ -910,6 +966,93 @@
     if (opts.length) sayPool(opts[rnd(opts.length)], { prio: 2 });
     else sayPool('profileOk', { prio: 2 });
   }
+
+  /* ---------- YENİ: puan, görev, oyun ve site olaylarına tepkiler ---------- */
+  function X() { return window.__lefx || null; }
+  function xLeft() { var x = X(); return x ? x.left() : []; }
+  function sayTasks() { var l = xLeft(); if (l.length) sayPool('xtasks', { prio: 1, vars: { n: l.length, t: l[0] }, actions: [{ t: 'Görevlere bak', f: function () { location.hash = 'ana-sayfa'; } }] }); }
+  function openF(k) { var x = X(); if (x) x.open(k); else location.hash = 'kesfet'; }
+  function siteInfo() {
+    var x = X(), ms = (window.MANGALAR || []).map(function (o) { return o.t; }).join(', ');
+    return 'Sitede şunlar var: Ana Sayfa (günlük görevler, günün sözü), Manga (' + (ms || 'çok sayıda manga') + '), Keşfet (sıralama, günlük çark, sınav, hafıza oyunu, XO, refleks testi), Kütüphane (kendi okuma listesi), Profil (banner, avatar, biyografi, arkadaşlar). Puan sistemi var: günlük giriş, seri, görevler, oyunlar.' + (x ? ' Kullanıcının puanı ' + x.pts + ', serisi ' + x.streak + ' gün.' : '') + ' İstersen kullanıcıya bu özellikleri öner.';
+  }
+  function xLocal(t) {
+    var x = X(), g;
+    if (/yeni.*(var|ne)|yenilik|neler eklendi|ne eklendi|neler var/.test(t))
+      return { m: 'h', t: "Yeni olanlar: Keşfet'te günlük çark, sınav, hafıza, XO ve refleks oyunları. Her gün girince puan ve seri artıyor, görevler var, Sıralama var, Kütüphane çalışıyor ve 10 yeni manga geldi. Hmph, hepsi benim sayemde!", btn: { t: "Keşfet'e git", f: function () { location.hash = 'kesfet'; } } };
+    if (/puan|seri\b|serim/.test(t)) {
+      if (!x) return { m: 'n', t: 'Puan sistemi henüz yüklenmedi, biraz sonra tekrar sor.' };
+      return { m: x.pts > 100 ? 'h' : 'n', t: 'Puanın ' + x.pts + ', serin ' + x.streak + ' gün. ' + (x.streak >= 3 ? 'Güzel gidiyorsun. Yanlış anlama, sadece doğru olanı söylüyorum.' : 'Her gün gelirsen bonus büyür.') };
+    }
+    if (/görev/.test(t)) {
+      var l = xLeft();
+      return { m: l.length ? 'a' : 'h', t: l.length ? 'Kalan görevlerin: ' + l.join(', ') + '. Hepsini bitirirsen +20 bonus var!' : 'Bugünkü görevlerin tamam! Aferin. ...Dedim mi? Demedim.', btn: l.length ? { t: 'Görevlere bak', f: function () { location.hash = 'ana-sayfa'; } } : null };
+    }
+    if (/sıkıl|oyun.*(öner|ne|oyna)|(öner|ne).*oyun|eğlen/.test(t)) {
+      g = GAMES[rnd(GAMES.length)];
+      return { m: 's', t: "Sıkıldıysan '" + g[1] + "' dene. Seçtim diye değil, sana yakıştığı için!", btn: { t: 'Aç', f: function () { openF(g[0]); } } };
+    }
+    if (/çark/.test(t)) return { m: 's', t: 'Günde bir kez çevirebilirsin ve 5 ile 50 puan arası kazanırsın. Şansına güven!', btn: { t: 'Çarkı aç', f: function () { openF('wheel'); } } };
+    if (/sınav|quiz/.test(t)) return { m: 'n', t: 'Sınavda 5 soru var, doğru başına 4 puan. Hazırsan başla.', btn: { t: 'Sınava gir', f: function () { openF('quiz'); } } };
+    if (/sıralama|lider/.test(t)) return { m: 'b', t: 'Sıralamada en çok puan toplayanlar var. Kendini orada görmek istersen çalış.', btn: { t: 'Sıralamaya bak', f: function () { openF('rank'); } } };
+    if (/motivasyon|moral|üzgün|keyfim yok/.test(t)) return pickM('motiv');
+    if (/ne yap(sam|ayım)|bugün ne/.test(t)) {
+      var mm = randomManga(); g = GAMES[rnd(GAMES.length)];
+      return { m: 'h', t: 'Önce bir manga oku' + (mm ? " ('" + mm.title + "')" : '') + ", sonra '" + g[1] + "' oyna, en sonda görevlerine bak. Sıralama hazır!" };
+    }
+    return null;
+  }
+  function pickM(key) { var l = pick(key, P[key]); return { m: l[0], t: l[1] }; }
+
+  window.addEventListener('lef-x', function (e) {
+    var d = e.detail || {}, w = d.why || '';
+    if (w === 'Çark') { sayPool('xwheel', { prio: 2, vars: { n: d.n } }); if (d.n >= 25) setTimeout(function () { fx('🎉'); }, 500); else setTimeout(function () { fx('⭐'); }, 500); }
+    else if (w === 'Sınav') { sayPool(d.n >= 16 ? 'xq1' : d.n >= 8 ? 'xq2' : 'xq3', { prio: 2, vars: { n: Math.round(d.n / 4) } }); if (d.n >= 16) setTimeout(function () { fx('🎉'); }, 500); }
+    else if (w === 'XO' || w === 'Hafıza oyunu' || w === 'Refleks') { sayPool('xgame', { prio: 2, vars: { n: d.n, g: w } }); setTimeout(function () { fx('✨'); }, 500); }
+    else if (w === 'XO-kayıp') sayPool('xlose', { prio: 2 });
+    else if (w === 'Tüm görevler tamam!') { sayPool('xall', { prio: 3 }); setTimeout(function () { fx('🏆'); }, 500); }
+    else if (w === 'Kütüphaneye bir şey ekle') sayPool('xlib', { prio: 2 });
+  });
+
+  /* Keşfet'te bir oyunu açınca kısa bir yorum */
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('#v-kesfet [data-f]');
+    if (b && P.feat[b.dataset.f]) say(pick('ft' + b.dataset.f, P.feat[b.dataset.f]), { prio: 2 });
+    var c = e.target.closest && e.target.closest('.mg-cover b');
+    var cv = c ? c.parentNode : (e.target.closest && e.target.closest('.mg-cover'));
+    if (cv && window.MANGALAR) {
+      var tt = (cv.querySelector('b') || {}).textContent, o = window.MANGALAR.filter(function (z) { return z.t === tt; })[0];
+      if (o) setTimeout(function () { say(['b', "'" + o.t + "' mu? " + o.ozet.split('. ')[0] + '. ...Neyse, iyi okumalar.'], { prio: 1 }); }, 1800);
+    }
+  });
+
+  /* Küçük kutlama efekti: maskotun etrafında emojiler uçuşur */
+  var fxCss = document.createElement('style');
+  fxCss.textContent = '.ag-fx{position:absolute;left:50%;bottom:34px;font-size:18px;pointer-events:none;opacity:0;animation:agFx 1.2s ease-out forwards}' +
+    '@keyframes agFx{0%{opacity:0;transform:translate(0,0) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.2)}}' +
+    '@media (prefers-reduced-motion:reduce){.ag-fx{display:none}}';
+  document.head.appendChild(fxCss);
+  function fx(ch) {
+    if (reduce || root.hidden) return;
+    for (var i = 0; i < 7; i++) {
+      var sp = document.createElement('span'); sp.className = 'ag-fx'; sp.textContent = ch;
+      sp.style.setProperty('--dx', (rnd(110) - 55) + 'px'); sp.style.setProperty('--dy', (-40 - rnd(70)) + 'px'); sp.style.animationDelay = (i * 70) + 'ms';
+      root.appendChild(sp); (function (n) { setTimeout(function () { n.remove(); }, 1700); })(sp);
+    }
+  }
+
+  /* Açılışta: yenilikleri bir kez tanıt, seri kutla */
+  setTimeout(function () {
+    if (!store('ag_x1')) {
+      store('ag_x1', '1');
+      sayPool('xnew', { prio: 2, actions: [{ t: "Keşfet'e git", f: function () { location.hash = 'kesfet'; } }, { t: 'Sonra', f: function () {} }] });
+      return;
+    }
+    var x = X(), day = new Date().toISOString().slice(0, 10);
+    if (x && [3, 7, 14, 30, 60, 100].indexOf(x.streak) !== -1 && store('ag_streak_day') !== day) {
+      store('ag_streak_day', day); sayPool('xstreak', { prio: 2, vars: { s: x.streak } }); setTimeout(function () { fx('🔥'); }, 500);
+    }
+  }, 4500);
 
   window.addEventListener('hashchange', function () { setTimeout(function () { onView(curView()); }, 0); });
 
@@ -1085,7 +1228,8 @@
       if (r < .35) recommend(true);
       else sayPool('mangaAmb', { prio: 1 });
     } else if (v === 'ana-sayfa' || v === 'kesfet' || v === 'kutuphane') {
-      if (r < .55) sayPool('emptyAmb', { prio: 1 });
+      if (v === 'ana-sayfa' && r < .3 && xLeft().length) sayTasks();
+      else if (r < .55) sayPool('emptyAmb', { prio: 1 });
       else sayPool('amb', { prio: 1 });
     } else {
       sayPool('amb', { prio: 1 });
