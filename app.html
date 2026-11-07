@@ -280,6 +280,15 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .st-sw[aria-checked="true"]{ background:#2f7bff; }
 .st-sw[aria-checked="true"]::after{ transform:translateX(19px); }
 .st-out{ width:100%; margin-top:16px; height:44px; border-radius:12px; border:1px solid rgba(255,120,120,.4); background:rgba(255,80,80,.1); color:#ff9a9a; font:inherit; font-size:14px; cursor:pointer; }
+/* ---- Mobil: banner (kendi + başkası, foto + video) kenardan kenara, yana kaymadan ---- */
+@media (max-width:600px){
+  #v-profil{ overflow-x:clip; }
+  .pf-bwrap{ margin:6px -16px 0; }
+  #pfSk .a{ width:calc(100% + 32px); margin:6px -16px 0; }
+  .pf-glow{ inset:-6px 0; transform:scale(1,1.07); }
+  .pf-banner{ width:100%; max-width:100%; min-height:0; aspect-ratio:2.2/1; isolation:isolate; }
+  .pf-banner video,.pf-banner img{ position:absolute; inset:0; width:100%; height:100%; max-width:100%; min-width:0; object-fit:cover; object-position:center; display:block; }
+}
 </style>
 </head>
 <body>
