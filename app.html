@@ -130,7 +130,14 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 @media (hover:none){ .dock-btn:hover{ background:transparent; color:#9ca3af; } .dock-btn[aria-current="page"]:hover,.dock-bar .ag-dockbtn[aria-expanded="true"]:hover{ color:#fff; } }
 .dock-btn:focus:not(:focus-visible){ outline:none; }
 /* ===== PROFİL SEKMESİ ===== */
-.pf-banner{ position:relative; aspect-ratio:3/1; min-height:130px; border-radius:14px; overflow:hidden; display:grid; place-items:center;
+.pf-bwrap{ position:relative; margin:6px -10px 0; isolation:isolate; }
+.pf-glow{ position:absolute; inset:-6px; z-index:0; border-radius:26px; overflow:hidden; pointer-events:none; opacity:0; transition:opacity .6s ease;
+  filter:blur(34px) saturate(1.9) brightness(1.15); transform:scale(1.07); }
+.pf-glow.on{ opacity:.85; animation:glowPulse 5s ease-in-out infinite; }
+.pf-glow img,.pf-glow canvas{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.pf-glow[hidden]{ display:none; }
+@keyframes glowPulse{ 0%,100%{ opacity:.7; } 50%{ opacity:.95; } }
+.pf-banner{ position:relative; z-index:1; aspect-ratio:2.2/1; min-height:210px; max-height:440px; border-radius:20px; overflow:hidden; display:grid; place-items:center;
   background:linear-gradient(135deg,#1f1f23,#2a1520); border:1px dashed rgba(255,255,255,.18); }
 .pf-banner.has{ border-style:solid; border-color:rgba(255,255,255,.1); }
 .pf-banner video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
@@ -138,18 +145,20 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .pf-btn{ position:relative; z-index:1; display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border:none; border-radius:999px; font:inherit; font-size:13px; color:#fff; cursor:pointer; background:rgba(0,0,0,.55); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.2); }
 .pf-btn:hover{ background:rgba(0,0,0,.75); }
 .pf-btn svg{ width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
-.pf-tools{ position:absolute; right:10px; bottom:10px; z-index:1; display:flex; gap:8px; }
-.pf-head{ display:flex; align-items:flex-start; gap:14px; padding:0 14px; margin-top:-46px; position:relative; z-index:2; }
-.pf-av{ position:relative; flex:none; width:92px; height:92px; padding:0; border-radius:50%; overflow:hidden; cursor:pointer; display:grid; place-items:center; color:#9ca3af;
-  background:#26262b; border:5px solid #121212; }
+.pf-tools{ position:absolute; right:12px; top:12px; z-index:3; display:flex; gap:8px; }
+.pf-head{ display:flex; align-items:flex-start; gap:16px; padding:0 14px; margin-top:-66px; position:relative; z-index:2; pointer-events:none; }
+.pf-head > *{ pointer-events:auto; }
+.pf-av{ position:relative; flex:none; width:132px; height:132px; padding:0; border-radius:50%; overflow:hidden; cursor:pointer; display:grid; place-items:center; color:#9ca3af;
+  background:#26262b; border:6px solid #121212; box-shadow:0 8px 24px rgba(0,0,0,.45); transition:transform .25s cubic-bezier(.3,1.4,.5,1); }
+.pf-av:not(:disabled):hover{ transform:scale(1.04); }
 .pf-av img{ width:100%; height:100%; object-fit:cover; display:block; }
 .pf-av img[hidden]{ display:none; }
-.pf-av svg{ width:38px; height:38px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; }
+.pf-av svg{ width:52px; height:52px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; }
 .pf-av .pf-cam{ position:absolute; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.55); opacity:0; transition:opacity .2s; color:#fff; }
 .pf-av:hover .pf-cam, .pf-av:focus-visible .pf-cam{ opacity:1; }
 .pf-av:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
-.pf-info{ min-width:0; padding-top:52px; padding-right:52px; }
-.pf-name{ display:flex; align-items:center; gap:6px; font-size:20px; font-weight:700; line-height:1.2; }
+.pf-info{ min-width:0; padding-top:74px; padding-right:52px; }
+.pf-name{ display:flex; align-items:center; gap:6px; font-size:22px; font-weight:700; line-height:1.2; }
 .pf-name span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .pf-name input{ width:min(220px,60vw); padding:4px 8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.08); color:#fff; font:inherit; outline:none; }
 .pf-ed{ flex:none; width:28px; height:28px; display:grid; place-items:center; border:none; border-radius:50%; background:transparent; color:#9ca3af; cursor:pointer; }
@@ -190,6 +199,41 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .mg-end{ text-align:center; color:#9ca3af; font-size:14px; padding:12px 0; }
 @media (prefers-reduced-motion:reduce){ .mg-track{ animation:none; overflow-x:auto; } .mg-belt{ overflow-x:auto; } }
 
+/* ---- Skeleton (yükleniyor iskeletleri) ---- */
+.sk{ position:relative; overflow:hidden; background:#202024; border-radius:10px; }
+.sk::after{ content:""; position:absolute; inset:0; transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent); animation:skMove 1.3s infinite; }
+@keyframes skMove{ to{ transform:translateX(100%); } }
+.pf-ld{ background:#202024; }
+.pf-ld::after{ content:""; position:absolute; inset:0; z-index:0; transform:translateX(-100%); pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent); animation:skMove 1.3s infinite; }
+#pfSk{ display:none; }
+#v-profil.pf-loading #pfSk{ display:block; }
+#v-profil.pf-loading .pf-bwrap,#v-profil.pf-loading .pf-head,#v-profil.pf-loading .bio{ display:none; }
+#pfSk .a{ aspect-ratio:2.2/1; min-height:210px; max-height:440px; border-radius:20px; margin:6px -10px 0; }
+#pfSk .b{ width:132px; height:132px; border-radius:50%; margin:-66px 0 0 14px; border:6px solid #121212; position:relative; }
+#pfSk .c{ height:22px; width:46%; margin:-52px 0 0 168px; }
+#pfSk .d{ height:13px; width:28%; margin:10px 0 0 168px; }
+#pfSk .e{ height:110px; margin:30px 14px 0; border-radius:14px; }
+.fr-sk{ display:flex; align-items:center; gap:10px; padding:10px 0; }
+.fr-sk i{ width:34px; height:34px; border-radius:50%; flex:none; }
+.fr-sk b{ flex:1; height:14px; }
+/* ---- Küçük giriş animasyonları ---- */
+.pf-banner,.pf-head,.bio,.pf-search{ animation:popIn .5s cubic-bezier(.2,.9,.3,1) both; }
+.pf-head{ animation-delay:.08s; } .bio{ animation-delay:.16s; }
+@keyframes popIn{ from{ opacity:0; transform:translateY(14px) scale(.98); } to{ opacity:1; transform:none; } }
+.mg-cover{ animation:popIn .45s cubic-bezier(.2,.9,.3,1) both; }
+.mg-grid .mg-cover:nth-child(2){ animation-delay:.04s } .mg-grid .mg-cover:nth-child(3){ animation-delay:.08s }
+.mg-grid .mg-cover:nth-child(4){ animation-delay:.12s } .mg-grid .mg-cover:nth-child(5){ animation-delay:.16s }
+.mg-grid .mg-cover:nth-child(6){ animation-delay:.2s } .mg-grid .mg-cover:nth-child(n+7){ animation-delay:.24s }
+.pf-it,.fr-row,.b{ animation:popIn .3s ease both; }
+.pf-btn,.bio-btn,.fr-btn,.pf-gear,.pf-ed{ transition:background .2s, transform .2s cubic-bezier(.3,1.4,.5,1), color .2s; }
+.pf-banner.busy::before{ content:""; position:absolute; z-index:4; inset:0; background:rgba(0,0,0,.55); }
+.pf-banner.busy::after{ content:""; position:absolute; z-index:5; left:50%; top:50%; width:34px; height:34px; margin:-17px; border-radius:50%;
+  border:3px solid rgba(255,255,255,.25); border-top-color:#fff; animation:spin .8s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+@media (prefers-reduced-motion:reduce){ .pf-glow.on,.sk::after,.pf-ld::after{ animation:none; } .pf-banner,.pf-head,.bio,.pf-search,.mg-cover,.pf-it,.fr-row,.b{ animation:none; } }
+@media (min-width:900px){ .pf-bwrap{ margin-inline:-24px; } }
 /* ---- Supabase profil eklemeleri ---- */
 #v-profil [hidden]{ display:none !important; }
 .pf-banner img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
@@ -204,7 +248,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .pf-it small{ display:block; color:#9ca3af; font-size:11px; }
 .pf-empty{ padding:12px; font-size:13px; color:#9ca3af; }
 .pf-back{ margin:0 0 10px; }
-.pf-gear{ position:absolute; right:14px; top:50px; width:38px; height:38px; display:grid; place-items:center; padding:0; border-radius:50%; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#9ca3af; cursor:pointer; }
+.pf-gear{ position:absolute; right:14px; top:76px; width:38px; height:38px; display:grid; place-items:center; padding:0; border-radius:50%; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#9ca3af; cursor:pointer; }
 .pf-gear:hover{ background:rgba(255,255,255,.14); color:#fff; }
 .pf-gear svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; }
 .st{ position:fixed; inset:0; z-index:70; display:none; align-items:flex-end; justify-content:center; background:rgba(0,0,0,.55); }
@@ -242,13 +286,16 @@ html,body{ min-height:100%; background:#121212; color:#fff;
   </section>
   <section class="view" id="v-kesfet"><h2>Keşfet</h2></section>
   <section class="view" id="v-kutuphane"><h2>Kütüphane</h2></section>
-  <section class="view" id="v-profil" aria-label="Profil">
+  <section class="view pf-loading" id="v-profil" aria-label="Profil">
     <div class="pf-search">
       <label class="mg-search"><svg viewBox="0 0 18 18"><circle cx="8" cy="8" r="5.25"/><line x1="11.9" y1="11.9" x2="15.5" y2="15.5"/></svg>
         <input id="pfQ" type="search" placeholder="Üye ara" autocomplete="off" maxlength="30"></label>
       <div class="pf-res" id="pfRes" hidden></div>
     </div>
     <button type="button" class="bio-btn pf-back" id="pfBack" hidden>&larr; Profilime dön</button>
+    <div id="pfSk" aria-hidden="true"><div class="sk a"></div><div class="sk b"></div><div class="sk c"></div><div class="sk d"></div><div class="sk e"></div></div>
+    <div class="pf-bwrap">
+    <div class="pf-glow" id="pfGlow" hidden><img id="pfGlowImg" alt=""><canvas id="pfGlowCv" width="64" height="29"></canvas></div>
     <div class="pf-banner" id="pfBan">
       <img id="pfBanImg" alt="" hidden>
       <video id="pfVid" muted loop autoplay playsinline hidden></video>
@@ -257,6 +304,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
         <button type="button" class="pf-btn" id="pfChg">Değiştir</button>
         <button type="button" class="pf-btn" id="pfDel">Kaldır</button>
       </div>
+    </div>
     </div>
     <div class="pf-head">
       <button type="button" class="pf-av" id="pfAv" aria-label="Profil fotoğrafı ekle">
@@ -926,6 +974,27 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     bioRender(); bioClose();
   });
 
+  // ---------- Ambilight: banner renkleri dışarı taşar ----------
+  const glow = $('pfGlow'), gImg = $('pfGlowImg'), gCv = $('pfGlowCv'); let gRaf = 0;
+  function glowStop(){ cancelAnimationFrame(gRaf); gRaf = 0; glow.classList.remove('on'); glow.hidden = true; gImg.removeAttribute('src'); gImg.hidden = true; gCv.hidden = true; }
+  function glowImage(u){ gCv.hidden = true; gImg.hidden = false; gImg.src = u; glow.hidden = false; requestAnimationFrame(() => glow.classList.add('on')); }
+  function glowVideo(v){
+    gImg.hidden = true; gCv.hidden = false; glow.hidden = false;
+    const cx = gCv.getContext('2d'); let last = 0;
+    const tick = t => {
+      gRaf = requestAnimationFrame(tick);
+      if(t - last < 66 || v.readyState < 2) return; last = t;     // ~15 kare/sn yeter, blur zaten yumuşatıyor
+      try { cx.drawImage(v, 0, 0, gCv.width, gCv.height); glow.classList.add('on'); } catch(_){}
+    };
+    gRaf = requestAnimationFrame(tick);
+  }
+  document.addEventListener('visibilitychange', () => { if(document.hidden){ cancelAnimationFrame(gRaf); gRaf = 0; } else if(!gRaf && !$('pfVid').hidden) glowVideo($('pfVid')); });
+  // Yükleme bitince iskelet efektini kaldır
+  const doneBan = () => $('pfBan').classList.remove('pf-ld'), doneAv = () => $('pfAv').classList.remove('pf-ld');
+  $('pfBanImg').addEventListener('load', doneBan); $('pfBanImg').addEventListener('error', doneBan);
+  $('pfVid').addEventListener('loadeddata', doneBan); $('pfVid').addEventListener('error', doneBan);
+  $('pfImg').addEventListener('load', doneAv); $('pfImg').addEventListener('error', doneAv);
+
   // ---------- Ekrana çiz ----------
   function render(){
     const mine = isMe();
@@ -938,15 +1007,17 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     $('pfEd').hidden = !mine;
     // avatar
     const au = safeUrl(d.avatar_url);
-    if(au){ $('pfImg').src = au; $('pfImg').hidden = false; $('pfPh').style.display = 'none'; }
+    if(au){ $('pfAv').classList.add('pf-ld'); $('pfImg').src = au; $('pfImg').hidden = false; $('pfPh').style.display = 'none'; }
     else { $('pfImg').removeAttribute('src'); $('pfImg').hidden = true; $('pfPh').style.display = ''; }
     $('pfAv').disabled = !mine;
     // banner (foto veya video)
     const bu = safeUrl(d.banner_url), v = $('pfVid'), im = $('pfBanImg');
     v.pause(); v.removeAttribute('src'); v.load(); v.hidden = true;
     im.removeAttribute('src'); im.hidden = true;
-    if(bu && d.banner_type === 'video'){ const auto = ST.get('vid', '1') === '1'; v.autoplay = auto; v.src = bu; v.hidden = false; if(auto) v.play().catch(() => {}); }
-    else if(bu){ im.src = bu; im.hidden = false; }
+    glowStop();
+    if(bu && d.banner_type === 'video'){ $('pfBan').classList.add('pf-ld'); const auto = ST.get('vid', '1') === '1'; v.autoplay = auto; v.src = bu; v.hidden = false; if(auto) v.play().catch(() => {}); glowVideo(v); }
+    else if(bu){ $('pfBan').classList.add('pf-ld'); im.src = bu; im.hidden = false; glowImage(bu); }
+    else $('pfBan').classList.remove('pf-ld');
     $('pfBan').classList.toggle('has', !!bu);
     $('pfAdd').hidden = !mine || !!bu;
     $('pfTools').hidden = !mine || !bu;
@@ -954,6 +1025,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     $('pfGear').hidden = !mine;
     $('bioEd').hidden = !mine;
     bioRender();
+    $('v-profil').classList.remove('pf-loading');
     window.__lefProfile = { id: d.id, mine: mine };          // friends.js bunu okur
     window.dispatchEvent(new Event('lef-profile'));
   }
@@ -1043,7 +1115,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     const ext = ({ 'video/webm': 'webm', 'video/quicktime': 'mov', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/jpeg': 'jpg' })[f.type] || (vid ? 'mp4' : 'jpg');
     const path = uid + '/banner-' + Date.now() + '.' + ext, old = bannerPath(d.banner_url);
     try {
-      msg('Yükleniyor, lütfen bekle...');
+      msg('Yükleniyor, lütfen bekle...'); $('pfBan').classList.add('busy');
       const up = await supabase.storage.from('banners').upload(path, f, { contentType: f.type, cacheControl: '3600' });
       if(up.error) throw up.error;
       const url = supabase.storage.from('banners').getPublicUrl(path).data.publicUrl;
@@ -1054,6 +1126,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
       d.banner_url = url; d.banner_type = type; if(me){ me.banner_url = url; me.banner_type = type; }
       msg(''); render();
     } catch(err){ msg('Yüklenemedi: ' + (err.message || 'bilinmeyen hata')); }
+    finally { $('pfBan').classList.remove('busy'); }
   });
 
   // ---------- Üye ara + başkasının profilini aç ----------
@@ -1081,9 +1154,10 @@ html,body{ min-height:100%; background:#121212; color:#fff;
         b.append(av, t);
         b.addEventListener('click', async () => {
           try {
-            const p = await fetchProfile(u.id); if(!p) return;
+            $('v-profil').classList.add('pf-loading'); window.scrollTo(0, 0);
+            const p = await fetchProfile(u.id); if(!p){ $('v-profil').classList.remove('pf-loading'); return; }
             d = p; msg(''); hideRes(); $('pfQ').value = ''; render(); window.scrollTo(0, 0);
-          } catch(e){ msg('Profil açılamadı.'); }
+          } catch(e){ $('v-profil').classList.remove('pf-loading'); msg('Profil açılamadı.'); }
         });
         res.appendChild(b);
       });
@@ -1091,14 +1165,16 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     }, 300);
   });
   $('pfBack').addEventListener('click', () => { if(me){ d = me; msg(''); render(); } });
+  setTimeout(() => $('v-profil').classList.remove('pf-loading'), 10000);   // güvenlik: iskelet hiçbir zaman takılı kalmasın
   // Arkadaş listesinden bir profile git (friends.js tetikler)
   window.addEventListener('lef-open-profile', async e => {
     try {
-      const p = await fetchProfile(e.detail && e.detail.id); if(!p) return;
+      $('v-profil').classList.add('pf-loading');
+      const p = await fetchProfile(e.detail && e.detail.id); if(!p){ $('v-profil').classList.remove('pf-loading'); return; }
       d = p; msg(''); render();
       if(location.hash !== '#profil') location.hash = '#profil';
       window.scrollTo(0, 0);
-    } catch(_){ msg('Profil açılamadı.'); }
+    } catch(_){ $('v-profil').classList.remove('pf-loading'); msg('Profil açılamadı.'); }
   });
 
   // Seçili metni sakla (açılır menüler odağı çaldığı için), sonra geri yükle

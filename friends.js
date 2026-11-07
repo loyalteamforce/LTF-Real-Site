@@ -48,13 +48,14 @@ import { supabase, FUNCTIONS_URL } from './config.js';
     '.fr-who b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
     '.fr-bx{display:flex;gap:6px;flex:none}.fr-bx .fr-btn{height:32px;padding:0 12px;font-size:12.5px}' +
     '.fr-h{margin:12px 0 2px;font-size:11.5px;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em}' +
+    '.fr-sk{display:flex;align-items:center;gap:10px;padding:10px 0}.fr-sk i{width:34px;height:34px;border-radius:50%;flex:none}.fr-sk b{flex:1;height:14px;border-radius:8px}' +
     '.fr-empty{padding:20px 4px;font-size:13px;color:#9ca3af;text-align:center}' +
     '.fr-srch{width:100%;height:42px;margin-bottom:6px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff;font:inherit;font-size:16px;outline:0}' +
     '.fr-srch:focus{border-color:rgba(255,255,255,.4)}';
   document.head.appendChild(css);
 
   /* ---------- durum ---------- */
-  var rels = [], people = {}, ready = true, tab = 'friends', sheetOpen = false;
+  var rels = [], people = {}, ready = true, loaded = false, tab = 'friends', sheetOpen = false;
   var cur = window.__lefProfile || null;
 
   function relOf(id) {
@@ -69,6 +70,9 @@ import { supabase, FUNCTIONS_URL } from './config.js';
   function friends() { return rels.filter(function (r) { return r.status === 'accepted'; }); }
 
   async function loadRels() {
+    try { return await loadRels0(); } finally { loaded = true; if (typeof paintSheet === 'function') paintSheet(); }
+  }
+  async function loadRels0() {
     var res = await supabase.from('friendships')
       .select('id,requester_id,addressee_id,status,created_at')
       .order('created_at', { ascending: false }).limit(500);
@@ -234,6 +238,10 @@ import { supabase, FUNCTIONS_URL } from './config.js';
     });
     if (tab === 'add') { paintAdd(); return; }
     list.replaceChildren();
+    if (!loaded) {
+      for (var k = 0; k < 4; k++) { var sk = document.createElement('div'); sk.className = 'fr-sk'; sk.innerHTML = '<i class="sk"></i><b class="sk"></b>'; list.appendChild(sk); }
+      return;
+    }
     if (!ready) { list.appendChild(empty('Arkadaşlık sistemi hazır değil.')); return; }
     if (tab === 'friends') {
       var fl = friends();
