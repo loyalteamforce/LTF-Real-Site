@@ -130,9 +130,16 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 @media (hover:none){ .dock-btn:hover{ background:transparent; color:#9ca3af; } .dock-btn[aria-current="page"]:hover,.dock-bar .ag-dockbtn[aria-expanded="true"]:hover{ color:#fff; } }
 .dock-btn:focus:not(:focus-visible){ outline:none; }
 /* ===== PROFİL SEKMESİ ===== */
+body{ position:relative; }
+#pfBg{ position:absolute; inset:0; min-height:100dvh; z-index:0; pointer-events:none; opacity:0; transition:opacity .7s ease;
+  background:linear-gradient(180deg,var(--pf-c,#121212) 0,var(--pf-c,#121212) 720px,#121212 1500px); }
+body:has(#v-profil.on) #pfBg.on{ opacity:1; }
+#app{ position:relative; z-index:1; }
+.pf-search{ position:relative; z-index:2; }
+.bio{ position:relative; z-index:2; }
 .pf-bwrap{ position:relative; margin:6px -10px 0; isolation:isolate; }
-.pf-glow{ position:absolute; inset:-6px; z-index:0; border-radius:26px; overflow:hidden; pointer-events:none; opacity:0; transition:opacity .6s ease;
-  filter:blur(34px) saturate(1.9) brightness(1.15); transform:scale(1.07); }
+.pf-glow{ position:absolute; inset:-48px; z-index:0; border-radius:64px; overflow:hidden; pointer-events:none; opacity:0; transition:opacity .6s ease;
+  filter:blur(60px) saturate(1.9) brightness(1.15); transform:scale(1.18); }
 .pf-glow.on{ opacity:.85; animation:glowPulse 5s ease-in-out infinite; }
 .pf-glow img,.pf-glow canvas{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
 .pf-glow[hidden]{ display:none; }
@@ -149,7 +156,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .pf-head{ display:flex; align-items:flex-start; gap:16px; padding:0 14px; margin-top:-66px; position:relative; z-index:2; pointer-events:none; }
 .pf-head > *{ pointer-events:auto; }
 .pf-av{ position:relative; flex:none; width:132px; height:132px; padding:0; border-radius:50%; overflow:hidden; cursor:pointer; display:grid; place-items:center; color:#9ca3af;
-  background:#26262b; border:6px solid #121212; box-shadow:0 8px 24px rgba(0,0,0,.45); transition:transform .25s cubic-bezier(.3,1.4,.5,1); }
+  background:#26262b; border:6px solid var(--pf-edge,#121212); box-shadow:0 8px 24px rgba(0,0,0,.45); transition:border-color .7s ease, transform .25s cubic-bezier(.3,1.4,.5,1); }
 .pf-av:not(:disabled):hover{ transform:scale(1.04); }
 .pf-av img{ width:100%; height:100%; object-fit:cover; display:block; }
 .pf-av img[hidden]{ display:none; }
@@ -285,13 +292,14 @@ html,body{ min-height:100%; background:#121212; color:#fff;
   #app{ overflow-x:clip; }
   .pf-bwrap{ margin:6px -8px 0; }
   #pfSk .a{ width:calc(100% + 16px); margin:6px -8px 0; }
-  .pf-glow{ inset:-6px; transform:scale(1.07); }
+  .pf-glow{ inset:-34px; transform:scale(1.14); }
   .pf-banner{ width:100%; max-width:100%; min-height:0; aspect-ratio:2.2/1; isolation:isolate; }
   .pf-banner video,.pf-banner img{ position:absolute; inset:0; width:100%; height:100%; max-width:100%; min-width:0; object-fit:cover; object-position:center; display:block; }
 }
 </style>
 </head>
 <body>
+<div id="pfBg" aria-hidden="true"></div>
 
 <main id="app">
   <section class="view" id="v-ana-sayfa"><h2>Ana Sayfa</h2></section>
@@ -1051,6 +1059,52 @@ html,body{ min-height:100%; background:#121212; color:#fff;
   $('pfVid').addEventListener('loadeddata', doneBan); $('pfVid').addEventListener('error', doneBan);
   $('pfImg').addEventListener('load', doneAv); $('pfImg').addEventListener('error', doneAv);
 
+  // ---------- Baskın renk: banner + profil fotoğrafı -> profil arka planı ----------
+  const pfBg = $('pfBg'); let tintTok = 0;
+  function pxOf(el){
+    try { const c = document.createElement('canvas'); c.width = 48; c.height = 48;
+      const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(el, 0, 0, 48, 48);
+      return x.getImageData(0, 0, 48, 48).data; } catch(_){ return null; }          // CORS yoksa null
+  }
+  const loadCors = u => new Promise(res => { const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => res(i); i.onerror = () => res(null); i.src = u; });
+  const videoPx = v => new Promise(res => { let n = 0; const t = () => { if(v.readyState >= 2) return res(pxOf(v)); if(++n > 40) return res(null); setTimeout(t, 200); }; t(); });
+  function dominant(list){
+    const bins = new Map();
+    for(const [dt, wt] of list){ if(!dt) continue;
+      for(let i = 0; i < dt.length; i += 4){
+        if(dt[i + 3] < 200) continue;
+        const r = dt[i], g = dt[i + 1], b = dt[i + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+        const l = (mx + mn) / 510, sat = mx === mn ? 0 : (mx - mn) / (255 - Math.abs(mx + mn - 255));
+        const w = wt * (0.15 + sat) * ((l < .08 || l > .95) ? .1 : 1);      // simsiyah/bembeyaz/renksiz pikseller az sayılır
+        const k = ((r >> 4) << 8) | ((g >> 4) << 4) | (b >> 4);
+        const e = bins.get(k) || [0, 0, 0, 0]; e[0] += w; e[1] += r * w; e[2] += g * w; e[3] += b * w; bins.set(k, e);
+      } }
+    let best = null; bins.forEach(e => { if(!best || e[0] > best[0]) best = e; });
+    return best && best[0] > 0 ? [best[1] / best[0], best[2] / best[0], best[3] / best[0]] : null;
+  }
+  function toBg(rgb){
+    const r = rgb[0] / 255, g = rgb[1] / 255, b = rgb[2] / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), dd = mx - mn;
+    let h = 0; if(dd){ h = mx === r ? ((g - b) / dd) % 6 : mx === g ? (b - r) / dd + 2 : (r - g) / dd + 4; h = (h * 60 + 360) % 360; }
+    const l = (mx + mn) / 2, s = dd ? dd / (1 - Math.abs(2 * l - 1)) : 0;
+    const S = s < .08 ? s * 100 : Math.min(72, Math.max(30, s * 100));
+    return 'hsl(' + Math.round(h) + ',' + Math.round(S) + '%,21%)';
+  }
+  async function pfTint(){
+    const tok = ++tintTok, bu = safeUrl(d.banner_url), au = safeUrl(d.avatar_url), jobs = [];
+    if(bu) jobs.push(d.banner_type === 'video' ? videoPx($('pfVid')).then(p => [p, 1]) : loadCors(bu).then(i => [i && pxOf(i), 1]));
+    if(au) jobs.push(loadCors(au).then(i => [i && pxOf(i), .7]));
+    const res = await Promise.all(jobs);
+    if(tok !== tintTok) return;
+    const c = dominant(res), pv = $('v-profil');
+    if(!c){ pfBg.classList.remove('on'); pv.style.removeProperty('--pf-edge'); return; }
+    const col = toBg(c);
+    pfBg.style.setProperty('--pf-c', col); pv.style.setProperty('--pf-edge', col); pfBg.classList.add('on');
+  }
+  $('pfVid').addEventListener('error', () => {      // CORS yüzünden video açılmazsa crossorigin'siz tekrar dene
+    const v = $('pfVid'), u = v.getAttribute('src');
+    if(v.crossOrigin && u){ v.removeAttribute('crossorigin'); v.src = u; v.load(); if(ST.get('vid', '1') === '1') v.play().catch(() => {}); }
+  });
+
   // ---------- Ekrana çiz ----------
   function render(){
     const mine = isMe();
@@ -1071,7 +1125,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     v.pause(); v.removeAttribute('src'); v.load(); v.hidden = true;
     im.removeAttribute('src'); im.hidden = true;
     glowStop();
-    if(bu && d.banner_type === 'video'){ $('pfBan').classList.add('pf-ld'); const auto = ST.get('vid', '1') === '1'; v.autoplay = auto; v.src = bu; v.hidden = false; if(auto) v.play().catch(() => {}); glowVideo(v); }
+    if(bu && d.banner_type === 'video'){ $('pfBan').classList.add('pf-ld'); const auto = ST.get('vid', '1') === '1'; v.autoplay = auto; v.crossOrigin = 'anonymous'; v.src = bu; v.hidden = false; if(auto) v.play().catch(() => {}); glowVideo(v); }
     else if(bu){ $('pfBan').classList.add('pf-ld'); im.src = bu; im.hidden = false; glowImage(bu); }
     else $('pfBan').classList.remove('pf-ld');
     $('pfBan').classList.toggle('has', !!bu);
@@ -1082,6 +1136,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
     $('bioEd').hidden = !mine;
     bioRender();
     $('v-profil').classList.remove('pf-loading');
+    pfTint();
     window.__lefProfile = { id: d.id, mine: mine };          // friends.js bunu okur
     window.dispatchEvent(new Event('lef-profile'));
   }
