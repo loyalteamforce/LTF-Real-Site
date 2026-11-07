@@ -248,6 +248,8 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 }
 /* ---- Supabase profil eklemeleri ---- */
 #v-profil [hidden]{ display:none !important; }
+.pf-back{ display:block; margin:14px 14px 0; }
+#v-profil.pf-loading .pf-back{ display:none; }
 .pf-banner img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
 .pf-av:disabled{ cursor:default; }
 .pf-av:disabled .pf-cam{ display:none; }
@@ -304,7 +306,6 @@ html,body{ min-height:100%; background:#121212; color:#fff;
         <input id="pfQ" type="search" placeholder="Üye ara" autocomplete="off" maxlength="30"></label>
       <div class="pf-res" id="pfRes" hidden></div>
     </div>
-    <button type="button" class="bio-btn pf-back" id="pfBack" hidden>&larr; Profilime dön</button>
     <div id="pfSk" aria-hidden="true"><div class="sk a"></div><div class="sk b"></div><div class="sk c"></div><div class="sk d"></div><div class="sk e"></div></div>
     <div class="pf-bwrap">
     <div class="pf-glow" id="pfGlow" hidden><img id="pfGlowImg" alt=""><canvas id="pfGlowCv" width="64" height="29"></canvas></div>
@@ -331,6 +332,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
       </div>
       <button type="button" class="pf-gear" id="pfGear" aria-label="Ayarlar"><svg viewBox="0 0 18 18"><path d="M2 5h7M13 5h3M2 9h3M9 9h7M2 13h8M14 13h2"/><circle cx="11" cy="5" r="2"/><circle cx="7" cy="9" r="2"/><circle cx="12" cy="13" r="2"/></svg></button>
     </div>
+    <button type="button" class="bio-btn pf-back" id="pfBack" hidden>&larr; Profilime dön</button>
     <div class="bio" id="bio">
       <div class="bio-top"><span>Biyografi</span><button type="button" class="pf-ed" id="bioEd" aria-label="Biyografiyi düzenle"><svg viewBox="0 0 18 18"><path d="M3 15l.7-3L12 3.7a1.4 1.4 0 0 1 2 0l.3.3a1.4 1.4 0 0 1 0 2L6 14.3z"/></svg></button></div>
       <div class="bio-view" id="bioView"></div>
