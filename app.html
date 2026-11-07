@@ -507,6 +507,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 
 </script>
 
+<script src="mangalar.js"></script>
 <script>
   // ---------- Manga sekmesi (yazı tabanlı; resimler sonra eklenecek, veriler sonra Supabase'ten gelebilir) ----------
   (function(){
@@ -670,13 +671,45 @@ html,body{ min-height:100%; background:#121212; color:#fff;
       M.push([TITLES[k][i], NAME[k] + ' / ' + NAME[sec], p[0], p[1], k, sec]);
     });
 
+    // Mangalar mangalar.js'ten gelir (her birinin kendi hikâyesi var)
+    if(window.MANGALAR && window.MANGALAR.length) M = window.MANGALAR.map(function(o, i){
+      var k = o.tur[0], sec = o.tur[1] || k, p = PAL[k][i % 4];
+      return [o.t, NAME[k] + ' / ' + NAME[sec], p[0], p[1], k, sec, o];
+    });
+
     var rd = document.getElementById('mgRd'), rdB = document.getElementById('mgRdB'), lastBtn = null;
 
+    function openData(m){
+      var o = m[6];
+      function el(tag, cls, txt){ var e = document.createElement(tag); e.className = cls; e.textContent = txt; rdB.appendChild(e); return e; }
+      document.querySelector('#mgRdT small').textContent = o.bol.length + ' bölüm';
+      el('p', 'mg-tx', o.ozet);
+      var det = document.createElement('details'); det.className = 'mg-cast';
+      var sum = document.createElement('summary'); sum.textContent = 'Karakterler (' + o.kar.length + ')'; det.appendChild(sum);
+      var wrap = document.createElement('div');
+      o.kar.forEach(function(c){
+        var chip = document.createElement('span'), b = document.createElement('b'), sm = document.createElement('small');
+        b.textContent = c[0]; sm.textContent = c[1]; chip.appendChild(b); chip.appendChild(sm); wrap.appendChild(chip);
+      });
+      det.appendChild(wrap); rdB.appendChild(det);
+      o.bol.forEach(function(b, ci){
+        el('h3', 'mg-tx-h', 'Bölüm ' + (ci + 1) + ': ' + b[0]);
+        if(b[2] && b[2].length){            // gerçek çizim sayfaları varsa onları göster
+          b[2].forEach(function(u){ var im = document.createElement('img'); im.src = u; im.loading = 'lazy'; im.alt = m[0] + ' · ' + b[0];
+            im.style.cssText = 'display:block;width:min(100%,560px);margin:0 auto 12px;border-radius:4px'; rdB.appendChild(im); });
+        } else { var pg = document.createElement('div'); pg.className = 'mg-art-pg'; pg.innerHTML = page(m, ci); rdB.appendChild(pg); }
+        el('p', 'mg-tx', b[1]);
+      });
+      rdB.insertAdjacentHTML('beforeend', '<p class="mg-end">Devamı yakında.</p>');
+      rd.classList.add('on'); rdB.scrollTop = 0; document.body.style.overflow = 'hidden';
+      document.getElementById('mgBack').focus();
+    }
     function openReader(m, btn){
       lastBtn = btn;
       document.getElementById('mgRdT').innerHTML = '<span></span><small>8 bölüm</small>';
       document.querySelector('#mgRdT span').textContent = m[0];
       rdB.innerHTML = '';
+      if(m[6]){ openData(m); return; }
       var seed = 0; for(var q = 0; q < m[0].length; q++) seed = (seed * 31 + m[0].charCodeAt(q)) % 9973;
       function rnd(){ seed = (seed * 48271 + 11) % 2147483647; return seed; }
       // bu mangada yer alan karakterler: 5 ile 8 arası, her manga için farklı
@@ -808,7 +841,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
       });
       return s + '</svg>';
     }
-    function artSvg(m){ return '<svg class="mg-art" viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + scene(m[4], hs(m[0]), m[2], m[3]) + '</svg>'; }
+    function artSvg(m){ if(m[6] && m[6].kapak) return '<img class="mg-art" src="' + m[6].kapak + '" alt="" style="object-fit:cover">'; return '<svg class="mg-art" viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + scene(m[4], hs(m[0]), m[2], m[3]) + '</svg>'; }
     function cover(m, i, tag){
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'mg-cover';
