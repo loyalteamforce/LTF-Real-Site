@@ -137,7 +137,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .pf-glow img,.pf-glow canvas{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
 .pf-glow[hidden]{ display:none; }
 @keyframes glowPulse{ 0%,100%{ opacity:.7; } 50%{ opacity:.95; } }
-.pf-banner{ position:relative; z-index:1; aspect-ratio:2.2/1; min-height:210px; max-height:440px; border-radius:20px; overflow:hidden; display:grid; place-items:center;
+.pf-banner{ position:relative; z-index:1; width:100%; aspect-ratio:2.2/1; min-height:170px; max-height:440px; border-radius:20px; overflow:hidden; display:grid; place-items:center;
   background:linear-gradient(135deg,#1f1f23,#2a1520); border:1px dashed rgba(255,255,255,.18); }
 .pf-banner.has{ border-style:solid; border-color:rgba(255,255,255,.1); }
 .pf-banner video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
@@ -210,7 +210,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 #pfSk{ display:none; }
 #v-profil.pf-loading #pfSk{ display:block; }
 #v-profil.pf-loading .pf-bwrap,#v-profil.pf-loading .pf-head,#v-profil.pf-loading .bio{ display:none; }
-#pfSk .a{ aspect-ratio:2.2/1; min-height:210px; max-height:440px; border-radius:20px; margin:6px -10px 0; }
+#pfSk .a{ width:calc(100% + 20px); aspect-ratio:2.2/1; min-height:170px; max-height:440px; border-radius:20px; margin:6px -10px 0; }
 #pfSk .b{ width:132px; height:132px; border-radius:50%; margin:-66px 0 0 14px; border:6px solid #121212; position:relative; }
 #pfSk .c{ height:22px; width:46%; margin:-52px 0 0 168px; }
 #pfSk .d{ height:13px; width:28%; margin:10px 0 0 168px; }
@@ -234,6 +234,18 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 @keyframes spin{ to{ transform:rotate(360deg); } }
 @media (prefers-reduced-motion:reduce){ .pf-glow.on,.sk::after,.pf-ld::after{ animation:none; } .pf-banner,.pf-head,.bio,.pf-search,.mg-cover,.pf-it,.fr-row,.b{ animation:none; } }
 @media (min-width:900px){ .pf-bwrap{ margin-inline:-24px; } }
+
+/* ---- Mobil: banner taşmasın, profil fotoğrafı biraz küçük ---- */
+@media (max-width:600px){
+  .pf-head{ margin-top:-52px; gap:14px; }
+  .pf-av{ width:104px; height:104px; border-width:5px; }
+  .pf-av svg{ width:42px; height:42px; }
+  .pf-info{ padding-top:60px; }
+  .pf-name{ font-size:20px; }
+  #pfSk .b{ width:104px; height:104px; margin:-52px 0 0 14px; border-width:5px; }
+  #pfSk .c{ margin:-40px 0 0 134px; }
+  #pfSk .d{ margin:10px 0 0 134px; }
+}
 /* ---- Supabase profil eklemeleri ---- */
 #v-profil [hidden]{ display:none !important; }
 .pf-banner img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
