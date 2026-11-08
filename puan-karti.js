@@ -1,7 +1,7 @@
 /* ============================================================
-   PUAN KARTI: Ana Sayfa'da kart + Gönder / Harca / Geçmiş
+   PUAN KARTI: Ana Sayfa'da kart + Gönder / Geçmiş
    - Puan sunucudaki cüzdanda durur (puan-kurulum.sql). Tarayıcı sadece okur,
-     değiştirme işi sunucu fonksiyonlarındadır (wallet_send, wallet_buy, wallet_earn).
+     değiştirme işi sunucu fonksiyonlarındadır (wallet_send, wallet_earn).
    - Başkasının profilinde "Puan gönder" butonu çıkar.
    - app.html'de extras.js'ten SONRA: <script type="module" src="puan-karti.js"></script>
    ============================================================ */
@@ -9,7 +9,6 @@ import { supabase, escapeHtml as E } from './config.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const fmt = n => Number(n || 0).toLocaleString('tr-TR');
-const THEME_COL = { kor: ['#4a1306', '#ff8a2b'], buz: ['#0f2a63', '#7fd8ff'], sakura: ['#3d0f55', '#ff6fb5'], zumrut: ['#08332b', '#3ddc97'], aurora: ['#00796b', '#8a6bff'], altin: ['#241b05', '#f5c451'] };
 const ERR = {
   insufficient: 'Yeterli puanın yok.', self: 'Kendine puan gönderemezsin.', not_found: 'Kullanıcı ya da ürün bulunamadı.',
   invalid: 'Geçersiz miktar.', owned: 'Bunu zaten açtın.', limit: 'Günlük sınıra ulaştın.', auth: 'Oturum bulunamadı.'
@@ -48,7 +47,7 @@ function init() {
 .pc-pt{ font-size:clamp(13px,3.8vw,17px); color:#9db8e8; letter-spacing:.04em; }
 .pc-lbl{ margin-top:6%; font-size:clamp(8px,2.4vw,10px); letter-spacing:.3em; color:#7f95bb; }
 .pc-name{ margin-top:2px; font-family:'Cinzel Decorative',Cinzel,serif; font-size:clamp(15px,4.8vw,21px); letter-spacing:.05em; color:#dbe6fa; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.pc-acts{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:12px; }
+.pc-acts{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:12px; }
 .pc-act{ display:flex; align-items:center; justify-content:center; gap:8px; height:44px; border-radius:14px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#fff; font:inherit; font-size:14px; cursor:pointer; }
 .pc-act svg{ width:17px; height:17px; flex:none; }
 .pc-send{ margin:12px 14px 0; display:inline-flex; align-items:center; }
@@ -127,7 +126,6 @@ function init() {
     </div>
     <div class="pc-acts">
       <button type="button" class="pc-act" data-a="send">${SVG.send}Gönder</button>
-      <button type="button" class="pc-act" data-a="shop">${SVG.bag}Harca</button>
       <button type="button" class="pc-act" data-a="hist">${SVG.clock}Geçmiş</button>
     </div>`;
     w.addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (b) openSheet(b.dataset.a); });
@@ -167,7 +165,7 @@ function init() {
   function openSheet(v, arg) {
     sheet.classList.add('on'); sheet.setAttribute('aria-hidden', 'false');
     if (ok === false) { T('Puan kartı'); B().innerHTML = '<p class="pc-dim">Puan kartı için sunucu kurulumu gerekiyor: Supabase SQL Editor\'de <b>puan-kurulum.sql</b> dosyasını çalıştır.</p>'; return; }
-    if (v === 'send') viewSend(arg); else if (v === 'shop') viewShop(); else viewHist();
+    if (v === 'send') viewSend(arg); else viewHist();
   }
   window.__lefWalletOpen = openSheet;
 
@@ -230,38 +228,6 @@ function init() {
         $('#pcDone', sheet).onclick = close;
       } catch (e) { err.textContent = errText(e); go.disabled = false; confirming = false; go.textContent = 'Gönder'; }
     });
-  }
-
-  /* ---------- HARCA (mağaza) ---------- */
-  async function viewShop(msg) {
-    T('Harca');
-    B().innerHTML = '<p class="pc-dim">Yükleniyor…</p>';
-    const [a, b] = await Promise.all([
-      supabase.from('shop_items').select('key,kind,name,price').order('price'),
-      supabase.from('wallet_items').select('item_key')
-    ]);
-    if (a.error || b.error) { B().innerHTML = '<p class="pc-dim">Mağaza yüklenemedi. puan-kurulum.sql çalıştırıldı mı?</p>'; return; }
-    const owned = new Set(b.data.map(r => r.item_key));
-    const group = (kind, title) => `<div class="pc-sec">${title}</div>` + a.data.filter(i => i.kind === kind).map(i => {
-      const id = i.key.split(':')[1], c = THEME_COL[id];
-      const sw = kind === 'theme' && c ? `<div class="pc-sw" style="background:linear-gradient(120deg,${c[0]},${c[1]})"></div>` : '<div class="pc-rg"></div>';
-      const have = i.price === 0 || owned.has(i.key);
-      const btn = have ? `<button type="button" class="pc-buy" disabled>${i.price === 0 ? 'Ücretsiz' : 'Senin'}</button>`
-        : `<button type="button" class="pc-buy" data-k="${E(i.key)}" data-p="${i.price}" ${bal < i.price ? 'disabled' : ''}>${fmt(i.price)} pt</button>`;
-      return `<div class="pc-row">${sw}<span>${E(i.name)}</span>${btn}</div>`;
-    }).join('');
-    B().innerHTML = `<div class="pc-bal">Kullanılabilir <b>${fmt(bal)}</b> pt</div><p class="pc-dim" style="padding-top:0">Aldıkların Profili süsle bölümünde kullanılır.</p>` +
-      group('theme', 'Profil temaları') + group('deco', 'Avatar çerçeveleri') + `<p class="pc-err" id="pcE" role="status">${E(msg || '')}</p>`;
-    B().onclick = async e => {
-      const x = e.target.closest('.pc-buy[data-k]'); if (!x) return;
-      if (!x.dataset.c) { B().querySelectorAll('.pc-buy[data-c]').forEach(o => { delete o.dataset.c; o.textContent = fmt(o.dataset.p) + ' pt'; }); x.dataset.c = '1'; x.textContent = 'Onayla'; return; }
-      x.disabled = true;
-      try {
-        const { data, error } = await supabase.rpc('wallet_buy', { p_key: x.dataset.k });
-        if (error) throw error;
-        setBal(data); viewShop('Satın alındı.');
-      } catch (er) { viewShop(errText(er)); }
-    };
   }
 
   /* ---------- GEÇMİŞ ---------- */
