@@ -21,9 +21,25 @@ let S = {}; try { S = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (_) {
 S = Object.assign({ pts: 0, streak: 0, last: '', spun: '', best: 0, d: {}, cap: {}, lib: [] }, S);
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (_) {} };
 let synced = null, tm = 0;
-const sync = () => { clearTimeout(tm); tm = setTimeout(async () => {
+const W = { on: false };   // sunucu cüzdanı (puan-kurulum.sql) çalışıyorsa true
+const sync = () => { if (W.on) return; clearTimeout(tm); tm = setTimeout(async () => {
   try { const { error } = await supabase.from('lef_points').upsert({ user_id: uid, points: S.pts, streak: S.streak, updated_at: new Date().toISOString() }); synced = !error; } catch (_) { synced = false; }
 }, 1500); };
+
+/* ---------- sunucu cüzdanı ---------- */
+function setPts(n) { S.pts = n; save(); paint(); window.dispatchEvent(new CustomEvent('lef-wallet', { detail: { balance: n } })); }
+const walletReady = (async () => {
+  try { const { data, error } = await supabase.rpc('wallet_get'); if (!error) { W.on = true; setPts(Number(data)); } } catch (_) {}
+})();
+async function earn(n, why) {
+  await walletReady;
+  try {
+    const { data, error } = await supabase.rpc('wallet_earn', { p_amount: n, p_reason: why });
+    if (!error) { W.on = true; setPts(Number(data)); return; }
+    if (/limit/.test(error.message || '')) { toast('Bugünkü puan kazanma sınırına ulaştın'); return; }
+  } catch (_) {}
+  S.pts += n; save(); sync(); paint();   // sunucu cüzdanı kurulmamışsa eski cihaz yöntemi
+}
 
 /* ---------- puan / görev ---------- */
 const TASKS = { checkin: 'Günlük giriş', spin: 'Çarkı çevir', quiz: 'Sınava gir', game: 'Bir oyun oyna', lib: 'Kütüphaneye bir şey ekle' };
@@ -38,7 +54,7 @@ function give(n, why, game) {
     if (n <= 0) { toast('Bugünkü oyun puanı sınırına ulaştın'); return; }
     S.cap.n += n;
   }
-  S.pts += n; toast('+' + n + ' puan · ' + why); save(); sync(); paint();
+  toast('+' + n + ' puan · ' + why); earn(n, why);
   window.dispatchEvent(new CustomEvent('lef-x', { detail: { n, why, game: !!game } }));
 }
 function mark(k) {
@@ -126,7 +142,9 @@ function paint() { document.querySelectorAll('.xp').forEach(n => n.textContent =
 async function rank(p) {
   p.innerHTML = '<div class="x-card"><p>Yükleniyor...</p></div>';
   try {
-    const { data, error } = await supabase.from('lef_points').select('user_id,points,streak').order('points', { ascending: false }).limit(20);
+    let { data, error } = await supabase.from('wallets').select('user_id,balance').order('balance', { ascending: false }).limit(20);
+    if (!error) data = data.map(r => ({ user_id: r.user_id, points: r.balance }));
+    else ({ data, error } = await supabase.from('lef_points').select('user_id,points,streak').order('points', { ascending: false }).limit(20));
     if (error) throw error;
     const ids = data.map(r => r.user_id);
     const { data: pr } = await supabase.from('profiles').select('id,display_name,username,avatar_url').in('id', ids);

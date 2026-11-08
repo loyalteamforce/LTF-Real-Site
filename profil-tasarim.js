@@ -111,6 +111,8 @@ const CSS = `
   background:rgba(255,255,255,.05); color:#e5e7eb; font:inherit; font-size:12px; cursor:pointer; }
 .pd-t[aria-pressed="true"]{ border-color:#fff; background:rgba(255,255,255,.13); }
 .pd-t:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+.pd-t.pd-lock{ opacity:.55; }
+.pd-pr{ font-size:11px; color:#9ca3af; min-height:13px; }
 .pd-sw{ width:100%; height:26px; border-radius:8px; }
 .pd-mini{ position:relative; width:34px; height:34px; margin:6px 0 4px; border-radius:50%; background:#2b2b31; --av:34px; }
 .pd-mini .pd-deco{ left:0; top:0; --rw:2px; }
@@ -205,6 +207,7 @@ function init(){
     b.type = 'button'; b.className = 'pd-t'; b.dataset.g = grp; b.dataset.k = key; b.setAttribute('aria-pressed', 'false');
     b.insertAdjacentHTML('beforeend', inner);
     const s = document.createElement('span'); s.textContent = label; b.appendChild(s);
+    const pr = document.createElement('small'); pr.className = 'pd-pr'; b.appendChild(pr);
     return b;
   };
   const noneSw = '<div class="pd-sw" style="background:repeating-linear-gradient(45deg,#2b2b31 0 6px,#35353c 6px 12px)"></div>';
@@ -217,6 +220,27 @@ function init(){
     $('pdDc').appendChild(t);
   });
 
+  // Kilitler: puan-kurulum.sql çalıştıysa satın alınmamış tema/çerçeve kilitli görünür
+  let priced = {};
+  const lockKey = b => (b.dataset.g === 'theme' ? 'theme:' : 'deco:') + b.dataset.k;
+  function paintLocks(){
+    sheet.querySelectorAll('.pd-t').forEach(b => {
+      const p = b.dataset.k ? priced[lockKey(b)] : 0;
+      const locked = !!p && saved[b.dataset.g] !== b.dataset.k;
+      b.classList.toggle('pd-lock', locked); b.dataset.lock = locked ? '1' : '';
+      b.querySelector('.pd-pr').textContent = locked ? p.toLocaleString('tr-TR') + ' pt' : '';
+    });
+  }
+  async function loadLocks(){
+    priced = {};
+    try {
+      const [a, b] = await Promise.all([supabase.from('shop_items').select('key,price'), supabase.from('wallet_items').select('item_key')]);
+      if(a.error || b.error) throw new Error('yok');
+      const own = new Set(b.data.map(r => r.item_key));
+      a.data.forEach(i => { if(i.price > 0 && !own.has(i.key)) priced[i.key] = i.price; });
+    } catch(_){ priced = {}; }
+    paintLocks();
+  }
   const sync = () => {
     sheet.querySelectorAll('.pd-t').forEach(b => b.setAttribute('aria-pressed', String(draft[b.dataset.g] === b.dataset.k)));
     setVars(sheet, draft.theme);
@@ -225,8 +249,9 @@ function init(){
     const p = window.__lefProfile; if(!p || !p.mine) return;
     saved = { theme: pick(THEMES, (p.pf || {}).theme), deco: pick(DECOS, (p.pf || {}).deco) };
     draft = Object.assign({}, saved);
-    $('pdErr').textContent = ''; sync();
+    $('pdErr').textContent = ''; sync(); paintLocks();
     sheet.classList.add('on'); sheet.setAttribute('aria-hidden', 'false');
+    loadLocks();
   };
   const closeSheet = revert => {
     sheet.classList.remove('on'); sheet.setAttribute('aria-hidden', 'true');
@@ -240,6 +265,11 @@ function init(){
 
   sheet.addEventListener('click', e => {
     const b = e.target.closest('.pd-t'); if(!b) return;
+    if(b.dataset.lock){                       // kilitliyse mağazayı aç
+      closeSheet(true);
+      if(window.__lefWalletOpen) window.__lefWalletOpen('shop'); else $('pdErr').textContent = 'Bu öğe kilitli. Ana Sayfa > Puan kartı > Harca bölümünden aç.';
+      return;
+    }
     draft[b.dataset.g] = b.dataset.k;
     sync(); show(draft);          // canlı önizleme: arkadaki profilde hemen görünür
   });
@@ -258,7 +288,7 @@ function init(){
       window.dispatchEvent(new CustomEvent('lef-pf-saved', { detail: row }));
       closeSheet(false);
     } catch(err){
-      $('pdErr').textContent = 'Kaydedilemedi. profil-tasarim.sql çalıştırıldı mı?';
+      $('pdErr').textContent = /locked/.test((err && err.message) || '') ? 'Bu tema ya da çerçeve kilitli. Önce Harca bölümünden aç.' : 'Kaydedilemedi. profil-tasarim.sql çalıştırıldı mı?';
     }
     btn.disabled = false;
   });
