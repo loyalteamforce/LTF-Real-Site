@@ -28,14 +28,14 @@ function init() {
   const css = document.createElement('style');
   css.textContent = `
 .pc-wrap{ margin-top:14px; max-width:440px; }
-.pc-card{ box-sizing:border-box; position:relative; width:100%; aspect-ratio:1.56; padding:6.5% 7%; border-radius:26px; overflow:hidden; color:#eaf2ff; display:flex; flex-direction:column; justify-content:space-between;
+.pc-card{ box-sizing:border-box; position:relative; width:100%; aspect-ratio:1.56; padding:6.5% 7%; border-radius:26px; overflow:hidden; color:#f2f2f2; display:flex; flex-direction:column; justify-content:space-between;
   background:linear-gradient(118deg,transparent 28%,rgba(255,255,255,.055) 50%,transparent 72%),
              repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 7px),
-             linear-gradient(135deg,#1d3d70 0%,#14284b 48%,#1a3560 100%);
-  border:1px solid rgba(160,195,255,.24); box-shadow:0 22px 50px -20px rgba(20,70,160,.75),inset 0 1px 0 rgba(255,255,255,.14); }
+             linear-gradient(135deg,#1a1a1a 0%,#000 48%,#0d0d0d 100%);
+  border:1px solid rgba(255,255,255,.16); box-shadow:0 22px 50px -20px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.12); }
 .pc-top{ display:flex; align-items:flex-start; justify-content:space-between; }
 .pc-brand{ font-family:'Cinzel Decorative',Cinzel,serif; font-weight:700; font-size:clamp(14px,4.4vw,19px); letter-spacing:.2em;
-  background:linear-gradient(90deg,#9cc4ff,#cfe2ff 60%,#7ea6e6); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  background:linear-gradient(90deg,#bdbdbd,#f0f0f0 60%,#9a9a9a); -webkit-background-clip:text; background-clip:text; color:transparent; }
 .pc-crest{ width:clamp(28px,8vw,38px); height:auto; opacity:.92; filter:drop-shadow(0 2px 6px rgba(0,0,0,.4)); }
 .pc-chip{ width:clamp(40px,12vw,54px); aspect-ratio:1.3; border-radius:10px; position:relative; margin-top:3%;
   background:linear-gradient(145deg,#eceef2,#a3a9b4 55%,#d9dce2); box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),0 3px 8px rgba(0,0,0,.35); }
@@ -43,10 +43,10 @@ function init() {
   background:linear-gradient(rgba(70,76,88,.45),rgba(70,76,88,.45)) center/100% 1.5px no-repeat,linear-gradient(90deg,transparent calc(50% - .75px),rgba(70,76,88,.45) 0 calc(50% + .75px),transparent 0); }
 .pc-mid{ display:flex; align-items:baseline; gap:10px; margin-top:auto; }
 .pc-num{ font-family:'Cormorant Garamond',Georgia,serif; font-weight:700; font-size:clamp(32px,10.5vw,50px); line-height:1; letter-spacing:.01em;
-  background:linear-gradient(180deg,#fff 20%,#b9d3fb); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 2px 3px rgba(0,0,20,.45)); font-variant-numeric:oldstyle-nums; }
-.pc-pt{ font-size:clamp(13px,3.8vw,17px); color:#9db8e8; letter-spacing:.04em; }
-.pc-lbl{ margin-top:6%; font-size:clamp(8px,2.4vw,10px); letter-spacing:.3em; color:#7f95bb; }
-.pc-name{ margin-top:2px; font-family:'Cinzel Decorative',Cinzel,serif; font-size:clamp(15px,4.8vw,21px); letter-spacing:.05em; color:#dbe6fa; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  background:linear-gradient(180deg,#fff 20%,#c4c4c4); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 2px 3px rgba(0,0,20,.45)); font-variant-numeric:oldstyle-nums; }
+.pc-pt{ font-size:clamp(13px,3.8vw,17px); color:#b0b0b0; letter-spacing:.04em; }
+.pc-lbl{ margin-top:6%; font-size:clamp(8px,2.4vw,10px); letter-spacing:.3em; color:#8a8a8a; }
+.pc-name{ margin-top:2px; font-family:'Cinzel Decorative',Cinzel,serif; font-size:clamp(15px,4.8vw,21px); letter-spacing:.05em; color:#e6e6e6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .pc-acts{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:12px; }
 .pc-act{ display:flex; align-items:center; justify-content:center; gap:8px; height:44px; border-radius:14px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#fff; font:inherit; font-size:14px; cursor:pointer; }
 .pc-act svg{ width:17px; height:17px; flex:none; }
