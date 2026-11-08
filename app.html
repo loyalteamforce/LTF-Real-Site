@@ -132,7 +132,7 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 /* ===== PROFİL SEKMESİ ===== */
 body{ position:relative; }
 #pfBg{ position:absolute; inset:0; min-height:100dvh; z-index:0; pointer-events:none; opacity:0; transition:opacity .7s ease;
-  background:linear-gradient(180deg,var(--pf-c,#121212) 0,var(--pf-c,#121212) 720px,#121212 1500px); }
+  background:#000; }
 body:has(#v-profil.on) #pfBg.on{ opacity:1; }
 #app{ position:relative; z-index:1; }
 .pf-search{ position:relative; z-index:2; }
@@ -156,7 +156,7 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
 .pf-head{ display:flex; align-items:flex-start; gap:16px; padding:0 14px; margin-top:-66px; position:relative; z-index:2; pointer-events:none; }
 .pf-head > *{ pointer-events:auto; }
 .pf-av{ position:relative; flex:none; width:132px; height:132px; padding:0; border-radius:50%; overflow:hidden; cursor:pointer; display:grid; place-items:center; color:#9ca3af;
-  background:#26262b; border:6px solid var(--pf-edge,#121212); box-shadow:0 8px 24px rgba(0,0,0,.45); transition:border-color .7s ease, transform .25s cubic-bezier(.3,1.4,.5,1); }
+  background:#26262b; border:6px solid #000; box-shadow:0 8px 24px rgba(0,0,0,.45); transition:border-color .7s ease, transform .25s cubic-bezier(.3,1.4,.5,1); }
 .pf-av:not(:disabled):hover{ transform:scale(1.04); }
 .pf-av img{ width:100%; height:100%; object-fit:cover; display:block; }
 .pf-av img[hidden]{ display:none; }
@@ -274,7 +274,7 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
 .pf-gear svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; }
 .st{ position:fixed; inset:0; z-index:70; display:none; align-items:flex-end; justify-content:center; background:rgba(0,0,0,.55); }
 .st.on{ display:flex; }
-.st-card{ width:min(100%,420px); padding:18px 18px calc(18px + env(safe-area-inset-bottom)); border-radius:20px 20px 0 0; background:#1b1b1f; border:1px solid rgba(255,255,255,.1); }
+.st-card{ width:min(100%,460px); padding:18px 18px calc(18px + env(safe-area-inset-bottom)); border-radius:20px 20px 0 0; background:#1b1b1f; border:1px solid rgba(255,255,255,.1); }
 @media (min-width:900px){ .st{ align-items:center; } .st-card{ border-radius:20px; padding-bottom:18px; } }
 .st-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; font-size:17px; }
 .st-top button{ width:34px; height:34px; border:none; border-radius:50%; background:rgba(255,255,255,.08); color:#fff; font-size:20px; line-height:1; cursor:pointer; }
@@ -1089,17 +1089,7 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
     const S = s < .08 ? s * 100 : Math.min(72, Math.max(30, s * 100));
     return 'hsl(' + Math.round(h) + ',' + Math.round(S) + '%,21%)';
   }
-  async function pfTint(){
-    const tok = ++tintTok, bu = safeUrl(d.banner_url), au = safeUrl(d.avatar_url), jobs = [];
-    if(bu) jobs.push(d.banner_type === 'video' ? videoPx($('pfVid')).then(p => [p, 1]) : loadCors(bu).then(i => [i && pxOf(i), 1]));
-    if(au) jobs.push(loadCors(au).then(i => [i && pxOf(i), .7]));
-    const res = await Promise.all(jobs);
-    if(tok !== tintTok) return;
-    const c = dominant(res), pv = $('v-profil');
-    if(!c){ pfBg.classList.remove('on'); pv.style.removeProperty('--pf-edge'); return; }
-    const col = toBg(c);
-    pfBg.style.setProperty('--pf-c', col); pv.style.setProperty('--pf-edge', col); pfBg.classList.add('on');
-  }
+  function pfTint(){ pfBg.classList.add('on'); }     // arka plan sabit siyah (ambilight banner'dan gelmeye devam ediyor)
   $('pfVid').addEventListener('error', () => {      // CORS yüzünden video açılmazsa crossorigin'siz tekrar dene
     const v = $('pfVid'), u = v.getAttribute('src');
     if(v.crossOrigin && u){ v.removeAttribute('crossorigin'); v.src = u; v.load(); if(ST.get('vid', '1') === '1') v.play().catch(() => {}); }

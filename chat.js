@@ -30,34 +30,49 @@ import { supabase, FUNCTIONS_URL } from './config.js';
   /* ---------- CSS ---------- */
   var css = document.createElement('style');
   css.textContent =
-    '.ch-card{--ch:#2563eb;--ch-hi:#3b82f6;margin:14px 14px 0;border-radius:16px;background:#1b1b1f;border:1px solid rgba(255,255,255,.1);overflow:hidden}' +
+    '.ch-card{--ch:#2563eb;--ch-hi:#3b82f6;margin:14px 14px 0;border-radius:18px;background:#0e0e11;border:1px solid rgba(255,255,255,.09);overflow:hidden;box-shadow:0 14px 34px -16px rgba(0,0,0,.9)}' +
     '.ch-card[hidden]{display:none}' +
-    '.ch-top{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.07)}' +
-    '.ch-top img,.ch-top i,.ch-in img,.ch-in i{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#2a2a30;flex:none}' +
+    '.ch-top{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.07)}' +
+    '.ch-top img,.ch-top i,.ch-in img,.ch-in i{width:38px;height:38px;border-radius:50%;object-fit:cover;background:#2a2a30;flex:none}' +
+    '.ch-top > div{min-width:0}' +
     '.ch-top b{display:block;font-size:14.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
-    '.ch-top small{display:block;font-size:12px;color:#9ca3af}' +
-    '.ch-snd{margin-left:auto;display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;flex:none}' +
+    '.ch-top small{display:block;font-size:12px;color:#9ca3af;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
+    '.ch-btns{margin-left:auto;display:flex;gap:6px;flex:none}' +
+    '.ch-snd{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;flex:none;transition:background .15s}' +
     '.ch-snd:hover{background:rgba(255,255,255,.16)}.ch-snd:focus-visible{outline:2px solid var(--ch-hi);outline-offset:2px}.ch-snd[aria-pressed=false]{color:#8b8f98}' +
-    '.ch-log{height:min(48vh,340px);overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin}' +
-    '.ch-day{align-self:center;margin:6px 0 2px;font-size:11.5px;color:#8b8f98}' +
-    '.ch-b{max-width:78%;padding:8px 12px;border-radius:16px;font-size:14.5px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}' +
-    '.ch-b.me{align-self:flex-end;background:var(--ch);color:#fff;border-bottom-right-radius:5px}' +
-    '.ch-b.th{align-self:flex-start;background:#2a2a30;color:#f1f1f3;border-bottom-left-radius:5px}' +
+    '.ch-wrap{position:relative}' +
+    '.ch-log{height:min(50vh,360px);overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin;overscroll-behavior:contain}' +
+    '.ch-day{align-self:center;margin:8px 0 4px;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.07);font-size:11.5px;color:#9ca3af}' +
+    '.ch-b{max-width:78%;padding:8px 12px;border-radius:18px;font-size:14.5px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}' +
+    '.ch-b.me{align-self:flex-end;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border-bottom-right-radius:5px}' +
+    '.ch-b.th{align-self:flex-start;background:#202026;color:#f1f1f3;border-bottom-left-radius:5px}' +
+    '.ch-b.c{margin-top:-4px}' +
+    '.ch-b.me.c{border-top-right-radius:6px}.ch-b.me.n{border-bottom-right-radius:6px}' +
+    '.ch-b.th.c{border-top-left-radius:6px}.ch-b.th.n{border-bottom-left-radius:6px}' +
+    '.ch-b a{color:inherit;text-decoration:underline;text-underline-offset:2px;word-break:break-all}' +
     '.ch-b time{display:block;margin-top:2px;font-size:10.5px;opacity:.65;text-align:right}' +
-    '.ch-empty{margin:auto;padding:12px;font-size:13px;color:#9ca3af;text-align:center}' +
-    '.ch-form{display:flex;align-items:flex-end;gap:8px;padding:10px;border-top:1px solid rgba(255,255,255,.07)}' +
+    '.ch-b.pend{opacity:.6}' +
+    '.ch-b.fail{background:#5b1f2a;cursor:pointer}' +
+    '.ch-b.fail time{opacity:1;color:#ffb3b3}' +
+    '.ch-down{position:absolute;right:14px;bottom:12px;display:none;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:#2a2a30;color:#fff;cursor:pointer;box-shadow:0 6px 18px -4px rgba(0,0,0,.7)}' +
+    '.ch-down.on{display:grid}.ch-down.nw::after{content:"";position:absolute;right:1px;top:1px;width:11px;height:11px;border-radius:50%;background:#3b82f6;border:2px solid #0e0e11}' +
+    '.ch-empty{margin:auto;padding:12px;font-size:13px;color:#9ca3af;text-align:center;line-height:1.5}' +
+    '.ch-form{display:flex;align-items:flex-end;gap:8px;padding:10px;border-top:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02)}' +
     '.ch-form textarea{flex:1;min-height:40px;max-height:110px;padding:10px 14px;resize:none;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font:inherit;font-size:16px;line-height:1.3;outline:0}' +
     '.ch-form textarea:focus{border-color:var(--ch-hi)}' +
     '.ch-send{display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:var(--ch);color:#fff;cursor:pointer;flex:none}' +
     '.ch-send:hover{background:var(--ch-hi)}.ch-send:disabled{background:#33333a;color:#777;cursor:default}' +
     '.ch-err{padding:0 14px 10px;font-size:12.5px;color:#ffb3b3;min-height:0}.ch-err:empty{display:none}' +
-    '.ch-note{padding:14px;font-size:13px;color:#9ca3af;text-align:center}' +
-    '.ch-hd{padding:12px 14px 4px;font-size:15px;font-weight:600}' +
-    '.ch-row{display:flex;align-items:center;gap:12px;width:100%;padding:10px 14px;border:0;border-top:1px solid rgba(255,255,255,.06);background:transparent;color:#fff;font:inherit;text-align:left;cursor:pointer}' +
+    '.ch-note{padding:16px 14px;font-size:13px;color:#9ca3af;text-align:center;line-height:1.5}' +
+    '#chBox .st-card{background:#0e0e11;border-color:rgba(255,255,255,.09);box-shadow:0 -10px 40px -10px rgba(0,0,0,.8)}' +
+    '.ch-srch{display:block;width:100%;height:42px;margin:0 0 8px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff;font:inherit;font-size:16px;outline:0}' +
+    '.ch-srch[hidden]{display:none}.ch-srch:focus{border-color:rgba(255,255,255,.4)}' +
+    '.ch-row{display:flex;align-items:center;gap:12px;width:100%;padding:10px 18px;border:0;border-top:1px solid rgba(255,255,255,.06);background:transparent;color:#fff;font:inherit;text-align:left;cursor:pointer}' +
     '.ch-row:hover{background:rgba(255,255,255,.05)}' +
-    '.ch-row img,.ch-row i{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#2a2a30;flex:none}' +
-    '.ch-row span{min-width:0;flex:1}.ch-row b{display:block;font-size:14px;font-weight:600}' +
-    '.ch-row em{display:block;font-style:normal;font-size:13px;color:#9ca3af;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
+    '.ch-row img,.ch-row i,.ch-ban img,.ch-ban i,.ch-top i{display:grid;place-items:center;font-style:normal;font-size:16px;font-weight:700;color:#cfd3da}' +
+    '.ch-row img,.ch-row i{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#2a2a30;flex:none}' +
+    '.ch-row span{min-width:0;flex:1}.ch-row b{display:block;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
+    '.ch-row em{display:block;margin-top:1px;font-style:normal;font-size:13px;color:#9ca3af;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
     '.ch-row time{font-size:11.5px;color:#8b8f98;flex:none}' +
     '.ch-ban{position:fixed;top:max(10px,env(safe-area-inset-top));left:50%;z-index:90;width:min(calc(100% - 20px),400px);translate:-50% -150%;opacity:0;display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:18px;background:rgba(28,28,32,.97);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.14);box-shadow:0 12px 32px -8px rgba(0,0,0,.7);color:#fff;cursor:pointer;touch-action:none;pointer-events:none;transition:translate .5s cubic-bezier(.3,1.35,.5,1),opacity .25s ease}' +
     '.ch-ban.on{translate:-50% 0;opacity:1;pointer-events:auto}.ch-ban.drag{transition:none}' +
@@ -78,7 +93,7 @@ import { supabase, FUNCTIONS_URL } from './config.js';
 
   /* ---------- durum ---------- */
   var cur = null, peer = null, msgs = [], people = {}, token = 0, pollT = null;
-  var log = null, input = null, sendBtn = null, errEl = null;
+  var log = null, input = null, sendBtn = null, errEl = null, down = null, pendSeq = 0;
 
   function el(tag, cls, text) {
     var e = document.createElement(tag);
@@ -88,7 +103,8 @@ import { supabase, FUNCTIONS_URL } from './config.js';
   }
   function avatar(p) {
     var u = safeUrl(p && p.avatar_url), a = el(u ? 'img' : 'i');
-    if (u) { a.src = u; a.alt = ''; }
+    if (u) { a.src = u; a.alt = ''; a.loading = 'lazy'; }
+    else a.textContent = nameOf(p).trim().charAt(0).toUpperCase();
     return a;
   }
   function nameOf(p) { return (p && (p.display_name || p.username)) || 'Üye'; }
@@ -99,6 +115,18 @@ import { supabase, FUNCTIONS_URL } from './config.js';
     var y = new Date(n); y.setDate(n.getDate() - 1);
     if (d.toDateString() === y.toDateString()) return 'Dün';
     return d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' });
+  }
+
+  // Mesajdaki http(s) bağlantılarını tıklanır yap (innerHTML yok: güvenli)
+  function fill(node, text) {
+    var parts = text.split(/(https?:\/\/[^\s<]+)/g);
+    parts.forEach(function (t, i) {
+      if (i % 2 === 0) { if (t) node.appendChild(document.createTextNode(t)); return; }
+      var m = t.match(/^(.*?)([.,!?;:)\]]*)$/), url = m[1], tail = m[2];
+      var a = el('a', '', url); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer nofollow';
+      node.appendChild(a);
+      if (tail) node.appendChild(document.createTextNode(tail));
+    });
   }
 
   async function getProfile(id) {
@@ -220,7 +248,9 @@ import { supabase, FUNCTIONS_URL } from './config.js';
   var convs = [];
   function isUnread(cv) { return cv.last.sender_id !== uid && Date.parse(cv.last.created_at) > (seen[cv.id] || INIT); }
   function recount() {
-    window.__lefUnread = convs.filter(isUnread).length;
+    var um = {}; convs.forEach(function (cv) { if (isUnread(cv)) um[cv.id] = 1; });
+    window.__lefUnreadMap = um;                            // friends.js arkadaş satırlarında nokta gösterir
+    window.__lefUnread = Object.keys(um).length;
     window.dispatchEvent(new Event('lef-unread'));      // friends.js "Sohbet" düğmesindeki rozeti günceller
   }
   function markSeen(id, ms) {
@@ -243,17 +273,32 @@ import { supabase, FUNCTIONS_URL } from './config.js';
     log.replaceChildren();
     if (!msgs.length) {
       log.appendChild(el('div', 'ch-empty', 'Henüz mesaj yok. İlk mesajı sen yaz.'));
+      syncDown();
       return;
     }
-    var lastDay = '';
-    msgs.forEach(function (m) {
+    var lastDay = '', GAP = 5 * 60000;
+    msgs.forEach(function (m, i) {
       var dl = dayLabel(m.created_at);
       if (dl !== lastDay) { log.appendChild(el('div', 'ch-day', dl)); lastDay = dl; }
-      var b = el('div', 'ch-b ' + (m.sender_id === uid ? 'me' : 'th'), m.body);
-      b.appendChild(el('time', '', hhmm(m.created_at)));
+      var pv = msgs[i - 1], nx = msgs[i + 1], t = Date.parse(m.created_at);
+      var sameP = pv && pv.sender_id === m.sender_id && dayLabel(pv.created_at) === dl && t - Date.parse(pv.created_at) < GAP;
+      var sameN = nx && nx.sender_id === m.sender_id && dayLabel(nx.created_at) === dl && Date.parse(nx.created_at) - t < GAP;
+      var b = el('div', 'ch-b ' + (m.sender_id === uid ? 'me' : 'th') + (sameP ? ' c' : '') + (sameN ? ' n' : '') + (m._p ? ' pend' : '') + (m._f ? ' fail' : ''));
+      fill(b, m.body);
+      if (m._f) {
+        b.appendChild(el('time', '', 'Gönderilemedi · tekrar dene'));
+        b.addEventListener('click', function () { send(m); });
+      } else if (!sameN) b.appendChild(el('time', '', m._p ? 'Gönderiliyor…' : hhmm(m.created_at)));
       log.appendChild(b);
     });
     if (atEnd) log.scrollTop = log.scrollHeight;
+    syncDown();
+  }
+  function syncDown() {
+    if (!log || !down) return;
+    var far = log.scrollHeight - log.scrollTop - log.clientHeight > 120;
+    down.classList.toggle('on', far);
+    if (!far) down.classList.remove('nw');
   }
 
   async function loadMsgs(stick) {
@@ -264,30 +309,41 @@ import { supabase, FUNCTIONS_URL } from './config.js';
       .or(f).order('created_at', { ascending: false }).limit(80);
     if (me !== token || r.error) return;
     var next = (r.data || []).reverse();
-    var changed = next.length !== msgs.length || (next.length && next[next.length - 1].id !== msgs[msgs.length - 1].id);
-    msgs = next;
+    var real = msgs.filter(function (m) { return !m._p && !m._f; }), keep = msgs.filter(function (m) { return m._p || m._f; });
+    var changed = next.length !== real.length || (next.length && next[next.length - 1].id !== real[real.length - 1].id);
+    msgs = next.concat(keep);
     if (changed || stick) paintLog(stick);
     seeIfViewing();
   }
 
   function addMsg(m) {
     for (var i = 0; i < msgs.length; i++) if (msgs[i].id === m.id) return;
-    msgs.push(m); paintLog(true); seeIfViewing();
+    var nearEnd = !log || log.scrollHeight - log.scrollTop - log.clientHeight < 120;
+    msgs.push(m); paintLog(false); seeIfViewing();
+    if (!nearEnd && down && m.sender_id !== uid) down.classList.add('nw');     // yukarı kaydırmışsa zorla aşağı atma
   }
 
-  async function send() {
-    var body = input.value.trim();
+  async function send(retry) {
+    var body = retry ? retry.body : input.value.trim();
     if (!body || !peer) return;
-    sendBtn.disabled = true; errEl.textContent = '';
+    var to = peer, tmp = retry || { id: 'p' + (++pendSeq), sender_id: uid, receiver_id: to, body: body.slice(0, 1000), created_at: new Date().toISOString() };
+    tmp._p = 1; tmp._f = 0; errEl.textContent = '';
+    if (!retry) { msgs.push(tmp); input.value = ''; fit(); }
+    paintLog(true); sndChime(false);                      // mesaj hemen görünür, sunucu cevabı beklenmez
+    if (input) input.focus();
     var r = await supabase.from('messages')
-      .insert({ sender_id: uid, receiver_id: peer, body: body.slice(0, 1000) })
+      .insert({ sender_id: uid, receiver_id: to, body: tmp.body })
       .select('id,sender_id,receiver_id,body,created_at').single();
-    if (r.error) {
-      errEl.textContent = 'Gönderilemedi. Arkadaş olduğunuzdan emin ol ve tekrar dene.';
-      sendBtn.disabled = !input.value.trim(); return;
+    if (to !== peer) return;                              // bu sırada başka sohbete geçildi
+    var i = msgs.indexOf(tmp);
+    if (r.error || !r.data) {
+      tmp._p = 0; tmp._f = 1; paintLog(false);
+      errEl.textContent = 'Gönderilemedi. Arkadaş olduğunuzdan emin ol, mesaja dokunup tekrar dene.';
+      return;
     }
-    input.value = ''; fit(); addMsg(r.data); sndChime(false);
-    input.focus();
+    var dup = msgs.some(function (m) { return m.id === r.data.id; });
+    if (i > -1) { if (dup) msgs.splice(i, 1); else msgs[i] = r.data; }
+    paintLog(true);
   }
   function fit() {
     input.style.height = '40px';
@@ -303,7 +359,7 @@ import { supabase, FUNCTIONS_URL } from './config.js';
 
     var top = el('div', 'ch-top');
     var tx = el('div');
-    tx.append(el('b', '', nameOf(p)), el('small', '', 'Arkadaşın · özel sohbet'));
+    tx.append(el('b', '', nameOf(p)), el('small', '', (p && p.username ? '@' + p.username + ' · ' : '') + 'özel sohbet'));
     var sb = el('button', 'ch-snd'); sb.type = 'button';
     var ICON_ON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
     var ICON_OFF = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>';
@@ -319,7 +375,11 @@ import { supabase, FUNCTIONS_URL } from './config.js';
       if (on) sndChime(true);                       // açınca yumuşak bir ses çalar
     });
     paintSnd();
-    top.append(avatar(p), tx, sb);
+    var ib = el('button', 'ch-snd'); ib.type = 'button'; ib.title = 'Tüm sohbetler'; ib.setAttribute('aria-label', 'Tüm sohbetleri aç');
+    ib.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg>';
+    ib.addEventListener('click', function () { window.dispatchEvent(new Event('lef-open-inbox')); });
+    var bx = el('div', 'ch-btns'); bx.append(ib, sb);
+    top.append(avatar(p), tx, bx);
 
     log = el('div', 'ch-log');
     log.setAttribute('role', 'log'); log.setAttribute('aria-live', 'polite'); log.setAttribute('aria-label', nameOf(p) + ' ile mesajlar');
@@ -341,7 +401,12 @@ import { supabase, FUNCTIONS_URL } from './config.js';
       else if (e.key === 'Backspace' || e.key === 'Delete') sndKey(true);
     });
 
-    card.append(top, log, errEl, form);
+    down = el('button', 'ch-down'); down.type = 'button'; down.setAttribute('aria-label', 'En alta in');
+    down.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
+    down.addEventListener('click', function () { log.scrollTo({ top: log.scrollHeight, behavior: 'smooth' }); });
+    log.addEventListener('scroll', syncDown, { passive: true });
+    var wrap = el('div', 'ch-wrap'); wrap.append(log, down);
+    card.append(top, wrap, errEl, form);
     card.hidden = false;
     paintLog(true);
     await loadMsgs(true);
@@ -355,10 +420,12 @@ import { supabase, FUNCTIONS_URL } from './config.js';
   sheet.innerHTML =
     '<div class="st-card" role="dialog" aria-modal="true" aria-label="Sohbetler">' +
       '<div class="st-top"><b>Sohbetler</b><button type="button" id="chX" aria-label="Kapat">&times;</button></div>' +
+      '<input type="search" class="ch-srch" id="chQ" placeholder="Sohbetlerde ara" maxlength="30" autocomplete="off" hidden>' +
       '<div class="ch-list" id="chList"></div>' +
     '</div>';
   document.body.appendChild(sheet);
-  var listEl = $('#chList', sheet);
+  var listEl = $('#chList', sheet), chQ = $('#chQ', sheet);
+  chQ.addEventListener('input', function () { paintSheet(); });
 
   async function loadConvs() {
     var r = await supabase.from('messages').select('id,sender_id,receiver_id,body,created_at')
@@ -376,11 +443,15 @@ import { supabase, FUNCTIONS_URL } from './config.js';
   }
   function paintSheet() {
     listEl.replaceChildren();
+    chQ.hidden = convs.length < 6;
     if (!convs.length) {
       listEl.appendChild(el('div', 'ch-empty', 'Henüz sohbet yok. Bir arkadaşının profiline girip mesaj yazabilirsin.'));
       return;
     }
-    convs.forEach(function (cv) {
+    var q = chQ.hidden ? '' : chQ.value.trim().toLocaleLowerCase('tr');
+    var shown = q ? convs.filter(function (cv) { var p = people[cv.id]; return (nameOf(p) + ' ' + ((p && p.username) || '')).toLocaleLowerCase('tr').indexOf(q) > -1; }) : convs;
+    if (!shown.length) { listEl.appendChild(el('div', 'ch-empty', 'Eşleşen sohbet yok.')); return; }
+    shown.forEach(function (cv) {
       var p = people[cv.id], un = isUnread(cv);
       var b = el('button', 'ch-row' + (un ? ' un' : '')); b.type = 'button';
       var mid = el('span');
@@ -395,7 +466,7 @@ import { supabase, FUNCTIONS_URL } from './config.js';
     });
   }
   function openSheet() {
-    sheet.classList.add('on'); sheet.setAttribute('aria-hidden', 'false');
+    sheet.classList.add('on'); sheet.setAttribute('aria-hidden', 'false'); chQ.value = '';
     paintSheet();
     loadConvs().then(paintSheet);
   }
@@ -471,7 +542,7 @@ import { supabase, FUNCTIONS_URL } from './config.js';
   /* ---------- profil değişince ---------- */
   async function refresh() {
     var me = ++token;
-    clearInterval(pollT); peer = null; log = input = sendBtn = errEl = null;
+    clearInterval(pollT); peer = null; log = input = sendBtn = errEl = down = null;
     cur = window.__lefProfile || null;
     if (!cur) { card.hidden = true; return; }
     try {
