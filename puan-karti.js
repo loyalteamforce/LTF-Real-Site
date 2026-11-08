@@ -27,26 +27,53 @@ function init() {
 
   const css = document.createElement('style');
   css.textContent = `
-.pc-wrap{ margin-top:14px; max-width:440px; }
-.pc-card{ box-sizing:border-box; position:relative; width:100%; aspect-ratio:1.56; padding:6.5% 7%; border-radius:26px; overflow:hidden; color:#eaf2ff; display:flex; flex-direction:column; justify-content:space-between;
+#v-ana-sayfa .x-hero{ display:none; }
+.pc-wrap{ margin-top:6px; max-width:560px; }
+.pc-home{ display:flex; align-items:center; gap:clamp(14px,4.5vw,30px); }
+.pc-cardbox{ flex:none; width:clamp(168px,50vw,236px); container-type:inline-size; }
+.pc-flip{ perspective:1000px; cursor:pointer; outline:none; border-radius:7cqw; -webkit-tap-highlight-color:transparent; }
+.pc-flip:focus-visible{ outline:2px solid #9cc4ff; outline-offset:4px; }
+.pc-card3d{ position:relative; width:100%; aspect-ratio:1.56; transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform;
+  transition:transform .9s cubic-bezier(.3,1.2,.4,1); }
+.pc-flip.open .pc-card3d{ transform:rotateY(180deg); }
+.pc-face{ box-sizing:border-box; position:absolute; inset:0; border-radius:7cqw; overflow:hidden; color:#eaf2ff;
+  -webkit-backface-visibility:hidden; backface-visibility:hidden;
+  border:1px solid rgba(160,195,255,.24); box-shadow:0 18px 40px -18px rgba(20,70,160,.8),inset 0 1px 0 rgba(255,255,255,.14); }
+/* arka yüz: logo */
+.pc-back{ display:grid; place-items:center;
+  background:radial-gradient(circle at 50% 46%,rgba(206,224,255,.5) 0,rgba(150,184,240,.2) 38%,transparent 66%),
+             repeating-linear-gradient(115deg,rgba(255,255,255,.03) 0 2px,transparent 2px 7px),
+             linear-gradient(135deg,#27508f 0%,#17305a 52%,#21457c 100%); }
+.pc-back img{ width:50%; height:auto; filter:drop-shadow(0 3px 10px rgba(0,10,40,.55)); }
+/* ön yüz: puan */
+.pc-front{ transform:rotateY(180deg); padding:6.5% 7%; display:flex; flex-direction:column; justify-content:space-between;
   background:linear-gradient(118deg,transparent 28%,rgba(255,255,255,.055) 50%,transparent 72%),
              repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 7px),
-             linear-gradient(135deg,#1d3d70 0%,#14284b 48%,#1a3560 100%);
-  border:1px solid rgba(160,195,255,.24); box-shadow:0 22px 50px -20px rgba(20,70,160,.75),inset 0 1px 0 rgba(255,255,255,.14); }
+             linear-gradient(135deg,#1d3d70 0%,#14284b 48%,#1a3560 100%); }
+.pc-front::after{ content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.2) 50%,transparent 60%); transform:translateX(-130%); }
+.pc-flip.open .pc-front::after{ animation:pcShine 1.1s .55s ease-out 1 both; }
+@keyframes pcShine{ from{ transform:translateX(-130%); } to{ transform:translateX(130%); } }
 .pc-top{ display:flex; align-items:flex-start; justify-content:space-between; }
-.pc-brand{ font-family:'Cinzel Decorative',Cinzel,serif; font-weight:700; font-size:clamp(14px,4.4vw,19px); letter-spacing:.2em;
+.pc-brand{ font-family:'Cinzel Decorative',Cinzel,serif; font-weight:700; font-size:max(8px,4.6cqw); letter-spacing:.2em;
   background:linear-gradient(90deg,#9cc4ff,#cfe2ff 60%,#7ea6e6); -webkit-background-clip:text; background-clip:text; color:transparent; }
-.pc-crest{ width:clamp(28px,8vw,38px); height:auto; opacity:.92; filter:drop-shadow(0 2px 6px rgba(0,0,0,.4)); }
-.pc-chip{ width:clamp(40px,12vw,54px); aspect-ratio:1.3; border-radius:10px; position:relative; margin-top:3%;
+.pc-crest{ width:10cqw; height:auto; opacity:.92; filter:drop-shadow(0 2px 6px rgba(0,0,0,.4)); }
+.pc-chip{ width:13cqw; aspect-ratio:1.3; border-radius:2.4cqw; position:relative; margin-top:2%;
   background:linear-gradient(145deg,#eceef2,#a3a9b4 55%,#d9dce2); box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),0 3px 8px rgba(0,0,0,.35); }
 .pc-chip::before{ content:""; position:absolute; inset:24% 18%; border:1.5px solid rgba(70,76,88,.55); border-radius:4px;
   background:linear-gradient(rgba(70,76,88,.45),rgba(70,76,88,.45)) center/100% 1.5px no-repeat,linear-gradient(90deg,transparent calc(50% - .75px),rgba(70,76,88,.45) 0 calc(50% + .75px),transparent 0); }
-.pc-mid{ display:flex; align-items:baseline; gap:10px; margin-top:auto; }
-.pc-num{ font-family:'Cormorant Garamond',Georgia,serif; font-weight:700; font-size:clamp(32px,10.5vw,50px); line-height:1; letter-spacing:.01em;
+.pc-mid{ display:flex; align-items:baseline; gap:2.4cqw; margin-top:auto; }
+.pc-num{ font-family:'Cormorant Garamond',Georgia,serif; font-weight:700; font-size:max(22px,13cqw); line-height:1; letter-spacing:.01em;
   background:linear-gradient(180deg,#fff 20%,#b9d3fb); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 2px 3px rgba(0,0,20,.45)); font-variant-numeric:oldstyle-nums; }
-.pc-pt{ font-size:clamp(13px,3.8vw,17px); color:#9db8e8; letter-spacing:.04em; }
-.pc-lbl{ margin-top:6%; font-size:clamp(8px,2.4vw,10px); letter-spacing:.3em; color:#7f95bb; }
-.pc-name{ margin-top:2px; font-family:'Cinzel Decorative',Cinzel,serif; font-size:clamp(15px,4.8vw,21px); letter-spacing:.05em; color:#dbe6fa; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pc-pt{ font-size:max(10px,4.4cqw); color:#9db8e8; letter-spacing:.04em; }
+.pc-lbl{ margin-top:4%; font-size:max(6px,2.9cqw); letter-spacing:.3em; color:#7f95bb; }
+.pc-name{ margin-top:1px; font-family:'Cinzel Decorative',Cinzel,serif; font-size:max(10px,5.4cqw); letter-spacing:.05em; color:#dbe6fa; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* sağ taraf: karşılama */
+.pc-side{ min-width:0; display:flex; flex-direction:column; gap:4px; }
+.pc-hi{ font-size:14px; color:#9db8e8; letter-spacing:.04em; }
+.pc-who{ font-family:'Cormorant Garamond',Georgia,serif; font-weight:700; font-size:clamp(24px,7.4vw,36px); line-height:1.1; overflow-wrap:anywhere;
+  background:linear-gradient(180deg,#fff 25%,#b9d3fb); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.pc-tip{ margin-top:6px; font-size:12.5px; line-height:1.45; color:#8da2c6; }
+@media (prefers-reduced-motion:reduce){ .pc-card3d{ transition:none; } .pc-flip.open .pc-front::after{ animation:none; } }
 .pc-acts{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:12px; }
 .pc-act{ display:flex; align-items:center; justify-content:center; gap:8px; height:44px; border-radius:14px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#fff; font:inherit; font-size:14px; cursor:pointer; }
 .pc-act svg{ width:17px; height:17px; flex:none; }
@@ -116,23 +143,52 @@ function init() {
     clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-7"/></svg>'
   };
+  let open = false;
+  const TIP = ['Puanını görmek için karta dokun.', 'Kartı kapatmak için tekrar dokun.'];
+  function setOpen(v) {
+    open = v;
+    const f = $('.pc-flip'); if (!f) return;
+    f.classList.toggle('open', v); f.setAttribute('aria-pressed', String(v));
+    const t = $('.pc-tip'); if (t) t.textContent = TIP[v ? 1 : 0];
+    if (v) {   // her açılışta puan 0'dan sayarak gelir
+      cancelAnimationFrame(raf); shown = 0;
+      const n = $('.pc-num'); if (n) n.textContent = fmt(0);
+      setTimeout(() => { if (open && bal !== null) countTo(bal); }, reduced ? 0 : 420);
+    }
+  }
   function build() {
     const w = document.createElement('div'); w.className = 'pc-wrap';
-    w.innerHTML = `<div class="pc-card" role="group" aria-label="Puan kartı">
-      <div class="pc-top"><span class="pc-brand">POINTS</span><img class="pc-crest" src="crest.png" alt=""></div>
-      <div class="pc-chip" aria-hidden="true"></div>
-      <div class="pc-mid"><span class="pc-num">0</span><span class="pc-pt">pt</span></div>
-      <div><div class="pc-lbl">KART SAHİBİ</div><div class="pc-name"></div></div>
+    w.innerHTML = `<div class="pc-home">
+      <div class="pc-cardbox">
+        <div class="pc-flip${open ? ' open' : ''}" role="button" tabindex="0" aria-pressed="${open}" aria-label="Puan kartı">
+          <div class="pc-card3d">
+            <div class="pc-face pc-back"><img src="crest.png" alt="Loyal Elite Force"></div>
+            <div class="pc-face pc-front">
+              <div class="pc-top"><span class="pc-brand">POINTS</span><img class="pc-crest" src="crest.png" alt=""></div>
+              <div class="pc-chip" aria-hidden="true"></div>
+              <div class="pc-mid"><span class="pc-num">0</span><span class="pc-pt">pt</span></div>
+              <div><div class="pc-lbl">KART SAHİBİ</div><div class="pc-name"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pc-side"><span class="pc-hi">Hoş geldin</span><b class="pc-who"></b><span class="pc-tip" aria-live="polite">${TIP[open ? 1 : 0]}</span></div>
     </div>
     <div class="pc-acts">
       <button type="button" class="pc-act" data-a="send">${SVG.send}Gönder</button>
       <button type="button" class="pc-act" data-a="hist">${SVG.clock}Geçmiş</button>
     </div>`;
-    w.addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (b) openSheet(b.dataset.a); });
+    w.addEventListener('click', e => {
+      if (e.target.closest('.pc-flip')) { setOpen(!open); return; }
+      const b = e.target.closest('[data-a]'); if (b) openSheet(b.dataset.a);
+    });
+    w.addEventListener('keydown', e => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('pc-flip')) { e.preventDefault(); setOpen(!open); }
+    });
     return w;
   }
   const home = $('#v-ana-sayfa');
-  function paintOwner() { const n = $('.pc-name'); if (n) n.textContent = owner.toLocaleUpperCase('tr'); }
+  function paintOwner() { const n = $('.pc-name'); if (n) n.textContent = owner.toLocaleUpperCase('tr'); const g = $('.pc-who'); if (g) g.textContent = owner || 'Loyal Elite Force'; }
   function mount() {
     if (!home || home.querySelector('.pc-wrap')) return;
     const w = build(), hero = home.querySelector('.x-hero');
