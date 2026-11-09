@@ -27,21 +27,23 @@ function init() {
 
   const css = document.createElement('style');
   css.textContent = `
-.pc-wrap{ margin-top:14px; display:grid; grid-template-columns:minmax(0,1.12fr) minmax(0,1fr); gap:12px; align-items:start; }
+.pc-wrap{ margin-top:14px; display:grid; grid-template-columns:minmax(0,1.65fr) minmax(0,1fr); gap:14px; align-items:start; }
+@media (max-width:340px){ .pc-wrap{ grid-template-columns:minmax(0,1fr); } }
+@media (min-width:900px){ .pc-wrap{ grid-template-columns:minmax(0,440px) minmax(0,1fr); gap:18px; } }
 .pc-left,.pc-side{ min-width:0; }
-.pc-flip{ display:block; position:relative; width:100%; aspect-ratio:1.56; perspective:900px; cursor:pointer; container-type:inline-size; outline:none; user-select:none; -webkit-user-select:none; touch-action:manipulation; }
+.pc-flip{ display:block; position:relative; width:100%; aspect-ratio:1.56; cursor:pointer; container-type:inline-size; outline:none; user-select:none; -webkit-user-select:none; touch-action:manipulation; }
 .pc-flip:focus-visible .pc-face{ outline:2px solid rgba(255,255,255,.7); outline-offset:2px; }
-.pc-inner{ position:relative; width:100%; height:100%; transform-style:preserve-3d; -webkit-transform-style:preserve-3d; transition:transform .6s cubic-bezier(.45,0,.55,1); }
-.pc-flip.flipped .pc-inner{ transform:rotateY(180deg); }
-.pc-face{ box-sizing:border-box; position:absolute; inset:0; border-radius:8cqw; overflow:hidden; color:#f2f2f2; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+/* Tek düzlemli çevirme: iki yüz de aynı eleman gibi döner (preserve-3d / backface-visibility yok), yarıda yüz değişir. Safari'de logo yandan düz görünme hatası bu yüzden olmaz. */
+.pc-inner{ position:absolute; inset:0; will-change:transform; transform-origin:50% 50%; }
+.pc-face{ box-sizing:border-box; position:absolute; inset:0; border-radius:8cqw; overflow:hidden; color:#f2f2f2;
   border:1px solid rgba(255,255,255,.16); box-shadow:0 18px 40px -18px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.12); }
-.pc-front{ transform:rotateY(180deg); padding:5.5% 7%; display:flex; flex-direction:column; justify-content:space-between;
+.pc-front{ display:none; padding:5.5% 7%; flex-direction:column; justify-content:space-between;
   background:linear-gradient(118deg,transparent 28%,rgba(255,255,255,.055) 50%,transparent 72%),
              repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 7px),
              linear-gradient(135deg,#1a1a1a 0%,#000 48%,#0d0d0d 100%); }
 /* Logo ayrı bir <img> değil, arka yüzün kendi arka planı: kartla aynı düzlemde, 3D döner (Safari'de yandan düz görünmez) */
 .pc-back{ background-image:url("crest.png"),radial-gradient(circle at 50% 32%,rgba(255,255,255,.13),transparent 62%),linear-gradient(135deg,#242424 0%,#0b0b0b 55%,#1b1b1b 100%);
-  background-repeat:no-repeat; background-position:center,0 0,0 0; background-size:44cqw auto,100% 100%,100% 100%; }
+  background-repeat:no-repeat; background-position:center,0 0,0 0; background-size:54cqw auto,100% 100%,100% 100%; }
 .pc-back::before{ content:""; position:absolute; inset:0; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity:.09; pointer-events:none; }
 .pc-back::after{ content:""; position:absolute; inset:0; background:linear-gradient(118deg,transparent 28%,rgba(255,255,255,.08) 50%,transparent 72%); pointer-events:none; }
 .pc-top{ display:flex; align-items:flex-start; justify-content:space-between; }
@@ -53,12 +55,9 @@ function init() {
 .pc-pt{ font-size:5cqw; color:#b0b0b0; letter-spacing:.04em; }
 .pc-lbl{ margin-top:3%; font-size:max(6.5px,2.9cqw); letter-spacing:.26em; color:#8a8a8a; }
 .pc-name{ margin-top:2px; font-family:'Cinzel Decorative',Cinzel,serif; font-size:5.6cqw; letter-spacing:.04em; color:#e6e6e6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.pc-back,.pc-front{ transition:visibility 0s linear .3s; }
-.pc-front{ visibility:hidden; }
-.pc-flip.flipped .pc-front{ visibility:visible; }
-.pc-flip.flipped .pc-back{ visibility:hidden; }
+.pc-flip.flipped .pc-front{ display:flex; }
+.pc-flip.flipped .pc-back{ display:none; }
 .pc-flip{ -webkit-tap-highlight-color:transparent; }
-@media (prefers-reduced-motion:reduce){ .pc-inner{ transition-duration:.01s; } .pc-back,.pc-front{ transition-delay:0s; } }
 .pc-acts{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:10px; }
 .pc-act{ display:flex; align-items:center; justify-content:center; gap:6px; height:40px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#fff; font:inherit; font-size:13px; cursor:pointer; }
 .pc-act svg{ width:16px; height:16px; flex:none; }
@@ -147,12 +146,23 @@ function init() {
       </div>
     </div>
     <div class="pc-side" id="pcSide"></div>`;
-    const flip = w.querySelector('.pc-flip');
+    const flip = w.querySelector('.pc-flip'), inner = w.querySelector('.pc-inner');
     let busy = false;   // animasyon sürerken gelen dokunuşları yok say: bir dokunuş = bir çevirme
     const toggle = () => {
       if (busy) return;
-      busy = true; setTimeout(() => { busy = false; }, reduced ? 30 : 620);
-      const on = flip.classList.toggle('flipped'); flip.setAttribute('aria-pressed', on ? 'true' : 'false');
+      busy = true;
+      const on = !flip.classList.contains('flipped');
+      const swap = () => { flip.classList.toggle('flipped', on); flip.setAttribute('aria-pressed', on ? 'true' : 'false'); };
+      if (reduced || !inner.animate) { swap(); busy = false; return; }
+      const P = 'perspective(900px) ';
+      // 1. yarı: 0 -> 90 derece (kart kenara döner), 2. yarı: yüz değişir, -90 -> 0
+      const a1 = inner.animate([{ transform: P + 'rotateY(0deg) scale(1)' }, { transform: P + 'rotateY(90deg) scale(1.05)' }], { duration: 250, easing: 'cubic-bezier(.5,0,1,1)', fill: 'forwards' });
+      a1.onfinish = () => {
+        swap();
+        const a2 = inner.animate([{ transform: P + 'rotateY(-90deg) scale(1.05)' }, { transform: P + 'rotateY(0deg) scale(1)' }], { duration: 300, easing: 'cubic-bezier(0,0,.25,1)' });
+        a1.cancel();
+        a2.onfinish = a2.oncancel = () => { busy = false; };
+      };
     };
     flip.addEventListener('click', toggle);
     flip.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
