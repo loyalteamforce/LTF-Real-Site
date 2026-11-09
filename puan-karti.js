@@ -48,17 +48,18 @@ function init() {
 .pc-brand{ font-family:'Cinzel Decorative',Cinzel,serif; font-weight:700; font-size:6cqw; letter-spacing:.16em;
   background:linear-gradient(90deg,#bdbdbd,#f0f0f0 60%,#9a9a9a); -webkit-background-clip:text; background-clip:text; color:transparent; }
 .pc-crest{ width:11cqw; height:auto; opacity:.92; filter:drop-shadow(0 2px 6px rgba(0,0,0,.4)); }
-.pc-chip{ width:12cqw; aspect-ratio:1.3; border-radius:2cqw; position:relative; margin-top:1%;
-  background:linear-gradient(145deg,#eceef2,#a3a9b4 55%,#d9dce2); box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),0 3px 8px rgba(0,0,0,.35); }
-.pc-chip::before{ content:""; position:absolute; inset:24% 18%; border:1.5px solid rgba(70,76,88,.55); border-radius:4px;
-  background:linear-gradient(rgba(70,76,88,.45),rgba(70,76,88,.45)) center/100% 1.5px no-repeat,linear-gradient(90deg,transparent calc(50% - .75px),rgba(70,76,88,.45) 0 calc(50% + .75px),transparent 0); }
 .pc-mid{ display:flex; align-items:baseline; gap:2.5cqw; margin-top:auto; }
 .pc-num{ font-family:'Cormorant Garamond',Georgia,serif; font-weight:700; font-size:13cqw; line-height:1; letter-spacing:.01em;
   background:linear-gradient(180deg,#fff 20%,#c4c4c4); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 2px 3px rgba(0,0,20,.45)); font-variant-numeric:oldstyle-nums; }
 .pc-pt{ font-size:5cqw; color:#b0b0b0; letter-spacing:.04em; }
 .pc-lbl{ margin-top:3%; font-size:max(6.5px,2.9cqw); letter-spacing:.26em; color:#8a8a8a; }
 .pc-name{ margin-top:2px; font-family:'Cinzel Decorative',Cinzel,serif; font-size:5.6cqw; letter-spacing:.04em; color:#e6e6e6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-@media (prefers-reduced-motion:reduce){ .pc-inner{ transition-duration:.01s; } }
+.pc-back,.pc-front{ transition:visibility 0s linear .375s; }
+.pc-front{ visibility:hidden; }
+.pc-flip.flipped .pc-front{ visibility:visible; }
+.pc-flip.flipped .pc-back{ visibility:hidden; }
+.pc-flip{ -webkit-tap-highlight-color:transparent; }
+@media (prefers-reduced-motion:reduce){ .pc-inner{ transition-duration:.01s; } .pc-back,.pc-front{ transition-delay:0s; } }
 .pc-acts{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:10px; }
 .pc-act{ display:flex; align-items:center; justify-content:center; gap:6px; height:40px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#fff; font:inherit; font-size:13px; cursor:pointer; }
 .pc-act svg{ width:16px; height:16px; flex:none; }
@@ -136,7 +137,6 @@ function init() {
           <div class="pc-face pc-back" aria-hidden="true"><img class="pc-bcrest" src="crest.png" alt=""></div>
           <div class="pc-face pc-front" role="group" aria-label="Puan kartı ön yüzü">
             <div class="pc-top"><span class="pc-brand">POINTS</span><img class="pc-crest" src="crest.png" alt=""></div>
-            <div class="pc-chip" aria-hidden="true"></div>
             <div class="pc-mid"><span class="pc-num">0</span><span class="pc-pt">pt</span></div>
             <div><div class="pc-lbl">KART SAHİBİ</div><div class="pc-name"></div></div>
           </div>
