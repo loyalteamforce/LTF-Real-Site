@@ -29,9 +29,9 @@ function init() {
   css.textContent = `
 .pc-wrap{ margin-top:14px; display:grid; grid-template-columns:minmax(0,1.12fr) minmax(0,1fr); gap:12px; align-items:start; }
 .pc-left,.pc-side{ min-width:0; }
-.pc-flip{ display:block; position:relative; width:100%; aspect-ratio:1.56; perspective:900px; cursor:pointer; container-type:inline-size; outline:none; user-select:none; -webkit-user-select:none; }
+.pc-flip{ display:block; position:relative; width:100%; aspect-ratio:1.56; perspective:900px; cursor:pointer; container-type:inline-size; outline:none; user-select:none; -webkit-user-select:none; touch-action:manipulation; }
 .pc-flip:focus-visible .pc-face{ outline:2px solid rgba(255,255,255,.7); outline-offset:2px; }
-.pc-inner{ position:relative; width:100%; height:100%; transform-style:preserve-3d; -webkit-transform-style:preserve-3d; transition:transform .75s cubic-bezier(.3,1.2,.4,1); }
+.pc-inner{ position:relative; width:100%; height:100%; transform-style:preserve-3d; -webkit-transform-style:preserve-3d; transition:transform .6s cubic-bezier(.45,0,.55,1); }
 .pc-flip.flipped .pc-inner{ transform:rotateY(180deg); }
 .pc-face{ box-sizing:border-box; position:absolute; inset:0; border-radius:8cqw; overflow:hidden; color:#f2f2f2; backface-visibility:hidden; -webkit-backface-visibility:hidden;
   border:1px solid rgba(255,255,255,.16); box-shadow:0 18px 40px -18px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.12); }
@@ -54,7 +54,7 @@ function init() {
 .pc-pt{ font-size:5cqw; color:#b0b0b0; letter-spacing:.04em; }
 .pc-lbl{ margin-top:3%; font-size:max(6.5px,2.9cqw); letter-spacing:.26em; color:#8a8a8a; }
 .pc-name{ margin-top:2px; font-family:'Cinzel Decorative',Cinzel,serif; font-size:5.6cqw; letter-spacing:.04em; color:#e6e6e6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.pc-back,.pc-front{ transition:visibility 0s linear .375s; }
+.pc-back,.pc-front{ transition:visibility 0s linear .3s; }
 .pc-front{ visibility:hidden; }
 .pc-flip.flipped .pc-front{ visibility:visible; }
 .pc-flip.flipped .pc-back{ visibility:hidden; }
@@ -149,7 +149,12 @@ function init() {
     </div>
     <div class="pc-side" id="pcSide"></div>`;
     const flip = w.querySelector('.pc-flip');
-    const toggle = () => { const on = flip.classList.toggle('flipped'); flip.setAttribute('aria-pressed', on ? 'true' : 'false'); };
+    let busy = false;   // animasyon sürerken gelen dokunuşları yok say: bir dokunuş = bir çevirme
+    const toggle = () => {
+      if (busy) return;
+      busy = true; setTimeout(() => { busy = false; }, reduced ? 30 : 620);
+      const on = flip.classList.toggle('flipped'); flip.setAttribute('aria-pressed', on ? 'true' : 'false');
+    };
     flip.addEventListener('click', toggle);
     flip.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
     w.addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (b) openSheet(b.dataset.a); });
@@ -157,9 +162,12 @@ function init() {
   }
   const home = $('#v-ana-sayfa');
   function paintOwner() { const n = $('.pc-name'); if (n) n.textContent = owner.toLocaleUpperCase('tr'); }
+  // Kart bir kez kurulur. Ana Sayfa yeniden çizilip kart DOM'dan çıkarılsa bile aynı kart geri takılır;
+  // böylece çevrilmiş hali sıfırlanmaz ve animasyon baştan oynamaz.
+  let wrapEl = null;
   function mount() {
     if (!home || home.querySelector('.pc-wrap')) return;
-    const w = build(), hero = home.querySelector('.x-hero');
+    const w = wrapEl || (wrapEl = build()), hero = home.querySelector('.x-hero');
     if (hero) hero.after(w); else home.prepend(w);
     const el = $('.pc-num'); if (el) el.textContent = fmt(shown);
     paintOwner(); if (bal !== null) countTo(bal);
@@ -281,4 +289,7 @@ function init() {
     const n = $('#pfNick');
     openSheet('send', { id: p.id, name: (n && n.textContent.trim()) || 'Üye' });
   });
+
+  /* ---------- Liderlik tablosu (liderlik.js): ana sayfa özet kartı + panel ---------- */
+  import('./liderlik.js').catch(() => {});
 }
