@@ -43,11 +43,10 @@ function init() {
   background:radial-gradient(circle at 50% 32%,rgba(255,255,255,.13),transparent 62%),linear-gradient(135deg,#242424 0%,#0b0b0b 55%,#1b1b1b 100%); }
 .pc-back::before{ content:""; position:absolute; inset:0; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity:.2; mix-blend-mode:screen; pointer-events:none; }
 .pc-back::after{ content:""; position:absolute; inset:0; background:linear-gradient(118deg,transparent 28%,rgba(255,255,255,.08) 50%,transparent 72%); pointer-events:none; }
-.pc-bcrest{ position:relative; z-index:1; width:44cqw; height:auto; opacity:.9; filter:drop-shadow(0 4px 14px rgba(0,0,0,.65)); pointer-events:none; }
+.pc-bcrest{ position:relative; z-index:1; width:44cqw; height:auto; opacity:.9; pointer-events:none; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
 .pc-top{ display:flex; align-items:flex-start; justify-content:space-between; }
 .pc-brand{ font-family:'Cinzel Decorative',Cinzel,serif; font-weight:700; font-size:6cqw; letter-spacing:.16em;
   background:linear-gradient(90deg,#bdbdbd,#f0f0f0 60%,#9a9a9a); -webkit-background-clip:text; background-clip:text; color:transparent; }
-.pc-crest{ width:11cqw; height:auto; opacity:.92; filter:drop-shadow(0 2px 6px rgba(0,0,0,.4)); }
 .pc-mid{ display:flex; align-items:baseline; gap:2.5cqw; margin-top:auto; }
 .pc-num{ font-family:'Cormorant Garamond',Georgia,serif; font-weight:700; font-size:13cqw; line-height:1; letter-spacing:.01em;
   background:linear-gradient(180deg,#fff 20%,#c4c4c4); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 2px 3px rgba(0,0,20,.45)); font-variant-numeric:oldstyle-nums; }
@@ -136,7 +135,7 @@ function init() {
         <div class="pc-inner">
           <div class="pc-face pc-back" aria-hidden="true"><img class="pc-bcrest" src="crest.png" alt=""></div>
           <div class="pc-face pc-front" role="group" aria-label="Puan kartı ön yüzü">
-            <div class="pc-top"><span class="pc-brand">POINTS</span><img class="pc-crest" src="crest.png" alt=""></div>
+            <div class="pc-top"><span class="pc-brand">POINTS</span></div>
             <div class="pc-mid"><span class="pc-num">0</span><span class="pc-pt">pt</span></div>
             <div><div class="pc-lbl">KART SAHİBİ</div><div class="pc-name"></div></div>
           </div>
