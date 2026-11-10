@@ -78,7 +78,7 @@ css.textContent = `
 .x-hero small{color:#9ca3af;font-size:13px}.x-hero h2{font-size:26px;margin-top:2px}
 .x-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .x-tile-hub{display:flex;flex-direction:column;gap:6px;padding:16px 14px;text-align:left;border-radius:16px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#fff;font:inherit;cursor:pointer}
-.x-tile-hub b{font-size:26px;font-weight:400}.x-tile-hub span{font-weight:600;font-size:15px}.x-tile-hub small{color:#9ca3af;font-size:12px}
+.x-tile-hub b{display:flex;font-size:26px;font-weight:400;color:#e5e7eb}.x-tile-hub span{font-weight:600;font-size:15px}.x-tile-hub small{color:#9ca3af;font-size:12px}
 .x-btn{height:38px;padding:0 18px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;font:inherit;font-size:14px;cursor:pointer}
 .x-btn.pri{background:#fff;color:#111;border-color:#fff;font-weight:600}.x-btn:disabled{opacity:.45}
 .x-task{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:14px}.x-task i{width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.3);display:grid;place-items:center;font-style:normal;font-size:12px}
@@ -98,7 +98,7 @@ css.textContent = `
 document.head.appendChild(css);
 
 /* ---------- ortak parçalar ---------- */
-const bar = () => `<div class="x-bar"><span class="x-chip">⭐ <b class="xp">${S.pts}</b> puan</span><span class="x-chip">🔥 ${S.streak} günlük seri</span></div>`;
+const bar = () => `<div class="x-bar"><span class="x-chip"><b class="xp">${S.pts}</b> puan</span><span class="x-chip">${S.streak} günlük seri</span></div>`;
 const tasksHTML = () => { const k = S.d.t === day() ? S.d.k : {};
   return Object.keys(TASKS).map(t => `<div class="x-task ${k[t] ? 'ok' : ''}"><i>${k[t] ? '✓' : ''}</i>${TASKS[t]} <small style="margin-left:auto;color:#9ca3af">+5</small></div>`).join(''); };
 const QUOTES = ['Gerçek güç, sessizce çalışanın elindedir.', 'Bugün dünden bir adım ileride ol, yeter.', 'Sınıfın puanı, her üyenin küçük çabasından doğar.', 'Kazanmak için önce vazgeçmemeyi öğren.', 'Bir plan yoksa, kaybetmeyi planlıyorsundur.', 'Sadakat, birlikte yürümektir.', 'Zayıf görünen rakibi hafife alma, güçlü görüneni abartma.'];
@@ -111,16 +111,16 @@ function home() {
   el.innerHTML = `<div class="x-hero"><small>${g}</small><h2>${E(NAME) || 'Loyal Elite Force'}</h2></div>${bar()}
   <div class="x-card"><h3>Günün sözü</h3><p>${QUOTES[(new Date().getDate() + new Date().getMonth()) % QUOTES.length]}</p></div>
   <div class="x-card" id="xtasks"><h3>Günlük görevler</h3>${tasksHTML()}</div>
-  <div class="x-card"><h3>Hızlı erişim</h3><div class="x-bar"><button class="x-btn pri" data-go="kesfet">🎮 Eğlence merkezi</button><button class="x-btn" data-go="manga">📖 Manga</button><button class="x-btn" data-go="kutuphane">🔖 Kütüphane</button></div></div>`;
+  <div class="x-card"><h3>Hızlı erişim</h3><div class="x-bar"><button class="x-btn pri" data-go="kesfet">Eğlence merkezi</button><button class="x-btn" data-go="manga">Manga</button><button class="x-btn" data-go="kutuphane">Kütüphane</button></div></div>`;
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) location.hash = b.dataset.go; });
 window.addEventListener('lef-profile', () => { if (window.__lefProfile && window.__lefProfile.mine) { const n = $('#pfNick'); if (n && n.textContent) { NAME = n.textContent; home(); } } });
 
 /* ---------- KEŞFET: merkez ---------- */
 const HUB = [
-  ['rank', '🏆', 'Sıralama', 'En çok puanlılar'], ['wheel', '🎡', 'Günlük çark', 'Günde bir kez çevir'],
-  ['quiz', '🧠', 'Sınav', '5 soru, doğru başına +4'], ['mem', '🃏', 'Hafıza', 'Eşleri bul'],
-  ['xo', '❌', 'XO', 'Yapay zekaya karşı'], ['rx', '⚡', 'Refleks', 'Ne kadar hızlısın?']
+  ['rank', '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0V4Z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8.5 20h7M10 17h4"/></svg>', 'Sıralama', 'En çok puanlılar'], ['wheel', '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 3v7M12 14v7M3 12h7M14 12h7"/></svg>', 'Günlük çark', 'Günde bir kez çevir'],
+  ['quiz', '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8M12 17h.01"/></svg>', 'Sınav', '5 soru, doğru başına +4'], ['mem', '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="11" height="14" rx="2"/><path d="M9 4h9a2 2 0 0 1 2 2v11"/></svg>', 'Hafıza', 'Eşleri bul'],
+  ['xo', '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l7 7M11 4l-7 7"/><circle cx="16.5" cy="16.5" r="4"/></svg>', 'XO', 'Yapay zekaya karşı'], ['rx', '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3 5 13h6l-1 8 8-10h-6l1-8Z"/></svg>', 'Refleks', 'Ne kadar hızlısın?']
 ];
 const ex = $('#v-kesfet');
 function hub() {
@@ -133,7 +133,7 @@ ex && ex.addEventListener('click', e => {
 });
 function openF(k) {
   const t = HUB.find(h => h[0] === k);
-  ex.innerHTML = `<button class="x-btn x-back">&larr; Geri</button><h2>${t[1]} ${t[2]}</h2>${bar()}<div id="xp"></div>`;
+  ex.innerHTML = `<button class="x-btn x-back">&larr; Geri</button><h2>${t[2]}</h2>${bar()}<div id="xp"></div>`;
   FEAT[k]($('#xp'));
 }
 function paint() { document.querySelectorAll('.xp').forEach(n => n.textContent = S.pts); const t = $('#xtasks'); if (t) t.innerHTML = '<h3>Günlük görevler</h3>' + tasksHTML(); }
@@ -151,21 +151,21 @@ async function rank(p) {
     const m = {}; (pr || []).forEach(x => m[x.id] = x);
     const base = supabase.supabaseUrl + '/storage/v1/object/public/';
     p.innerHTML = '<div class="x-card">' + (data.length ? data.map((r, i) => { const u = m[r.user_id] || {}, a = u.avatar_url && u.avatar_url.indexOf(base) === 0 ? u.avatar_url : '';
-      return `<div class="x-row ${r.user_id === uid ? 'me' : ''}"><em>${['🥇', '🥈', '🥉'][i] || i + 1}</em>${a ? `<img src="${E(a)}" alt="">` : '<u></u>'}<b>${E(u.display_name || u.username || 'Üye')}</b><span>${r.points} ⭐</span></div>`; }).join('') : '<p>Henüz kimse puan toplamadı. İlk sen ol!</p>') + '</div>';
+      return `<div class="x-row ${r.user_id === uid ? 'me' : ''}"><em>${i + 1}</em>${a ? `<img src="${E(a)}" alt="">` : '<u></u>'}<b>${E(u.display_name || u.username || 'Üye')}</b><span>${r.points} puan</span></div>`; }).join('') : '<p>Henüz kimse puan toplamadı. İlk sen ol!</p>') + '</div>';
   } catch (_) {
-    p.innerHTML = '<div class="x-card"><p>Sıralama için sunucu tablosu henüz kurulmamış (<b>eglence-kurulum.sql</b>). O zamana kadar puanın bu cihazda: <b>' + S.pts + '</b> ⭐</p></div>';
+    p.innerHTML = '<div class="x-card"><p>Sıralama için sunucu tablosu henüz kurulmamış (<b>eglence-kurulum.sql</b>). O zamana kadar puanın bu cihazda: <b>' + S.pts + '</b> puan.</p></div>';
   }
 }
 
 /* ---------- Günlük çark ---------- */
 function wheel(p) {
   const done = S.spun === day();
-  p.innerHTML = `<div class="x-card" style="text-align:center"><div class="x-wheel" id="xw">🎡</div><p id="xwt">${done ? 'Bugünkü hakkını kullandın, yarın gel.' : 'Çevir ve puan kazan!'}</p><br><button class="x-btn pri" id="xs" ${done ? 'disabled' : ''}>Çevir</button></div>`;
+  p.innerHTML = `<div class="x-card" style="text-align:center"><div class="x-wheel" id="xw">?</div><p id="xwt">${done ? 'Bugünkü hakkını kullandın, yarın gel.' : 'Çevir ve puan kazan!'}</p><br><button class="x-btn pri" id="xs" ${done ? 'disabled' : ''}>Çevir</button></div>`;
   $('#xs').onclick = () => {
     if (S.spun === day()) return; S.spun = day(); save(); $('#xs').disabled = true;
-    const prizes = [5, 5, 10, 10, 15, 20, 25, 50], pr = prizes[rnd(prizes.length)], ic = ['🎡', '💫', '🌟', '✨'];
-    let i = 0; const iv = setInterval(() => { $('#xw').textContent = ic[i++ % 4]; }, 120);
-    setTimeout(() => { clearInterval(iv); $('#xw').textContent = pr >= 25 ? '🎉' : '⭐'; $('#xwt').textContent = pr + ' puan kazandın!'; give(pr, 'Çark'); mark('spin'); }, 1400);
+    const prizes = [5, 5, 10, 10, 15, 20, 25, 50], pr = prizes[rnd(prizes.length)], ic = ['5', '10', '15', '25', '50'];
+    let i = 0; const iv = setInterval(() => { $('#xw').textContent = ic[i++ % ic.length]; }, 120);
+    setTimeout(() => { clearInterval(iv); $('#xw').textContent = '+' + pr; $('#xwt').textContent = pr + ' puan kazandın!'; give(pr, 'Çark'); mark('spin'); }, 1400);
   };
 }
 
@@ -193,7 +193,7 @@ function quiz(p) {
 
 /* ---------- Hafıza ---------- */
 function mem(p) {
-  const em = ['🍙', '⚔️', '🌸', '🔥', '⭐', '🐉', '🎴', '🌙'], c = shuf([...em, ...em]);
+  const em = ['α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ'], c = shuf([...em, ...em]);
   let open = [], found = 0, mv = 0, lock = false;
   p.innerHTML = `<div class="x-bar"><span class="x-chip">Hamle: <b id="xm">0</b></span></div><div class="x-g4">${c.map((_, i) => `<button class="x-t" data-i="${i}">?</button>`).join('')}</div>`;
   p.onclick = e => { const b = e.target.closest('.x-t'); if (!b || lock || b.classList.contains('on') || b.classList.contains('ok')) return;
@@ -213,7 +213,7 @@ function xo(p) {
   const draw = (msg) => { p.innerHTML = `<div class="x-g3">${b.map((v, i) => `<button class="x-t3" data-i="${i}">${v}</button>`).join('')}</div><p style="text-align:center;min-height:24px">${msg || 'Sen X\'sin, sıra sende.'}</p>${end ? '<div style="text-align:center;margin-top:10px"><button class="x-btn pri" id="xr">Tekrar</button></div>' : ''}`; if (end) $('#xr').onclick = () => xo(p); };
   const fin = (m, pts) => { end = true; draw(m); if (pts) give(pts, 'XO', true); mark('game'); };
   p.onclick = e => { const t = e.target.closest('.x-t3'); if (!t || end || b[t.dataset.i]) return; b[t.dataset.i] = 'X';
-    if (win('X')) return fin('Kazandın! 🎉', 5); if (b.every(Boolean)) return fin('Berabere.', 2);
+    if (win('X')) return fin('Kazandın!', 5); if (b.every(Boolean)) return fin('Berabere.', 2);
     let m = find('O'); if (m < 0) m = find('X'); if (m < 0) m = !b[4] ? 4 : [0, 2, 6, 8, 1, 3, 5, 7].find(i => !b[i]);
     b[m] = 'O'; if (win('O')) { window.dispatchEvent(new CustomEvent('lef-x', { detail: { why: 'XO-kayıp' } })); return fin('Yapay zeka kazandı.', 0); } if (b.every(Boolean)) return fin('Berabere.', 2); draw(); };
   draw();
