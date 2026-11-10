@@ -27,9 +27,9 @@ function init() {
 
   const css = document.createElement('style');
   css.textContent = `
-.pc-wrap{ margin-top:14px; display:grid; grid-template-columns:minmax(0,1.65fr) minmax(0,1fr); gap:14px; align-items:start; }
-@media (max-width:340px){ .pc-wrap{ grid-template-columns:minmax(0,1fr); } }
-@media (min-width:900px){ .pc-wrap{ grid-template-columns:minmax(0,440px) minmax(0,1fr); gap:18px; } }
+.pc-wrap{ margin-top:14px; display:grid; grid-template-columns:minmax(0,1fr); gap:14px; align-items:start; }
+@media (min-width:700px){ .pc-wrap{ grid-template-columns:minmax(0,1.65fr) minmax(0,1fr); } }
+@media (min-width:900px){ .pc-wrap{ grid-template-columns:minmax(0,560px) minmax(0,1fr); gap:18px; } }
 .pc-left,.pc-side{ min-width:0; }
 .pc-flip{ display:block; position:relative; width:100%; aspect-ratio:1.56; cursor:pointer; container-type:inline-size; outline:none; user-select:none; -webkit-user-select:none; touch-action:manipulation; }
 .pc-flip:focus-visible .pc-face{ outline:2px solid rgba(255,255,255,.7); outline-offset:2px; }

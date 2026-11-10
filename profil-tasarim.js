@@ -139,7 +139,7 @@ function init(){
   const deco = document.createElement('div'); deco.className = 'pd-deco'; deco.setAttribute('aria-hidden', 'true'); deco.dataset.d = ''; head.prepend(deco);
 
   const open = document.createElement('button');
-  open.type = 'button'; open.className = 'bio-btn pd-open'; open.hidden = true; open.textContent = '✦ Profili süsle';
+  open.type = 'button'; open.className = 'bio-btn pd-open'; open.hidden = true; open.textContent = 'Profili süsle';
   const back = document.getElementById('pfBack');
   (back || head).after(open);
 
