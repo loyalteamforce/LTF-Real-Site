@@ -37,7 +37,7 @@ import { supabase } from './config.js';
     { id: 'kalp', n: 'Kalpler', L: [{ e: ['heart'], m: 'rise', r: .8, z: [14, 24] }] },
     { id: 'ates', n: 'Ateş', L: [{ e: ['flame'], m: 'rise', r: 1.4, z: [18, 30] }, { e: ['spark'], m: 'rise', r: .8, z: [8, 12] }] },
     { id: 'yagmur', n: 'Yağmur', L: [{ e: ['drop'], m: 'fall', r: 3, z: [8, 12] }] },
-    { id: 'kabarcik', n: 'Kabarıcıklar', L: [{ e: ['bubble'], m: 'rise', r: 1.3, z: [8, 22] }] },
+    { id: 'kabarcik', n: 'Kabarcıklar', L: [{ e: ['bubble'], m: 'rise', r: 1.3, z: [8, 22] }] },
     { id: 'atesbocegi', n: 'Ateşböcekleri', L: [{ e: ['glow'], m: 'drift', r: 1.3, z: [8, 16] }] },
     { id: 'kelebek', n: 'Kelebekler', L: [{ e: ['butterfly#ff8fc7', 'butterfly#7dd3fc', 'butterfly#fcd34d'], m: 'fly', r: .8, z: [26, 38], flap: 1 }, { e: ['petal'], m: 'rise', r: .4, z: [12, 18] }] },
     { id: 'yarasa', n: 'Yarasalar', L: [{ e: ['bat'], m: 'fly', r: 1.2, z: [22, 34], flap: 1 }] },
