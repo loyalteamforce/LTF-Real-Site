@@ -10,9 +10,9 @@
      - Her tasarımın kendi giriş animasyonu vardır. Profil sekmesi her açıldığında
        veya başka birinin profiline girildiğinde baştan oynar.
      - Profil fotoğrafının etrafında animasyonlu çerçeve (halka, yörünge, taç...).
-     - Kendi profilinde "🎨 Tasarım" düğmesi çıkar: canlı önizle, kaydet.
+     - Kendi profilinde "Tasarım" düğmesi çıkar: canlı önizle, kaydet.
    Yeni tasarım eklemek: THEMES listesine bir satır ekle.
-     { id, n: ad, t: emoji, a: ana renk, b: ikinci renk, an: animasyon, f: yazı tipi, r: köşe yuvarlaklığı, amb: ortam }
+     { id, n: ad, t: '', a: ana renk, b: ikinci renk, an: animasyon, f: yazı tipi, r: köşe yuvarlaklığı, amb: ortam }
      an: Rise Zoom Flip Slide Drop Glitch Unfold   amb: stars snow embers scan
    Yeni çerçeve eklemek: FRAMES listesine bir satır + aşağıdaki CSS'e [data-f="id"] kuralları.
    Kayıt sütunları: profiles.theme, profiles.frame (metin, sadece id)
@@ -32,40 +32,45 @@ import { supabase } from './config.js';
 
   /* ---------- Tasarım listesi ---------- */
   var THEMES = [
-    { id: 'sonbahar',  n: 'Sonbahar',    t: '🍂', a: '#ff9a3c', b: '#c2410c', an: 'Rise',   f: "'Caveat',cursive", r: 18, amb: 'embers' },
-    { id: 'neon',      n: 'Neon Gece',   t: '🌃', a: '#00f0ff', b: '#ff2bd6', an: 'Glitch', f: "'Bebas Neue',sans-serif", r: 6, amb: 'scan' },
-    { id: 'altin',     n: 'Altın Asalet', t: '👑', a: '#f5c451', b: '#b8741a', an: 'Unfold', f: "'Cinzel',serif", r: 4 },
-    { id: 'buz',       n: 'Buz',         t: '❄️', a: '#8fdcff', b: '#dff7ff', an: 'Flip',   r: 22, amb: 'snow' },
-    { id: 'kizil',     n: 'Kızıl',       t: '🩸', a: '#ff3b3b', b: '#7a0c1a', an: 'Zoom',   f: "'Bebas Neue',sans-serif", r: 10, amb: 'embers' },
-    { id: 'zumrut',    n: 'Zümrüt',      t: '🌿', a: '#34d399', b: '#0f766e', an: 'Slide',  r: 14 },
-    { id: 'okyanus',   n: 'Okyanus',     t: '🌊', a: '#38bdf8', b: '#2563eb', an: 'Rise',   r: 20 },
-    { id: 'sakura',    n: 'Sakura',      t: '🌸', a: '#ff8fc7', b: '#c084fc', an: 'Drop',   f: "'Dancing Script',cursive", r: 26 },
-    { id: 'galaksi',   n: 'Galaksi',     t: '🌌', a: '#a78bfa', b: '#3b82f6', an: 'Zoom',   r: 16, amb: 'stars' },
-    { id: 'ltf',       n: 'LTF Mühür',   t: '⚜️', a: '#e5e7eb', b: '#6b7280', an: 'Unfold', f: "'Cinzel',serif", r: 8 },
-    { id: 'gunbatimi', n: 'Gün Batımı',  t: '🌇', a: '#fb7185', b: '#f59e0b', an: 'Slide',  r: 18 },
-    { id: 'matrix',    n: 'Matrix',      t: '💻', a: '#22ff88', b: '#0a7d3b', an: 'Glitch', f: "ui-monospace,Menlo,monospace", r: 2, amb: 'scan' }
+    { id: 'sonbahar',  n: 'Sonbahar',    t: '', a: '#ff9a3c', b: '#c2410c', an: 'Rise',   f: "'Caveat',cursive", r: 18, amb: 'embers' },
+    { id: 'neon',      n: 'Neon Gece',   t: '', a: '#00f0ff', b: '#ff2bd6', an: 'Glitch', f: "'Bebas Neue',sans-serif", r: 6, amb: 'scan' },
+    { id: 'altin',     n: 'Altın Asalet', t: '', a: '#f5c451', b: '#b8741a', an: 'Unfold', f: "'Cinzel',serif", r: 4 },
+    { id: 'buz',       n: 'Buz',         t: '', a: '#8fdcff', b: '#dff7ff', an: 'Flip',   r: 22, amb: 'snow' },
+    { id: 'kizil',     n: 'Kızıl',       t: '', a: '#ff3b3b', b: '#7a0c1a', an: 'Zoom',   f: "'Bebas Neue',sans-serif", r: 10, amb: 'embers' },
+    { id: 'zumrut',    n: 'Zümrüt',      t: '', a: '#34d399', b: '#0f766e', an: 'Slide',  r: 14 },
+    { id: 'okyanus',   n: 'Okyanus',     t: '', a: '#38bdf8', b: '#2563eb', an: 'Rise',   r: 20 },
+    { id: 'sakura',    n: 'Sakura',      t: '', a: '#ff8fc7', b: '#c084fc', an: 'Drop',   f: "'Dancing Script',cursive", r: 26 },
+    { id: 'galaksi',   n: 'Galaksi',     t: '', a: '#a78bfa', b: '#3b82f6', an: 'Zoom',   r: 16, amb: 'stars' },
+    { id: 'ltf',       n: 'LTF Mühür',   t: '', a: '#e5e7eb', b: '#6b7280', an: 'Unfold', f: "'Cinzel',serif", r: 8 },
+    { id: 'gunbatimi', n: 'Gün Batimı',  t: '', a: '#fb7185', b: '#f59e0b', an: 'Slide',  r: 18 },
+    { id: 'matrix',    n: 'Matrix',      t: '', a: '#22ff88', b: '#0a7d3b', an: 'Glitch', f: "ui-monospace,Menlo,monospace", r: 2, amb: 'scan' }
   ];
 
   /* ---------- Çerçeve listesi (görünümü aşağıdaki CSS'te) ---------- */
-  var LEAVES = ['🍂', '🍁', '🍂', '🍁', '🍂', '🍁', '🍂', '🍁'];
+  var SV = function (v, p) { return '<svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true">' + p + '</svg>'; };
+  var leaf = function (c) { return SV(0, '<path d="M12 2c6 4 9 10 0 20C3 12 6 6 12 2Z" fill="' + c + '"/><path d="M12 6v14" stroke="rgba(0,0,0,.3)" stroke-width="1.2" fill="none"/>'); };
+  var heart = function (c) { return SV(0, '<path d="M12 21C4 14 2 9.5 2 7a5 5 0 0 1 10-1 5 5 0 0 1 10 1c0 2.5-2 7-10 14Z" fill="' + c + '"/>'); };
+  var spark = function () { return SV(0, '<path d="M12 1c1 6 5 10 11 11-6 1-10 5-11 11-1-6-5-10-11-11 6-1 10-5 11-11Z" fill="currentColor"/>'); };
+  var CROWN = SV(0, '<path d="M3 18 2 7l5.5 4.5L12 4l4.5 7.5L22 7l-1 11Z" fill="#f5c451" stroke="#b8741a" stroke-width="1"/><rect x="3" y="19" width="18" height="2.4" rx="1" fill="#f5c451"/>');
+  var LEAVES = [leaf('#ff9a3c'), leaf('#d9480f'), leaf('#ff9a3c'), leaf('#d9480f'), leaf('#ff9a3c'), leaf('#d9480f'), leaf('#ff9a3c'), leaf('#d9480f')];
   function orbit(list, cls) {
     var h = '<b class="o ' + (cls || '') + '" style="--n:' + list.length + '">';
     list.forEach(function (e, i) { h += '<em style="--i:' + i + '">' + e + '</em>'; });
     return h + '</b>';
   }
   var FRAMES = [
-    { id: 'orbit',     n: 'Altın Yörünge', t: '🪐', h: '<i class="r r1"></i><i class="r r2"></i><i class="r r3"></i>' },
-    { id: 'neon',      n: 'Neon Halka',    t: '💠', h: '<i class="r g"></i><i class="r"></i>' },
-    { id: 'ates',      n: 'Ateş',          t: '🔥', h: '<i class="r g"></i><i class="r"></i>' },
-    { id: 'yaprak',    n: 'Sonbahar Çelengi', t: '🍁', h: '<i class="r"></i>' + orbit(LEAVES) },
-    { id: 'halo',      n: 'Melek Halkası', t: '😇', h: '<i class="h"></i>' },
-    { id: 'gokkusagi', n: 'Gökkuşağı',     t: '🌈', h: '<i class="r g"></i><i class="r"></i>' },
-    { id: 'buz',       n: 'Buz Kristali',  t: '🧊', h: '<i class="r"></i>' + orbit(['✦', '✧', '✦', '✧', '✦', '✧'], 'fix') },
-    { id: 'kalp',      n: 'Kalp Atışı',    t: '💗', h: '<i class="r"></i>' + orbit(['💗', '💕', '💗', '💕']) },
-    { id: 'ltf',       n: 'LTF Mühür',     t: '⚜️', h: '<i class="r"></i><i class="r s"></i>' },
-    { id: 'glitch',    n: 'Glitch',        t: '📺', h: '<i class="r c1"></i><i class="r c2"></i><i class="r c3"></i>' },
-    { id: 'tac',       n: 'Taç',           t: '👑', h: '<i class="r"></i><em class="k">👑</em>' },
-    { id: 'galaksi',   n: 'Galaksi',       t: '🌌', h: '<i class="r g"></i><i class="r"></i>' + orbit(['✦', '⋆', '✧', '✦', '⋆', '✧'], 'rev') }
+    { id: 'orbit',     n: 'Altın Yörünge', t: '', h: '<i class="r r1"></i><i class="r r2"></i><i class="r r3"></i>' },
+    { id: 'neon',      n: 'Neon Halka',    t: '', h: '<i class="r g"></i><i class="r"></i>' },
+    { id: 'ates',      n: 'Ateş',          t: '', h: '<i class="r g"></i><i class="r"></i>' },
+    { id: 'yaprak',    n: 'Sonbahar Çelengi', t: '', h: '<i class="r"></i>' + orbit(LEAVES) },
+    { id: 'halo',      n: 'Melek Halkası', t: '', h: '<i class="h"></i>' },
+    { id: 'gokkusagi', n: 'Gökkuşağı',     t: '', h: '<i class="r g"></i><i class="r"></i>' },
+    { id: 'buz',       n: 'Buz Kristali',  t: '', h: '<i class="r"></i>' + orbit([spark(), spark(), spark(), spark(), spark(), spark()], 'fix') },
+    { id: 'kalp',      n: 'Kalp Atışı',    t: '', h: '<i class="r"></i>' + orbit([heart('#ff5d8f'), heart('#ff9ec0'), heart('#ff5d8f'), heart('#ff9ec0')]) },
+    { id: 'ltf',       n: 'LTF Mühür',     t: '', h: '<i class="r"></i><i class="r s"></i>' },
+    { id: 'glitch',    n: 'Glitch',        t: '', h: '<i class="r c1"></i><i class="r c2"></i><i class="r c3"></i>' },
+    { id: 'tac',       n: 'Taç',           t: '', h: '<i class="r"></i><em class="k">' + CROWN + '</em>' },
+    { id: 'galaksi',   n: 'Galaksi',       t: '', h: '<i class="r g"></i><i class="r"></i>' + orbit([spark(), spark(), spark(), spark(), spark(), spark()], 'rev') }
   ];
   var TBY = Object.create(null), FBY = Object.create(null);
   THEMES.forEach(function (x) { TBY[x.id] = x; });
@@ -305,7 +310,7 @@ import { supabase } from './config.js';
 
   /* ---------- Seçici (sadece kendi profilinde) ---------- */
   var btn = document.createElement('button');
-  btn.type = 'button'; btn.className = 'tm-open'; btn.hidden = true; btn.textContent = '🎨 Tasarım';
+  btn.type = 'button'; btn.className = 'tm-open'; btn.hidden = true; btn.textContent = 'Tasarım';
   info.appendChild(btn);
 
   var sh = document.createElement('div');
@@ -322,12 +327,13 @@ import { supabase } from './config.js';
   function say(t, err) { msg.textContent = t || ''; msg.className = err ? 'err' : ''; }
   function build() {
     grid.textContent = '';
-    var list = [{ id: '', n: 'Yok', t: '🚫' }].concat(tab === 'theme' ? THEMES : FRAMES);
+    var list = [{ id: '', n: 'Yok', t: '\u2013' }].concat(tab === 'theme' ? THEMES : FRAMES);
     var cur = (tab === 'theme' ? pickT : pickF) || '';
     list.forEach(function (c) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'tm-it' + (c.id === cur ? ' on' : ''); b.dataset.id = c.id;
       var i = document.createElement('i'); i.textContent = c.t;
       if (tab === 'theme' && c.id) i.style.background = 'linear-gradient(135deg,' + c.a + ',' + c.b + ')';
+      else if (tab !== 'theme' && c.id) i.style.boxShadow = 'inset 0 0 0 3px rgba(255,255,255,.55)';
       var s = document.createElement('span'); s.textContent = c.n;
       b.appendChild(i); b.appendChild(s); grid.appendChild(b);
     });
