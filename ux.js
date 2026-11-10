@@ -29,8 +29,21 @@
     '@keyframes uxL{from{opacity:.2;transform:translateX(-38px)}to{opacity:1;transform:none}}' +
     '.view.ux-drag{will-change:transform,opacity}' +
     '.view.ux-snap{transition:transform .28s cubic-bezier(.3,1.4,.5,1),opacity .28s ease}' +
+    '.ag-fx svg{display:block;width:1em;height:1em}' +
     '@media (prefers-reduced-motion:reduce){.view.on.ux-r,.view.on.ux-l{animation:none}.ux-press{scale:.97}}';
   document.head.appendChild(css);
+
+  /* ---------- Emoji koruması: Ardevyl'in kutlama parçacıkları (.ag-fx) emoji yerine çizim gösterir ---------- */
+  var SPARKS = ['#ff7ab8', '#ffd34d', '#fff2a8', '#f5c451', '#ff7a3c'], sparkN = 0;
+  new MutationObserver(function (ms) {
+    ms.forEach(function (m) {
+      m.addedNodes.forEach(function (n) {
+        if (n.nodeType === 1 && n.classList && n.classList.contains('ag-fx') && !n.querySelector('svg')) {
+          n.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1c1 6 5 10 11 11-6 1-10 5-11 11-1-6-5-10-11-11 6-1 10-5 11-11Z" fill="' + SPARKS[sparkN++ % SPARKS.length] + '"/></svg>';
+        }
+      });
+    });
+  }).observe(document.body, { childList: true, subtree: true });
 
   /* ---------- Basma animasyonu ---------- */
   var PRESSABLE = 'button,[role=button],[role=switch],.mg-card';
