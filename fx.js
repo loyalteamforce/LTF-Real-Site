@@ -6,10 +6,11 @@
    Ne yapar:
      - Herkesin profilinde (kendi + başkaları) seçilen efekt banner üzerinde oynar.
        Açılışta yoğun bir giriş yapar, sonra hafif bir döngüde devam eder.
-     - Kendi profilinde "✨ Efekt" düğmesi çıkar: 40 efekt arasından seç, canlı önizle, kaydet.
+     - Kendi profilinde "Profil efekti" düğmesi çıkar: hazır efektler arasından seç, canlı önizle, kaydet.
    Yeni efekt eklemek için: aşağıdaki EFFECTS listesine bir satır ekle.
-     { id, n: ad, t: küçük resim emojisi, L: [ katmanlar ] }
-     katman: { e: [emojiler], m: hareket, r: saniyedeki sayı, z: [min,maks boyut] }
+     { id, n: ad, L: [ katmanlar ] }
+     katman: { e: [çizim adları, ör. petal, leaf#ff9a3c], m: hareket, r: saniyedeki sayı, z: [min,maks boyut] }
+     çizimler: petal leaf flake spark star heart flame drop paw bat butterfly feather confetti bubble glow
      hareketler: fall rise walk scurry hop fly swim leap peek burst orbit drift dangle trail
    Kayıt sütunu: profiles.fx (metin, efekt id'si)
    ============================================================ */
@@ -28,46 +29,21 @@ import { supabase } from './config.js';
 
   /* ---------- Efekt listesi ---------- */
   var EFFECTS = [
-    { id: 'kedi', n: 'Kedi', t: '🐱', L: [{ e: ['🐱', '😺', '😻'], m: 'peek', r: .55, z: [46, 64] }, { e: ['✨'], m: 'rise', r: .6, z: [12, 18] }] },
-    { id: 'kopek', n: 'Köpek', t: '🐶', L: [{ e: ['🐶', '🐕', '🐩'], m: 'hop', r: .4, z: [36, 48] }, { e: ['🦴'], m: 'fall', r: .3, z: [18, 26] }] },
-    { id: 'tavsan', n: 'Tavşan', t: '🐰', L: [{ e: ['🐰', '🐇'], m: 'hop', r: .45, z: [34, 46] }, { e: ['🥕'], m: 'fall', r: .25, z: [18, 26] }, { e: ['🌸'], m: 'rise', r: .4, z: [14, 20] }] },
-    { id: 'kurbaga', n: 'Kurbağa', t: '🐸', L: [{ e: ['🐸'], m: 'fall', r: 1.1, z: [26, 40] }] },
-    { id: 'ugur', n: 'Uğur Böceği', t: '🐞', L: [{ e: ['🐞'], m: 'fall', r: 1.4, z: [18, 28] }, { e: ['🍀'], m: 'fall', r: .3, z: [16, 24] }] },
-    { id: 'kelebek', n: 'Kelebekler', t: '🦋', L: [{ e: ['🦋'], m: 'fly', r: .8, z: [26, 40], flap: 1 }, { e: ['🌸'], m: 'rise', r: .4, z: [12, 18] }] },
-    { id: 'ari', n: 'Arılar', t: '🐝', L: [{ e: ['🐝'], m: 'orbit', r: .55, z: [20, 28] }, { e: ['🌼'], m: 'rise', r: .4, z: [14, 22] }] },
-    { id: 'penguen', n: 'Penguenler', t: '🐧', L: [{ e: ['🐧'], m: 'walk', r: .4, z: [36, 50] }, { e: ['❄️'], m: 'fall', r: .9, z: [12, 20] }] },
-    { id: 'balik', n: 'Balıklar', t: '🐠', L: [{ e: ['🐟', '🐠', '🐡'], m: 'swim', r: .9, z: [24, 38] }, { e: ['bubble'], m: 'rise', r: 1.2, z: [8, 18] }] },
-    { id: 'yunus', n: 'Yunus', t: '🐬', L: [{ e: ['🐬'], m: 'leap', r: .35, z: [44, 60] }, { e: ['bubble'], m: 'rise', r: .8, z: [8, 16] }] },
-    { id: 'balina', n: 'Balina', t: '🐳', L: [{ e: ['🐳', '🐋'], m: 'swim', r: .2, z: [60, 84] }, { e: ['bubble'], m: 'rise', r: 1, z: [8, 18] }] },
-    { id: 'ahtapot', n: 'Ahtapot', t: '🐙', L: [{ e: ['🐙', '🦑'], m: 'drift', r: .4, z: [38, 56] }, { e: ['bubble'], m: 'rise', r: 1, z: [8, 16] }] },
-    { id: 'baykus', n: 'Baykuş', t: '🦉', L: [{ e: ['🦉'], m: 'peek', r: .45, z: [46, 62] }, { e: ['🍃'], m: 'fall', r: .5, z: [14, 22] }] },
-    { id: 'yarasa', n: 'Yarasalar', t: '🦇', L: [{ e: ['🦇'], m: 'fly', r: 1.2, z: [22, 34], flap: 1 }] },
-    { id: 'kus', n: 'Kuşlar', t: '🐦', L: [{ e: ['🐦', '🕊️', '🐤'], m: 'fly', r: .7, z: [26, 38] }] },
-    { id: 'flamingo', n: 'Flamingo', t: '🦩', L: [{ e: ['🦩'], m: 'walk', r: .3, z: [48, 64] }, { e: ['🌺'], m: 'rise', r: .4, z: [14, 22] }] },
-    { id: 'kaplumbaga', n: 'Kaplumbağa', t: '🐢', L: [{ e: ['🐢'], m: 'walk', r: .3, z: [36, 48], sp: [26, 34] }, { e: ['🌿'], m: 'rise', r: .4, z: [14, 20] }] },
-    { id: 'salyangoz', n: 'Salyangoz', t: '🐌', L: [{ e: ['🐌'], m: 'walk', r: .25, z: [26, 36], sp: [12, 18] }, { e: ['💧'], m: 'fall', r: .5, z: [12, 18] }] },
-    { id: 'fare', n: 'Fare', t: '🐭', L: [{ e: ['🐭', '🐁'], m: 'scurry', r: .7, z: [24, 34] }, { e: ['🧀'], m: 'fall', r: .2, z: [18, 26] }] },
-    { id: 'panda', n: 'Panda', t: '🐼', L: [{ e: ['🐼'], m: 'peek', r: .5, z: [48, 64] }, { e: ['🍃'], m: 'fall', r: .5, z: [14, 22] }] },
-    { id: 'tilki', n: 'Tilki', t: '🦊', L: [{ e: ['🦊'], m: 'hop', r: .4, z: [38, 50] }, { e: ['🍂'], m: 'fall', r: .8, z: [16, 24] }] },
-    { id: 'koala', n: 'Koala', t: '🐨', L: [{ e: ['🐨'], m: 'peek', r: .5, z: [46, 62] }, { e: ['🍃'], m: 'fall', r: .5, z: [14, 22] }] },
-    { id: 'maymun', n: 'Maymunlar', t: '🙈', L: [{ e: ['🐵', '🙈', '🙉', '🙊'], m: 'burst', r: .5, z: [28, 40] }, { e: ['🍌'], m: 'fall', r: .35, z: [18, 26] }] },
-    { id: 'aslan', n: 'Aslan', t: '🦁', L: [{ e: ['🦁'], m: 'burst', r: .35, z: [38, 54] }, { e: ['👑', '✨'], m: 'burst', r: .5, z: [16, 24] }] },
-    { id: 'kurt', n: 'Kurt', t: '🐺', L: [{ e: ['🐺'], m: 'peek', r: .45, z: [48, 64] }, { e: ['✨'], m: 'rise', r: .7, z: [12, 18] }] },
-    { id: 'dino', n: 'Dinozorlar', t: '🦖', L: [{ e: ['🦖', '🦕'], m: 'walk', r: .3, z: [46, 62] }, { e: ['🌿'], m: 'rise', r: .4, z: [14, 20] }] },
-    { id: 'ejderha', n: 'Ejderha', t: '🐉', L: [{ e: ['🐉'], m: 'fly', r: .25, z: [50, 70] }, { e: ['🔥'], m: 'rise', r: .8, z: [14, 22] }] },
-    { id: 'unicorn', n: 'Unicorn', t: '🦄', L: [{ e: ['🦄'], m: 'fly', r: .3, z: [44, 60] }, { e: ['🌈', '✨'], m: 'rise', r: .6, z: [14, 24] }] },
-    { id: 'fil', n: 'Fil', t: '🐘', L: [{ e: ['🐘'], m: 'walk', r: .22, z: [60, 80], sp: [28, 38] }, { e: ['🥜'], m: 'fall', r: .3, z: [14, 20] }] },
-    { id: 'karinca', n: 'Karıncalar', t: '🐜', L: [{ e: ['🐜'], m: 'scurry', r: 1.2, z: [14, 22] }] },
-    { id: 'atesbocegi', n: 'Ateşböcekleri', t: '✨', L: [{ e: ['glow'], m: 'drift', r: 1.3, z: [8, 16] }] },
-    { id: 'orumcek', n: 'Örümcek', t: '🕷️', L: [{ e: ['🕷️'], m: 'dangle', r: .35, z: [24, 34] }, { e: ['🕸️'], m: 'fall', r: .12, z: [24, 34] }] },
-    { id: 'kartal', n: 'Kartal', t: '🦅', L: [{ e: ['🦅'], m: 'fly', r: .3, z: [46, 66], fast: 1 }] },
-    { id: 'papagan', n: 'Papağan', t: '🦜', L: [{ e: ['🦜'], m: 'fly', r: .45, z: [30, 44] }, { e: ['🌺'], m: 'rise', r: .4, z: [14, 20] }] },
-    { id: 'yilan', n: 'Yılan', t: '🐍', L: [{ e: ['🐍'], m: 'walk', r: .3, z: [34, 46], sp: [60, 80] }] },
-    { id: 'kugu', n: 'Kuğular', t: '🦢', L: [{ e: ['🦢'], m: 'swim', r: .3, z: [38, 52], shore: 1 }, { e: ['bubble'], m: 'rise', r: .6, z: [8, 14] }] },
-    { id: 'ordek', n: 'Ördekler', t: '🦆', L: [{ e: ['🦆', '🐥'], m: 'swim', r: .5, z: [28, 40], shore: 1 }, { e: ['bubble'], m: 'rise', r: .6, z: [8, 14] }] },
-    { id: 'hamster', n: 'Hamster', t: '🐹', L: [{ e: ['🐹'], m: 'peek', r: .5, z: [42, 56] }, { e: ['🌻'], m: 'fall', r: .3, z: [16, 24] }] },
-    { id: 'civciv', n: 'Civcivler', t: '🐥', L: [{ e: ['🐥', '🐤', '🐣'], m: 'hop', r: .5, z: [26, 36] }, { e: ['🌼'], m: 'fall', r: .4, z: [14, 20] }] },
-    { id: 'pati', n: 'Pati İzleri', t: '🐾', L: [{ e: ['🐾'], m: 'trail', r: 5, z: [18, 22] }, { e: ['✨'], m: 'rise', r: .5, z: [12, 18] }] }
+    { id: 'kar', n: 'Kar', L: [{ e: ['flake'], m: 'fall', r: 1.2, z: [12, 22] }] },
+    { id: 'sakura', n: 'Sakura', L: [{ e: ['petal'], m: 'fall', r: 1, z: [14, 22] }] },
+    { id: 'sonbahar', n: 'Sonbahar', L: [{ e: ['leaf#ff9a3c', 'leaf#d9480f', 'leaf#f2c14e'], m: 'fall', r: .9, z: [18, 28] }] },
+    { id: 'kivilcim', n: 'Kıvılcım', L: [{ e: ['spark'], m: 'rise', r: 1.5, z: [10, 20] }] },
+    { id: 'yildiz', n: 'Yıldızlar', L: [{ e: ['star', 'spark'], m: 'burst', r: .5, z: [14, 22] }] },
+    { id: 'kalp', n: 'Kalpler', L: [{ e: ['heart'], m: 'rise', r: .8, z: [14, 24] }] },
+    { id: 'ates', n: 'Ateş', L: [{ e: ['flame'], m: 'rise', r: 1.4, z: [18, 30] }, { e: ['spark'], m: 'rise', r: .8, z: [8, 12] }] },
+    { id: 'yagmur', n: 'Yağmur', L: [{ e: ['drop'], m: 'fall', r: 3, z: [8, 12] }] },
+    { id: 'kabarcik', n: 'Kabarıcıklar', L: [{ e: ['bubble'], m: 'rise', r: 1.3, z: [8, 22] }] },
+    { id: 'atesbocegi', n: 'Ateşböcekleri', L: [{ e: ['glow'], m: 'drift', r: 1.3, z: [8, 16] }] },
+    { id: 'kelebek', n: 'Kelebekler', L: [{ e: ['butterfly#ff8fc7', 'butterfly#7dd3fc', 'butterfly#fcd34d'], m: 'fly', r: .8, z: [26, 38], flap: 1 }, { e: ['petal'], m: 'rise', r: .4, z: [12, 18] }] },
+    { id: 'yarasa', n: 'Yarasalar', L: [{ e: ['bat'], m: 'fly', r: 1.2, z: [22, 34], flap: 1 }] },
+    { id: 'pati', n: 'Pati İzleri', L: [{ e: ['paw'], m: 'trail', r: 5, z: [18, 22] }, { e: ['spark'], m: 'rise', r: .5, z: [12, 18] }] },
+    { id: 'konfeti', n: 'Konfeti', L: [{ e: ['confetti#ff5d73', 'confetti#ffd34d', 'confetti#4ade80', 'confetti#38bdf8', 'confetti#c084fc'], m: 'burst', r: 1.6, z: [8, 12] }] },
+    { id: 'tuy', n: 'Tüyler', L: [{ e: ['feather'], m: 'fall', r: .5, z: [20, 30] }] }
   ];
   var BY = {}; EFFECTS.forEach(function (c) { BY[c.id] = c; });
 
@@ -90,7 +66,7 @@ import { supabase } from './config.js';
     '.fx-hd span{font-size:12px;color:#9ca3af}.fx-hd span.err{color:#ffb3b3}' +
     '.fx-grid{flex:1;overflow-y:auto;overscroll-behavior:contain;display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px;padding:2px 2px 10px}' +
     '.fx-it{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:84px;padding:6px 4px;border-radius:14px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#e5e7eb;font:inherit;font-size:11.5px;cursor:pointer;line-height:1.2;text-align:center}' +
-    '.fx-it i{font-style:normal;font-size:30px;line-height:1}' +
+    '.fx-it i{display:grid;place-items:center;width:34px;height:34px;font-style:normal;font-size:22px;line-height:1;color:#9ca3af}.fx-it i img{width:34px;height:34px;display:block}' +
     '.fx-it:hover{background:rgba(255,255,255,.1)}.fx-it.on{border-color:#fff;background:rgba(255,255,255,.14);color:#fff}' +
     '.fx-ft{display:flex;justify-content:flex-end;gap:8px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}' +
     '.fx-b{height:38px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:transparent;color:#fff;font:inherit;font-size:14px;cursor:pointer}' +
@@ -106,7 +82,7 @@ import { supabase } from './config.js';
   }
   if (window.ResizeObserver) new ResizeObserver(resize).observe(wrap); else window.addEventListener('resize', resize);
 
-  /* ---------- Sprite önbelleği (emoji tek sefer çizilir) ---------- */
+  /* ---------- Sprite önbelleği (çizimler tek sefer çizilir) ---------- */
   var cache = {};
   function sprite(e, s) {
     var sz = Math.max(12, Math.round(s / 6) * 6), key = e + '|' + sz;
@@ -124,8 +100,65 @@ import { supabase } from './config.js';
       x.lineWidth = Math.max(1, px * .03); x.strokeStyle = 'rgba(255,255,255,.65)'; x.stroke();
       x.beginPath(); x.arc(m, m, r * .72, 3.5, 4.4); x.strokeStyle = 'rgba(255,255,255,.9)'; x.lineWidth = Math.max(1, px * .035); x.stroke();
     } else {
-      x.font = (sz * DPR) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
-      x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(e, m, m + sz * DPR * .04);
+      var kd = e.split('#'), kind = kd[0], col = kd[1] ? '#' + kd[1] : null, rr = px * .3;
+      x.save(); x.translate(m, m); x.lineJoin = 'round'; x.lineCap = 'round';
+      var gr = function (y0, y1, c0, c1) { var g2 = x.createLinearGradient(0, y0, 0, y1); g2.addColorStop(0, c0); g2.addColorStop(1, c1); return g2; };
+      if (kind === 'petal') {
+        x.beginPath(); x.moveTo(0, -rr); x.bezierCurveTo(rr * .95, -rr * .7, rr * .8, rr * .8, 0, rr); x.bezierCurveTo(-rr * .8, rr * .8, -rr * .95, -rr * .7, 0, -rr);
+        x.fillStyle = gr(-rr, rr, '#ffe3f1', '#ff8fc7'); x.fill();
+      } else if (kind === 'leaf') {
+        x.beginPath(); x.moveTo(0, -rr * 1.1); x.quadraticCurveTo(rr * 1.05, -rr * .1, 0, rr * 1.1); x.quadraticCurveTo(-rr * 1.05, -rr * .1, 0, -rr * 1.1);
+        x.fillStyle = col || '#f59e0b'; x.fill();
+        x.beginPath(); x.moveTo(0, -rr * .8); x.lineTo(0, rr * 1.1); x.strokeStyle = 'rgba(0,0,0,.28)'; x.lineWidth = Math.max(1, px * .03); x.stroke();
+      } else if (kind === 'flake') {
+        x.strokeStyle = 'rgba(255,255,255,.95)'; x.lineWidth = Math.max(1.2, px * .045);
+        for (var i = 0; i < 6; i++) {
+          x.save(); x.rotate(i * Math.PI / 3);
+          x.beginPath(); x.moveTo(0, 0); x.lineTo(0, -rr); x.moveTo(0, -rr * .55); x.lineTo(rr * .26, -rr * .8); x.moveTo(0, -rr * .55); x.lineTo(-rr * .26, -rr * .8); x.stroke(); x.restore();
+        }
+      } else if (kind === 'spark' || kind === 'star') {
+        x.beginPath();
+        if (kind === 'spark') { x.moveTo(0, -rr * 1.1); x.quadraticCurveTo(rr * .12, -rr * .12, rr * 1.1, 0); x.quadraticCurveTo(rr * .12, rr * .12, 0, rr * 1.1); x.quadraticCurveTo(-rr * .12, rr * .12, -rr * 1.1, 0); x.quadraticCurveTo(-rr * .12, -rr * .12, 0, -rr * 1.1); x.fillStyle = gr(-rr, rr, '#ffffff', '#ffe27a'); }
+        else { for (var k = 0; k < 10; k++) { var ra = k % 2 ? rr * .45 : rr * 1.05, an = -Math.PI / 2 + k * Math.PI / 5; x[k ? 'lineTo' : 'moveTo'](Math.cos(an) * ra, Math.sin(an) * ra); } x.closePath(); x.fillStyle = gr(-rr, rr, '#ffe27a', '#ffb21e'); }
+        x.fill();
+      } else if (kind === 'heart') {
+        x.beginPath(); x.moveTo(0, rr * .95); x.bezierCurveTo(-rr * 1.6, -rr * .1, -rr * .7, -rr * 1.1, 0, -rr * .4); x.bezierCurveTo(rr * .7, -rr * 1.1, rr * 1.6, -rr * .1, 0, rr * .95);
+        x.fillStyle = gr(-rr, rr, '#ff7a98', '#e11d48'); x.fill();
+      } else if (kind === 'flame') {
+        x.beginPath(); x.moveTo(0, -rr * 1.15); x.bezierCurveTo(rr * .95, -rr * .2, rr * .85, rr * .95, 0, rr); x.bezierCurveTo(-rr * .85, rr * .95, -rr * .95, -rr * .2, 0, -rr * 1.15);
+        x.fillStyle = gr(-rr, rr, '#ff4d2e', '#ffd54a'); x.fill();
+        x.beginPath(); x.ellipse(0, rr * .42, rr * .32, rr * .5, 0, 0, 6.2832); x.fillStyle = 'rgba(255,250,210,.9)'; x.fill();
+      } else if (kind === 'drop') {
+        x.beginPath(); x.moveTo(0, -rr * 1.1); x.bezierCurveTo(rr * .9, rr * .1, rr * .8, rr * .95, 0, rr * .95); x.bezierCurveTo(-rr * .8, rr * .95, -rr * .9, rr * .1, 0, -rr * 1.1);
+        x.fillStyle = gr(-rr, rr, '#cfeaff', '#3b8fff'); x.fill();
+      } else if (kind === 'paw') {
+        x.fillStyle = 'rgba(255,255,255,.88)';
+        x.beginPath(); x.ellipse(0, rr * .35, rr * .52, rr * .42, 0, 0, 6.2832); x.fill();
+        [[-.62, -.15, .2], [-.22, -.62, .21], [.22, -.62, .21], [.62, -.15, .2]].forEach(function (t) { x.beginPath(); x.ellipse(t[0] * rr, t[1] * rr, rr * t[2], rr * (t[2] + .06), 0, 0, 6.2832); x.fill(); });
+      } else if (kind === 'bat') {
+        x.fillStyle = '#1c1c25'; x.strokeStyle = 'rgba(255,255,255,.35)'; x.lineWidth = Math.max(1, px * .02);
+        [1, -1].forEach(function (sg) {
+          x.save(); x.scale(sg, 1); x.beginPath(); x.moveTo(0, -rr * .1);
+          x.quadraticCurveTo(rr * .45, -rr * .95, rr * 1.35, -rr * .45); x.quadraticCurveTo(rr * 1.1, -rr * .1, rr * 1.0, rr * .2);
+          x.quadraticCurveTo(rr * .72, -rr * .05, rr * .5, rr * .4); x.quadraticCurveTo(rr * .25, rr * .08, 0, rr * .5); x.closePath(); x.fill(); x.stroke(); x.restore();
+        });
+        x.beginPath(); x.ellipse(0, rr * .05, rr * .2, rr * .38, 0, 0, 6.2832); x.fill();
+      } else if (kind === 'butterfly') {
+        var bc = col || '#ff8fc7';
+        [1, -1].forEach(function (sg) {
+          x.save(); x.scale(sg, 1);
+          x.beginPath(); x.ellipse(rr * .5, -rr * .32, rr * .55, rr * .72, -.5, 0, 6.2832); x.fillStyle = bc; x.fill();
+          x.beginPath(); x.ellipse(rr * .4, rr * .5, rr * .38, rr * .5, .45, 0, 6.2832); x.fillStyle = 'rgba(255,255,255,.55)'; x.fill();
+          x.restore();
+        });
+        x.beginPath(); x.moveTo(0, -rr * .55); x.lineTo(0, rr * .7); x.strokeStyle = 'rgba(30,30,40,.8)'; x.lineWidth = Math.max(1.4, px * .05); x.stroke();
+      } else if (kind === 'feather') {
+        x.rotate(.7); x.beginPath(); x.ellipse(0, 0, rr * .38, rr * 1.15, 0, 0, 6.2832); x.fillStyle = 'rgba(255,255,255,.9)'; x.fill();
+        x.beginPath(); x.moveTo(0, -rr * 1.15); x.lineTo(0, rr * 1.3); x.strokeStyle = 'rgba(160,170,190,.9)'; x.lineWidth = Math.max(1, px * .03); x.stroke();
+      } else if (kind === 'confetti') {
+        x.rotate(.5); x.fillStyle = col || '#ffd34d'; x.fillRect(-rr * .5, -rr * .26, rr, rr * .52);
+      }
+      x.restore();
     }
     cache[key] = c; return c;
   }
@@ -275,7 +308,7 @@ import { supabase } from './config.js';
 
   /* ---------- Seçici (sadece kendi profilinde) ---------- */
   var btn = document.createElement('button');
-  btn.type = 'button'; btn.className = 'fx-open'; btn.hidden = true; btn.textContent = '✨ Profil efekti';
+  btn.type = 'button'; btn.className = 'fx-open'; btn.hidden = true; btn.textContent = 'Profil efekti';
   info.appendChild(btn);
 
   var sh = document.createElement('div');
@@ -290,10 +323,12 @@ import { supabase } from './config.js';
   function say(t, err) { msg.textContent = t || ''; msg.className = err ? 'err' : ''; }
   function build() {
     if (grid.firstChild) return;
-    var list = [{ id: '', n: 'Yok', t: '🚫' }].concat(EFFECTS);
+    var list = [{ id: '', n: 'Yok' }].concat(EFFECTS);
     list.forEach(function (c) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'fx-it'; b.dataset.id = c.id;
-      var i = document.createElement('i'); i.textContent = c.t; var s = document.createElement('span'); s.textContent = c.n;
+      var i = document.createElement('i');
+      if (c.L) { var im = document.createElement('img'); im.alt = ''; im.width = im.height = 34; im.src = sprite(c.L[0].e[0], 24).toDataURL(); i.appendChild(im); } else { i.textContent = '\u2013'; }
+      var s = document.createElement('span'); s.textContent = c.n;
       b.appendChild(i); b.appendChild(s); grid.appendChild(b);
     });
   }
