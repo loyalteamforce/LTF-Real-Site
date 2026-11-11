@@ -7,7 +7,7 @@
    - Sekme değişirken yeni sayfa geldiği yönden kayarak girer.
    - app.html'de, </body>'den hemen önce şu satır olmalı:
         <script src="ux.js"></script>
-   - iOS geri bildirim animasyonları (ios-fx.js) en altta buradan otomatik yüklenir.
+   - iOS geri bildirim animasyonları (ios-fx.js) ve profil çerçeveleri (cerceve.js) en altta buradan otomatik yüklenir.
    Ayarlar: aşağıdaki sabitler.
    ============================================================ */
 (function () {
@@ -157,5 +157,15 @@
   s.src = 'ios-fx.js';
   s.async = true;
   s.setAttribute('data-ios-fx', '');
+  document.body.appendChild(s);
+})();
+
+/* ---------- Profil çerçeveleri (cerceve.js) otomatik yüklenir ---------- */
+(function () {
+  if (document.querySelector('script[data-cerceve]')) return;
+  var s = document.createElement('script');
+  s.type = 'module';
+  s.src = 'cerceve.js';
+  s.setAttribute('data-cerceve', '');
   document.body.appendChild(s);
 })();
