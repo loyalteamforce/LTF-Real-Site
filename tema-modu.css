@@ -1,0 +1,24 @@
+/* ============================================================
+   AÇIK TEMA (tema-modu.css)
+   Site koyu tasarlanmış; açık tema, koyu tasarımı ters çevirerek (filter) elde edilir.
+   Foto, video, manga kapakları ve maskot tekrar ters çevrilir; renkleri bozulmaz.
+   <html data-theme="light"> iken çalışır. Koyu temada hiçbir şey değişmez.
+   Yükleyen: splash.js (app.html'in <head> kısmında)
+   ============================================================ */
+html[data-theme="light"]{background:#ededed;color-scheme:light}
+html[data-theme="light"] body{background:#ededed}
+html[data-theme="light"] body>*:not(script):not(style):not(link):not(noscript):not(canvas):not(.ag){filter:invert(1) hue-rotate(180deg);color-scheme:dark}
+/* görseller: bir kez daha ters çevrilince gerçek renkleri geri gelir */
+html[data-theme="light"] body>* :is(img,video,canvas,picture,iframe):not(:is(.mg-cover,.mg-art-pg,.pf-glow,.ag) *){filter:invert(1) hue-rotate(180deg)}
+html[data-theme="light"] body>* :is(.mg-cover,.mg-art-pg,.ag){filter:invert(1) hue-rotate(180deg)}
+html[data-theme="light"] .pf-glow{filter:invert(1) hue-rotate(180deg) blur(60px) saturate(1.9) brightness(1.15)}
+html[data-theme="light"] #pfBg{background:#121212}
+
+/* ============================================================
+   MÜREKKEP GEÇİŞİ: yeni tema, eski temanın üstüne leke gibi yayılır.
+   Şekil tema-modu.js'te çizilir; burada sadece varsayılan solma efekti kapatılır.
+   ============================================================ */
+html.lt-ink::view-transition-old(root),
+html.lt-ink::view-transition-new(root){animation:none;mix-blend-mode:normal}
+html.lt-ink::view-transition-old(root){z-index:1}
+html.lt-ink::view-transition-new(root){z-index:2}

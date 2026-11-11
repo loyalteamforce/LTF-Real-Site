@@ -1,5 +1,12 @@
+/* Tema: kayıtlı açık tema sayfa çizilmeden önce uygulanır (parlama olmaz); tema-modu.css ve tema-modu.js yüklenir. */
+(function () {
+  try { if (localStorage.getItem('lef_theme') === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}
+  var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'tema-modu.css'; document.head.appendChild(l);
+  var s = document.createElement('script'); s.src = 'tema-modu.js'; document.head.appendChild(s);
+})();
+
 /* ============================================================
-   AÇILIŞ EKRANI: siyah zemin üzerinde "Loyal Elite Force" arması.
+   AÇILIŞ EKRANI: siyah zemin üzerinde "Loyal Elite Force" armaşı.
    - En az 2,5 sn görünür, site hazır olunca yavaşça kaybolur.
    - Giriş/kayıt veya index.html'den gelindiyse arma zaten gösterilmiştir;
      tekrar göstermemek için sessionStorage 'lefSplash' işaretine bakılır.
