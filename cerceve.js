@@ -8,18 +8,19 @@
        cr-mavi-banner.png    cr-mavi-avatar.png
    - ux.js içinden otomatik yüklenir.
    - Görsellerin koyu/yarı saydam ARKA PLANI yüklenirken temizlenir (sadece efektler kalır).
-   - BANNER çerçevesi her ekran boyutunda parça parça çizilir: sol alttaki oyuk
-     profil fotoğrafının etrafına oturur (germe yüzünden oluşan bozukluk yok).
+   - BANNER çerçevesi her ekran boyutunda parça parça çizilir: halkanın dış kenarı
+     banner kenarına oturur, sol alttaki oyuk profil fotoğrafının etrafına oturur.
+   - Banner fotoğrafı oyuk bölgesinden kesilir (çerçevenin dışına taşan köşe kalmaz).
    - Avatar çerçevesi fotoğrafın İÇİNDE durur.
    ============================================================ */
 import { supabase } from './config.js';
 
 // hole/out: avatar çerçevesi iç boşluk / halka dış yarıçapı (piksel)
-// ban: banner PNG ölçüleri -> L,T,R,B = halka kutusu; bx = alt kenarın başladığı x; ly = sol kenarın bittiği y
+// ban: banner PNG ölçüleri -> L,T,R,B = halka çubuklarının DIŞ kenarı; bx = alt kenarın başladığı x; ly = sol kenarın bittiği y
 const PAL = {
-  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, glow: 'rgba(255,255,255,.45)', ban: { L: 29, T: 27, R: 883, B: 352, bx: 372, ly: 314 } },
-  kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, glow: 'rgba(255,50,85,.7)',   ban: { L: 19, T: 30, R: 886, B: 358, bx: 368, ly: 304 } },
-  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, glow: 'rgba(80,150,255,.6)',  ban: { L: 30, T: 15, R: 874, B: 348, bx: 373, ly: 282 } }
+  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, glow: 'rgba(255,255,255,.35)', ban: { L: 30, T: 30, R: 882, B: 352, bx: 372, ly: 314 } },
+  kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, glow: 'rgba(255,50,85,.45)',   ban: { L: 30, T: 30, R: 880, B: 358, bx: 368, ly: 304 } },
+  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, glow: 'rgba(80,150,255,.4)',   ban: { L: 30, T: 30, R: 874, B: 348, bx: 373, ly: 282 } }
 };
 const src = (k, t) => 'cr-' + k + '-' + t + '.png';
 
@@ -83,8 +84,9 @@ function drawBanner(canvas, k, Wd, Hd, cx, cy, r, dpr) {
     const fx = dw / sw, fy = dh / sh;
     x.drawImage(im, x0, y0, x1 - x0, y1 - y0, dx + (x0 - sx) * fx, dy + (y0 - sy) * fy, (x1 - x0) * fx, (y1 - y0) * fy);
   };
-  const LyD = g + Math.max(c * s * 1.4, Math.min(cy - .15 * r, Hd - 8));
-  const bxD = g + Math.min(cx + .92 * r, Wd * .6);
+  const lyRel = Math.max(c * s * 1.4, Math.min(cy - .15 * r, Hd - 8));   // sol kenarın bittiği y (banner içinde)
+  const bxRel = Math.min(cx + .92 * r, Wd * .6);                         // alt kenarın başladığı x (banner içinde)
+  const LyD = g + lyRel, bxD = g + bxRel;
   // köşeler
   P(B.L - Gm, B.T - Gm, c + Gm, c + Gm, 0, 0, (c + Gm) * s, (c + Gm) * s);
   P(B.R - c, B.T - Gm, c + Gm, c + Gm, g + Wd - c * s, 0, (c + Gm) * s, (c + Gm) * s);
@@ -98,7 +100,7 @@ function drawBanner(canvas, k, Wd, Hd, cx, cy, r, dpr) {
   // sol kenar: avatarın üstünde biter
   P(B.L - Gm, B.T + c, Gm + tb, B.ly - capH - (B.T + c), 0, g + c * s, (Gm + tb) * s, LyD - capH * s - (g + c * s));
   P(B.L - Gm, B.ly - capH, Gm + tb, capH, 0, LyD - capH * s, (Gm + tb) * s, capH * s);
-  return { g, rad: c * s * .28 };
+  return { g, rad: 46 * s, ly: lyRel, bx: bxRel };
 }
 
 if (typeof document !== 'undefined') (async function main() {
@@ -109,11 +111,11 @@ if (typeof document !== 'undefined') (async function main() {
 
   const css = document.createElement('style');
   css.textContent =
-    '.cr-ban{position:absolute;z-index:2;pointer-events:none;display:none;animation:crGlow 3.6s ease-in-out infinite alternate}' +
+    '.cr-ban{position:absolute;z-index:2;pointer-events:none;display:none}' +
     '.cr-av{position:absolute;z-index:4;pointer-events:none;overflow:hidden;border-radius:50%}' +
     '.cr-av img{position:absolute;left:50%;top:50%;max-width:none;transform:translate(-50%,-50%);animation:crGlow 3.6s ease-in-out infinite alternate}' +
-    '@keyframes crGlow{from{filter:drop-shadow(0 0 2px var(--cg))}to{filter:drop-shadow(0 0 8px var(--cg))}}' +
-    '@media (prefers-reduced-motion:reduce){.cr-ban,.cr-av img{animation:none}}' +
+    '@keyframes crGlow{from{filter:drop-shadow(0 0 1px var(--cg))}to{filter:drop-shadow(0 0 4px var(--cg))}}' +
+    '@media (prefers-reduced-motion:reduce){.cr-av img{animation:none}}' +
     '.cr-tabs{display:flex;gap:6px;margin:0 0 10px}.cr-tabs button{flex:1;height:34px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:transparent;color:#cfd3da;font:inherit;font-size:13px;cursor:pointer}' +
     '.cr-tabs button.on{background:#fff;color:#111;border-color:#fff;font-weight:600}' +
     '.cr-dot{position:relative;display:block;width:34px;height:34px;border-radius:50%;background:#2b2b31;overflow:hidden}.cr-dot img{position:absolute;left:50%;top:50%;max-width:none;transform:translate(-50%,-50%)}';
@@ -122,12 +124,13 @@ if (typeof document !== 'undefined') (async function main() {
   const banEl = document.createElement('canvas'); banEl.className = 'cr-ban'; banEl.setAttribute('aria-hidden', 'true'); wrap.appendChild(banEl);
   const avEl = document.createElement('div'); avEl.className = 'cr-av'; avEl.setAttribute('aria-hidden', 'true'); head.appendChild(avEl);
 
+  const resetBan = () => { bn.style.borderRadius = ''; bn.style.clipPath = ''; bn.style.borderColor = ''; };
   let cur = null;
   function render() {
     const w = bn.clientWidth, h = bn.clientHeight;
-    if (!cur || !w || !h) { banEl.style.display = 'none'; avEl.innerHTML = ''; bn.style.borderRadius = ''; return; }
+    if (!cur || !w || !h) { banEl.style.display = 'none'; avEl.innerHTML = ''; resetBan(); return; }
     const P = PAL[cur];
-    banEl.style.setProperty('--cg', P.glow); avEl.style.setProperty('--cg', P.glow);
+    avEl.style.setProperty('--cg', P.glow);
 
     // avatarın banner'a göre konumu (oyuğu buna göre açıyoruz)
     const br = bn.getBoundingClientRect(), ar = av.getBoundingClientRect();
@@ -137,8 +140,13 @@ if (typeof document !== 'undefined') (async function main() {
       banEl.style.display = 'block';
       banEl.style.left = (bn.offsetLeft + bn.clientLeft - res.g) + 'px';
       banEl.style.top = (bn.offsetTop + bn.clientTop - res.g) + 'px';
-      bn.style.borderRadius = Math.max(10, res.rad) + 'px';
-    } else banEl.style.display = 'none';
+      // fotoğraf çerçevenin kenarına kadar: köşe yuvarlaklığı halkayla aynı, kenar çizgisi yok
+      bn.style.borderRadius = res.rad + 'px';
+      bn.style.borderColor = 'transparent';
+      // oyuk bölgesindeki (avatarın solu/altı) fotoğraf köşesini kes
+      const bl = bn.clientLeft, bt = bn.clientTop;
+      bn.style.clipPath = 'polygon(0 0,100% 0,100% 100%,' + (res.bx + bl) + 'px 100%,' + (res.bx + bl) + 'px ' + (res.ly + bt) + 'px,0 ' + (res.ly + bt) + 'px)';
+    } else { banEl.style.display = 'none'; resetBan(); }
 
     // halka gövdesinin dış kenarı = fotoğraf kenarı  -> çerçeve fotoğrafın içinde kalır
     const d = av.offsetWidth, S = 380 * (d / 2) / P.out;
