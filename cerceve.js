@@ -8,22 +8,28 @@
        cr-mavi-banner.png    cr-mavi-avatar.png
    - ux.js içinden otomatik yüklenir.
    - Görsellerin koyu/yarı saydam ARKA PLANI yüklenirken temizlenir (sadece efektler kalır).
-   - Avatar çerçevesi fotoğrafın DIŞINA taşmaz, fotoğrafın İÇİNDE durur.
+   - BANNER çerçevesi her ekran boyutunda parça parça çizilir: sol alttaki oyuk
+     profil fotoğrafının etrafına oturur (germe yüzünden oluşan bozukluk yok).
+   - Avatar çerçevesi fotoğrafın İÇİNDE durur.
    ============================================================ */
 import { supabase } from './config.js';
 
-// hole: avatar çerçevesinin iç boşluğunun yarıçapı (görselde, piksel)
-// out : avatar çerçevesinin halka gövdesinin dış yarıçapı (görselde, piksel) -> fotoğraf kenarına denk gelir
+// hole/out: avatar çerçevesi iç boşluk / halka dış yarıçapı (piksel)
+// ban: banner PNG ölçüleri -> L,T,R,B = halka kutusu; bx = alt kenarın başladığı x; ly = sol kenarın bittiği y
 const PAL = {
-  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, glow: 'rgba(255,255,255,.45)' },
-  kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, glow: 'rgba(255,50,85,.7)' },
-  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, glow: 'rgba(80,150,255,.6)' }
+  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, glow: 'rgba(255,255,255,.45)', ban: { L: 29, T: 27, R: 883, B: 352, bx: 372, ly: 314 } },
+  kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, glow: 'rgba(255,50,85,.7)',   ban: { L: 19, T: 30, R: 886, B: 358, bx: 368, ly: 304 } },
+  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, glow: 'rgba(80,150,255,.6)',  ban: { L: 30, T: 15, R: 874, B: 348, bx: 373, ly: 282 } }
 };
 const src = (k, t) => 'cr-' + k + '-' + t + '.png';
 
 /* ---------- Arka plan temizleme: koyu yarı saydam pikselleri sil, avatar deliğinin içini boşalt ---------- */
-const IMG = {};
-const url = (k, t) => IMG[k + t] || src(k, t);
+const CV = {};      // temizlenmiş canvas'lar
+const URLS = {};    // dataURL önbelleği
+const url = (k, t) => {
+  const c = CV[k + t]; if (!c) return src(k, t);
+  return URLS[k + t] || (URLS[k + t] = c.toDataURL('image/png'));
+};
 function cleanImg(k, t) {
   return new Promise(res => {
     const im = new Image();
@@ -48,14 +54,52 @@ function cleanImg(k, t) {
           d[i + 3] = a;
         }
         x.putImageData(id, 0, 0);
-        res(c.toDataURL('image/png'));
-      } catch (_) { res(src(k, t)); }
+        CV[k + t] = c;
+      } catch (_) { /* temizlenemezse orijinal görsel kullanılır */ }
+      res();
     };
-    im.onerror = () => res(src(k, t));
+    im.onerror = () => res();
     im.src = src(k, t);
   });
 }
-const ready = Promise.all(Object.keys(PAL).flatMap(k => ['avatar', 'banner'].map(async t => { IMG[k + t] = await cleanImg(k, t); })));
+const ready = Promise.all(Object.keys(PAL).flatMap(k => ['avatar', 'banner'].map(t => cleanImg(k, t))));
+
+/* ---------- Banner çerçevesini parça parça çiz (oyuk avatarın etrafına oturur) ---------- */
+function drawBanner(canvas, k, Wd, Hd, cx, cy, r, dpr) {
+  const B = PAL[k].ban, im = CV[k + 'banner'];
+  if (!im) return null;
+  const iw = im.width, ih = im.height;
+  const c = 110, Gm = 55, tb = 40, cap = 35, capH = 40;
+  const s = Wd / (B.R - B.L), g = Gm * s;
+  const CW = Wd + 2 * g, CH = Hd + 2 * g;
+  canvas.width = Math.round(CW * dpr); canvas.height = Math.round(CH * dpr);
+  canvas.style.width = CW + 'px'; canvas.style.height = CH + 'px';
+  const x = canvas.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
+  x.clearRect(0, 0, CW, CH); x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high';
+  const P = (sx, sy, sw, sh, dx, dy, dw, dh) => {
+    if (dw <= .5 || dh <= .5 || sw <= 0 || sh <= 0) return;
+    const x0 = Math.max(sx, 0), y0 = Math.max(sy, 0), x1 = Math.min(sx + sw, iw), y1 = Math.min(sy + sh, ih);
+    if (x1 <= x0 || y1 <= y0) return;
+    const fx = dw / sw, fy = dh / sh;
+    x.drawImage(im, x0, y0, x1 - x0, y1 - y0, dx + (x0 - sx) * fx, dy + (y0 - sy) * fy, (x1 - x0) * fx, (y1 - y0) * fy);
+  };
+  const LyD = g + Math.max(c * s * 1.4, Math.min(cy - .15 * r, Hd - 8));
+  const bxD = g + Math.min(cx + .92 * r, Wd * .6);
+  // köşeler
+  P(B.L - Gm, B.T - Gm, c + Gm, c + Gm, 0, 0, (c + Gm) * s, (c + Gm) * s);
+  P(B.R - c, B.T - Gm, c + Gm, c + Gm, g + Wd - c * s, 0, (c + Gm) * s, (c + Gm) * s);
+  P(B.R - c, B.B - c, c + Gm, c + Gm, g + Wd - c * s, g + Hd - c * s, (c + Gm) * s, (c + Gm) * s);
+  // üst ve sağ kenar
+  P(B.L + c, B.T - Gm, (B.R - B.L) - 2 * c, Gm + tb, g + c * s, 0, Wd - 2 * c * s, (Gm + tb) * s);
+  P(B.R - tb, B.T + c, tb + Gm, (B.B - B.T) - 2 * c, g + Wd - tb * s, g + c * s, (tb + Gm) * s, Hd - 2 * c * s);
+  // alt kenar: avatarın hemen sağından başlar
+  P(B.bx + cap, B.B - tb, (B.R - c) - (B.bx + cap), tb + Gm, bxD + cap * s, g + Hd - tb * s, (g + Wd - c * s) - (bxD + cap * s), (tb + Gm) * s);
+  P(B.bx, B.B - tb, cap, tb + Gm, bxD, g + Hd - tb * s, cap * s, (tb + Gm) * s);
+  // sol kenar: avatarın üstünde biter
+  P(B.L - Gm, B.T + c, Gm + tb, B.ly - capH - (B.T + c), 0, g + c * s, (Gm + tb) * s, LyD - capH * s - (g + c * s));
+  P(B.L - Gm, B.ly - capH, Gm + tb, capH, 0, LyD - capH * s, (Gm + tb) * s, capH * s);
+  return { g, rad: c * s * .28 };
+}
 
 if (typeof document !== 'undefined') (async function main() {
   if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r));
@@ -75,16 +119,27 @@ if (typeof document !== 'undefined') (async function main() {
     '.cr-dot{position:relative;display:block;width:34px;height:34px;border-radius:50%;background:#2b2b31;overflow:hidden}.cr-dot img{position:absolute;left:50%;top:50%;max-width:none;transform:translate(-50%,-50%)}';
   document.head.appendChild(css);
 
-  const banEl = document.createElement('div'); banEl.className = 'cr-ban'; banEl.setAttribute('aria-hidden', 'true'); wrap.appendChild(banEl);
+  const banEl = document.createElement('canvas'); banEl.className = 'cr-ban'; banEl.setAttribute('aria-hidden', 'true'); wrap.appendChild(banEl);
   const avEl = document.createElement('div'); avEl.className = 'cr-av'; avEl.setAttribute('aria-hidden', 'true'); head.appendChild(avEl);
 
   let cur = null;
   function render() {
     const w = bn.clientWidth, h = bn.clientHeight;
-    if (!cur || !w || !h) { banEl.style.display = 'none'; avEl.innerHTML = ''; return; }
-    const P = PAL[cur], sc = Math.min(.8, Math.max(.45, w / 1000)), m = 40 * sc, v = 100 * sc, hz = 150 * sc;
-    banEl.style.cssText = 'display:block;left:' + (-m) + 'px;top:' + (-m) + 'px;width:' + (w + 2 * m) + 'px;height:' + (h + 2 * m) + 'px;box-sizing:border-box;border-style:solid;border-width:' + v + 'px ' + hz + 'px;border-image:url("' + url(cur, 'banner') + '") 100 150 / ' + v + 'px ' + hz + 'px stretch;';
+    if (!cur || !w || !h) { banEl.style.display = 'none'; avEl.innerHTML = ''; bn.style.borderRadius = ''; return; }
+    const P = PAL[cur];
     banEl.style.setProperty('--cg', P.glow); avEl.style.setProperty('--cg', P.glow);
+
+    // avatarın banner'a göre konumu (oyuğu buna göre açıyoruz)
+    const br = bn.getBoundingClientRect(), ar = av.getBoundingClientRect();
+    const r = ar.width / 2, cx = ar.left + r - br.left - bn.clientLeft, cy = ar.top + ar.height / 2 - br.top - bn.clientTop;
+    const res = drawBanner(banEl, cur, w, h, cx, cy, r, Math.min(window.devicePixelRatio || 1, 2));
+    if (res) {
+      banEl.style.display = 'block';
+      banEl.style.left = (bn.offsetLeft + bn.clientLeft - res.g) + 'px';
+      banEl.style.top = (bn.offsetTop + bn.clientTop - res.g) + 'px';
+      bn.style.borderRadius = Math.max(10, res.rad) + 'px';
+    } else banEl.style.display = 'none';
+
     // halka gövdesinin dış kenarı = fotoğraf kenarı  -> çerçeve fotoğrafın içinde kalır
     const d = av.offsetWidth, S = 380 * (d / 2) / P.out;
     avEl.style.left = av.offsetLeft + 'px'; avEl.style.top = av.offsetTop + 'px'; avEl.style.width = d + 'px'; avEl.style.height = av.offsetHeight + 'px';
@@ -135,7 +190,6 @@ if (typeof document !== 'undefined') (async function main() {
       const s = document.createElement('span'); s.textContent = k ? PAL[k].n : 'Yok';
       b.appendChild(i); b.appendChild(s); cg.appendChild(b);
     });
-    // temizlenmiş görseller hazır olunca önizleme küçük resimlerini yenile
     ready.then(() => cg.querySelectorAll('.cr-th').forEach(im => { im.src = url(im.dataset.k, 'avatar'); }));
     const mark = () => cg.querySelectorAll('.fx-it').forEach(b => b.classList.toggle('on', (b.dataset.id || '') === (pick || '')));
     const say = (t, err) => { msg.textContent = t || ''; msg.className = err ? 'err' : ''; };
