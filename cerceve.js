@@ -7,16 +7,55 @@
        cr-kirmizi-banner.png cr-kirmizi-avatar.png
        cr-mavi-banner.png    cr-mavi-avatar.png
    - ux.js içinden otomatik yüklenir.
+   - Görsellerin koyu/yarı saydam ARKA PLANI yüklenirken temizlenir (sadece efektler kalır).
+   - Avatar çerçevesi fotoğrafın DIŞINA taşmaz, fotoğrafın İÇİNDE durur.
    ============================================================ */
 import { supabase } from './config.js';
 
 // hole: avatar çerçevesinin iç boşluğunun yarıçapı (görselde, piksel)
+// out : avatar çerçevesinin halka gövdesinin dış yarıçapı (görselde, piksel) -> fotoğraf kenarına denk gelir
 const PAL = {
-  beyaz:   { n: 'Beyaz Diken', hole: 102, glow: 'rgba(255,255,255,.45)' },
-  kirmizi: { n: 'Kızıl Melek', hole: 108, glow: 'rgba(255,50,85,.7)' },
-  mavi:    { n: 'Mavi Zincir', hole: 104, glow: 'rgba(80,150,255,.6)' }
+  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, glow: 'rgba(255,255,255,.45)' },
+  kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, glow: 'rgba(255,50,85,.7)' },
+  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, glow: 'rgba(80,150,255,.6)' }
 };
 const src = (k, t) => 'cr-' + k + '-' + t + '.png';
+
+/* ---------- Arka plan temizleme: koyu yarı saydam pikselleri sil, avatar deliğinin içini boşalt ---------- */
+const IMG = {};
+const url = (k, t) => IMG[k + t] || src(k, t);
+function cleanImg(k, t) {
+  return new Promise(res => {
+    const im = new Image();
+    im.onload = () => {
+      try {
+        const w = im.naturalWidth, h = im.naturalHeight;
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const x = c.getContext('2d'); x.drawImage(im, 0, 0);
+        const id = x.getImageData(0, 0, w, h), d = id.data;
+        const hole = t === 'avatar' ? PAL[k].hole : 0;
+        for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) {
+          const i = (y * w + xx) * 4; let a = d[i + 3];
+          if (a === 0) continue;
+          if (a < 255) {
+            const mx = Math.max(d[i], d[i + 1], d[i + 2]);
+            a *= Math.min(1, Math.max(0, (mx - 45) / 70));
+          }
+          if (hole) {
+            const dd = Math.hypot(xx - w / 2 + .5, y - h / 2 + .5);
+            a *= Math.min(1, Math.max(0, (dd - hole) / 6));
+          }
+          d[i + 3] = a;
+        }
+        x.putImageData(id, 0, 0);
+        res(c.toDataURL('image/png'));
+      } catch (_) { res(src(k, t)); }
+    };
+    im.onerror = () => res(src(k, t));
+    im.src = src(k, t);
+  });
+}
+const ready = Promise.all(Object.keys(PAL).flatMap(k => ['avatar', 'banner'].map(async t => { IMG[k + t] = await cleanImg(k, t); })));
 
 if (typeof document !== 'undefined') (async function main() {
   if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r));
@@ -27,13 +66,13 @@ if (typeof document !== 'undefined') (async function main() {
   const css = document.createElement('style');
   css.textContent =
     '.cr-ban{position:absolute;z-index:2;pointer-events:none;display:none;animation:crGlow 3.6s ease-in-out infinite alternate}' +
-    '.cr-av{position:absolute;z-index:4;pointer-events:none;animation:crGlow 3.6s ease-in-out infinite alternate}' +
-    '.cr-av img{position:absolute;left:50%;top:50%;max-width:none;transform:translate(-50%,-50%)}' +
+    '.cr-av{position:absolute;z-index:4;pointer-events:none;overflow:hidden;border-radius:50%}' +
+    '.cr-av img{position:absolute;left:50%;top:50%;max-width:none;transform:translate(-50%,-50%);animation:crGlow 3.6s ease-in-out infinite alternate}' +
     '@keyframes crGlow{from{filter:drop-shadow(0 0 2px var(--cg))}to{filter:drop-shadow(0 0 8px var(--cg))}}' +
-    '@media (prefers-reduced-motion:reduce){.cr-ban,.cr-av{animation:none}}' +
+    '@media (prefers-reduced-motion:reduce){.cr-ban,.cr-av img{animation:none}}' +
     '.cr-tabs{display:flex;gap:6px;margin:0 0 10px}.cr-tabs button{flex:1;height:34px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:transparent;color:#cfd3da;font:inherit;font-size:13px;cursor:pointer}' +
     '.cr-tabs button.on{background:#fff;color:#111;border-color:#fff;font-weight:600}' +
-    '.cr-dot{position:relative;display:block;width:34px;height:34px;border-radius:50%;background:#2b2b31}.cr-dot img{position:absolute;left:50%;top:50%;max-width:none;transform:translate(-50%,-50%)}';
+    '.cr-dot{position:relative;display:block;width:34px;height:34px;border-radius:50%;background:#2b2b31;overflow:hidden}.cr-dot img{position:absolute;left:50%;top:50%;max-width:none;transform:translate(-50%,-50%)}';
   document.head.appendChild(css);
 
   const banEl = document.createElement('div'); banEl.className = 'cr-ban'; banEl.setAttribute('aria-hidden', 'true'); wrap.appendChild(banEl);
@@ -44,15 +83,16 @@ if (typeof document !== 'undefined') (async function main() {
     const w = bn.clientWidth, h = bn.clientHeight;
     if (!cur || !w || !h) { banEl.style.display = 'none'; avEl.innerHTML = ''; return; }
     const P = PAL[cur], sc = Math.min(.8, Math.max(.45, w / 1000)), m = 40 * sc, v = 100 * sc, hz = 150 * sc;
+    banEl.style.cssText = 'display:block;left:' + (-m) + 'px;top:' + (-m) + 'px;width:' + (w + 2 * m) + 'px;height:' + (h + 2 * m) + 'px;box-sizing:border-box;border-style:solid;border-width:' + v + 'px ' + hz + 'px;border-image:url("' + url(cur, 'banner') + '") 100 150 / ' + v + 'px ' + hz + 'px stretch;';
     banEl.style.setProperty('--cg', P.glow); avEl.style.setProperty('--cg', P.glow);
-    banEl.style.cssText = 'display:block;left:' + (-m) + 'px;top:' + (-m) + 'px;width:' + (w + 2 * m) + 'px;height:' + (h + 2 * m) + 'px;box-sizing:border-box;border-style:solid;border-width:' + v + 'px ' + hz + 'px;border-image:url(' + src(cur, 'banner') + ') 100 150 / ' + v + 'px ' + hz + 'px stretch;';
-    banEl.style.setProperty('--cg', P.glow);
-    const d = av.offsetWidth, S = 380 * (d / 2) / P.hole;
+    // halka gövdesinin dış kenarı = fotoğraf kenarı  -> çerçeve fotoğrafın içinde kalır
+    const d = av.offsetWidth, S = 380 * (d / 2) / P.out;
     avEl.style.left = av.offsetLeft + 'px'; avEl.style.top = av.offsetTop + 'px'; avEl.style.width = d + 'px'; avEl.style.height = av.offsetHeight + 'px';
-    avEl.innerHTML = '<img alt="" src="' + src(cur, 'avatar') + '" style="width:' + S + 'px;height:' + S + 'px">';
+    avEl.innerHTML = '<img alt="" src="' + url(cur, 'avatar') + '" style="width:' + S + 'px;height:' + S + 'px">';
   }
   const apply = k => { cur = PAL[k] ? k : null; render(); };
   if (window.ResizeObserver) { const ro = new ResizeObserver(render); ro.observe(bn); ro.observe(head); } else window.addEventListener('resize', render);
+  ready.then(render);
 
   const memo = {}; let curId = null;
   async function load(id) {
@@ -91,10 +131,12 @@ if (typeof document !== 'undefined') (async function main() {
     [''].concat(Object.keys(PAL)).forEach(k => {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'fx-it'; b.dataset.id = k;
       const i = document.createElement('i'); i.style.cssText = 'width:44px;height:44px';
-      if (k) i.innerHTML = '<span class="cr-dot"><img alt="" src="' + src(k, 'avatar') + '" style="width:' + (380 * 17 / PAL[k].hole) + 'px;height:' + (380 * 17 / PAL[k].hole) + 'px"></span>'; else i.textContent = '\u2013';
+      if (k) i.innerHTML = '<span class="cr-dot"><img class="cr-th" data-k="' + k + '" alt="" src="' + url(k, 'avatar') + '" style="width:' + (380 * 17 / PAL[k].out) + 'px;height:' + (380 * 17 / PAL[k].out) + 'px"></span>'; else i.textContent = '\u2013';
       const s = document.createElement('span'); s.textContent = k ? PAL[k].n : 'Yok';
       b.appendChild(i); b.appendChild(s); cg.appendChild(b);
     });
+    // temizlenmiş görseller hazır olunca önizleme küçük resimlerini yenile
+    ready.then(() => cg.querySelectorAll('.cr-th').forEach(im => { im.src = url(im.dataset.k, 'avatar'); }));
     const mark = () => cg.querySelectorAll('.fx-it').forEach(b => b.classList.toggle('on', (b.dataset.id || '') === (pick || '')));
     const say = (t, err) => { msg.textContent = t || ''; msg.className = err ? 'err' : ''; };
     function tab(n) {
