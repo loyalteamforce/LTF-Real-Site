@@ -12,15 +12,18 @@
      banner kenarına oturur, sol alttaki oyuk profil fotoğrafının etrafına oturur.
    - Banner fotoğrafı oyuk bölgesinden kesilir (çerçevenin dışına taşan köşe kalmaz).
    - Avatar çerçevesi fotoğrafın İÇİNDE durur.
+   - ANİMASYON: parlama süpürmesi + yıldız pırıltıları + hafif nefes alma (sadece çerçevenin
+     kendi piksellerinde). Çerçeve değişince giriş animasyonu, kaldırınca solma animasyonu.
+     "Hareketi azalt" ayarı açıksa animasyonlar kapanır.
    ============================================================ */
 import { supabase } from './config.js';
 
 // hole/out: avatar çerçevesi iç boşluk / halka dış yarıçapı (piksel)
 // ban: banner PNG ölçüleri -> L,T,R,B = halka çubuklarının DIŞ kenarı; bx = alt kenarın başladığı x; ly = sol kenarın bittiği y
 const PAL = {
-  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, glow: 'rgba(255,255,255,.35)', ban: { L: 30, T: 30, R: 882, B: 352, bx: 372, ly: 314 } },
-  kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, glow: 'rgba(255,50,85,.45)',   ban: { L: 30, T: 30, R: 880, B: 358, bx: 368, ly: 304 } },
-  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, glow: 'rgba(80,150,255,.4)',   ban: { L: 30, T: 30, R: 874, B: 348, bx: 373, ly: 282 } }
+  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, ban: { L: 30, T: 30, R: 882, B: 352, bx: 372, ly: 314 } },
+  kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, ban: { L: 30, T: 30, R: 880, B: 358, bx: 368, ly: 304 } },
+  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, ban: { L: 30, T: 30, R: 874, B: 348, bx: 373, ly: 282 } }
 };
 const src = (k, t) => 'cr-' + k + '-' + t + '.png';
 
@@ -103,40 +106,141 @@ function drawBanner(canvas, k, Wd, Hd, cx, cy, r, dpr) {
   return { g, rad: 46 * s, ly: lyRel, bx: bxRel };
 }
 
+/*ANIM-START*/
+// Çerçeve animasyonu: parlama süpürmesi + yıldız pırıltıları (sadece çerçevenin kendi piksellerinde)
+const ANIM = {
+  beyaz:   { col: '255,255,255', per: 4.2 },
+  kirmizi: { col: '255,150,175', per: 4.8 },
+  mavi:    { col: '150,200,255', per: 3.6 }
+};
+function mkAnim(el, circle) { return { el, circle: !!circle, base: null, k: null, cands: [], sp: [], u: 6 }; }
+function setAnimBase(A, base, k, count) {
+  A.base = base; A.k = k;
+  A.el.width = base.width; A.el.height = base.height;
+  A.u = Math.max(base.width, base.height) * (A.circle ? .018 : .0065);
+  // pırıltı adayları: çerçevenin parlak, opak pikselleri
+  const W = base.width, H = base.height, d = base.getContext('2d').getImageData(0, 0, W, H).data;
+  const strong = [], any = [], st = Math.max(2, Math.round(Math.max(W, H) / 220));
+  for (let y = 0; y < H; y += st) for (let x = 0; x < W; x += st) {
+    const i = (y * W + x) * 4;
+    if (d[i + 3] > 200) { any.push(x, y); if (Math.max(d[i], d[i + 1], d[i + 2]) > 150) strong.push(x, y); }
+  }
+  A.cands = strong.length >= 40 ? strong : any;
+  A.sp = Array.from({ length: count }, () => ({ per: 1.5 + Math.random() * 1.6, ph: Math.random() * 3, cyc: -1, i: 0 }));
+}
+function paintAnim(A, t) {
+  if (!A.base) return;
+  const c = A.el, x = c.getContext('2d'), W = c.width, H = c.height, cfg = ANIM[A.k]; if (!cfg) return;
+  x.setTransform(1, 0, 0, 1, 0, 0); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
+  x.clearRect(0, 0, W, H); x.drawImage(A.base, 0, 0);
+  // 1) parlama süpürmesi (source-atop: sadece çerçeve piksellerinin üstüne biner)
+  x.globalCompositeOperation = 'source-atop';
+  if (A.circle && x.createConicGradient) {
+    const g = x.createConicGradient((t / cfg.per) * Math.PI * 2, W / 2, H / 2);
+    g.addColorStop(0, 'rgba(' + cfg.col + ',0)'); g.addColorStop(.05, 'rgba(' + cfg.col + ',.75)'); g.addColorStop(.12, 'rgba(' + cfg.col + ',0)');
+    g.addColorStop(.55, 'rgba(' + cfg.col + ',0)'); g.addColorStop(.6, 'rgba(' + cfg.col + ',.4)'); g.addColorStop(.66, 'rgba(' + cfg.col + ',0)'); g.addColorStop(1, 'rgba(' + cfg.col + ',0)');
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+  } else {
+    const u = (t % cfg.per) / cfg.per;
+    if (u < .45) {
+      const p = u / .45, cx = -.3 * W + p * 1.6 * W, hw = .16 * W;
+      const g = x.createLinearGradient(cx - hw, 0, cx + hw, hw * .55);
+      g.addColorStop(0, 'rgba(' + cfg.col + ',0)'); g.addColorStop(.5, 'rgba(' + cfg.col + ',.8)'); g.addColorStop(1, 'rgba(' + cfg.col + ',0)');
+      x.fillStyle = g; x.fillRect(0, 0, W, H);
+    }
+  }
+  // 2) yıldız pırıltıları
+  x.globalCompositeOperation = 'source-over';
+  const n = A.cands.length / 2; if (!n) return;
+  for (const s of A.sp) {
+    const q = (t + s.ph) / s.per, cyc = Math.floor(q);
+    if (cyc !== s.cyc) { s.cyc = cyc; s.i = Math.floor(Math.random() * n); }
+    const f = q - cyc, a = Math.sin(Math.PI * f), v = a * a;
+    if (v < .02) continue;
+    const px = A.cands[s.i * 2], py = A.cands[s.i * 2 + 1], r = A.u * (.6 + .9 * v);
+    const g = x.createRadialGradient(px, py, 0, px, py, r * 1.7);
+    g.addColorStop(0, 'rgba(255,255,255,' + (.95 * v) + ')'); g.addColorStop(.35, 'rgba(' + cfg.col + ',' + (.55 * v) + ')'); g.addColorStop(1, 'rgba(' + cfg.col + ',0)');
+    x.fillStyle = g; x.beginPath(); x.arc(px, py, r * 1.7, 0, 6.2832); x.fill();
+    x.fillStyle = 'rgba(255,255,255,' + (.9 * v) + ')';
+    x.beginPath();   // 4 uçlu yıldız
+    x.moveTo(px, py - r * 2.1); x.quadraticCurveTo(px + r * .18, py - r * .18, px + r * 2.1, py);
+    x.quadraticCurveTo(px + r * .18, py + r * .18, px, py + r * 2.1); x.quadraticCurveTo(px - r * .18, py + r * .18, px - r * 2.1, py);
+    x.quadraticCurveTo(px - r * .18, py - r * .18, px, py - r * 2.1); x.fill();
+  }
+}
+/*ANIM-END*/
+
 if (typeof document !== 'undefined') (async function main() {
   if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r));
   const $ = (s, r) => (r || document).querySelector(s);
   const wrap = $('.pf-bwrap'), head = $('.pf-head'), av = $('#pfAv'), bn = $('#pfBan');
   if (!wrap || !head || !av || !bn) return;
+  const reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   const css = document.createElement('style');
   css.textContent =
-    '.cr-ban{position:absolute;z-index:2;pointer-events:none;display:none}' +
-    '.cr-av{position:absolute;z-index:4;pointer-events:none;overflow:hidden;border-radius:50%}' +
-    '.cr-av img{position:absolute;left:50%;top:50%;max-width:none;transform:translate(-50%,-50%);animation:crGlow 3.6s ease-in-out infinite alternate}' +
-    '@keyframes crGlow{from{filter:drop-shadow(0 0 1px var(--cg))}to{filter:drop-shadow(0 0 4px var(--cg))}}' +
-    '@media (prefers-reduced-motion:reduce){.cr-av img{animation:none}}' +
+    '.cr-ban{position:absolute;z-index:2;pointer-events:none;display:none;animation:crBreath 4.5s ease-in-out infinite alternate}' +
+    '.cr-av{position:absolute;z-index:4;pointer-events:none;overflow:hidden;border-radius:50%;display:none}' +
+    '.cr-av canvas{position:absolute;left:0;top:0;display:block;animation:crBreath 4.5s ease-in-out infinite alternate}' +
+    '@keyframes crBreath{from{filter:brightness(1)}to{filter:brightness(1.16) saturate(1.1)}}' +
+    // çerçeve değişince giriş animasyonu (önce parlak flaş, sonra yerine oturur)
+    '.cr-ban.cr-in{animation:crBanIn .75s cubic-bezier(.2,.8,.2,1) backwards,crBreath 4.5s .75s ease-in-out infinite alternate}' +
+    '.cr-av canvas.cr-in{animation:crAvIn .8s cubic-bezier(.2,1.25,.3,1) backwards,crBreath 4.5s .8s ease-in-out infinite alternate}' +
+    '@keyframes crBanIn{0%{opacity:0;transform:scale(1.06);filter:brightness(2.6)}55%{opacity:1}100%{opacity:1;transform:none;filter:brightness(1)}}' +
+    '@keyframes crAvIn{0%{opacity:0;transform:scale(.55) rotate(-50deg);filter:brightness(2.6)}100%{opacity:1;transform:none;filter:brightness(1)}}' +
+    // çerçeve kaldırılınca solma
+    '.cr-ban.cr-out,.cr-av.cr-out{animation:crOut .26s ease-in forwards}' +
+    '@keyframes crOut{to{opacity:0;filter:brightness(2)}}' +
+    '@media (prefers-reduced-motion:reduce){.cr-ban,.cr-av canvas,.cr-ban.cr-in,.cr-av canvas.cr-in,.cr-ban.cr-out,.cr-av.cr-out{animation:none}}' +
     '.cr-tabs{display:flex;gap:6px;margin:0 0 10px}.cr-tabs button{flex:1;height:34px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:transparent;color:#cfd3da;font:inherit;font-size:13px;cursor:pointer}' +
     '.cr-tabs button.on{background:#fff;color:#111;border-color:#fff;font-weight:600}' +
-    '.cr-dot{position:relative;display:block;width:34px;height:34px;border-radius:50%;background:#2b2b31;overflow:hidden}.cr-dot img{position:absolute;left:50%;top:50%;max-width:none;transform:translate(-50%,-50%)}';
+    '.cr-dot{position:relative;display:block;width:34px;height:34px;border-radius:50%;background:#2b2b31;overflow:hidden;transition:transform .2s}.cr-dot img{position:absolute;left:50%;top:50%;max-width:none;transform:translate(-50%,-50%)}' +
+    '.cr-grid .fx-it:active .cr-dot{transform:scale(.9)}' +
+    '.cr-grid .fx-it.on .cr-dot{animation:crPop .5s cubic-bezier(.2,1.5,.4,1)}' +
+    '@keyframes crPop{from{transform:scale(.7) rotate(-30deg)}to{transform:none}}' +
+    '@media (prefers-reduced-motion:reduce){.cr-grid .fx-it.on .cr-dot{animation:none}}';
   document.head.appendChild(css);
 
   const banEl = document.createElement('canvas'); banEl.className = 'cr-ban'; banEl.setAttribute('aria-hidden', 'true'); wrap.appendChild(banEl);
   const avEl = document.createElement('div'); avEl.className = 'cr-av'; avEl.setAttribute('aria-hidden', 'true'); head.appendChild(avEl);
+  const avCan = document.createElement('canvas'); avEl.appendChild(avCan);
+  const banBase = document.createElement('canvas'), avBase = document.createElement('canvas');
+  const banA = mkAnim(banEl, false), avA = mkAnim(avCan, true);
+  let banKey = '', avKey = '';
+
+  /* ---------- Animasyon döngüsü (~30 fps, sekme gizliyken durur) ---------- */
+  let raf = 0, last = 0;
+  function tick(ts) {
+    raf = requestAnimationFrame(tick);
+    if (ts - last < 32) return; last = ts;
+    if (document.hidden || !cur || !bn.offsetParent) return;
+    const t = ts / 1000;
+    if (banEl.style.display === 'block' && banA.base) paintAnim(banA, t);
+    if (avEl.style.display === 'block' && avA.base) paintAnim(avA, t);
+  }
+  const startLoop = () => { if (!raf && !reduce) raf = requestAnimationFrame(tick); };
+  const stopLoop = () => { if (raf) cancelAnimationFrame(raf); raf = 0; };
+  const retrigger = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+  const playIn = () => { if (reduce) return; retrigger(banEl, 'cr-in'); retrigger(avCan, 'cr-in'); };
 
   const resetBan = () => { bn.style.borderRadius = ''; bn.style.clipPath = ''; bn.style.borderColor = ''; };
   let cur = null;
   function render() {
     const w = bn.clientWidth, h = bn.clientHeight;
-    if (!cur || !w || !h) { banEl.style.display = 'none'; avEl.innerHTML = ''; resetBan(); return; }
-    const P = PAL[cur];
-    avEl.style.setProperty('--cg', P.glow);
+    if (!cur || !w || !h) { banEl.style.display = 'none'; avEl.style.display = 'none'; resetBan(); banKey = avKey = ''; stopLoop(); return; }
+    const P = PAL[cur], dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     // avatarın banner'a göre konumu (oyuğu buna göre açıyoruz)
     const br = bn.getBoundingClientRect(), ar = av.getBoundingClientRect();
     const r = ar.width / 2, cx = ar.left + r - br.left - bn.clientLeft, cy = ar.top + ar.height / 2 - br.top - bn.clientTop;
-    const res = drawBanner(banEl, cur, w, h, cx, cy, r, Math.min(window.devicePixelRatio || 1, 2));
+    const key = [cur, w, h, Math.round(cx), Math.round(cy), Math.round(r), dpr].join();
+    const res = drawBanner(banBase, cur, w, h, cx, cy, r, dpr);
     if (res) {
+      if (key !== banKey) {
+        banKey = key; setAnimBase(banA, banBase, cur, 9);
+        banEl.style.width = banBase.style.width; banEl.style.height = banBase.style.height;
+        paintAnim(banA, 0);
+      }
       banEl.style.display = 'block';
       banEl.style.left = (bn.offsetLeft + bn.clientLeft - res.g) + 'px';
       banEl.style.top = (bn.offsetTop + bn.clientTop - res.g) + 'px';
@@ -146,16 +250,44 @@ if (typeof document !== 'undefined') (async function main() {
       // oyuk bölgesindeki (avatarın solu/altı) fotoğraf köşesini kes
       const bl = bn.clientLeft, bt = bn.clientTop;
       bn.style.clipPath = 'polygon(0 0,100% 0,100% 100%,' + (res.bx + bl) + 'px 100%,' + (res.bx + bl) + 'px ' + (res.ly + bt) + 'px,0 ' + (res.ly + bt) + 'px)';
-    } else { banEl.style.display = 'none'; resetBan(); }
+    } else { banKey = ''; banEl.style.display = 'none'; resetBan(); }
 
-    // halka gövdesinin dış kenarı = fotoğraf kenarı  -> çerçeve fotoğrafın içinde kalır
-    const d = av.offsetWidth, S = 380 * (d / 2) / P.out;
-    avEl.style.left = av.offsetLeft + 'px'; avEl.style.top = av.offsetTop + 'px'; avEl.style.width = d + 'px'; avEl.style.height = av.offsetHeight + 'px';
-    avEl.innerHTML = '<img alt="" src="' + url(cur, 'avatar') + '" style="width:' + S + 'px;height:' + S + 'px">';
+    // avatar çerçevesi: halka gövdesinin dış kenarı = fotoğraf kenarı -> çerçeve fotoğrafın içinde kalır
+    const d = av.offsetWidth, ring = CV[cur + 'avatar'];
+    if (ring && d) {
+      const k2 = [cur, d, dpr].join();
+      if (k2 !== avKey) {
+        avKey = k2;
+        const D = Math.round(d * dpr), S = 380 * (d / 2) / P.out * dpr;
+        avBase.width = avBase.height = D;
+        const bx = avBase.getContext('2d'); bx.clearRect(0, 0, D, D); bx.imageSmoothingQuality = 'high';
+        bx.drawImage(ring, (D - S) / 2, (D - S) / 2, S, S);
+        setAnimBase(avA, avBase, cur, 5);
+        avCan.style.width = d + 'px'; avCan.style.height = d + 'px';
+        paintAnim(avA, 0);
+      }
+      avEl.style.left = av.offsetLeft + 'px'; avEl.style.top = av.offsetTop + 'px'; avEl.style.width = d + 'px'; avEl.style.height = av.offsetHeight + 'px';
+      avEl.style.display = 'block';
+    } else { avKey = ''; avEl.style.display = 'none'; }
+    startLoop();
   }
-  const apply = k => { cur = PAL[k] ? k : null; render(); };
+
+  let outT = 0;
+  function apply(k) {
+    clearTimeout(outT);
+    const nk = PAL[k] ? k : null;
+    if (!nk && cur && !reduce) {              // çerçeve kaldırıldı: yumuşakça sol
+      banEl.classList.add('cr-out'); avEl.classList.add('cr-out');
+      outT = setTimeout(() => { cur = null; banEl.classList.remove('cr-out'); avEl.classList.remove('cr-out'); render(); }, 260);
+      return;
+    }
+    const changed = !!nk && nk !== cur;
+    cur = nk; banEl.classList.remove('cr-out'); avEl.classList.remove('cr-out');
+    render();
+    if (changed) playIn();                    // yeni çerçeve: giriş animasyonu
+  }
   if (window.ResizeObserver) { const ro = new ResizeObserver(render); ro.observe(bn); ro.observe(head); } else window.addEventListener('resize', render);
-  ready.then(render);
+  ready.then(() => { render(); if (cur) playIn(); });
 
   const memo = {}; let curId = null;
   async function load(id) {
