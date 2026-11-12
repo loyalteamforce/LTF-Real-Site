@@ -169,3 +169,13 @@
   s.setAttribute('data-cerceve', '');
   document.body.appendChild(s);
 })();
+
+/* ---------- Müzik sekmesi (muzik.js) otomatik yüklenir ---------- */
+(function () {
+  if (document.querySelector('script[data-muzik]')) return;
+  var s = document.createElement('script');
+  s.type = 'module';
+  s.src = 'muzik.js';
+  s.setAttribute('data-muzik', '');
+  document.body.appendChild(s);
+})();
