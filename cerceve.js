@@ -7,10 +7,14 @@
        cr-kirmizi-banner.png cr-kirmizi-avatar.png
        cr-mavi-banner.png    cr-mavi-avatar.png
    - ux.js içinden otomatik yüklenir.
-   - Görsellerin koyu/yarı saydam ARKA PLANI yüklenirken temizlenir (sadece efektler kalır).
+   - Görsellerin ARKA PLANI yüklenirken temizlenir (sadece efektler kalır):
+       1) koyu yarı saydam pikseller silinir
+       2) dışarıdan ve boş pencereden sel doldurma ile soluk gri/beyaz sis ve plaka silinir
+          (köşelerde kalan beyaz lekeler bunlardı)
    - BANNER çerçevesi her ekran boyutunda parça parça çizilir: halkanın dış kenarı
      banner kenarına oturur, sol alttaki oyuk profil fotoğrafının etrafına oturur.
    - Banner fotoğrafı oyuk bölgesinden kesilir (çerçevenin dışına taşan köşe kalmaz).
+     Giriş animasyonları bittikten sonra ölçüm yeniden yapılır, yoksa kesim yanlış yere oturuyordu.
    - Avatar çerçevesi fotoğrafın İÇİNDE durur.
    - ANİMASYON: parlama süpürmesi + yıldız pırıltıları + hafif nefes alma (sadece çerçevenin
      kendi piksellerinde). Çerçeve değişince giriş animasyonu, kaldırınca solma animasyonu.
@@ -27,13 +31,42 @@ const PAL = {
 };
 const src = (k, t) => 'cr-' + k + '-' + t + '.png';
 
-/* ---------- Arka plan temizleme: koyu yarı saydam pikselleri sil, avatar deliğinin içini boşalt ---------- */
+/* ---------- Arka plan temizleme: koyu yarı saydam pikselleri sil, soluk beyaz/gri sisi sil, avatar deliğinin içini boşalt ---------- */
 const CV = {};      // temizlenmiş canvas'lar
 const URLS = {};    // dataURL önbelleği
 const url = (k, t) => {
   const c = CV[k + t]; if (!c) return src(k, t);
   return URLS[k + t] || (URLS[k + t] = c.toDataURL('image/png'));
 };
+
+// Görselin dışından (kenarlar) ve ortasındaki boş pencereden başlayıp "arka plan gibi" piksellere yayılır, hepsini siler.
+// Arka plan sayılanlar: neredeyse saydam pikseller, soluk gri/beyaz yarı saydam sis, saf beyaz plaka.
+// Halkanın kendisi mavi/kırmızı/renkli olduğu için sel onu geçemez; halkanın içindeki parlaklıklara dokunulmaz.
+function floodBg(d, w, h) {
+  const N = w * h, seen = new Uint8Array(N), q = new Int32Array(N);
+  let qh = 0, qt = 0;
+  const isBg = p => {
+    const i = p * 4, a = d[i + 3];
+    if (a < 24) return true;
+    const mx = Math.max(d[i], d[i + 1], d[i + 2]), sat = mx - Math.min(d[i], d[i + 1], d[i + 2]);
+    if (sat < 40 && mx > 120 && a < 250) return true;   // soluk gri/beyaz yarı saydam sis
+    if (sat < 14 && mx > 200) return true;              // saf beyaz plaka
+    return false;
+  };
+  const push = p => { if (!seen[p] && isBg(p)) { seen[p] = 1; q[qt++] = p; } };
+  for (let x = 0; x < w; x++) { push(x); push((h - 1) * w + x); }
+  for (let y = 0; y < h; y++) { push(y * w); push(y * w + w - 1); }
+  push((h >> 1) * w + (w >> 1));
+  while (qh < qt) {
+    const p = q[qh++], x = p % w, y = (p / w) | 0;
+    d[p * 4 + 3] = 0;
+    if (x > 0) push(p - 1);
+    if (x < w - 1) push(p + 1);
+    if (y > 0) push(p - w);
+    if (y < h - 1) push(p + w);
+  }
+}
+
 function cleanImg(k, t) {
   return new Promise(res => {
     const im = new Image();
@@ -57,6 +90,7 @@ function cleanImg(k, t) {
           }
           d[i + 3] = a;
         }
+        floodBg(d, w, h);
         x.putImageData(id, 0, 0);
         CV[k + t] = c;
       } catch (_) { /* temizlenemezse orijinal görsel kullanılır */ }
@@ -103,6 +137,10 @@ function drawBanner(canvas, k, Wd, Hd, cx, cy, r, dpr) {
   // sol kenar: avatarın üstünde biter
   P(B.L - Gm, B.T + c, Gm + tb, B.ly - capH - (B.T + c), 0, g + c * s, (Gm + tb) * s, LyD - capH * s - (g + c * s));
   P(B.L - Gm, B.ly - capH, Gm + tb, capH, 0, LyD - capH * s, (Gm + tb) * s, capH * s);
+  // güvenlik: avatarın solu ve altı (oyuk bölgesi) kesinlikle boş kalsın, hiçbir leke çıkmasın
+  x.save(); x.globalCompositeOperation = 'destination-out'; x.fillStyle = '#000';
+  x.fillRect(0, LyD, bxD, CH - LyD);
+  x.restore();
   return { g, rad: 46 * s, ly: lyRel, bx: bxRel };
 }
 
@@ -289,6 +327,17 @@ if (typeof document !== 'undefined') (async function main() {
   if (window.ResizeObserver) { const ro = new ResizeObserver(render); ro.observe(bn); ro.observe(head); } else window.addEventListener('resize', render);
   ready.then(() => { render(); if (cur) playIn(); });
 
+  // Avatarın konumu giriş animasyonları (kayma/büyüme) sürerken yanlış ölçülüyordu: bu yüzden oyuk
+  // yanlış yere kesilip banner fotoğrafının köşesi dışarı taşıyordu. Animasyonlar bitince ve sayfa
+  // tam yüklenince ölçümü yeniden yap.
+  const again = () => { if (cur) render(); };
+  head.addEventListener('animationend', again);
+  bn.addEventListener('animationend', again);
+  window.addEventListener('load', again);
+  window.addEventListener('pageshow', again);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(again);
+  [250, 700, 1500].forEach(ms => setTimeout(again, ms));
+
   const memo = {}; let curId = null;
   async function load(id) {
     if (Object.prototype.hasOwnProperty.call(memo, id)) return memo[id];
@@ -301,7 +350,7 @@ if (typeof document !== 'undefined') (async function main() {
   async function onProfile() {
     const P = window.__lefProfile; if (!P) return;
     curId = P.id; const v = await load(P.id);
-    if (curId === P.id) apply(v);
+    if (curId === P.id) { apply(v); setTimeout(again, 900); }
   }
   window.addEventListener('lef-profile', onProfile); onProfile();
 
