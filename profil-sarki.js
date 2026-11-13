@@ -1,5 +1,5 @@
 /* ============================================================
-   PROFİL ŞARKISI: her üye profiline kendi MP3'ünü ekler.
+   EN SEVİLEN ŞARKI (profil şarkısı): her üye profiline kendi MP3'ünü ekler.
    - Şarkı kartı profil sayfasında (biyografinin altında) görünür.
    - Başkaları profile bakınca şarkıyı çalabilir (otomatik çalmaz).
    - Sadece profilin sahibi MP3 ekleyebilir, değiştirebilir, kaldırabilir.
@@ -51,16 +51,16 @@ function init(){
   const style = document.createElement('style'); style.textContent = CSS; document.head.appendChild(style);
 
   const card = document.createElement('section');
-  card.className = 'ps-card'; card.hidden = true; card.setAttribute('aria-label', 'Profil şarkısı');
+  card.className = 'ps-card'; card.hidden = true; card.setAttribute('aria-label', 'En sevilen şarkı');
   card.innerHTML =
-    '<div class="ps-head">♪ Profil şarkısı</div>' +
+    '<div class="ps-head">♪ En sevdiğim şarkı</div>' +
     '<div class="ps-row ps-player" hidden>' +
       '<button type="button" class="ps-play" aria-label="Çal"></button>' +
       '<div class="ps-mid"><div class="ps-title"></div>' +
         '<input class="ps-seek" type="range" min="0" max="1000" value="0" aria-label="Şarkı konumu">' +
         '<div class="ps-time"><span class="ps-cur">0:00</span><span class="ps-dur">0:00</span></div></div>' +
     '</div>' +
-    '<div class="ps-empty" hidden>Henüz şarkı eklemedin. Bir MP3 yükleyip profiline müzik koy.</div>' +
+    '<div class="ps-empty" hidden>En sevdiğin şarkıyı henüz eklemedin. Bir MP3 yükleyip profiline koy, herkes görsün.</div>' +
     '<div class="ps-own" hidden>' +
       '<button type="button" class="bio-btn" data-a="pick">Şarkı ekle</button>' +
       '<button type="button" class="bio-btn" data-a="del" hidden>Kaldır</button>' +

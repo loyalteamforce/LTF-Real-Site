@@ -1,21 +1,36 @@
 /* ============================================================
    ALT MENÜ BÜYÜTME (app.html'deki .dock stillerinin üstüne biner)
    puan-karti.js bu dosyayı otomatik yükler.
-   Buton sayısı (Müzik, Ardevyl...) arttıkça butonlar ekrana sığacak şekilde daralır.
+   Müzik ve Ardevyl butonları alt menüden çıkarıldı (kisayollar.js Ana Sayfa'ya taşır).
+   Boyut: butonlar 78px'e kadar büyür, ekran dar ise eşit şekilde daralır.
    ============================================================ */
 .dock{ bottom:max(18px, env(safe-area-inset-bottom)); width:max-content; max-width:calc(100vw - 16px); }
-.dock-bar{ display:flex; width:100%; gap:5px; padding:8px 9px; box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 14px 36px -8px rgba(0,0,0,.8); }
-.dock-btn{ flex:0 1 66px; width:auto; min-width:0; height:56px; }
-.dock-btn svg{ width:26px; height:26px; stroke-width:1.6; }
-.dock-tip{ height:32px; padding:0 14px; border-radius:12px; font-size:14px; }
-#app{ padding-bottom:calc(132px + env(safe-area-inset-bottom)); }
+.dock-bar{ display:flex; width:100%; gap:6px; padding:10px; box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 16px 40px -8px rgba(0,0,0,.85); }
+.dock-btn{ flex:0 1 78px; width:auto; min-width:0; height:64px; }
+.dock-btn svg{ width:30px; height:30px; stroke-width:1.6; }
+.dock-tip{ height:34px; padding:0 15px; border-radius:12px; font-size:14px; }
+#app{ padding-bottom:calc(150px + env(safe-area-inset-bottom)); }
+
+/* Müzik ve Ardevyl düğmeleri alt menüde görünmesin (sayfa açılırken anında gizle) */
+.dock-bar .ag-dockbtn, .dock-bar [data-view="muzik"], .dock-bar .dock-out{ display:none !important; }
+/* Aktif sekme yokken (örn. Müzik sayfası) gösterge boşta kalmasın */
+.dock-bar:not(:has(.dock-btn[aria-current="page"])) .dock-ind{ opacity:0 !important; }
+/* Ardevyl sohbeti açıkken aktif sekme beyaz kalsın */
+.dock-bar:has(.ag-dockbtn[aria-expanded="true"]) .dock-btn[aria-current="page"]{ color:#fff; }
+
+/* Ardevyl sohbet paneli ve maskot, büyük menünün üstünde dursun */
+.agc{ bottom:calc(114px + env(safe-area-inset-bottom)); height:min(740px, calc(100dvh - 150px)); }
+.ag[data-pos="b"]{ bottom:calc(114px + env(safe-area-inset-bottom)); }
 
 /* Masaüstü: sol dikey menü de büyür */
 @media (min-width:900px){
-  body{ padding-left:108px; }
+  body{ padding-left:116px; }
   #app{ padding-bottom:48px; }
   .dock{ width:auto; max-width:none; }
-  .dock-bar{ display:inline-flex; width:auto; padding:10px 8px; gap:8px; }
-  .dock-btn{ flex:none; width:64px; height:60px; }
-  .dock-btn svg{ width:28px; height:28px; }
+  .dock-bar{ display:inline-flex; width:auto; padding:12px 10px; gap:8px; }
+  .dock-btn{ flex:none; width:72px; height:68px; }
+  .dock-btn svg{ width:32px; height:32px; }
+  .agc{ left:128px; bottom:24px; height:min(860px, calc(100dvh - 48px)); }
+  .ag[data-pos="l"]{ left:116px; }
+  .ag[data-pos="b"]{ bottom:20px; }
 }
