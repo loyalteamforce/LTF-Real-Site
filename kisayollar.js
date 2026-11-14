@@ -22,6 +22,14 @@
   tidy();
   new MutationObserver(tidy).observe(bar, { childList: true });
 
+  /* ---------- Kayan gösterge boyut değişince yeniden hizalansın ----------
+     dock-buyuk.css sayfa yüklendikten sonra gelir; butonlar büyüyünce gösterge eski ölçüde kalıyordu. */
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(function () { if (window.__dockInd) window.__dockInd(true); });
+    ro.observe(bar);
+    bar.querySelectorAll('.dock-btn').forEach(function (b) { ro.observe(b); });
+  }
+
   /* ---------- Ana Sayfa kısayolları ---------- */
   var css = document.createElement('style');
   css.textContent =

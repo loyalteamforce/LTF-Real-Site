@@ -4,9 +4,10 @@
    Müzik ve Ardevyl butonları alt menüden çıkarıldı (kisayollar.js Ana Sayfa'ya taşır).
    Boyut: butonlar 78px'e kadar büyür, ekran dar ise eşit şekilde daralır.
    ============================================================ */
-.dock{ bottom:max(18px, env(safe-area-inset-bottom)); width:max-content; max-width:calc(100vw - 16px); }
+.dock{ bottom:max(18px, env(safe-area-inset-bottom)); width:min(434px, calc(100vw - 16px)); max-width:none; }
 .dock-bar{ display:flex; width:100%; gap:6px; padding:10px; box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 16px 40px -8px rgba(0,0,0,.85); }
-.dock-btn{ flex:0 1 78px; width:auto; min-width:0; height:64px; }
+/* flex:1 1 0 -> butonlar menü genişliğini eşit paylaşır (eskiden max-content hesabı menüyü ~256px'e daraltıp butonları ince-uzun yapıyordu) */
+.dock-btn{ flex:1 1 0; width:auto; max-width:78px; min-width:0; height:64px; }
 .dock-btn svg{ width:30px; height:30px; stroke-width:1.6; }
 .dock-tip{ height:34px; padding:0 15px; border-radius:12px; font-size:14px; }
 #app{ padding-bottom:calc(150px + env(safe-area-inset-bottom)); }
@@ -26,9 +27,10 @@
 @media (min-width:900px){
   body{ padding-left:116px; }
   #app{ padding-bottom:48px; }
-  .dock{ width:auto; max-width:none; }
+  /* üstte yazılan bottom, app.html'deki top:50% ile çakışıp menüyü aşağı itiyordu: masaüstünde bottom iptal */
+  .dock, .dock.is-hidden{ bottom:auto; width:auto; max-width:none; }
   .dock-bar{ display:inline-flex; width:auto; padding:12px 10px; gap:8px; }
-  .dock-btn{ flex:none; width:72px; height:68px; }
+  .dock-btn{ flex:none; width:72px; max-width:none; height:68px; }
   .dock-btn svg{ width:32px; height:32px; }
   .agc{ left:128px; bottom:24px; height:min(860px, calc(100dvh - 48px)); }
   .ag[data-pos="l"]{ left:116px; }
