@@ -7,23 +7,25 @@
        cr-kirmizi-banner.png cr-kirmizi-avatar.png
        cr-mavi-banner.png    cr-mavi-avatar.png
    - ux.js içinden otomatik yüklenir.
-   - Görsellerin koyu/yarı saydam ARKA PLANI yüklenirken temizlenir (sadece efektler kalır).
-   - BANNER çerçevesi her ekran boyutunda parça parça çizilir: halkanın dış kenarı
-     banner kenarına oturur, sol alttaki oyuk profil fotoğrafının etrafına oturur.
-   - Banner fotoğrafı oyuk bölgesinden kesilir (çerçevenin dışına taşan köşe kalmaz).
+   - Görsellerin koyu ARKA PLANI (koyu kırmızı/mavi dolgu + duman) yüklenirken parlaklığa göre silinir,
+     geriye sadece parlak efektler (tüy, zincir, ışık çizgileri) kalır. Eşikler PAL içindeki `key`.
+   - BANNER çerçevesi her ekran boyutunda parça parça çizilir ve banner'ı 4 kenardan TAM sarar
+     (sol-alt köşe sağ-alt köşenin aynası; sol ve alt kenar uzatılır). Oyuk/kesik yok:
+     profil fotoğrafı çerçevenin sol-alt köşesinin ÜSTÜNDE durur, banner fotoğrafı kesilmez.
    - Avatar çerçevesi fotoğrafın İÇİNDE durur.
-   - ANİMASYON: parlama süpürmesi + yıldız pırıltıları + hafif nefes alma (sadece çerçevenin
+   - ANIMASYON: parlama süpürmesi + yıldız pırıltıları + hafif nefes alma (sadece çerçevenin
      kendi piksellerinde). Çerçeve değişince giriş animasyonu, kaldırınca solma animasyonu.
      "Hareketi azalt" ayarı açıksa animasyonlar kapanır.
    ============================================================ */
 import { supabase } from './config.js';
 
 // hole/out: avatar çerçevesi iç boşluk / halka dış yarıçapı (piksel)
-// ban: banner PNG ölçüleri -> L,T,R,B = halka çubuklarının DIŞ kenarı; bx = alt kenarın başladığı x; ly = sol kenarın bittiği y
+// key: [alt, üst] aydınlık (luma) eşiği; bunun altındaki koyu arka plan tamamen silinir, üstü olduğu gibi kalır (beyaz çerçevede yok)
+// ban: banner PNG ölçüleri -> L,T,R,B = halka çubuklarının DİŞ kenarı; bx = alt kenarın başladığı x; ly = sol kenarın bittiği y
 const PAL = {
   beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, ban: { L: 30, T: 30, R: 882, B: 352, bx: 372, ly: 314 } },
-  kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, ban: { L: 30, T: 30, R: 880, B: 358, bx: 368, ly: 304 } },
-  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, ban: { L: 30, T: 30, R: 874, B: 348, bx: 373, ly: 282 } }
+  kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, key: [95, 160], ban: { L: 30, T: 30, R: 880, B: 358, bx: 368, ly: 304 } },
+  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, key: [85, 150], ban: { L: 30, T: 30, R: 874, B: 348, bx: 373, ly: 282 } }
 };
 const src = (k, t) => 'cr-' + k + '-' + t + '.png';
 
@@ -43,12 +45,16 @@ function cleanImg(k, t) {
         const c = document.createElement('canvas'); c.width = w; c.height = h;
         const x = c.getContext('2d'); x.drawImage(im, 0, 0);
         const id = x.getImageData(0, 0, w, h), d = id.data;
-        const hole = t === 'avatar' ? PAL[k].hole : 0;
+        const hole = t === 'avatar' ? PAL[k].hole : 0, key = PAL[k].key;
         for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) {
           const i = (y * w + xx) * 4; let a = d[i + 3];
           if (a === 0) continue;
-          if (a < 255) {
-            const mx = Math.max(d[i], d[i + 1], d[i + 2]);
+          const mx = Math.max(d[i], d[i + 1], d[i + 2]);
+          if (key) {                       // koyu/doygun dolgu + duman: aydınlığa (luma) göre sil (opak olsa bile)
+            const lum = .299 * d[i] + .587 * d[i + 1] + .114 * d[i + 2];   // doygun kırmızı/mavi dolgu düşük, parlak çizgiler yüksek çıkar
+            const t = Math.min(1, Math.max(0, (lum - key[0]) / (key[1] - key[0])));
+            a *= t * t * (3 - 2 * t);
+          } else if (a < 255) {
             a *= Math.min(1, Math.max(0, (mx - 45) / 70));
           }
           if (hole) {
@@ -68,8 +74,8 @@ function cleanImg(k, t) {
 }
 const ready = Promise.all(Object.keys(PAL).flatMap(k => ['avatar', 'banner'].map(t => cleanImg(k, t))));
 
-/* ---------- Banner çerçevesini parça parça çiz (oyuk avatarın etrafına oturur) ---------- */
-function drawBanner(canvas, k, Wd, Hd, cx, cy, r, dpr) {
+/* ---------- Banner çerçevesini parça parça çiz: banner'ı 4 kenardan TAM sarar ---------- */
+function drawBanner(canvas, k, Wd, Hd, dpr) {
   const B = PAL[k].ban, im = CV[k + 'banner'];
   if (!im) return null;
   const iw = im.width, ih = im.height;
@@ -80,30 +86,32 @@ function drawBanner(canvas, k, Wd, Hd, cx, cy, r, dpr) {
   canvas.style.width = CW + 'px'; canvas.style.height = CH + 'px';
   const x = canvas.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
   x.clearRect(0, 0, CW, CH); x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high';
-  const P = (sx, sy, sw, sh, dx, dy, dw, dh) => {
+  // P: kaynaktan parça çiz (görsel sınırına taşan kısım orantılı kırpılır); mirror=true ise yatay ayna
+  const P = (sx, sy, sw, sh, dx, dy, dw, dh, mirror) => {
     if (dw <= .5 || dh <= .5 || sw <= 0 || sh <= 0) return;
     const x0 = Math.max(sx, 0), y0 = Math.max(sy, 0), x1 = Math.min(sx + sw, iw), y1 = Math.min(sy + sh, ih);
     if (x1 <= x0 || y1 <= y0) return;
     const fx = dw / sw, fy = dh / sh;
-    x.drawImage(im, x0, y0, x1 - x0, y1 - y0, dx + (x0 - sx) * fx, dy + (y0 - sy) * fy, (x1 - x0) * fx, (y1 - y0) * fy);
+    const ddy = dy + (y0 - sy) * fy, ddh = (y1 - y0) * fy, ddw = (x1 - x0) * fx;
+    if (!mirror) { x.drawImage(im, x0, y0, x1 - x0, y1 - y0, dx + (x0 - sx) * fx, ddy, ddw, ddh); return; }
+    x.save(); x.translate(dx + dw, 0); x.scale(-1, 1);                 // aynalı: hedef kutunun içinde sağdan sola
+    x.drawImage(im, x0, y0, x1 - x0, y1 - y0, (x0 - sx) * fx, ddy, ddw, ddh);
+    x.restore();
   };
-  const lyRel = Math.max(c * s * 1.4, Math.min(cy - .15 * r, Hd - 8));   // sol kenarın bittiği y (banner içinde)
-  const bxRel = Math.min(cx + .92 * r, Wd * .6);                         // alt kenarın başladığı x (banner içinde)
-  const LyD = g + lyRel, bxD = g + bxRel;
-  // köşeler
-  P(B.L - Gm, B.T - Gm, c + Gm, c + Gm, 0, 0, (c + Gm) * s, (c + Gm) * s);
-  P(B.R - c, B.T - Gm, c + Gm, c + Gm, g + Wd - c * s, 0, (c + Gm) * s, (c + Gm) * s);
-  P(B.R - c, B.B - c, c + Gm, c + Gm, g + Wd - c * s, g + Hd - c * s, (c + Gm) * s, (c + Gm) * s);
+  const cs = (c + Gm) * s, ci = c * s;
+  // 4 köşe (sol-alt = sağ-alt köşenin aynası, çünkü görselde sol-altta avatar oyğu var)
+  P(B.L - Gm, B.T - Gm, c + Gm, c + Gm, 0, 0, cs, cs);
+  P(B.R - c, B.T - Gm, c + Gm, c + Gm, g + Wd - ci, 0, cs, cs);
+  P(B.R - c, B.B - c, c + Gm, c + Gm, g + Wd - ci, g + Hd - ci, cs, cs);
+  P(B.R - c, B.B - c, c + Gm, c + Gm, 0, g + Hd - ci, cs, cs, true);
   // üst ve sağ kenar
-  P(B.L + c, B.T - Gm, (B.R - B.L) - 2 * c, Gm + tb, g + c * s, 0, Wd - 2 * c * s, (Gm + tb) * s);
-  P(B.R - tb, B.T + c, tb + Gm, (B.B - B.T) - 2 * c, g + Wd - tb * s, g + c * s, (tb + Gm) * s, Hd - 2 * c * s);
-  // alt kenar: avatarın hemen sağından başlar
-  P(B.bx + cap, B.B - tb, (B.R - c) - (B.bx + cap), tb + Gm, bxD + cap * s, g + Hd - tb * s, (g + Wd - c * s) - (bxD + cap * s), (tb + Gm) * s);
-  P(B.bx, B.B - tb, cap, tb + Gm, bxD, g + Hd - tb * s, cap * s, (tb + Gm) * s);
-  // sol kenar: avatarın üstünde biter
-  P(B.L - Gm, B.T + c, Gm + tb, B.ly - capH - (B.T + c), 0, g + c * s, (Gm + tb) * s, LyD - capH * s - (g + c * s));
-  P(B.L - Gm, B.ly - capH, Gm + tb, capH, 0, LyD - capH * s, (Gm + tb) * s, capH * s);
-  return { g, rad: 46 * s, ly: lyRel, bx: bxRel };
+  P(B.L + c, B.T - Gm, (B.R - B.L) - 2 * c, Gm + tb, g + ci, 0, Wd - 2 * ci, (Gm + tb) * s);
+  P(B.R - tb, B.T + c, tb + Gm, (B.B - B.T) - 2 * c, g + Wd - tb * s, g + ci, (tb + Gm) * s, Hd - 2 * ci);
+  // alt kenar: görseldeki alt şerit tüm genişliğe yayılır
+  P(B.bx + cap, B.B - tb, (B.R - c) - (B.bx + cap), tb + Gm, g + ci, g + Hd - tb * s, Wd - 2 * ci, (tb + Gm) * s);
+  // sol kenar: görseldeki sol şerit (oyuğa kadar olan kısmı) tüm yüksekliğe yayılır
+  P(B.L - Gm, B.T + c, Gm + tb, B.ly - capH - (B.T + c), 0, g + ci, (Gm + tb) * s, Hd - 2 * ci);
+  return { g, rad: 46 * s };
 }
 
 /*ANIM-START*/
@@ -230,11 +238,8 @@ if (typeof document !== 'undefined') (async function main() {
     if (!cur || !w || !h) { banEl.style.display = 'none'; avEl.style.display = 'none'; resetBan(); banKey = avKey = ''; stopLoop(); return; }
     const P = PAL[cur], dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    // avatarın banner'a göre konumu (oyuğu buna göre açıyoruz)
-    const br = bn.getBoundingClientRect(), ar = av.getBoundingClientRect();
-    const r = ar.width / 2, cx = ar.left + r - br.left - bn.clientLeft, cy = ar.top + ar.height / 2 - br.top - bn.clientTop;
-    const key = [cur, w, h, Math.round(cx), Math.round(cy), Math.round(r), dpr].join();
-    const res = drawBanner(banBase, cur, w, h, cx, cy, r, dpr);
+    const key = [cur, w, h, dpr].join();
+    const res = drawBanner(banBase, cur, w, h, dpr);
     if (res) {
       if (key !== banKey) {
         banKey = key; setAnimBase(banA, banBase, cur, 9);
@@ -244,12 +249,11 @@ if (typeof document !== 'undefined') (async function main() {
       banEl.style.display = 'block';
       banEl.style.left = (bn.offsetLeft + bn.clientLeft - res.g) + 'px';
       banEl.style.top = (bn.offsetTop + bn.clientTop - res.g) + 'px';
-      // fotoğraf çerçevenin kenarına kadar: köşe yuvarlaklığı halkayla aynı, kenar çizgisi yok
+      // fotoğraf çerçevenin kenarına kadar: köşe yuvarlaklığı halkayla aynı, kenar çizgisi yok.
+      // Kesik/oyuk YOK: banner 4 kenardan tam çerçeveli, avatar sol-alt köşenin üstünde durur.
       bn.style.borderRadius = res.rad + 'px';
       bn.style.borderColor = 'transparent';
-      // oyuk bölgesindeki (avatarın solu/altı) fotoğraf köşesini kes
-      const bl = bn.clientLeft, bt = bn.clientTop;
-      bn.style.clipPath = 'polygon(0 0,100% 0,100% 100%,' + (res.bx + bl) + 'px 100%,' + (res.bx + bl) + 'px ' + (res.ly + bt) + 'px,0 ' + (res.ly + bt) + 'px)';
+      bn.style.clipPath = '';
     } else { banKey = ''; banEl.style.display = 'none'; resetBan(); }
 
     // avatar çerçevesi: halka gövdesinin dış kenarı = fotoğraf kenarı -> çerçeve fotoğrafın içinde kalır
