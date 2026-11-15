@@ -32,3 +32,6 @@ import('./profil-sarki.js').catch(() => {});
 
 // Ana Sayfa kısayolları (Müzik, Ardevyl) ve alt menü düzeni. Yüklenemese bile site normal çalışmaya devam eder.
 import('./kisayollar.js').catch(() => {});
+
+// YouTube çalma yardımcısı: hata nedenini ekranda gösterir, çalmazsa oynatıcıyı görünür yapar.
+import('./yt-duzelt.js').catch(() => {});
