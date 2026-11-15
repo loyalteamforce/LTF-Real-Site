@@ -11,6 +11,10 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 export const FUNCTIONS_URL = SUPABASE_URL + '/functions/v1'; // Ardevyl için
 export { SUPABASE_ANON_KEY };
 
+// Profil şarkısı aramasında kullanılan YouTube Data API anahtarı (boş bırakılırsa herkese açık Piped sunucularına düşer).
+// Anahtar Google Cloud'da "HTTP referrers: loyalteamforce.com/*" ve sadece YouTube Data API v3 ile kısıtlanmalı.
+export const YOUTUBE_API_KEY = 'AIzaSyAHn208oZwEIBtG8FacnNlnHoM5Av8EAqE';
+
 const EMAIL_DOMAIN = '@lefmembers.com';
 
 export function usernameToEmail(username){
