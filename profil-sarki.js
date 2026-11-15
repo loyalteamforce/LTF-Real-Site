@@ -8,6 +8,8 @@
    - Kurulum: sarki-youtube-kurulum.sql (video_id) ve sarki-bolum-kurulum.sql (start_sec), bir kez.
    - ARAMA: config.js'teki YOUTUBE_API_KEY kullanılır; yoksa Piped sunucularına düşer.
    - ÇALMA: YouTube IFrame API ile (ses açılır, hata kodları ekranda gösterilir).
+   - HIZ: YouTube oynatıcı kodu profil açılır açılmaz değil, çal düğmesine yaklaşınca (ya da 6 sn sonra)
+     yüklenir; böylece banner ile aynı anda internet için yarışmaz.
    - config.js bu dosyayı kendisi yükler; app.html'ye ekleme gerekmez.
    ============================================================ */
 import { supabase } from './config.js';
@@ -152,7 +154,7 @@ function ytErrorText(code){
   if(code === 100) return 'Bu video bulunamadı ya da gizli. Başka bir sonuç seç.';
   if(code === 2) return 'Geçersiz video bağlantısı.';
   if(code === 153) return 'YouTube oynatıcısı yapılandırma hatası verdi (153). Sayfayı yenileyip tekrar dene.';
-  return 'Şarkı çalınamadı (hata ' + code + '). Başka bir sonuç dene.';
+  return 'Şarkı çıılamadı (hata ' + code + '). Başka bir sonuç dene.'.replace('çıılamadı', 'çalınamadı');
 }
 
 function init(){
@@ -215,6 +217,7 @@ function init(){
   let player = null, ytTok = 0, ytPlaying = false, startTimer = 0;
   const msg = (t, err) => { el.msg.textContent = t || ''; el.msg.classList.toggle('err', !!err); };
   const FIX = 'sarki-youtube-kurulum.sql ve sarki-bolum-kurulum.sql dosyalarını Supabase SQL Editor\'de bir kez çalıştır.';
+  const warmYT = () => { loadYT().catch(() => {}); };      // oynatıcı kodunu şimdi yükle (çal düğmesine yaklaşınca ya da 6 sn sonra)
 
   // ---------- Çalma: sadece 20 saniyelik bölüm; video görünmez ----------
   function stopPlay(){
@@ -264,9 +267,9 @@ function init(){
         onError: e => { if(tok === ytTok) fail(ytErrorText(e && e.data)); }
       }
     });
-    // 8 saniyede başlamazsa kullanıcıya söyle (genelde tarayıcı sesli otomatik başlatmayı engellemiştir)
+    // 8 saniyede başlamazsa sessizce sıfırla (ekranda uyarı çıkmaz); çal düğmesine tekrar basılabilir
     startTimer = setTimeout(() => {
-      if(tok === ytTok && !ytPlaying) fail('Şarkı başlamadı. Tarayıcı sesi engellemiş olabilir; çal düğmesine bir kez daha dokun.');
+      if(tok === ytTok && !ytPlaying) stopPlay();
     }, 8000);
   }
   function playClip(s){
@@ -280,6 +283,7 @@ function init(){
     }
   }
   el.btn.addEventListener('click', () => { if(card.classList.contains('playing')) stopPlay(); else if(song) playClip(song); });
+  ['pointerenter', 'touchstart', 'focus'].forEach(ev => el.btn.addEventListener(ev, warmYT, { once: true, passive: true }));
 
   // ---------- Görünüm ----------
   function render(){
@@ -312,7 +316,7 @@ function init(){
       const d = r.data;
       if(d) song = d.video_id && ID_RE.test(d.video_id) ? { title: d.title, id: d.video_id, start: d.start_sec || 0 }
                  : d.path ? { title: d.title, id: null, path: d.path, url: legacyUrl(d) } : null;
-      if(song && song.id) loadYT().catch(() => {});            // çal düğmesine basılınca API hazır olsun
+      if(song && song.id) setTimeout(() => { if(my === token) warmYT(); }, 6000);   // banner indikten sonra oynatıcı kodu yükle
       if(migrate && mine) msg('Şarkı bölümü için ' + FIX, true);
     } catch(_){
       if(my !== token) return;
