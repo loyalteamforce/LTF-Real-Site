@@ -35,3 +35,6 @@ import('./kisayollar.js').catch(() => {});
 
 // YouTube çalma yardımcısı: hata nedenini ekranda gösterir, çalmazsa oynatıcıyı görünür yapar.
 import('./yt-duzelt.js').catch(() => {});
+
+// Kart sekmesi: alt menüye Kart butonu ekler (kart seç, fiş animasyonu, LTF üye kartı).
+import('./kart-sekme.js').catch(() => {});
