@@ -7,6 +7,7 @@
    - Veriler: profile_songs tablosu (title, video_id, start_sec). Eski MP3'ler çalmaya devam eder.
    - Kurulum: sarki-youtube-kurulum.sql (video_id) ve sarki-bolum-kurulum.sql (start_sec), bir kez.
    - ARAMA: config.js'teki YOUTUBE_API_KEY kullanılır; yoksa Piped sunucularına düşer.
+   - ÇALMA: YouTube IFrame API ile (ses açılır, hata kodları ekranda gösterilir).
    - config.js bu dosyayı kendisi yükler; app.html'ye ekleme gerekmez.
    ============================================================ */
 import { supabase } from './config.js';
@@ -37,8 +38,8 @@ const CSS = `
 .ps-title{ font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .ps-bar{ height:3px; margin-top:7px; border-radius:2px; background:rgba(255,255,255,.12); overflow:hidden; }
 .ps-bar i{ display:block; height:100%; width:0; background:var(--pf-a,#9db8ff); }
-.ps-hid{ position:absolute; right:0; bottom:0; width:200px; height:113px; opacity:.01; pointer-events:none; overflow:hidden; }
-.ps-hid iframe{ width:100%; height:100%; border:0; }
+.ps-hid{ position:fixed; left:0; bottom:0; width:220px; height:220px; opacity:.01; pointer-events:none; overflow:hidden; z-index:-1; }
+.ps-hid iframe{ width:220px; height:220px; border:0; }
 .ps-own,.ps-q,.ps-act{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:10px; }
 .ps-in{ flex:1 1 160px; min-width:0; padding:9px 11px; border-radius:10px; border:1.5px solid rgba(255,255,255,.14);
   background:rgba(255,255,255,.06); color:#fff; font:inherit; font-size:14px; }
@@ -108,6 +109,18 @@ async function titleOf(id){
   } catch(_){}
   return null;
 }
+/* Video dışarıda (siteye gömülü) çalabilir mi? 'ok' | 'blocked' | 'missing' | 'unknown' */
+async function embedState(id){
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 5000);
+  try {
+    const r = await fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + id), { signal: ctl.signal });
+    if(r.ok) return 'ok';
+    if(r.status === 401 || r.status === 403) return 'blocked';
+    if(r.status === 404) return 'missing';
+    return 'unknown';
+  } catch(_){ return 'unknown'; }
+  finally { clearTimeout(t); }
+}
 async function durationOf(id){   // saniye; bulunamazsa null
   if(!YT_KEY) return null;
   try {
@@ -116,6 +129,30 @@ async function durationOf(id){   // saniye; bulunamazsa null
     if(!m) return null;
     return (+m[1] || 0) * 3600 + (+m[2] || 0) * 60 + (+m[3] || 0);
   } catch(_){ return null; }
+}
+
+/* YouTube IFrame API (bir kez yüklenir) */
+let ytApi = null;
+function loadYT(){
+  if(window.YT && window.YT.Player) return Promise.resolve(window.YT);
+  if(ytApi) return ytApi;
+  ytApi = new Promise((res, rej) => {
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { try { if(prev) prev(); } catch(_){} res(window.YT); };
+    const s = document.createElement('script');
+    s.src = 'https://www.youtube.com/iframe_api';
+    s.onerror = () => { ytApi = null; rej(new Error('yt-api')); };
+    document.head.appendChild(s);
+    setTimeout(() => { if(!(window.YT && window.YT.Player)){ ytApi = null; rej(new Error('yt-timeout')); } }, 10000);
+  });
+  return ytApi;
+}
+function ytErrorText(code){
+  if(code === 101 || code === 150) return 'Bu şarkının sahibi dışarıda çalmaya izin vermiyor. Başka bir sonuç seç.';
+  if(code === 100) return 'Bu video bulunamadı ya da gizli. Başka bir sonuç seç.';
+  if(code === 2) return 'Geçersiz video bağlantısı.';
+  if(code === 153) return 'YouTube oynatıcısı yapılandırma hatası verdi (153). Sayfayı yenileyip tekrar dene.';
+  return 'Şarkı çalınamadı (hata ' + code + '). Başka bir sonuç dene.';
 }
 
 function init(){
@@ -175,33 +212,72 @@ function init(){
 
   let token = 0, lastId = null, song = null, mine = false, setupOk = true, migrate = false;
   let finding = false, picking = null, busy = false, timer = 0, watch = 0, audio = null;
+  let player = null, ytTok = 0, ytPlaying = false, startTimer = 0;
   const msg = (t, err) => { el.msg.textContent = t || ''; el.msg.classList.toggle('err', !!err); };
   const FIX = 'sarki-youtube-kurulum.sql ve sarki-bolum-kurulum.sql dosyalarını Supabase SQL Editor\'de bir kez çalıştır.';
 
   // ---------- Çalma: sadece 20 saniyelik bölüm; video görünmez ----------
   function stopPlay(){
-    clearTimeout(timer); clearInterval(watch); timer = watch = 0;
+    clearTimeout(timer); clearTimeout(startTimer); clearInterval(watch); timer = startTimer = watch = 0;
+    ytTok++; ytPlaying = false;                                // eski oynatıcının gecikmiş olayları yok sayılır
+    if(player){ try { player.destroy(); } catch(_){} player = null; }
     el.hid.textContent = '';                                   // iframe kalkınca ses durur
     if(audio){ audio.pause(); audio = null; }
     el.bar.style.transition = 'none'; el.bar.style.width = '0';
     card.classList.remove('playing'); el.btn.setAttribute('aria-label', 'Çal');
   }
-  function playClip(s){
-    stopPlay();
-    card.classList.add('playing'); el.btn.setAttribute('aria-label', 'Durdur');
-    if(s.id){
-      const st = Math.max(0, Math.floor(s.start || 0));
-      const f = document.createElement('iframe');
-      f.src = 'https://www.youtube-nocookie.com/embed/' + s.id + '?autoplay=1&controls=0&rel=0&playsinline=1&start=' + st + '&end=' + (st + CLIP);
-      f.allow = 'autoplay; encrypted-media'; f.title = s.title || 'Şarkı';
-      el.hid.appendChild(f);
-    } else if(s.url){
-      audio = new Audio(s.url); audio.play().catch(() => { msg('Şarkı çalınamadı.', true); stopPlay(); });
-    }
+  function runBar(){                                           // ilerleme çubuğu: ses gerçekten başlayınca çalışır
     void el.bar.offsetWidth;
     el.bar.style.transition = 'width ' + CLIP + 's linear'; el.bar.style.width = '100%';
-    timer = setTimeout(stopPlay, CLIP * 1000 + 600);
+    clearTimeout(timer); timer = setTimeout(stopPlay, CLIP * 1000 + 600);
+  }
+  function fail(text){ stopPlay(); msg(text, true); }
+
+  function startYT(s){
+    const st = Math.max(0, Math.floor(s.start || 0)), tok = ++ytTok;
+    const box = document.createElement('div'); el.hid.appendChild(box);
+    if(!(window.YT && window.YT.Player)){
+      // API henüz yüklenmediyse düz iframe ile dene (bir sonraki sefere API hazır olur)
+      loadYT().catch(() => {});
+      const f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + s.id + '?autoplay=1&controls=0&rel=0&playsinline=1&start=' + st + '&end=' + (st + CLIP);
+      f.allow = 'autoplay; encrypted-media'; f.title = s.title || 'Şarkı'; f.referrerPolicy = 'strict-origin-when-cross-origin';
+      el.hid.textContent = ''; el.hid.appendChild(f);
+      runBar();
+      return;
+    }
+    player = new window.YT.Player(box, {
+      width: 220, height: 220, videoId: s.id, host: 'https://www.youtube-nocookie.com',
+      playerVars: { autoplay: 1, controls: 0, rel: 0, playsinline: 1, start: st, end: st + CLIP, origin: location.origin },
+      events: {
+        onReady: e => {
+          if(tok !== ytTok) return;
+          try { e.target.unMute(); e.target.setVolume(100); e.target.playVideo(); } catch(_){}
+        },
+        onStateChange: e => {
+          if(tok !== ytTok) return;
+          if(e.data === 1){                                    // çalıyor
+            try { if(e.target.isMuted && e.target.isMuted()){ e.target.unMute(); e.target.setVolume(100); } } catch(_){}
+            if(!ytPlaying){ ytPlaying = true; clearTimeout(startTimer); msg(''); runBar(); }
+          } else if(e.data === 0){ stopPlay(); }               // bölüm bitti
+        },
+        onError: e => { if(tok === ytTok) fail(ytErrorText(e && e.data)); }
+      }
+    });
+    // 8 saniyede başlamazsa kullanıcıya söyle (genelde tarayıcı sesli otomatik başlatmayı engellemiştir)
+    startTimer = setTimeout(() => {
+      if(tok === ytTok && !ytPlaying) fail('Şarkı başlamadı. Tarayıcı sesi engellemiş olabilir; çal düğmesine bir kez daha dokun.');
+    }, 8000);
+  }
+  function playClip(s){
+    stopPlay(); msg('');
+    card.classList.add('playing'); el.btn.setAttribute('aria-label', 'Durdur');
     watch = setInterval(() => { if(pv.getClientRects().length === 0) stopPlay(); }, 1200);   // profil ekranından çıkılınca sus
+    if(s.id){ startYT(s); }
+    else if(s.url){
+      audio = new Audio(s.url);
+      audio.play().then(runBar).catch(() => fail('Şarkı çalınamadı.'));
+    }
   }
   el.btn.addEventListener('click', () => { if(card.classList.contains('playing')) stopPlay(); else if(song) playClip(song); });
 
@@ -236,6 +312,7 @@ function init(){
       const d = r.data;
       if(d) song = d.video_id && ID_RE.test(d.video_id) ? { title: d.title, id: d.video_id, start: d.start_sec || 0 }
                  : d.path ? { title: d.title, id: null, path: d.path, url: legacyUrl(d) } : null;
+      if(song && song.id) loadYT().catch(() => {});            // çal düğmesine basılınca API hazır olsun
       if(migrate && mine) msg('Şarkı bölümü için ' + FIX, true);
     } catch(_){
       if(my !== token) return;
@@ -307,7 +384,12 @@ function init(){
     el.clR.textContent = mmss(s) + ' – ' + mmss(s + CLIP);
   }
   async function choose(id, title){
-    stopPlay(); msg('Şarkı süresi alınıyor…');
+    stopPlay(); msg('Şarkı kontrol ediliyor…');
+    const es = await embedState(id);                // sahibi dışarıda çalmayı kapattıysa baştan söyle
+    if(es === 'blocked'){ msg('Bu şarkının sahibi dışarıda çalmaya izin vermiyor. Başka bir sonuç seç.', true); return; }
+    if(es === 'missing'){ msg('Bu video bulunamadı ya da gizli. Başka bir sonuç seç.', true); return; }
+    loadYT().catch(() => {});                       // "Dinle"ye basılınca oynatıcı API'si hazır olsun
+    msg('Şarkı süresi alınıyor…');
     const dur = await durationOf(id);               // anahtar yoksa bilinmez: 10 dakikaya kadar kaydırılabilir
     const max = Math.max(0, (dur || 600) - CLIP);
     picking = { id, title, start: 0 }; finding = false;
@@ -337,7 +419,7 @@ function init(){
   card.addEventListener('click', async e => {
     const b = e.target.closest('[data-a]'); if(!b || busy || !mine) return;
     const a = b.dataset.a;
-    if(a === 'pick'){ finding = true; picking = null; msg(''); render(); el.input.focus(); return; }
+    if(a === 'pick'){ finding = true; picking = null; msg(''); loadYT().catch(() => {}); render(); el.input.focus(); return; }
     if(a === 'cancel'){ finding = false; el.res.textContent = ''; msg(''); render(); return; }
     if(a === 'go'){ search(); return; }
     if(a === 'try'){ if(picking){ if(card.classList.contains('playing')) stopPlay(); else playClip({ id: picking.id, start: picking.start, title: picking.title }); } return; }
