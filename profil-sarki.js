@@ -154,7 +154,7 @@ function ytErrorText(code){
   if(code === 100) return 'Bu video bulunamadı ya da gizli. Başka bir sonuç seç.';
   if(code === 2) return 'Geçersiz video bağlantısı.';
   if(code === 153) return 'YouTube oynatıcısı yapılandırma hatası verdi (153). Sayfayı yenileyip tekrar dene.';
-  return 'Şarkı çıılamadı (hata ' + code + '). Başka bir sonuç dene.'.replace('çıılamadı', 'çalınamadı');
+  return 'Şarkı çalınamadı (hata ' + code + '). Başka bir sonuç dene.';
 }
 
 function init(){
