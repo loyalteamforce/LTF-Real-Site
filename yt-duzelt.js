@@ -2,8 +2,7 @@
    YOUTUBE ÇALMA YARDIMCISI (config.js yükler; hata verse bile site çalışır)
    - Müzik sekmesindeki oynatıcıyı www.youtube.com adresine alır ve durumunu dinler.
    - YouTube hata verirse ekranda nedenini yazar (kod ile birlikte).
-   - Profil şarkısındaki gizli oynatıcı 3 sn içinde başlamazsa görünür yapar:
-     telefonlar sesi bir dokunuş olmadan başlatmaz, oynat düğmesine dokunman yeter.
+   - "Ortadaki oynat düğmesine dokun" uyarısı kaldırıldı: şarkı kendiliğinden başlamazsa ekranda bir şey çıkmaz.
    ============================================================ */
 (function () {
   var NC = /^https:\/\/www\.youtube-nocookie\.com\/embed\//;
@@ -41,12 +40,6 @@
       try { f.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); } catch (_) {}
     });
     var h = hidBox(f); if (h) reveal(h, false);
-    setTimeout(function () {
-      if (!f.isConnected || st.get(f) === 1) return;
-      var hb = hidBox(f);
-      if (hb) { reveal(hb, true); say('Şarkı kendiliğinden başlamadı. Ortadaki oynat düğmesine dokun.'); }
-      else say('Şarkı başlamadıysa videonun üstündeki oynat düğmesine dokun.');
-    }, 3000);
   }
 
   function fix(f) {

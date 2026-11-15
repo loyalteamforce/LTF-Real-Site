@@ -33,8 +33,11 @@ import('./profil-sarki.js').catch(() => {});
 // Ana Sayfa kısayolları (Müzik, Ardevyl) ve alt menü düzeni. Yüklenemese bile site normal çalışmaya devam eder.
 import('./kisayollar.js').catch(() => {});
 
-// YouTube çalma yardımcısı: hata nedenini ekranda gösterir, çalmazsa oynatıcıyı görünür yapar.
+// YouTube çalma yardımcısı: hata nedenini ekranda gösterir. Yüklenemese bile site çalışır.
 import('./yt-duzelt.js').catch(() => {});
 
 // Kart sekmesi: alt menüye Kart butonu ekler (kart seç, fiş animasyonu, LTF üye kartı).
 import('./kart-sekme.js').catch(() => {});
+
+// Hız ayarları: profil banner'ı ve fotoğrafı daha öncelikli yüklenir.
+import('./hiz.js').catch(() => {});
