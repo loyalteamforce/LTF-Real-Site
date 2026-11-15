@@ -1,13 +1,12 @@
 /* ============================================================
-   EN SEVİLDİĞİM ŞARKI (profil şarkısı): MP3 yüklemek yerine YouTube'dan aranır.
-   - Profilin sahibi "Şarkı ekle" der, şarkı/sanatçı adını yazar, çıkan sonuçlardan birine dokunur.
-     (İstersen YouTube linkini yapıştırarak da ekleyebilir.)
-   - Şarkı kartı profil sayfasında (biyografinin altında) görünür. Başkaları kapak resmine
-     dokununca YouTube oynatıcısı açılır (otomatik çalmaz). Profil ekranından çıkılınca durur.
-   - Veriler: profile_songs tablosu (title, video_id). Eski MP3'ler çalmaya devam eder.
-   - Kurulum: sarki-youtube-kurulum.sql Supabase SQL Editor'de BİR KEZ çalıştırılır.
-   - ARAMA: config.js'e `export const YOUTUBE_API_KEY = '...';` eklenirse resmi YouTube Data API
-     kullanılır (en güvenilir yol). Anahtar yoksa herkese açık Piped sunucularına düşer.
+   EN SEVİLDİĞİM ŞARKI (profil şarkısı): YouTube'dan aranır, sadece sevdiğin 20 saniyelik bölüm çalır.
+   - Kart küçüktür: müzik simgesi + şarkı adı + çal düğmesi. Video görünmez, sadece ses gelir.
+   - Profilin sahibi "Şarkı ekle" der, arar (ya da YouTube linki yapıştırır), sonra kaydırıcıyla
+     20 saniyelik bölümün başlangıcını seçer, "Dinle" ile dener, "Kaydet" der.
+   - Başkaları çal düğmesine basunca yalnızca o 20 saniye çalır (otomatik çalmaz).
+   - Veriler: profile_songs tablosu (title, video_id, start_sec). Eski MP3'ler çalmaya devam eder.
+   - Kurulum: sarki-youtube-kurulum.sql (video_id) ve sarki-bolum-kurulum.sql (start_sec), bir kez.
+   - ARAMA: config.js'teki YOUTUBE_API_KEY kullanılır; yoksa Piped sunucularına düşer.
    - config.js bu dosyayı kendisi yükler; app.html'ye ekleme gerekmez.
    ============================================================ */
 import { supabase } from './config.js';
@@ -17,39 +16,49 @@ const BUCKET = 'profile-songs';                       // eski MP3 şarkılar iç
 const YT_KEY = (CFG && CFG.YOUTUBE_API_KEY) || '';
 const PIPED = ['https://pipedapi.kavin.rocks', 'https://pipedapi.adminforge.de', 'https://api.piped.private.coffee'];
 const ID_RE = /^[A-Za-z0-9_-]{11}$/;
+const CLIP = 20;                                       // bölüm uzunluğu (saniye)
 const thumb = id => 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg';
+const mmss = s => { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 
 const CSS = `
-.ps-card{ margin:14px; padding:14px; border-radius:16px; color:#e5e7eb;
+.ps-card{ position:relative; margin:14px; padding:10px 12px; border-radius:16px; color:#e5e7eb; overflow:hidden;
   border:1px solid color-mix(in srgb,var(--pf-a,#9db8ff) 35%,rgba(255,255,255,.12));
   background:linear-gradient(160deg,color-mix(in srgb,var(--pf-a,#9db8ff) 8%,transparent),rgba(255,255,255,.03)); }
 .ps-card[hidden],.ps-card [hidden]{ display:none !important; }
-.ps-head{ margin-bottom:10px; font-size:12px; font-weight:600; color:#9ca3af; }
-.ps-video{ position:relative; width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden; background:#000; }
-.ps-cover{ position:absolute; inset:0; width:100%; height:100%; padding:0; border:0; cursor:pointer; background:#000; }
-.ps-cover img{ width:100%; height:100%; object-fit:cover; display:block; opacity:.92; }
-.ps-cover .ps-ico{ position:absolute; left:50%; top:50%; width:56px; height:56px; margin:-28px 0 0 -28px; border-radius:50%;
-  display:grid; place-items:center; background:var(--pf-a,#9db8ff); color:#0b0b0f; box-shadow:0 6px 22px rgba(0,0,0,.5); }
-.ps-cover:focus-visible{ outline:2px solid #fff; outline-offset:-2px; }
-.ps-video iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
-.ps-title{ margin-top:10px; font-size:15px; font-weight:600; overflow-wrap:anywhere; }
-.ps-aud{ width:100%; margin-top:2px; }
-.ps-empty{ font-size:13px; color:#9ca3af; }
-.ps-own,.ps-q{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:12px; }
+.ps-row{ display:flex; align-items:center; gap:12px; }
+.ps-btn{ flex:none; position:relative; width:42px; height:42px; padding:0; border:0; border-radius:50%; cursor:pointer; display:grid; place-items:center;
+  background:var(--pf-a,#9db8ff); color:#0b0b0f; }
+.ps-btn:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+.ps-btn svg{ width:20px; height:20px; display:block; }
+.ps-btn .i-pause{ display:none; }
+.ps-card.playing .ps-btn .i-note{ display:none; }
+.ps-card.playing .ps-btn .i-pause{ display:block; }
+.ps-mid{ flex:1; min-width:0; }
+.ps-title{ font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ps-bar{ height:3px; margin-top:7px; border-radius:2px; background:rgba(255,255,255,.12); overflow:hidden; }
+.ps-bar i{ display:block; height:100%; width:0; background:var(--pf-a,#9db8ff); }
+.ps-hid{ position:absolute; right:0; bottom:0; width:200px; height:113px; opacity:.01; pointer-events:none; overflow:hidden; }
+.ps-hid iframe{ width:100%; height:100%; border:0; }
+.ps-own,.ps-q,.ps-act{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:10px; }
 .ps-in{ flex:1 1 160px; min-width:0; padding:9px 11px; border-radius:10px; border:1.5px solid rgba(255,255,255,.14);
   background:rgba(255,255,255,.06); color:#fff; font:inherit; font-size:14px; }
-.ps-res{ display:flex; flex-direction:column; gap:6px; margin-top:10px; max-height:340px; overflow:auto; }
+.ps-res{ display:flex; flex-direction:column; gap:6px; margin-top:10px; max-height:300px; overflow:auto; }
 .ps-it{ display:flex; align-items:center; gap:10px; width:100%; padding:6px; border-radius:12px; text-align:left; cursor:pointer; font:inherit;
   color:#e5e7eb; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.04); }
 .ps-it:hover,.ps-it:focus-visible{ background:rgba(255,255,255,.1); }
-.ps-it img{ flex:none; width:96px; aspect-ratio:16/9; object-fit:cover; border-radius:8px; background:#000; }
+.ps-it img{ flex:none; width:72px; aspect-ratio:16/9; object-fit:cover; border-radius:8px; background:#000; }
 .ps-it b{ display:block; font-size:13px; font-weight:600; line-height:1.3; }
 .ps-it span{ display:block; margin-top:2px; font-size:12px; color:#9ca3af; }
-.ps-msg{ min-height:18px; margin-top:10px; font-size:13px; color:#9ca3af; }
+.ps-cl-t{ font-size:13px; font-weight:600; margin-top:10px; overflow-wrap:anywhere; }
+.ps-range{ width:100%; margin:12px 0 2px; accent-color:var(--pf-a,#9db8ff); }
+.ps-cl-l{ display:flex; justify-content:space-between; font-size:12px; color:#9ca3af; font-variant-numeric:tabular-nums; }
+.ps-msg{ min-height:16px; margin-top:8px; font-size:13px; color:#9ca3af; }
+.ps-msg:empty{ min-height:0; margin:0; }
 .ps-msg.err{ color:#ffb3b3; }
 `;
 
-const ICON_PLAY = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
+const ICON_NOTE = '<svg class="i-note" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3z"/></svg>' +
+                  '<svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
 
 /* ---------- YouTube yardımcıları ---------- */
 function ytId(raw){
@@ -74,7 +83,7 @@ async function getJSON(url, ms){
   } finally { clearTimeout(t); }
 }
 async function searchYT(q){
-  if(YT_KEY){   // resmi YouTube Data API (anahtarı Google Cloud'da HTTP referrer ile siteye kilitle)
+  if(YT_KEY){   // resmi YouTube Data API (anahtar Google Cloud'da HTTP referrer ile siteye kilitli)
     const j = await getJSON('https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoEmbeddable=true&maxResults=8&q=' +
       encodeURIComponent(q) + '&key=' + encodeURIComponent(YT_KEY), 6000);
     return (j.items || []).map(i => ({ id: i.id && i.id.videoId, title: decode(i.snippet && i.snippet.title), by: decode(i.snippet && i.snippet.channelTitle) }))
@@ -95,9 +104,18 @@ async function searchYT(q){
 async function titleOf(id){
   try {
     const j = await getJSON('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + id), 5000);
-    if(j && j.title) return { title: String(j.title), by: j.author_name || '' };
+    if(j && j.title) return String(j.title);
   } catch(_){}
   return null;
+}
+async function durationOf(id){   // saniye; bulunamazsa null
+  if(!YT_KEY) return null;
+  try {
+    const j = await getJSON('https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=' + id + '&key=' + encodeURIComponent(YT_KEY), 5000);
+    const m = String(j.items && j.items[0] && j.items[0].contentDetails.duration || '').match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/);
+    if(!m) return null;
+    return (+m[1] || 0) * 3600 + (+m[2] || 0) * 60 + (+m[3] || 0);
+  } catch(_){ return null; }
 }
 
 function init(){
@@ -110,13 +128,11 @@ function init(){
   const card = document.createElement('section');
   card.className = 'ps-card'; card.hidden = true; card.setAttribute('aria-label', 'En sevdiğim şarkı');
   card.innerHTML =
-    '<div class="ps-head">♪ En sevdiğim şarkı</div>' +
-    '<div class="ps-player" hidden>' +
-      '<div class="ps-video" hidden><button type="button" class="ps-cover" aria-label="Şarkıyı çal"><img alt="" referrerpolicy="no-referrer"><span class="ps-ico">' + ICON_PLAY + '</span></button></div>' +
-      '<audio class="ps-aud" controls preload="none" hidden></audio>' +
-      '<div class="ps-title"></div>' +
+    '<div class="ps-row ps-player" hidden>' +
+      '<button type="button" class="ps-btn" aria-label="Çal">' + ICON_NOTE + '</button>' +
+      '<div class="ps-mid"><div class="ps-title"></div><div class="ps-bar"><i></i></div></div>' +
     '</div>' +
-    '<div class="ps-empty" hidden>En sevdiğin şarkıyı henüz eklemedin. YouTube\'dan ara, profiline koy, herkes görsün.</div>' +
+    '<div class="ps-hid"></div>' +
     '<div class="ps-own" hidden>' +
       '<button type="button" class="bio-btn" data-a="pick">Şarkı ekle</button>' +
       '<button type="button" class="bio-btn" data-a="del" hidden>Kaldır</button>' +
@@ -129,13 +145,25 @@ function init(){
       '</div>' +
       '<div class="ps-res" role="list"></div>' +
     '</div>' +
+    '<div class="ps-clip" hidden>' +
+      '<div class="ps-cl-t"></div>' +
+      '<input class="ps-range" type="range" min="0" max="0" step="1" value="0" aria-label="20 saniyelik bölümün başlangıcı">' +
+      '<div class="ps-cl-l"><span class="ps-cl-r"></span><span>' + CLIP + ' sn</span></div>' +
+      '<div class="ps-act">' +
+        '<button type="button" class="bio-btn" data-a="try">Dinle</button>' +
+        '<button type="button" class="bio-btn pri" data-a="save">Kaydet</button>' +
+        '<button type="button" class="bio-btn" data-a="back">Geri</button>' +
+      '</div>' +
+    '</div>' +
     '<div class="ps-msg" role="status"></div>';
 
   const q = s => card.querySelector(s);
   const el = {
-    player: q('.ps-player'), video: q('.ps-video'), cover: q('.ps-cover'), coverImg: q('.ps-cover img'), aud: q('.ps-aud'),
-    title: q('.ps-title'), empty: q('.ps-empty'), own: q('.ps-own'), pick: q('[data-a=pick]'), del: q('[data-a=del]'),
-    find: q('.ps-find'), input: q('.ps-in'), go: q('[data-a=go]'), cancel: q('[data-a=cancel]'), res: q('.ps-res'), msg: q('.ps-msg')
+    player: q('.ps-player'), btn: q('.ps-btn'), title: q('.ps-title'), bar: q('.ps-bar i'), hid: q('.ps-hid'),
+    own: q('.ps-own'), pick: q('[data-a=pick]'), del: q('[data-a=del]'),
+    find: q('.ps-find'), input: q('.ps-in'), go: q('[data-a=go]'), cancel: q('[data-a=cancel]'), res: q('.ps-res'),
+    clip: q('.ps-clip'), clT: q('.ps-cl-t'), range: q('.ps-range'), clR: q('.ps-cl-r'),
+    tryB: q('[data-a=try]'), saveB: q('[data-a=save]'), backB: q('[data-a=back]'), msg: q('.ps-msg')
   };
 
   // Kartı profil sayfasına yerleştir (sayfa yeniden çizilirse olaylarda tekrar takılır)
@@ -145,66 +173,70 @@ function init(){
     if(bio && !head.contains(bio)) bio.after(card); else head.after(card);
   }
 
-  let token = 0, lastId = null, song = null, mine = false, setupOk = true, migrate = false, finding = false, busy = false, watch = 0;
+  let token = 0, lastId = null, song = null, mine = false, setupOk = true, migrate = false;
+  let finding = false, picking = null, busy = false, timer = 0, watch = 0, audio = null;
   const msg = (t, err) => { el.msg.textContent = t || ''; el.msg.classList.toggle('err', !!err); };
-  const FIX = 'sarki-youtube-kurulum.sql dosyasını Supabase SQL Editor\'de bir kez çalıştır.';
+  const FIX = 'sarki-youtube-kurulum.sql ve sarki-bolum-kurulum.sql dosyalarını Supabase SQL Editor\'de bir kez çalıştır.';
 
-  // ---------- Oynatıcı ----------
-  function stopVideo(){
-    clearInterval(watch); watch = 0;
-    const f = el.video.querySelector('iframe'); if(f) f.remove();    // iframe kalkinca ses durur
-    el.cover.hidden = false;
-    el.aud.pause();
+  // ---------- Çalma: sadece 20 saniyelik bölüm; video görünmez ----------
+  function stopPlay(){
+    clearTimeout(timer); clearInterval(watch); timer = watch = 0;
+    el.hid.textContent = '';                                   // iframe kalkınca ses durur
+    if(audio){ audio.pause(); audio = null; }
+    el.bar.style.transition = 'none'; el.bar.style.width = '0';
+    card.classList.remove('playing'); el.btn.setAttribute('aria-label', 'Çal');
   }
-  function playVideo(){
-    if(!song || !song.id || el.video.querySelector('iframe')) return;
-    const f = document.createElement('iframe');
-    f.src = 'https://www.youtube-nocookie.com/embed/' + song.id + '?autoplay=1&rel=0&playsinline=1';
-    f.allow = 'autoplay; encrypted-media; picture-in-picture'; f.allowFullscreen = true; f.title = song.title;
-    el.cover.hidden = true; el.video.appendChild(f);
-    clearInterval(watch);
-    watch = setInterval(() => { if(pv.getClientRects().length === 0) stopVideo(); }, 1200);   // profil ekranından çıkılınca sus
+  function playClip(s){
+    stopPlay();
+    card.classList.add('playing'); el.btn.setAttribute('aria-label', 'Durdur');
+    if(s.id){
+      const st = Math.max(0, Math.floor(s.start || 0));
+      const f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + s.id + '?autoplay=1&controls=0&rel=0&playsinline=1&start=' + st + '&end=' + (st + CLIP);
+      f.allow = 'autoplay; encrypted-media'; f.title = s.title || 'Şarkı';
+      el.hid.appendChild(f);
+    } else if(s.url){
+      audio = new Audio(s.url); audio.play().catch(() => { msg('Şarkı çalınamadı.', true); stopPlay(); });
+    }
+    void el.bar.offsetWidth;
+    el.bar.style.transition = 'width ' + CLIP + 's linear'; el.bar.style.width = '100%';
+    timer = setTimeout(stopPlay, CLIP * 1000 + 600);
+    watch = setInterval(() => { if(pv.getClientRects().length === 0) stopPlay(); }, 1200);   // profil ekranından çıkılınca sus
   }
-  el.cover.addEventListener('click', playVideo);
+  el.btn.addEventListener('click', () => { if(card.classList.contains('playing')) stopPlay(); else if(song) playClip(song); });
 
   // ---------- Görünüm ----------
   function render(){
+    const adding = finding || !!picking;
     card.hidden = !(song || mine);
     el.player.hidden = !song;
-    el.video.hidden = !(song && song.id);
-    el.aud.hidden = !(song && !song.id && song.url);
-    el.empty.hidden = !!song || !mine || !setupOk || finding;
-    el.own.hidden = !mine || !setupOk || finding;
+    el.own.hidden = !mine || !setupOk || adding;
     el.find.hidden = !finding;
+    el.clip.hidden = !picking;
     el.pick.textContent = song ? 'Şarkıyı değiştir' : 'Şarkı ekle';
     el.del.hidden = !song;
-    if(song){
-      el.title.textContent = song.title;
-      if(song.id){ if(el.coverImg.dataset.id !== song.id){ el.coverImg.dataset.id = song.id; el.coverImg.src = thumb(song.id); } }
-      else if(el.aud.getAttribute('src') !== song.url) el.aud.src = song.url;
-    }
+    if(song) el.title.textContent = song.title;
   }
-  const setBusy = on => { busy = on; [el.pick, el.del, el.go, el.cancel].forEach(b => { b.disabled = on; }); };
+  const setBusy = on => { busy = on; [el.pick, el.del, el.go, el.cancel, el.saveB, el.backB].forEach(b => { b.disabled = on; }); };
   const legacyUrl = row => supabase.storage.from(BUCKET).getPublicUrl(row.path).data.publicUrl + '?v=' + encodeURIComponent(row.updated_at);
 
   async function load(id){
     const my = ++token;
-    stopVideo(); el.aud.pause(); el.aud.removeAttribute('src');
-    song = null; finding = false; setupOk = true; migrate = false; msg(''); el.res.textContent = '';
-    delete el.coverImg.dataset.id;
+    stopPlay();
+    song = null; finding = false; picking = null; setupOk = true; migrate = false; msg(''); el.res.textContent = '';
     render();
     try {
-      let r = await supabase.from('profile_songs').select('title,path,video_id,updated_at').eq('user_id', id).maybeSingle();
-      if(r.error){   // video_id sütunu henüz yoksa eski şemayla oku (eski MP3'ler görünsün)
+      let r = await supabase.from('profile_songs').select('title,path,video_id,start_sec,updated_at').eq('user_id', id).maybeSingle();
+      if(r.error){   // yeni sütunlar henüz yoksa eski şemayla oku (şarkılar görünsün)
         r = await supabase.from('profile_songs').select('title,path,updated_at').eq('user_id', id).maybeSingle();
         if(r.error) throw r.error;
         migrate = true;
       }
       if(my !== token) return;
       const d = r.data;
-      if(d) song = d.video_id && ID_RE.test(d.video_id) ? { title: d.title, id: d.video_id }
+      if(d) song = d.video_id && ID_RE.test(d.video_id) ? { title: d.title, id: d.video_id, start: d.start_sec || 0 }
                  : d.path ? { title: d.title, id: null, path: d.path, url: legacyUrl(d) } : null;
-      if(migrate && mine) msg('Şarkı araması için ' + FIX, true);
+      if(migrate && mine) msg('Şarkı bölümü için ' + FIX, true);
     } catch(_){
       if(my !== token) return;
       setupOk = false; song = null;
@@ -241,7 +273,7 @@ function init(){
       const box = document.createElement('div'), t = document.createElement('b'), c = document.createElement('span');
       t.textContent = s.title; c.textContent = s.by || '';
       box.append(t, c); b.append(im, box);
-      b.addEventListener('click', () => save(s.id, s.title));
+      b.addEventListener('click', () => choose(s.id, s.title));
       el.res.appendChild(b);
     });
   }
@@ -250,11 +282,11 @@ function init(){
     const text = el.input.value.trim();
     if(!text){ msg('Bir şarkı veya sanatçı adı yaz.', true); return; }
     const direct = ytId(text);
-    if(direct){                                   // link yapıştırıldı: aramadan doğrudan ekle
+    if(direct){                                   // link yapıştırıldı: aramadan doğrudan bölüm seçmeye geç
       setBusy(true); msg('Şarkı bilgisi alınıyor…');
-      const info = await titleOf(direct);
+      const t = await titleOf(direct);
       setBusy(false);
-      await save(direct, info ? info.title : 'YouTube şarkısı');
+      await choose(direct, t || 'YouTube şarkısı');
       return;
     }
     setBusy(true); msg('YouTube\'da aranıyor…'); el.res.textContent = '';
@@ -267,20 +299,37 @@ function init(){
     }
     setBusy(false);
   }
-  async function save(id, title){
-    if(busy) return;
-    const my = token, old = song && !song.id ? song.path : null;
-    setBusy(true); msg('Kaydediliyor…');
+
+  // ---------- 20 saniyelik bölüm seçimi ----------
+  function updRange(){
+    const s = +el.range.value;
+    picking.start = s;
+    el.clR.textContent = mmss(s) + ' – ' + mmss(s + CLIP);
+  }
+  async function choose(id, title){
+    stopPlay(); msg('Şarkı süresi alınıyor…');
+    const dur = await durationOf(id);               // anahtar yoksa bilinmez: 10 dakikaya kadar kaydırılabilir
+    const max = Math.max(0, (dur || 600) - CLIP);
+    picking = { id, title, start: 0 }; finding = false;
+    el.clT.textContent = title;
+    el.range.max = String(max); el.range.value = '0';
+    el.range.disabled = max === 0;
+    updRange(); msg(dur ? '' : 'Şarkı süresi öğrenilemedi; kaydırıcı 10 dakikaya kadar gider.');
+    render();
+  }
+  el.range.addEventListener('input', () => { if(picking){ updRange(); if(card.classList.contains('playing')) stopPlay(); } });
+
+  async function save(){
+    if(busy || !picking) return;
+    const my = token, p = picking, old = song && !song.id ? song.path : null;
+    stopPlay(); setBusy(true); msg('Kaydediliyor…');
     try {
       const uid = await userId();
-      const row = { user_id: uid, title: String(title).trim().slice(0, 120) || 'YouTube şarkısı', video_id: id, path: null, updated_at: new Date().toISOString() };
+      const row = { user_id: uid, title: String(p.title).trim().slice(0, 120) || 'YouTube şarkısı', video_id: p.id, start_sec: p.start | 0, path: null, updated_at: new Date().toISOString() };
       const r = await supabase.from('profile_songs').upsert(row);
       if(r.error) throw r.error;
       if(old) supabase.storage.from(BUCKET).remove([old]).catch(() => {});   // eski MP3 dosyası silinemese de sorun değil
-      if(my === token){
-        stopVideo(); song = { title: row.title, id }; finding = false; el.res.textContent = ''; el.input.value = '';
-        delete el.coverImg.dataset.id; msg('Şarkın eklendi.');
-      }
+      if(my === token){ song = { title: row.title, id: p.id, start: row.start_sec }; picking = null; finding = false; el.res.textContent = ''; el.input.value = ''; msg('Şarkın eklendi.'); }
     } catch(err){ if(my === token) msg(explain(err), true); }
     setBusy(false); render();
   }
@@ -288,9 +337,12 @@ function init(){
   card.addEventListener('click', async e => {
     const b = e.target.closest('[data-a]'); if(!b || busy || !mine) return;
     const a = b.dataset.a;
-    if(a === 'pick'){ finding = true; msg(''); render(); el.input.focus(); return; }
+    if(a === 'pick'){ finding = true; picking = null; msg(''); render(); el.input.focus(); return; }
     if(a === 'cancel'){ finding = false; el.res.textContent = ''; msg(''); render(); return; }
     if(a === 'go'){ search(); return; }
+    if(a === 'try'){ if(picking){ if(card.classList.contains('playing')) stopPlay(); else playClip({ id: picking.id, start: picking.start, title: picking.title }); } return; }
+    if(a === 'back'){ stopPlay(); picking = null; finding = true; msg(''); render(); return; }
+    if(a === 'save'){ save(); return; }
     if(a === 'del'){
       if(!song || !window.confirm('Profil şarkın kaldırılsın mı?')) return;
       const my = token, path = song.id ? null : song.path;
@@ -300,7 +352,7 @@ function init(){
         const r = await supabase.from('profile_songs').delete().eq('user_id', uid);
         if(r.error) throw r.error;
         if(path) supabase.storage.from(BUCKET).remove([path]).catch(() => {});
-        if(my === token){ stopVideo(); el.aud.pause(); song = null; msg('Şarkı kaldırıldı.'); }
+        if(my === token){ stopPlay(); song = null; msg('Şarkı kaldırıldı.'); }
       } catch(err){ if(my === token) msg(explain(err), true); }
       setBusy(false); render();
     }
