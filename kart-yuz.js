@@ -1,7 +1,8 @@
 /* ============================================================
-   KART YÜZÜ: LTF üye kartı (kart.jpeg'in aynısı). Platin / Gümüş / Altın.
-   - Sol üstte LTF kalkanı + "LOYAL ELITE FORCE", ortada No / Ad / Yol / Tür, sertifika yazısı, barkod,
-     sağda KARE profil fotoğrafı (hesabın kendi fotoğrafı), rozet.
+   KART YÜZÜ: LTF üye kartı. Platin / Gümüş / Altın.
+   - Sade ve resmî görünüm: arka plansız LTF kalkanı (siyah zemin yok), ince iç çerçeve, parlama/çizgi dokusu yok.
+   - Sol üstte LTF kalkanı + "LOYAL ELITE FORCE", ortada No / Ad / Yol / Tür, tek satırlık üyelik yazısı, barkod,
+     sağda KARE profil fotoğrafı (hesabın kendi fotoğrafı; ince gri çerçeveli, kimlik fotoğrafı gibi), rozet.
    - Ad: ARTIK KESİLMEZ. Önce tek satırda küçülür, sığmazsa en yakın boşluktan 2 satıra bölünür,
      yine uzunsa yazı daha da küçülür. Yazı fotoğraf çerçevesinin ve kart çizgilerinin ÜSTÜNDEN geçebilir (taşma kesilmez).
    - Varsayılan ad yazı tipi: Cormorant Garamond (dar ve zarif; Cinzel çok genişti). Diğer yazı tipleri seçilebilir.
@@ -36,12 +37,13 @@
   function bars(seed) { var x = seed, h = ''; for (var i = 0; i < 46; i++) { x = (x * 1103515245 + 12345) & 0x7fffffff; h += '<s style="flex:' + (1 + x % 4) + '"></s><s style="flex:' + (1 + (x >> 3) % 3) + ';background:none"></s>'; } return h; }
 
   var CSS = [
-    '.idc{container-type:inline-size;position:relative;width:100%;aspect-ratio:1.57/1;border-radius:14px;background:linear-gradient(135deg,var(--c1,#f1f1f1),var(--c2,#d6d6d6));border:1px solid rgba(0,0,0,.1);box-shadow:0 14px 34px -12px rgba(0,0,0,.4);color:#161616;overflow:visible;flex:none}',
+    '.idc{container-type:inline-size;position:relative;width:100%;aspect-ratio:1.57/1;border-radius:14px;background:linear-gradient(135deg,var(--c1,#f1f1f1),var(--c2,#d6d6d6));border:1px solid rgba(0,0,0,.14);box-shadow:0 10px 24px -14px rgba(0,0,0,.35);color:#161616;overflow:visible;flex:none}',
     '.idc *{position:absolute}',
-    '.idc::before{content:"";position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(90deg,rgba(255,255,255,.22) 0 1px,rgba(0,0,0,.025) 1px 3px);pointer-events:none}',
-    '.idc::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.4) 48%,transparent 62%);pointer-events:none}',
-    '.idc .lg{left:4cqw;top:4cqw;width:15cqw;height:15cqw;background:#000;border-radius:2cqw;padding:1.4cqw;display:grid;place-items:center}',
-    '.idc .lg img{position:static;width:100%;height:100%;object-fit:contain}',
+    /* resmî görünüm: ince iç çerçeve (çizgi dokusu ve parlama kaldırıldı) */
+    '.idc::before{content:"";position:absolute;inset:1.6cqw;border-radius:1.2cqw;border:.25cqw solid rgba(0,0,0,.14);pointer-events:none}',
+    /* kalkan logosu: arka plan YOK, sadece şeffaf logo */
+    '.idc .lg{left:4cqw;top:4cqw;width:15cqw;height:15cqw;display:grid;place-items:center;background:none}',
+    '.idc .lg img{position:static;width:100%;height:100%;object-fit:contain;background:none}',
     '.idc .ht{left:21.5cqw;top:5.6cqw;font:700 3.6cqw/1.3 Georgia,"Times New Roman",serif;text-transform:uppercase;letter-spacing:.2px;white-space:nowrap}',
     '.idc .f{left:4cqw;display:flex;align-items:baseline;gap:2cqw;white-space:nowrap}',
     '.idc .f i{position:static;font:700 3.4cqw Georgia,serif;font-style:normal;width:13cqw;flex:none}',
@@ -50,12 +52,14 @@
     '.idc .f.nm.two i{margin-top:.6cqw}',
     /* ad: kesilmez, taşarsa çizgilerin üstünden geçer */
     '.idc .f.nm b{display:block;max-width:none;overflow:visible;text-overflow:clip;font-weight:700;line-height:1.08;white-space:nowrap;text-shadow:0 0 .8cqw rgba(255,255,255,.55)}',
-    '.idc .cert{left:4cqw;top:47cqw;width:50cqw;font:600 2.1cqw/1.3 Georgia,serif;color:#222}',
-    '.idc .ph{right:4cqw;top:20cqw;width:30cqw;height:30cqw;border:.6cqw solid #1a1a1a;border-radius:1.2cqw;background:#d9d9dd;overflow:hidden;z-index:1}',
-    '.idc .ph img{position:static;width:100%;height:100%;object-fit:cover}',
-    '.idc .ph svg{width:100%;height:100%;fill:#a8a8b0}',
-    '.idc .bdg{right:29cqw;top:14.5cqw;width:12.5cqw;height:12.5cqw;border-radius:50%;background:#fff;border:.5cqw solid #151515;display:grid;place-items:center;text-align:center;font:800 3.8cqw/1 system-ui,sans-serif;z-index:2}',
-    '.idc .bdg small{position:static;display:block;font-size:1.6cqw;letter-spacing:.3px;margin-top:.4cqw}',
+    /* üyelik yazısı kısa ve tek satır: karta sığar, barkodun üstüne binmez */
+    '.idc .cert{left:4cqw;top:47.5cqw;width:56cqw;font:600 2.3cqw/1.3 Georgia,serif;color:#222;white-space:nowrap}',
+    /* fotoğraf: sade, ince gri çerçeve, kimlik fotoğrafı gibi */
+    '.idc .ph{right:4cqw;top:20cqw;width:28cqw;height:28cqw;border:.3cqw solid #6b6b72;border-radius:.6cqw;background:#ececef;overflow:hidden;z-index:1}',
+    '.idc .ph img{position:static;width:100%;height:100%;object-fit:cover;filter:grayscale(.3) contrast(1.02)}',
+    '.idc .ph svg{width:100%;height:100%;fill:#b9b9c0}',
+    '.idc .bdg{right:27cqw;top:14.5cqw;width:11cqw;height:11cqw;border-radius:50%;background:#fff;border:.3cqw solid #55555b;display:grid;place-items:center;text-align:center;font:700 3.2cqw/1 Georgia,serif;z-index:2}',
+    '.idc .bdg small{position:static;display:block;font-size:1.5cqw;letter-spacing:.3px;margin-top:.4cqw;font-weight:600}',
     '.idc .bc{left:4cqw;bottom:3.5cqw;width:50cqw;height:5.5cqw;display:flex}',
     '.idc .bc s{position:static;display:block;background:#111}'
   ].join('\n');
@@ -90,7 +94,7 @@
       '<div class="f nm' + (ft.two ? ' two' : '') + '"><i>Ad</i><b style="font-family:' + fo[1] + ';font-size:' + ft.fs.toFixed(2) + 'cqw">' + ft.html + '</b></div>' +
       '<div class="f y"><i>Yol</i><b>' + esc(yol) + '</b></div>' +
       '<div class="f t"><i>Tür</i><b>' + esc(tur) + '</b></div>' +
-      '<div class="cert">Bu belge, adı yazılı kişinin Loyal Elite Force üyesi olduğunu onaylar.</div>' +
+      '<div class="cert">Loyal Elite Force üyesidir.</div>' +
       '<div class="bc">' + bars(+id + 7) + '</div>' +
       '<div class="bdg"><span>5★<small>' + esc(yol.toLocaleUpperCase('tr').slice(0, 8)) + '</small></span></div>' +
       '<div class="ph">' + ph + '</div></div>';
