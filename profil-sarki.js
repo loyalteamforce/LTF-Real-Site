@@ -3,13 +3,13 @@
    - Kart küçüktür: müzik simgesi + şarkı adı + çal düğmesi. Video görünmez, sadece ses gelir.
    - Profilin sahibi "Şarkı ekle" der, arar (ya da YouTube linki yapıştırır), sonra kaydırıcıyla
      20 saniyelik bölümün başlangıcını seçer, "Dinle" ile dener, "Kaydet" der.
-   - Başkaları çal düğmesine basunca yalnızca o 20 saniye çalır (otomatik çalmaz).
+   - Başkaları çal düğmesine basınca yalnızca o 20 saniye çalır (otomatik çalmaz).
+   - Şarkı yüklenirken çal düğmesinin yerinde dönen yuvarlak işaret görünür; ses gelince kalır.
    - Veriler: profile_songs tablosu (title, video_id, start_sec). Eski MP3'ler çalmaya devam eder.
    - Kurulum: sarki-youtube-kurulum.sql (video_id) ve sarki-bolum-kurulum.sql (start_sec), bir kez.
    - ARAMA: config.js'teki YOUTUBE_API_KEY kullanılır; yoksa Piped sunucularına düşer.
-   - ÇALMA: YouTube IFrame API ile (ses açılır, hata kodları ekranda gösterilir).
-   - HIZ: YouTube oynatıcı kodu profil açılır açılmaz değil, çal düğmesine yaklaşınca (ya da 6 sn sonra)
-     yüklenir; böylece banner ile aynı anda internet için yarışmaz.
+   - ÇALMA: YouTube IFrame API ile (ses açılır, hata kodları ekranda gösterilir). Çal düğmesine basınca
+     oynatıcı kodu hazır değilse önce o beklenir, sonra şarkı başlar.
    - config.js bu dosyayı kendisi yükler; app.html'ye ekleme gerekmez.
    ============================================================ */
 import { supabase } from './config.js';
@@ -36,6 +36,10 @@ const CSS = `
 .ps-btn .i-pause{ display:none; }
 .ps-card.playing .ps-btn .i-note{ display:none; }
 .ps-card.playing .ps-btn .i-pause{ display:block; }
+.ps-card.loading .ps-btn .i-note,.ps-card.loading .ps-btn .i-pause{ display:none !important; }
+.ps-card.loading .ps-btn::after{ content:""; position:absolute; inset:0; margin:auto; width:22px; height:22px; border-radius:50%;
+  border:3px solid rgba(0,0,0,.22); border-top-color:#0b0b0f; animation:psSpin .8s linear infinite; }
+@keyframes psSpin{ to{ transform:rotate(360deg); } }
 .ps-mid{ flex:1; min-width:0; }
 .ps-title{ font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .ps-bar{ height:3px; margin-top:7px; border-radius:2px; background:rgba(255,255,255,.12); overflow:hidden; }
@@ -218,6 +222,7 @@ function init(){
   const msg = (t, err) => { el.msg.textContent = t || ''; el.msg.classList.toggle('err', !!err); };
   const FIX = 'sarki-youtube-kurulum.sql ve sarki-bolum-kurulum.sql dosyalarını Supabase SQL Editor\'de bir kez çalıştır.';
   const warmYT = () => { loadYT().catch(() => {}); };      // oynatıcı kodunu şimdi yükle (çal düğmesine yaklaşınca ya da 6 sn sonra)
+  const setLoading = on => card.classList.toggle('loading', !!on);   // çal düğmesinde dönen yuvarlak
 
   // ---------- Çalma: sadece 20 saniyelik bölüm; video görünmez ----------
   function stopPlay(){
@@ -227,6 +232,7 @@ function init(){
     el.hid.textContent = '';                                   // iframe kalkınca ses durur
     if(audio){ audio.pause(); audio = null; }
     el.bar.style.transition = 'none'; el.bar.style.width = '0';
+    setLoading(false);
     card.classList.remove('playing'); el.btn.setAttribute('aria-label', 'Çal');
   }
   function runBar(){                                           // ilerleme çubuğu: ses gerçekten başlayınca çalışır
@@ -240,13 +246,12 @@ function init(){
     const st = Math.max(0, Math.floor(s.start || 0)), tok = ++ytTok;
     const box = document.createElement('div'); el.hid.appendChild(box);
     if(!(window.YT && window.YT.Player)){
-      // API henüz yüklenmediyse düz iframe ile dene (bir sonraki sefere API hazır olur)
-      loadYT().catch(() => {});
+      // API yüklenemediyse düz iframe ile dene
       const f = document.createElement('iframe');
       f.src = 'https://www.youtube-nocookie.com/embed/' + s.id + '?autoplay=1&controls=0&rel=0&playsinline=1&start=' + st + '&end=' + (st + CLIP);
       f.allow = 'autoplay; encrypted-media'; f.title = s.title || 'Şarkı'; f.referrerPolicy = 'strict-origin-when-cross-origin';
       el.hid.textContent = ''; el.hid.appendChild(f);
-      runBar();
+      setLoading(false); runBar();
       return;
     }
     player = new window.YT.Player(box, {
@@ -261,25 +266,31 @@ function init(){
           if(tok !== ytTok) return;
           if(e.data === 1){                                    // çalıyor
             try { if(e.target.isMuted && e.target.isMuted()){ e.target.unMute(); e.target.setVolume(100); } } catch(_){}
-            if(!ytPlaying){ ytPlaying = true; clearTimeout(startTimer); msg(''); runBar(); }
+            if(!ytPlaying){ ytPlaying = true; clearTimeout(startTimer); msg(''); setLoading(false); runBar(); }
           } else if(e.data === 0){ stopPlay(); }               // bölüm bitti
         },
         onError: e => { if(tok === ytTok) fail(ytErrorText(e && e.data)); }
       }
     });
-    // 8 saniyede başlamazsa sessizce sıfırla (ekranda uyarı çıkmaz); çal düğmesine tekrar basılabilir
+    // 12 saniyede başlamazsa sessizce sıfırla (ekranda uyarı çıkmaz); çal düğmesine tekrar basılabilir
     startTimer = setTimeout(() => {
       if(tok === ytTok && !ytPlaying) stopPlay();
-    }, 8000);
+    }, 12000);
   }
   function playClip(s){
     stopPlay(); msg('');
     card.classList.add('playing'); el.btn.setAttribute('aria-label', 'Durdur');
+    setLoading(true);                                          // yüklenirken dönen yuvarlak
     watch = setInterval(() => { if(pv.getClientRects().length === 0) stopPlay(); }, 1200);   // profil ekranından çıkılınca sus
-    if(s.id){ startYT(s); }
+    if(s.id){
+      const tk = ytTok;                                        // bu sırada durdurulursa ytTok değişir, başlatma iptal olur
+      const ready = (window.YT && window.YT.Player) ? Promise.resolve()
+        : Promise.race([loadYT(), new Promise((_, rej) => setTimeout(rej, 7000))]);
+      ready.catch(() => {}).then(() => { if(tk === ytTok) startYT(s); });
+    }
     else if(s.url){
       audio = new Audio(s.url);
-      audio.play().then(runBar).catch(() => fail('Şarkı çalınamadı.'));
+      audio.play().then(() => { setLoading(false); runBar(); }).catch(() => fail('Şarkı çalınamadı.'));
     }
   }
   el.btn.addEventListener('click', () => { if(card.classList.contains('playing')) stopPlay(); else if(song) playClip(song); });
@@ -316,7 +327,7 @@ function init(){
       const d = r.data;
       if(d) song = d.video_id && ID_RE.test(d.video_id) ? { title: d.title, id: d.video_id, start: d.start_sec || 0 }
                  : d.path ? { title: d.title, id: null, path: d.path, url: legacyUrl(d) } : null;
-      if(song && song.id) setTimeout(() => { if(my === token) warmYT(); }, 6000);   // banner indikten sonra oynatıcı kodu yükle
+      if(song && song.id) setTimeout(() => { if(my === token) warmYT(); }, 3000);   // banner başladıktan sonra oynatıcı kodu yükle
       if(migrate && mine) msg('Şarkı bölümü için ' + FIX, true);
     } catch(_){
       if(my !== token) return;
