@@ -41,8 +41,11 @@ body.dk{background:#0a0a0b;color:#fff}
 .dots{display:flex;gap:6px;justify-content:center;margin:4px 0 22px}
 .dots i{width:5px;height:5px;border-radius:5px;background:#d6d6da;transition:.3s}
 .dots i.on{width:16px;background:#8d8d92}
+.balL{text-align:center;font-size:13px;color:var(--mut);margin:-12px 0 16px;min-height:16px}
+.balL b{color:#111;font-weight:600}
 .btn{height:56px;width:100%;border:0;border-radius:999px;background:#0b0b0c;color:#fff;font:500 16px 'Outfit',system-ui,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:transform .15s,opacity .2s,width .45s cubic-bezier(.3,1.2,.4,1),height .45s cubic-bezier(.3,1.2,.4,1)}
 .btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;pointer-events:none}
 .btn.w{background:#fff;color:#111;box-shadow:0 0 0 1px rgba(0,0,0,.05)}
 .btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .dk .btn{background:#fff;color:#111}.dk .btn.g{background:#1c1c1f;color:#fff}
@@ -53,6 +56,7 @@ body.dk{background:#0a0a0b;color:#fff}
 .lnk{border:0;background:none;color:var(--mut);font:500 14px 'Outfit',system-ui,sans-serif;padding:6px 10px;cursor:pointer}
 .sec{display:flex;align-items:center;gap:6px;color:#a8a8ad;font-size:12px}
 .sec svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.err{min-height:18px;margin-top:10px;text-align:center;font-size:13px;color:#c0392b}
 .box{width:100%;background:#fff;border-radius:20px;padding:4px 18px;margin-top:16px;text-align:left}
 .box p{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eeecec;font-size:14px;color:#9a9a9f}
 .box p:last-child{border:0}
@@ -104,9 +108,10 @@ body.dk{background:#0a0a0b;color:#fff}
 
 <section class="s on" id="s0">
   <button class="bk" id="b0" type="button" aria-label="Geri"><svg viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg></button>
-  <div class="hd" id="hd"><span class="gh l" id="gl"></span><span class="gh r" id="gr"></span><h1 class="t" id="tn">Platin</h1><p class="t">Ücretsiz<small> / süresiz</small></p></div>
+  <div class="hd" id="hd"><span class="gh l" id="gl"></span><span class="gh r" id="gr"></span><h1 class="t" id="tn">Platin</h1><p class="t" id="pt">Ücretsiz<small> / süresiz</small></p></div>
   <div class="car" id="car"></div>
   <div class="dots" id="dots"></div>
+  <p class="balL" id="balL"></p>
   <div class="bot"><button class="btn" id="pickB" type="button">Platin seç</button><button class="lnk" id="rst" type="button" hidden>Varsayılan kartı kullan</button></div>
 </section>
 
@@ -120,15 +125,17 @@ body.dk{background:#0a0a0b;color:#fff}
     <p>Yazı tipi<select id="fontIn" aria-label="Yazı tipi"></select></p>
     <p>Yol<input id="pathIn" maxlength="10" aria-label="Yol"></p>
     <p>Tür<input id="typeIn" maxlength="10" aria-label="Tür"></p>
-    <p class="tt">Bugünkü toplam<b>Ücretsiz</b></p>
+    <p id="balRow">Bakiye<b id="balB">-</b></p>
+    <p class="tt">Toplam<b id="totB">Ücretsiz</b></p>
   </div>
+  <p class="err" id="ordErr" role="status"></p>
   <div class="bot"><button class="btn" id="ordB" type="button">Sipariş ver · Ücretsiz</button><p class="sec" id="sec"></p></div>
 </section>
 
 <section class="s c" id="s2">
   <div class="pos" id="pos"></div>
   <h1 class="h1 ct">Sipariş verildi</h1><p class="sub ct" id="okSub"></p>
-  <div class="box"><p>Ödenen<b>Ücretsiz</b></p><p>Teslim<b>Anında</b></p></div>
+  <div class="box"><p>Ödenen<b id="paidB">Ücretsiz</b></p><p>Teslim<b>Anında</b></p></div>
   <div class="bot">
     <button class="btn w" id="recB" type="button"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"/><path d="M9 8h6M9 12h6"/></svg>Makbuzu gör</button>
     <button class="btn" id="useB" type="button">Kullan</button>
@@ -143,11 +150,11 @@ body.dk{background:#0a0a0b;color:#fff}
     <div class="pw"><div class="paper">
       <h3>LTF</h3><small>KART SİPARİŞ MAKBUZU</small>
       <p><span>MAKBUZ</span><span id="rN"></span></p><p><span>TARİH</span><span id="rD"></span></p><p><span>KART SAHİBİ</span><span id="rO"></span></p><hr>
-      <p class="it"><span><b id="rK" style="font-weight:600"></b><i>Üyelik kartı · süresiz</i></span><span>ÜCRETSİZ</span></p>
+      <p class="it"><span><b id="rK" style="font-weight:600"></b><i>Üyelik kartı · süresiz</i></span><span id="rP1">ÜCRETSİZ</span></p>
       <p class="it"><span>Kart düzenleme</span><span>ÜCRETSİZ</span></p>
       <p class="it"><span>Teslimat · Anında</span><span>ÜCRETSİZ</span></p><hr>
-      <p class="tot"><span>TOPLAM</span><span>ÜCRETSİZ</span></p>
-      <p><span>LTF ÜYELİĞİ İLE</span><span>ONAYLANDI</span></p>
+      <p class="tot"><span>TOPLAM</span><span id="rT">ÜCRETSİZ</span></p>
+      <p><span id="rA">LTF ÜYELİĞİ İLE</span><span id="rA2">ONAYLANDI</span></p>
       <div class="bc2" id="bc2"></div><p class="no" id="rN2"></p>
       <em>Loyal Elite Force’u seçtiğin için teşekkürler.</em>
       <div class="stamp">ÖDENDİ</div>
@@ -169,9 +176,42 @@ body.dk{background:#0a0a0b;color:#fff}
   var $ = function (i) { return document.getElementById(i); };
   var st = document.createElement('style'); st.textContent = K.css; document.head.appendChild(st);
 
+  /* ---- Puan: fiyatlar, bakiye, sahip olunan kartlar (ana sayfa kart-sekme.js'den gelir) ---- */
+  var info = { bal: null, price: { p: 0, s: 250, g: 500 }, owned: { p: 1 }, ready: false };
+  var fmt = function (n) { return Number(n || 0).toLocaleString('tr-TR'); };
+  function priceOf(k) { return k === 'p' ? 0 : (info.price[k] || 0); }
+  function isOwned(k) { return priceOf(k) === 0 || !!info.owned[k]; }
+  function payTxt(k) { return isOwned(k) ? 'Ücretsiz' : fmt(priceOf(k)) + ' puan'; }
+  function headTxt(k) { return priceOf(k) === 0 ? 'Ücretsiz<small> / süresiz</small>' : isOwned(k) ? 'Sende<small> / süresiz</small>' : fmt(priceOf(k)) + ' puan<small> / tek seferlik</small>'; }
+  var rid = 0, wait = {};
+  function post(m) { try { if (window.parent !== window) { window.parent.postMessage(m, location.origin); return true; } } catch (e) {} return false; }
+  function ask(a, extra) {
+    return new Promise(function (res) {
+      var id = ++rid, m = { ltf: 'kart', a: a, id: id };
+      for (var k in (extra || {})) m[k] = extra[k];
+      wait[id] = res;
+      if (!post(m)) { delete wait[id]; res({ ok: false, err: 'Puanla satın alma için kartı uygulama içinden aç.' }); return; }
+      setTimeout(function () { if (wait[id]) { delete wait[id]; res({ ok: false, err: 'Sunucu yanıt vermedi. Tekrar dene.' }); } }, 15000);
+    });
+  }
+  window.addEventListener('message', function (e) {
+    if (e.origin !== location.origin || e.source !== window.parent || !e.data || e.data.ltf !== 'kart-r') return;
+    var f = wait[e.data.id]; if (f) { delete wait[e.data.id]; f(e.data); }
+  });
+  function loadInfo() {
+    return ask('state').then(function (r) {
+      if (!r || !r.ok) return;
+      info.ready = true; info.bal = (r.bal === null || r.bal === undefined) ? null : Number(r.bal);
+      for (var k in (r.price || {})) info.price[k] = Number(r.price[k]);
+      for (var o in (r.owned || {})) info.owned[o] = 1;
+      build(); head(); balLine();
+    });
+  }
+  function balLine() { $('balL').innerHTML = info.bal === null ? '' : 'Puanın: <b>' + fmt(info.bal) + '</b>'; }
+
   $('fontIn').innerHTML = Object.keys(K.FONTS).map(function (k) { return '<option value="' + k + '">' + K.FONTS[k][0] + '</option>'; }).join('');
   $('fontIn').value = 'cinzel';
-  $('nameIn').value = ((q.get('n') || '').trim() || 'LTF ÜYESİ').slice(0, 20).toLocaleUpperCase('tr');
+  $('nameIn').value = ((q.get('n') || '').trim() || 'LTF ÜYESI').slice(0, 20).toLocaleUpperCase('tr');
   $('typeIn').value = 'Kalkan';
   try {
     var old = JSON.parse(localStorage.getItem(SK) || 'null');
@@ -189,7 +229,7 @@ body.dk{background:#0a0a0b;color:#fff}
   function typ() { return $('typeIn').value.trim(); }
   function fnt() { return $('fontIn').value; }
   function card(k) { return K.card(k, { n: name(), y: pth(), t: typ(), f: fnt(), p: photo }); }
-  function send(a) { try { if (window.parent !== window) { window.parent.postMessage({ ltf: 'kart', a: a }, location.origin); return true; } } catch (e) {} return false; }
+  function send(a) { return post({ ltf: 'kart', a: a }); }
   function leave() { if (!send('close')) location.href = 'app.html#ana-sayfa'; }
   function show(id) {
     document.querySelectorAll('.s').forEach(function (s) { s.classList.toggle('on', s.id === id); });
@@ -200,16 +240,18 @@ body.dk{background:#0a0a0b;color:#fff}
   /* ---- 1) Kart seç ---- */
   var car = $('car');
   function dots() { [].forEach.call($('dots').children, function (d, i) { d.classList.toggle('on', KEYS[i] === sel); }); }
+  function pickLabel() { return T[sel][0] + ' seç' + (isOwned(sel) ? '' : ' · ' + fmt(priceOf(sel)) + ' puan'); }
   function head() {
     var i = KEYS.indexOf(sel), h = $('hd');
     h.classList.add('sw');
     setTimeout(function () {
       $('tn').textContent = T[sel][0];
+      $('pt').innerHTML = headTxt(sel);
       $('gl').textContent = i > 0 ? T[KEYS[i - 1]][0] : '';
       $('gr').textContent = i < KEYS.length - 1 ? T[KEYS[i + 1]][0] : '';
       h.classList.remove('sw');
     }, 130);
-    $('pickB').textContent = T[sel][0] + ' seç';
+    $('pickB').textContent = pickLabel();
     $('pathIn').placeholder = T[sel][0];
     dots();
   }
@@ -235,20 +277,50 @@ body.dk{background:#0a0a0b;color:#fff}
   /* ---- 2) Siparişi onayla ---- */
   var CHECK = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.7 2.7L16 9.8"/></svg>';
   var LOCK = '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
-  function pre() { $('pre').innerHTML = card(sel); $('cK').textContent = T[sel][0] + ' kart'; }
-  function resetOrd() { var b = $('ordB'); b.classList.remove('proc'); b.textContent = 'Sipariş ver · Ücretsiz'; $('sec').innerHTML = LOCK + ' Güvenli ödeme · İstediğin zaman iptal'; }
-  $('pickB').onclick = function () { pre(); resetOrd(); show('s1'); };
+  function pre() {
+    $('pre').innerHTML = card(sel); $('cK').textContent = T[sel][0] + ' kart';
+    $('totB').textContent = payTxt(sel);
+    $('balRow').style.display = isOwned(sel) ? 'none' : '';
+    $('balB').textContent = info.bal === null ? '-' : fmt(info.bal) + ' puan';
+  }
+  function enough() { return isOwned(sel) || (info.bal !== null && info.bal >= priceOf(sel)); }
+  function resetOrd() {
+    var b = $('ordB'); b.classList.remove('proc'); $('ordErr').textContent = '';
+    if (isOwned(sel)) {
+      b.disabled = false; b.textContent = 'Sipariş ver · ' + payTxt(sel);
+      $('sec').innerHTML = CHECK + ' ' + (priceOf(sel) === 0 ? 'Ücretsiz kart' : 'Bu kart sende, tekrar ödeme yok');
+    } else if (!enough() && info.bal !== null) {
+      b.disabled = true; b.textContent = 'Yetersiz puan · ' + fmt(priceOf(sel)) + ' gerekli';
+      $('sec').innerHTML = LOCK + ' Puanın: ' + fmt(info.bal);
+    } else {
+      b.disabled = false; b.textContent = 'Puanla satın al · ' + fmt(priceOf(sel)) + ' puan';
+      $('sec').innerHTML = LOCK + ' Puanın hesabından düşer' + (info.bal !== null ? ' · Kalan: ' + fmt(info.bal - priceOf(sel)) : '');
+    }
+  }
+  $('pickB').onclick = function () { pre(); resetOrd(); show('s1'); if (!isOwned(sel)) loadInfo().then(function () { pre(); resetOrd(); }); };
   ['nameIn', 'pathIn', 'typeIn'].forEach(function (id) { $(id).addEventListener('input', function () { pre(); build(); }); });
   $('fontIn').addEventListener('change', function () { pre(); build(); });
+  function finish(paid) {
+    var d = new Date(), p = function (n) { return String(n).padStart(2, '0'); }, M = ['OCA', 'ŞUB', 'MAR', 'NİS', 'MAY', 'HAZ', 'TEM', 'AĞU', 'EYL', 'EKİ', 'KAS', 'ARA'];
+    order = { paid: paid, no: 'LTF-' + String(d.getFullYear()).slice(2) + p(d.getMonth() + 1) + p(d.getDate()) + '-' + K.num(name() + d.getTime()), date: p(d.getDate()) + ' ' + M[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + p(d.getHours()) + ':' + p(d.getMinutes()) };
+    $('paidB').textContent = paid ? fmt(paid) + ' puan' : 'Ücretsiz';
+    pos(); show('s2'); build(); head(); balLine();
+  }
   $('ordB').onclick = function () {
-    var b = this; if (b.classList.contains('proc')) return;
+    var b = this; if (b.classList.contains('proc') || b.disabled) return;
+    var k = sel, price = priceOf(k), owned = isOwned(k);
+    $('ordErr').textContent = '';
     b.classList.add('proc'); b.innerHTML = '<span class="dd"><i></i><i></i></span>';
-    $('sec').innerHTML = CHECK + ' Ödemen onaylanıyor…';
-    setTimeout(function () {
-      var d = new Date(), p = function (n) { return String(n).padStart(2, '0'); }, M = ['OCA', 'ŞUB', 'MAR', 'NİS', 'MAY', 'HAZ', 'TEM', 'AĞU', 'EYL', 'EKİ', 'KAS', 'ARA'];
-      order = { no: 'LTF-' + String(d.getFullYear()).slice(2) + p(d.getMonth() + 1) + p(d.getDate()) + '-' + K.num(name() + d.getTime()), date: p(d.getDate()) + ' ' + M[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + p(d.getHours()) + ':' + p(d.getMinutes()) };
-      pos(); show('s2');
-    }, 1800);
+    $('sec').innerHTML = CHECK + ' ' + (owned ? 'Sipariş hazırlanıyor…' : 'Ödemen onaylanıyor…');
+    var delay = new Promise(function (r) { setTimeout(r, 1500); });
+    var buy = owned ? Promise.resolve({ ok: true }) : ask('buy', { k: k });
+    Promise.all([buy, delay]).then(function (a) {
+      var r = a[0];
+      if (!r || !r.ok) { resetOrd(); $('ordErr').textContent = (r && r.err) || 'Satın alma başarısız.'; return; }
+      var spent = 0;
+      if (!owned) { spent = price; info.owned[k] = 1; if (r.bal !== null && r.bal !== undefined) info.bal = Number(r.bal); }
+      finish(spent);
+    });
   };
 
   /* ---- 3) Sipariş verildi ---- */
@@ -270,9 +342,13 @@ body.dk{background:#0a0a0b;color:#fff}
       '</svg>';
   }
   $('recB').onclick = function () {
-    var n = name(), o = order || { no: 'LTF-000000-0000', date: '' };
+    var n = name(), o = order || { paid: 0, no: 'LTF-000000-0000', date: '' }, paid = o.paid > 0;
     $('rN').textContent = o.no; $('rN2').textContent = o.no; $('rD').textContent = o.date; $('rO').textContent = n;
     $('rK').textContent = T[sel][0] + ' kart'; $('bc2').innerHTML = K.bars(+K.num(n) + 3);
+    $('rP1').textContent = paid ? fmt(o.paid) + ' PUAN' : 'ÜCRETSİZ';
+    $('rT').textContent = paid ? fmt(o.paid) + ' PUAN' : 'ÜCRETSİZ';
+    $('rA').textContent = paid ? 'PUANLA' : 'LTF ÜYELİĞİ İLE';
+    $('rA2').textContent = paid ? 'ÖDENDİ' : 'ONAYLANDI';
     show('s3'); printIt();
   };
   $('useB').onclick = function () {
@@ -299,7 +375,7 @@ body.dk{background:#0a0a0b;color:#fff}
   $('b1').onclick = function () { show('s0'); };
   $('b3').onclick = function () { show('s2'); };
 
-  build(); head();
+  build(); head(); loadInfo();
 })();
 </script>
 </body>
