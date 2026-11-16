@@ -3,6 +3,8 @@
    Basınca kart.html tam ekran açılır: kart seç (Platin / Gümüş / Altın), özelleştir (Ad / Yazı tipi / Yol / Tür),
    onayla, sipariş verildi, makbuz. "Kullan" denince ana sayfadaki kartın ön yüzü seçilen kartla
    değişir (dokununca yine puanlar görünür). Kartta KARE fotoğraf hesabın profil fotoğrafıdır.
+   - Platin ücretsiz; Gümüş ve Altın kart PUANLA satın alınır (kart-magaza-kurulum.sql, magaza_al fonksiyonu).
+     Satın alma sunucuda yapılır; kart.html bu dosyaya mesaj gönderir (state / buy), puan tarayıcıda değiştirilemez.
    - Seçim bu cihazda saklanır (localStorage: ltf_kart_<kullanıcı>).
    - config.js bu dosyayı kendisi yükler; app.html'ye ekleme gerekmez.
    ============================================================ */
@@ -62,6 +64,48 @@ import { supabase } from './config.js';
     if (f && f.classList.contains('flipped')) { f.classList.remove('flipped'); f.setAttribute('aria-pressed', 'false'); }
   }
 
+  /* ---------- Puanla kart satın alma (kart.html bu fonksiyonları mesajla çağırır) ---------- */
+  var DEF = { s: 250, g: 500 };   // kart-magaza-kurulum.sql ile aynı fiyatlar (tablo kurulmamışsa yedek)
+  var ERR = { insufficient: 'Yeterli puanın yok.', not_found: 'Kart ürünü sunucuda yok. kart-magaza-kurulum.sql Supabase\'te çalıştırıldı mı?', auth: 'Oturum bulunamadı.' };
+  function errText(e) { var m = (e && e.message) || ''; for (var k in ERR) if (m.indexOf(k) !== -1) return ERR[k]; return 'Satın alma başarısız. Tekrar dene.'; }
+  async function readBal() {
+    var w = window.__lefWallet;
+    if (w && w.balance !== null && w.balance !== undefined) return Number(w.balance);
+    try {
+      var r = await supabase.from('wallets').select('balance').eq('user_id', uid).maybeSingle();
+      if (r && r.data) return Number(r.data.balance);
+    } catch (e) {}
+    return null;
+  }
+  async function kartState() {
+    var out = { ok: true, bal: null, price: {}, owned: {} };
+    try {
+      var r = await supabase.from('magaza_urunler').select('id,fiyat').eq('tur', 'kart').eq('aktif', true);
+      if (!r.error && r.data) r.data.forEach(function (x) { if (String(x.id).indexOf('kart-') === 0) out.price[String(x.id).slice(5)] = Number(x.fiyat); });
+      if (uid) {
+        var o = await supabase.from('magaza_sahip').select('urun_id').eq('user_id', uid);
+        (o.data || []).forEach(function (x) { if (String(x.urun_id).indexOf('kart-') === 0) out.owned[String(x.urun_id).slice(5)] = 1; });
+      }
+    } catch (e) {}
+    Object.keys(DEF).forEach(function (k) { if (out.price[k] === undefined) out.price[k] = DEF[k]; });
+    out.bal = await readBal();
+    return out;
+  }
+  async function kartBuy(k) {
+    if (!uid) return { ok: false, err: ERR.auth };
+    if (k !== 's' && k !== 'g') return { ok: false, err: ERR.not_found };
+    try {
+      var r = await supabase.rpc('magaza_al', { p_urun: 'kart-' + k });
+      if (r.error) throw r.error;
+      var nb = Number(r.data);
+      window.dispatchEvent(new CustomEvent('lef-wallet', { detail: { balance: nb } }));
+      return { ok: true, bal: nb };
+    } catch (x) {
+      if (x && x.message && x.message.indexOf('owned') !== -1) return { ok: true, bal: await readBal() };   // zaten alınmış: tekrar ödeme yok
+      return { ok: false, err: errText(x) };
+    }
+  }
+
   /* ---------- kart.html tam ekran ---------- */
   var ov = null, fr = null;
   function build() {
@@ -93,6 +137,15 @@ import { supabase } from './config.js';
   }
   window.addEventListener('message', function (e) {
     if (e.origin !== location.origin || !e.data || e.data.ltf !== 'kart') return;
+    if (e.data.a === 'state' || e.data.a === 'buy') {   // puan / satın alma isteği: sadece kart çerçevesinden kabul edilir
+      if (!fr || e.source !== fr.contentWindow) return;
+      var id = e.data.id, src = e.source;
+      (e.data.a === 'state' ? kartState() : kartBuy(String(e.data.k || ''))).then(function (res) {
+        res.ltf = 'kart-r'; res.id = id;
+        try { src.postMessage(res, location.origin); } catch (x) {}
+      });
+      return;
+    }
     if (e.data.a === 'use') { applyCard(); showCardSide(); }
     close();
   });
