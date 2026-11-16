@@ -1,35 +1,41 @@
 /* ============================================================
-   PROFİL ÇERÇEVELERİ: banner + avatar çerçevesi (3 tasarım, görselden)
+   PROFİL ÇERÇEVELERİ: banner + avatar çerçevesi (6 tasarım)
    - "Profil efekti" panelinin üstüne iki sekme ekler: Normal efektler / Çerçeve tasarımları
-   - Seçim profiles.fx_cerceve sütununa kaydedilir: beyaz | kirmizi | mavi
-   - Repo kökünde bu 6 görsel olmalı:
-       cr-beyaz-banner.png   cr-beyaz-avatar.png
-       cr-kirmizi-banner.png cr-kirmizi-avatar.png
-       cr-mavi-banner.png    cr-mavi-avatar.png
+   - Seçim profiles.fx_cerceve sütununa kaydedilir: beyaz | kirmizi | mavi | kelebek | murekkep | kurdele
+   - Repo kökünde şu görseller olmalı:
+       cr-beyaz-banner.png    cr-beyaz-avatar.png
+       cr-kirmizi-banner.png  cr-kirmizi-avatar.png
+       cr-mavi-banner.png     cr-mavi-avatar.png
+       cr-kelebek-banner.png  cr-kelebek-avatar.png     (yeni: siyah kelebek)
+       cr-murekkep-banner.png cr-murekkep-avatar.png    (yeni: mürekkep)
+       cr-kurdele-banner.png  cr-kurdele-avatar.png     (yeni: kurdele)
+     Eksik görseli olan tasarım panelde ve profilde otomatik gizlenir (site bozulmaz).
    - ux.js içinden otomatik yüklenir.
-   - Görsellerin koyu ARKA PLANI (koyu kırmızı/mavi dolgu + duman) yüklenirken parlaklığa göre silinir,
-     geriye sadece parlak efektler (tüy, zincir, ışık çizgileri) kalır. Eşikler PAL içindeki `key`.
+   - Koyu ARKA PLAN (koyu dolgu + duman) yüklenirken parlaklığa göre silinir, geriye sadece parlak çizgiler kalır.
+     Eşikler PAL içindeki `key`. `raw:true` olan yeni tasarımlar zaten şeffaf hazırlandığı için olduğu gibi kullanılır.
+     BEYAZ çerçevenin arka planı artık silinir (key eşiği eklendi).
    - BANNER çerçevesi her ekran boyutunda parça parça çizilir ve banner'ı 4 kenardan TAM sarar
-     (sol-alt köşe sağ-alt köşenin aynası; sol ve alt kenar uzatılır). Oyuk/kesik yok:
-     profil fotoğrafı çerçevenin sol-alt köşesinin ÜSTÜNDE durur, banner fotoğrafı kesilmez.
-   - Avatar çerçevesi fotoğrafın İÇİNDE durur.
-   - ANIMASYON: parlama süpürmesi + yıldız pırıltıları + hafif nefes alma (sadece çerçevenin
-     kendi piksellerinde). Çerçeve değişince giriş animasyonu, kaldırınca solma animasyonu.
-     "Hareketi azalt" ayarı açıksa animasyonlar kapanır.
+     (sol-alt köşe sağ-alt köşenin aynası; sol ve alt kenar uzatılır). Profil fotoğrafı sol-alt köşenin ÜSTÜNDE durur.
+   - Avatar çerçevesi fotoğrafin İÇİNDE durur.
+   - ANIMASYON: parlama süpürmesi + yıldız pırıltıları + hafif nefes alma. "Hareketi azalt" açıksa animasyonlar kapanır.
    ============================================================ */
 import { supabase } from './config.js';
 
 // hole/out: avatar çerçevesi iç boşluk / halka dış yarıçapı (piksel)
-// key: [alt, üst] aydınlık (luma) eşiği; bunun altındaki koyu arka plan tamamen silinir, üstü olduğu gibi kalır (beyaz çerçevede yok)
+// key: [alt, üst] aydınlık (luma) eşiği; bunun altındaki koyu arka plan tamamen silinir
+// raw: görsel zaten şeffaf hazır, temizleme yok
 // ban: banner PNG ölçüleri -> L,T,R,B = halka çubuklarının DİŞ kenarı; bx = alt kenarın başladığı x; ly = sol kenarın bittiği y
 const PAL = {
-  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, ban: { L: 30, T: 30, R: 882, B: 352, bx: 372, ly: 314 } },
+  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, key: [55, 135], ban: { L: 30, T: 30, R: 882, B: 352, bx: 372, ly: 314 } },
   kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, key: [95, 160], ban: { L: 30, T: 30, R: 880, B: 358, bx: 368, ly: 304 } },
-  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, key: [85, 150], ban: { L: 30, T: 30, R: 874, B: 348, bx: 373, ly: 282 } }
+  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, key: [85, 150], ban: { L: 30, T: 30, R: 874, B: 348, bx: 373, ly: 282 } },
+  kelebek: { n: 'Gece Kelebeği', hole: 111, out: 138, raw: true, ban: { L: 52, T: 190, R: 852, B: 478, bx: 342, ly: 322 } },
+  murekkep:{ n: 'Mürekkep', hole: 118, out: 138, raw: true, ban: { L: 44, T: 180, R: 862, B: 466, bx: 342, ly: 324 } },
+  kurdele: { n: 'Kurdele', hole: 108, out: 136, raw: true, ban: { L: 50, T: 170, R: 848, B: 458, bx: 338, ly: 302 } }
 };
 const src = (k, t) => 'cr-' + k + '-' + t + '.png';
 
-/* ---------- Arka plan temizleme: koyu yarı saydam pikselleri sil, avatar deliğinin içini boşalt ---------- */
+/* ---------- Arka plan temizleme: koyu yarı saydam pikselleri sil, avatar değiğinin içini boşalt ---------- */
 const CV = {};      // temizlenmiş canvas'lar
 const URLS = {};    // dataURL önbelleği
 const url = (k, t) => {
@@ -45,15 +51,16 @@ function cleanImg(k, t) {
         const c = document.createElement('canvas'); c.width = w; c.height = h;
         const x = c.getContext('2d'); x.drawImage(im, 0, 0);
         const id = x.getImageData(0, 0, w, h), d = id.data;
-        const hole = t === 'avatar' ? PAL[k].hole : 0, key = PAL[k].key;
+        const hole = t === 'avatar' ? PAL[k].hole : 0, key = PAL[k].key, raw = PAL[k].raw;
         for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) {
           const i = (y * w + xx) * 4; let a = d[i + 3];
           if (a === 0) continue;
           const mx = Math.max(d[i], d[i + 1], d[i + 2]);
-          if (key) {                       // koyu/doygun dolgu + duman: aydınlığa (luma) göre sil (opak olsa bile)
-            const lum = .299 * d[i] + .587 * d[i + 1] + .114 * d[i + 2];   // doygun kırmızı/mavi dolgu düşük, parlak çizgiler yüksek çıkar
-            const t = Math.min(1, Math.max(0, (lum - key[0]) / (key[1] - key[0])));
-            a *= t * t * (3 - 2 * t);
+          if (raw) { /* hazır şeffaf: dokunma */ }
+          else if (key) {                  // koyu/doygun dolgu + duman: aydınlığa (luma) göre sil (opak olsa bile)
+            const lum = .299 * d[i] + .587 * d[i + 1] + .114 * d[i + 2];
+            const tt = Math.min(1, Math.max(0, (lum - key[0]) / (key[1] - key[0])));
+            a *= tt * tt * (3 - 2 * tt);
           } else if (a < 255) {
             a *= Math.min(1, Math.max(0, (mx - 45) / 70));
           }
@@ -66,13 +73,14 @@ function cleanImg(k, t) {
         x.putImageData(id, 0, 0);
         CV[k + t] = c;
       } catch (_) { /* temizlenemezse orijinal görsel kullanılır */ }
-      res();
+      res(true);
     };
-    im.onerror = () => res();
+    im.onerror = () => res(false);
     im.src = src(k, t);
   });
 }
-const ready = Promise.all(Object.keys(PAL).flatMap(k => ['avatar', 'banner'].map(t => cleanImg(k, t))));
+// görseli eksik tasarımı PAL'dan çıkar (başlangıçta tüm anahtarlar; yüklenince eksikler silinir)
+const ready = Promise.all(Object.keys(PAL).map(k => Promise.all(['avatar', 'banner'].map(t => cleanImg(k, t))).then(r => { if (!r[0] || !r[1]) delete PAL[k]; })));
 
 /* ---------- Banner çerçevesini parça parça çiz: banner'ı 4 kenardan TAM sarar ---------- */
 function drawBanner(canvas, k, Wd, Hd, dpr) {
@@ -109,7 +117,7 @@ function drawBanner(canvas, k, Wd, Hd, dpr) {
   P(B.R - tb, B.T + c, tb + Gm, (B.B - B.T) - 2 * c, g + Wd - tb * s, g + ci, (tb + Gm) * s, Hd - 2 * ci);
   // alt kenar: görseldeki alt şerit tüm genişliğe yayılır
   P(B.bx + cap, B.B - tb, (B.R - c) - (B.bx + cap), tb + Gm, g + ci, g + Hd - tb * s, Wd - 2 * ci, (tb + Gm) * s);
-  // sol kenar: görseldeki sol şerit (oyuğa kadar olan kısmı) tüm yüksekliğe yayılır
+  // sol kenar: görseldeki sol şerit (oyğa kadar olan kısım) tüm yüksekliğe yayılır
   P(B.L - Gm, B.T + c, Gm + tb, B.ly - capH - (B.T + c), 0, g + ci, (Gm + tb) * s, Hd - 2 * ci);
   return { g, rad: 46 * s };
 }
@@ -119,14 +127,17 @@ function drawBanner(canvas, k, Wd, Hd, dpr) {
 const ANIM = {
   beyaz:   { col: '255,255,255', per: 4.2 },
   kirmizi: { col: '255,150,175', per: 4.8 },
-  mavi:    { col: '150,200,255', per: 3.6 }
+  mavi:    { col: '150,200,255', per: 3.6 },
+  kelebek: { col: '235,240,255', per: 4.4 },
+  murekkep:{ col: '255,255,255', per: 5.2 },
+  kurdele: { col: '255,235,245', per: 4.0 }
 };
 function mkAnim(el, circle) { return { el, circle: !!circle, base: null, k: null, cands: [], sp: [], u: 6 }; }
 function setAnimBase(A, base, k, count) {
   A.base = base; A.k = k;
   A.el.width = base.width; A.el.height = base.height;
   A.u = Math.max(base.width, base.height) * (A.circle ? .018 : .0065);
-  // pırıltı adayları: çerçevenin parlak, opak pikselleri
+  // pırıltı adayları: çerçevenin parlak, opak piksellerı
   const W = base.width, H = base.height, d = base.getContext('2d').getImageData(0, 0, W, H).data;
   const strong = [], any = [], st = Math.max(2, Math.round(Math.max(W, H) / 220));
   for (let y = 0; y < H; y += st) for (let x = 0; x < W; x += st) {
@@ -235,7 +246,7 @@ if (typeof document !== 'undefined') (async function main() {
   let cur = null;
   function render() {
     const w = bn.clientWidth, h = bn.clientHeight;
-    if (!cur || !w || !h) { banEl.style.display = 'none'; avEl.style.display = 'none'; resetBan(); banKey = avKey = ''; stopLoop(); return; }
+    if (!cur || !PAL[cur] || !w || !h) { banEl.style.display = 'none'; avEl.style.display = 'none'; resetBan(); banKey = avKey = ''; stopLoop(); return; }
     const P = PAL[cur], dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     const key = [cur, w, h, dpr].join();
@@ -250,13 +261,12 @@ if (typeof document !== 'undefined') (async function main() {
       banEl.style.left = (bn.offsetLeft + bn.clientLeft - res.g) + 'px';
       banEl.style.top = (bn.offsetTop + bn.clientTop - res.g) + 'px';
       // fotoğraf çerçevenin kenarına kadar: köşe yuvarlaklığı halkayla aynı, kenar çizgisi yok.
-      // Kesik/oyuk YOK: banner 4 kenardan tam çerçeveli, avatar sol-alt köşenin üstünde durur.
       bn.style.borderRadius = res.rad + 'px';
       bn.style.borderColor = 'transparent';
       bn.style.clipPath = '';
     } else { banKey = ''; banEl.style.display = 'none'; resetBan(); }
 
-    // avatar çerçevesi: halka gövdesinin dış kenarı = fotoğraf kenarı -> çerçeve fotoğrafın içinde kalır
+    // avatar çerçevesi: halka gövdesinin dış kenarı = fotoğraf kenarı -> çerçeve fotoğrafin içinde kalır
     const d = av.offsetWidth, ring = CV[cur + 'avatar'];
     if (ring && d) {
       const k2 = [cur, d, dpr].join();
@@ -291,7 +301,6 @@ if (typeof document !== 'undefined') (async function main() {
     if (changed) playIn();                    // yeni çerçeve: giriş animasyonu
   }
   if (window.ResizeObserver) { const ro = new ResizeObserver(render); ro.observe(bn); ro.observe(head); } else window.addEventListener('resize', render);
-  ready.then(() => { render(); if (cur) playIn(); });
 
   const memo = {}; let curId = null;
   async function load(id) {
@@ -299,15 +308,16 @@ if (typeof document !== 'undefined') (async function main() {
     try {
       const r = await supabase.from('profiles').select('fx_cerceve').eq('id', id).maybeSingle();
       if (r.error) return null;
-      memo[id] = (r.data && PAL[r.data.fx_cerceve]) ? r.data.fx_cerceve : null; return memo[id];
+      memo[id] = (r.data && r.data.fx_cerceve) ? r.data.fx_cerceve : null; return memo[id];
     } catch (_) { return null; }
   }
   async function onProfile() {
+    await ready;
     const P = window.__lefProfile; if (!P) return;
     curId = P.id; const v = await load(P.id);
     if (curId === P.id) apply(v);
   }
-  window.addEventListener('lef-profile', onProfile); onProfile();
+  window.addEventListener('lef-profile', onProfile); ready.then(onProfile);
 
   /* ---------- "Profil efekti" paneline sekmeler ---------- */
   function whenSheet(cb) {
@@ -315,7 +325,8 @@ if (typeof document !== 'undefined') (async function main() {
     const mo = new MutationObserver(() => { const s2 = $('.fx-sh'); if (s2) { mo.disconnect(); cb(s2); } });
     mo.observe(document.body, { childList: true });
   }
-  whenSheet(sh => {
+  whenSheet(async sh => {
+    await ready;   // eksik görselli tasarımlar elendikten sonra liste kurulur
     const hd = $('.fx-hd', sh), grid = $('#fxGrid', sh), ft = $('.fx-ft', sh), msg = $('#fxMsg', sh);
     const tabs = document.createElement('div'); tabs.className = 'cr-tabs';
     tabs.innerHTML = '<button type="button" class="on">Normal efektler</button><button type="button">Çerçeve tasarımları</button>';
@@ -334,7 +345,7 @@ if (typeof document !== 'undefined') (async function main() {
       const s = document.createElement('span'); s.textContent = k ? PAL[k].n : 'Yok';
       b.appendChild(i); b.appendChild(s); cg.appendChild(b);
     });
-    ready.then(() => cg.querySelectorAll('.cr-th').forEach(im => { im.src = url(im.dataset.k, 'avatar'); }));
+    cg.querySelectorAll('.cr-th').forEach(im => { im.src = url(im.dataset.k, 'avatar'); });
     const mark = () => cg.querySelectorAll('.fx-it').forEach(b => b.classList.toggle('on', (b.dataset.id || '') === (pick || '')));
     const say = (t, err) => { msg.textContent = t || ''; msg.className = err ? 'err' : ''; };
     function tab(n) {
