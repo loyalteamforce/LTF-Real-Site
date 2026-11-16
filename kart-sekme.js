@@ -1,6 +1,6 @@
 /* ============================================================
    KART (Ana Sayfa): puan kartının altındaki Gönder / Geçmiş butonlarının yanına "Kart" butonu ekler.
-   Basınca kart.html tam ekran açılır: kart seç (Platin / Gümüş / Altın), özelleştir (Ad / Yol / Tür),
+   Basınca kart.html tam ekran açılır: kart seç (Platin / Gümüş / Altın), özelleştir (Ad / Yazı tipi / Yol / Tür),
    onayla, sipariş verildi, makbuz. "Kullan" denince ana sayfadaki kartın ön yüzü seçilen kartla
    değişir (dokununca yine puanlar görünür). Kartta KARE fotoğraf hesabın profil fotoğrafıdır.
    - Seçim bu cihazda saklanır (localStorage: ltf_kart_<kullanıcı>).
@@ -50,11 +50,11 @@ import { supabase } from './config.js';
     var back = home.querySelector('.pc-back'); if (!back) return;
     var j = readSel(), cur = back.querySelector('.ltf-kc');
     if (!j) { if (cur) cur.remove(); back.classList.remove('ltf-k'); return; }
-    var sig = [j.k, j.n, j.y, j.t, j.ts, avatar].join('|');
+    var sig = [j.k, j.n, j.y, j.t, j.f, j.ts, avatar].join('|');
     if (cur && cur.dataset.s === sig) return;
     if (cur) cur.remove();
     var d = document.createElement('div'); d.className = 'ltf-kc'; d.dataset.s = sig;
-    d.innerHTML = K.card(j.k, { n: j.n, y: j.y, t: j.t, p: avatar });
+    d.innerHTML = K.card(j.k, { n: j.n, y: j.y, t: j.t, f: j.f, p: avatar });
     back.classList.add('ltf-k'); back.appendChild(d);
   }
   function showCardSide() {   // puan yüzü açıksa kartı öne çevir

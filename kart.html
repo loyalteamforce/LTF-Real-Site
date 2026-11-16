@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@700&family=Bebas+Neue&family=Anton&family=Oswald:wght@600&family=Space+Mono:wght@700&family=Dancing+Script:wght@700&family=Pacifico&family=Caveat:wght@700&family=Lobster&display=swap" rel="stylesheet">
 <style>
 :root{--mut:#9a9a9f}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -53,10 +54,12 @@ body.dk{background:#0a0a0b;color:#fff}
 .sec{display:flex;align-items:center;gap:6px;color:#a8a8ad;font-size:12px}
 .sec svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .box{width:100%;background:#fff;border-radius:20px;padding:4px 18px;margin-top:16px;text-align:left}
-.box p{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #eeecec;font-size:14px;color:#9a9a9f}
+.box p{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eeecec;font-size:14px;color:#9a9a9f}
 .box p:last-child{border:0}
 .box b{color:#111;font-weight:500}.box p.tt b{font-weight:600}
-.box input{border:0;outline:0;text-align:right;font:500 14px 'Outfit',system-ui,sans-serif;color:#111;background:transparent;width:58%;text-transform:uppercase}
+.box input,.box select{border:0;outline:0;text-align:right;font:500 14px 'Outfit',system-ui,sans-serif;color:#111;background:transparent;width:58%}
+.box input{text-transform:uppercase}
+.box select{direction:rtl;cursor:pointer}
 .pos{width:min(80%,290px);margin:10px auto 0}
 .pos svg{width:100%;display:block;overflow:visible}
 .cardfly{animation:fly 1.7s .3s cubic-bezier(.55,0,.25,1) both}
@@ -113,7 +116,8 @@ body.dk{background:#0a0a0b;color:#fff}
   <div id="pre"></div>
   <div class="box">
     <p>Kart<b id="cK"></b></p>
-    <p>Ad<input id="nameIn" maxlength="14" aria-label="Ad"></p>
+    <p>Ad<input id="nameIn" maxlength="20" aria-label="Ad"></p>
+    <p>Yazı tipi<select id="fontIn" aria-label="Yazı tipi"></select></p>
     <p>Yol<input id="pathIn" maxlength="10" aria-label="Yol"></p>
     <p>Tür<input id="typeIn" maxlength="10" aria-label="Tür"></p>
     <p class="tt">Bugünkü toplam<b>Ücretsiz</b></p>
@@ -165,22 +169,26 @@ body.dk{background:#0a0a0b;color:#fff}
   var $ = function (i) { return document.getElementById(i); };
   var st = document.createElement('style'); st.textContent = K.css; document.head.appendChild(st);
 
-  $('nameIn').value = ((q.get('n') || '').trim() || 'LTF ÜYESİ').slice(0, 14).toLocaleUpperCase('tr');
+  $('fontIn').innerHTML = Object.keys(K.FONTS).map(function (k) { return '<option value="' + k + '">' + K.FONTS[k][0] + '</option>'; }).join('');
+  $('fontIn').value = 'cinzel';
+  $('nameIn').value = ((q.get('n') || '').trim() || 'LTF ÜYESİ').slice(0, 20).toLocaleUpperCase('tr');
   $('typeIn').value = 'Kalkan';
   try {
     var old = JSON.parse(localStorage.getItem(SK) || 'null');
     if (old && T[old.k]) {
       $('rst').hidden = false;
-      if (old.n) $('nameIn').value = String(old.n).slice(0, 14);
+      if (old.n) $('nameIn').value = String(old.n).slice(0, 20);
       if (old.y) $('pathIn').value = String(old.y).slice(0, 10);
       if (old.t) $('typeIn').value = String(old.t).slice(0, 10);
+      if (old.f && K.FONTS[old.f]) $('fontIn').value = old.f;
     }
   } catch (e) {}
 
   function name() { return ($('nameIn').value.trim() || 'LTF ÜYESİ').toLocaleUpperCase('tr'); }
   function pth() { return $('pathIn').value.trim(); }
   function typ() { return $('typeIn').value.trim(); }
-  function card(k) { return K.card(k, { n: name(), y: pth(), t: typ(), p: photo }); }
+  function fnt() { return $('fontIn').value; }
+  function card(k) { return K.card(k, { n: name(), y: pth(), t: typ(), f: fnt(), p: photo }); }
   function send(a) { try { if (window.parent !== window) { window.parent.postMessage({ ltf: 'kart', a: a }, location.origin); return true; } } catch (e) {} return false; }
   function leave() { if (!send('close')) location.href = 'app.html#ana-sayfa'; }
   function show(id) {
@@ -231,6 +239,7 @@ body.dk{background:#0a0a0b;color:#fff}
   function resetOrd() { var b = $('ordB'); b.classList.remove('proc'); b.textContent = 'Sipariş ver · Ücretsiz'; $('sec').innerHTML = LOCK + ' Güvenli ödeme · İstediğin zaman iptal'; }
   $('pickB').onclick = function () { pre(); resetOrd(); show('s1'); };
   ['nameIn', 'pathIn', 'typeIn'].forEach(function (id) { $(id).addEventListener('input', function () { pre(); build(); }); });
+  $('fontIn').addEventListener('change', function () { pre(); build(); });
   $('ordB').onclick = function () {
     var b = this; if (b.classList.contains('proc')) return;
     b.classList.add('proc'); b.innerHTML = '<span class="dd"><i></i><i></i></span>';
@@ -268,7 +277,7 @@ body.dk{background:#0a0a0b;color:#fff}
   };
   $('useB').onclick = function () {
     var b = this; if (b.disabled) return; b.disabled = true; b.textContent = 'Kart uygulandı ✓';
-    try { localStorage.setItem(SK, JSON.stringify({ k: sel, n: name(), y: pth(), t: typ(), ts: Date.now() })); } catch (e) {}
+    try { localStorage.setItem(SK, JSON.stringify({ k: sel, n: name(), y: pth(), t: typ(), f: fnt(), ts: Date.now() })); } catch (e) {}
     setTimeout(function () { b.disabled = false; if (!send('use')) location.href = 'app.html#ana-sayfa'; }, 500);
   };
   $('fin1').onclick = leave;
