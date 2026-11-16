@@ -7,7 +7,7 @@
    - Sekme değişirken yeni sayfa geldiği yönden kayarak girer.
    - app.html'de, </body>'den hemen önce şu satır olmalı:
         <script src="ux.js"></script>
-   - iOS geri bildirim animasyonları (ios-fx.js) ve profil çerçeveleri (cerceve.js) en altta buradan otomatik yüklenir.
+   - iOS geri bildirim animasyonları (ios-fx.js), profil çerçeveleri (cerceve.js), Müzik (muzik.js) ve Mağaza (magaza.js) en altta buradan otomatik yüklenir.
    Ayarlar: aşağıdaki sabitler.
    ============================================================ */
 (function () {
@@ -94,7 +94,7 @@
 
   function blocked(target) {
     if (!target || !target.closest) return true;
-    if (document.querySelector('.st.on, .mg-rd.on')) return true;                 // açık panel / okuyucu
+    if (document.querySelector('.st.on, .mg-rd.on, .mg2-sh.on')) return true;      // açık panel / okuyucu / mağaza detayı
     if (target.closest('input,textarea,select,video,[contenteditable],.agc,.ag,.dock,.ch-log,.fr-list,.bio-fonts,.ux-noswipe')) return true;
     for (var n = target; n && n !== document.body; n = n.parentElement) {          // yatay kayan listeler (türler vb.)
       if (n.scrollWidth > n.clientWidth + 4) {
@@ -177,5 +177,15 @@
   s.type = 'module';
   s.src = 'muzik.js';
   s.setAttribute('data-muzik', '');
+  document.body.appendChild(s);
+})();
+
+/* ---------- Mağaza sekmesi (magaza.js) otomatik yüklenir ---------- */
+(function () {
+  if (document.querySelector('script[data-magaza]')) return;
+  var s = document.createElement('script');
+  s.type = 'module';
+  s.src = 'magaza.js';
+  s.setAttribute('data-magaza', '');
   document.body.appendChild(s);
 })();
