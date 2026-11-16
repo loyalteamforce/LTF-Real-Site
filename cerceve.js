@@ -13,20 +13,22 @@
    - ux.js içinden otomatik yüklenir.
    - Koyu ARKA PLAN (koyu dolgu + duman) yüklenirken parlaklığa göre silinir, geriye sadece parlak çizgiler kalır.
      Eşikler PAL içindeki `key`. `raw:true` olan yeni tasarımlar zaten şeffaf hazırlandığı için olduğu gibi kullanılır.
-     BEYAZ çerçevenin arka planı artık silinir (key eşiği eklendi).
+     BEYAZ çerçeve parlak olduğu için parlaklığa göre DEĞİL, şeffaflığa (alfa) göre temizlenir (`amin`): yarı saydam
+     beyaz sis / arka plan tamamen silinir, sadece keskin çerçeve çizgileri kalır.
    - BANNER çerçevesi her ekran boyutunda parça parça çizilir ve banner'ı 4 kenardan TAM sarar
      (sol-alt köşe sağ-alt köşenin aynası; sol ve alt kenar uzatılır). Profil fotoğrafı sol-alt köşenin ÜSTÜNDE durur.
-   - Avatar çerçevesi fotoğrafin İÇİNDE durur.
+   - Avatar çerçevesi fotoğrafın İÇİNDE durur.
    - ANIMASYON: parlama süpürmesi + yıldız pırıltıları + hafif nefes alma. "Hareketi azalt" açıksa animasyonlar kapanır.
    ============================================================ */
 import { supabase } from './config.js';
 
 // hole/out: avatar çerçevesi iç boşluk / halka dış yarıçapı (piksel)
 // key: [alt, üst] aydınlık (luma) eşiği; bunun altındaki koyu arka plan tamamen silinir
+// amin: [alt, üst] alfa eşiği; bunun altındaki yarı saydam sis / arka plan tamamen silinir (parlak çerçeveler için)
 // raw: görsel zaten şeffaf hazır, temizleme yok
 // ban: banner PNG ölçüleri -> L,T,R,B = halka çubuklarının DİŞ kenarı; bx = alt kenarın başladığı x; ly = sol kenarın bittiği y
 const PAL = {
-  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, key: [55, 135], ban: { L: 30, T: 30, R: 882, B: 352, bx: 372, ly: 314 } },
+  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, amin: [140, 235], ban: { L: 30, T: 30, R: 882, B: 352, bx: 372, ly: 314 } },
   kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, key: [95, 160], ban: { L: 30, T: 30, R: 880, B: 358, bx: 368, ly: 304 } },
   mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, key: [85, 150], ban: { L: 30, T: 30, R: 874, B: 348, bx: 373, ly: 282 } },
   kelebek: { n: 'Gece Kelebeği', hole: 111, out: 138, raw: true, ban: { L: 52, T: 190, R: 852, B: 478, bx: 342, ly: 322 } },
@@ -51,12 +53,16 @@ function cleanImg(k, t) {
         const c = document.createElement('canvas'); c.width = w; c.height = h;
         const x = c.getContext('2d'); x.drawImage(im, 0, 0);
         const id = x.getImageData(0, 0, w, h), d = id.data;
-        const hole = t === 'avatar' ? PAL[k].hole : 0, key = PAL[k].key, raw = PAL[k].raw;
+        const hole = t === 'avatar' ? PAL[k].hole : 0, key = PAL[k].key, amin = PAL[k].amin, raw = PAL[k].raw;
         for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) {
           const i = (y * w + xx) * 4; let a = d[i + 3];
           if (a === 0) continue;
           const mx = Math.max(d[i], d[i + 1], d[i + 2]);
           if (raw) { /* hazır şeffaf: dokunma */ }
+          else if (amin) {                 // yarı saydam sis / arka plan: alfaya göre sil, sadece opak çerçeve çizgileri kalır
+            const tt = Math.min(1, Math.max(0, (a - amin[0]) / (amin[1] - amin[0])));
+            a *= tt * tt * (3 - 2 * tt);
+          }
           else if (key) {                  // koyu/doygun dolgu + duman: aydınlığa (luma) göre sil (opak olsa bile)
             const lum = .299 * d[i] + .587 * d[i + 1] + .114 * d[i + 2];
             const tt = Math.min(1, Math.max(0, (lum - key[0]) / (key[1] - key[0])));
@@ -82,7 +88,7 @@ function cleanImg(k, t) {
 // görseli eksik tasarımı PAL'dan çıkar (başlangıçta tüm anahtarlar; yüklenince eksikler silinir)
 const ready = Promise.all(Object.keys(PAL).map(k => Promise.all(['avatar', 'banner'].map(t => cleanImg(k, t))).then(r => { if (!r[0] || !r[1]) delete PAL[k]; })));
 
-/* ---------- Banner çerçevesini parça parça çiz: banner'ı 4 kenardan TAM sarar ---------- */
+/* ---------- Banner çerçevesini parça parça çiz: banner'ı 4 kenardan TAM sarıyor ---------- */
 function drawBanner(canvas, k, Wd, Hd, dpr) {
   const B = PAL[k].ban, im = CV[k + 'banner'];
   if (!im) return null;
@@ -107,7 +113,7 @@ function drawBanner(canvas, k, Wd, Hd, dpr) {
     x.restore();
   };
   const cs = (c + Gm) * s, ci = c * s;
-  // 4 köşe (sol-alt = sağ-alt köşenin aynası, çünkü görselde sol-altta avatar oyğu var)
+  // 4 köşe (sol-alt = sağ-alt köşenin aynası, çünkü görselde sol-altta avatar oğyu var)
   P(B.L - Gm, B.T - Gm, c + Gm, c + Gm, 0, 0, cs, cs);
   P(B.R - c, B.T - Gm, c + Gm, c + Gm, g + Wd - ci, 0, cs, cs);
   P(B.R - c, B.B - c, c + Gm, c + Gm, g + Wd - ci, g + Hd - ci, cs, cs);
@@ -117,7 +123,7 @@ function drawBanner(canvas, k, Wd, Hd, dpr) {
   P(B.R - tb, B.T + c, tb + Gm, (B.B - B.T) - 2 * c, g + Wd - tb * s, g + ci, (tb + Gm) * s, Hd - 2 * ci);
   // alt kenar: görseldeki alt şerit tüm genişliğe yayılır
   P(B.bx + cap, B.B - tb, (B.R - c) - (B.bx + cap), tb + Gm, g + ci, g + Hd - tb * s, Wd - 2 * ci, (tb + Gm) * s);
-  // sol kenar: görseldeki sol şerit (oyğa kadar olan kısım) tüm yüksekliğe yayılır
+  // sol kenar: görseldeki sol şerit (oğya kadar olan kısım) tüm yüksekliğe yayılır
   P(B.L - Gm, B.T + c, Gm + tb, B.ly - capH - (B.T + c), 0, g + ci, (Gm + tb) * s, Hd - 2 * ci);
   return { g, rad: 46 * s };
 }
@@ -137,7 +143,7 @@ function setAnimBase(A, base, k, count) {
   A.base = base; A.k = k;
   A.el.width = base.width; A.el.height = base.height;
   A.u = Math.max(base.width, base.height) * (A.circle ? .018 : .0065);
-  // pırıltı adayları: çerçevenin parlak, opak piksellerı
+  // pırıltı adayları: çerçevenin parlak, opak pikselları
   const W = base.width, H = base.height, d = base.getContext('2d').getImageData(0, 0, W, H).data;
   const strong = [], any = [], st = Math.max(2, Math.round(Math.max(W, H) / 220));
   for (let y = 0; y < H; y += st) for (let x = 0; x < W; x += st) {
@@ -266,7 +272,7 @@ if (typeof document !== 'undefined') (async function main() {
       bn.style.clipPath = '';
     } else { banKey = ''; banEl.style.display = 'none'; resetBan(); }
 
-    // avatar çerçevesi: halka gövdesinin dış kenarı = fotoğraf kenarı -> çerçeve fotoğrafin içinde kalır
+    // avatar çerçevesi: halka gövdesinin dış kenarı = fotoğraf kenarı -> çerçeve fotoğrafın içinde kalır
     const d = av.offsetWidth, ring = CV[cur + 'avatar'];
     if (ring && d) {
       const k2 = [cur, d, dpr].join();
