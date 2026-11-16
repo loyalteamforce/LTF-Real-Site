@@ -2,7 +2,7 @@
    KART (Ana Sayfa): puan kartının altındaki Gönder / Geçmiş butonlarının yanına "Kart" butonu ekler.
    Basınca kart.html tam ekran açılır: kart seç (Platin / Gümüş / Altın), özelleştir (Ad / Yazı tipi / Yol / Tür),
    onayla, sipariş verildi, makbuz. "Kullan" denince ana sayfadaki kartın ön yüzü seçilen kartla
-   değişir (dokununca yine puanlar görünür). Kartta KARE fotoğraf hesabın profil fotoğrafıdır.
+   değişir; ARKA yüzü de (puan yüzü) aynı renge geçer (dokununca puanlar görünür). Kartta KARE fotoğraf hesabın profil fotoğrafıdır.
    - Platin ücretsiz; Gümüş ve Altın kart PUANLA satın alınır (kart-magaza-kurulum.sql, magaza_al fonksiyonu).
      Satın alma sunucuda yapılır; kart.html bu dosyaya mesaj gönderir (state / buy), puan tarayıcıda değiştirilemez.
    - Seçim bu cihazda saklanır (localStorage: ltf_kart_<kullanıcı>).
@@ -20,7 +20,13 @@ import { supabase } from './config.js';
   css.textContent = '.pc-acts{grid-template-columns:repeat(3,1fr)!important}' +
     '.pc-back.ltf-k{background:none!important}.pc-back.ltf-k::before,.pc-back.ltf-k::after{display:none}' +
     '.ltf-kc{position:absolute;inset:0;border-radius:inherit;overflow:hidden}' +
-    '.ltf-kc .idc{width:100%;height:100%;aspect-ratio:auto;border-radius:0;box-shadow:none;border:0}';
+    '.ltf-kc .idc{width:100%;height:100%;aspect-ratio:auto;border-radius:0;box-shadow:none;border:0}' +
+    /* ARKA YÜZ (puan yüzü): seçilen kartla aynı renk ve sade görünüm */
+    '.pc-flip[data-ltfk] .pc-front{background:linear-gradient(135deg,var(--k1),var(--k2));color:#161616;border:1px solid rgba(0,0,0,.14);box-shadow:0 10px 24px -14px rgba(0,0,0,.35)}' +
+    '.pc-flip[data-ltfk] .pc-front::before{content:"";position:absolute;inset:3cqw;border-radius:5.4cqw;border:.4cqw solid rgba(0,0,0,.14);pointer-events:none}' +
+    '.pc-flip[data-ltfk] .pc-brand{background:none;-webkit-text-fill-color:#161616;color:#161616}' +
+    '.pc-flip[data-ltfk] .pc-num{background:none;-webkit-text-fill-color:#161616;color:#161616;filter:none}' +
+    '.pc-flip[data-ltfk] .pc-pt{color:#444}.pc-flip[data-ltfk] .pc-lbl{color:#555}.pc-flip[data-ltfk] .pc-name{color:#161616}';
   document.head.appendChild(css);
 
   // Kart yüzü (kart.html ile ortak)
@@ -47,10 +53,17 @@ import { supabase } from './config.js';
   function readSel() {
     try { var j = JSON.parse(localStorage.getItem('ltf_kart_' + uid) || 'null'); return j && K && K.T[j.k] ? j : null; } catch (e) { return null; }
   }
+  function tintBack(j) {   // arka yüzü (puan yüzü) seçilen kartın rengine boya
+    var fl = home.querySelector('.pc-flip'); if (!fl) return;
+    if (!j) { fl.removeAttribute('data-ltfk'); fl.style.removeProperty('--k1'); fl.style.removeProperty('--k2'); return; }
+    fl.setAttribute('data-ltfk', j.k); fl.style.setProperty('--k1', K.T[j.k][1]); fl.style.setProperty('--k2', K.T[j.k][2]);
+  }
   function applyCard() {
     if (!K || !uid) return;
+    var j = readSel();
+    tintBack(j);
     var back = home.querySelector('.pc-back'); if (!back) return;
-    var j = readSel(), cur = back.querySelector('.ltf-kc');
+    var cur = back.querySelector('.ltf-kc');
     if (!j) { if (cur) cur.remove(); back.classList.remove('ltf-k'); return; }
     var sig = [j.k, j.n, j.y, j.t, j.f, j.ts, avatar].join('|');
     if (cur && cur.dataset.s === sig) return;
@@ -66,7 +79,7 @@ import { supabase } from './config.js';
 
   /* ---------- Puanla kart satın alma (kart.html bu fonksiyonları mesajla çağırır) ---------- */
   var DEF = { s: 250, g: 500 };   // kart-magaza-kurulum.sql ile aynı fiyatlar (tablo kurulmamışsa yedek)
-  var ERR = { insufficient: 'Yeterli puanın yok.', not_found: 'Kart ürünü sunucuda yok. kart-magaza-kurulum.sql Supabase\'te çalıştırıldı mı?', auth: 'Oturum bulunamadı.' };
+  var ERR = { insufficient: 'Yeterli puanın yok.', not_found: 'Kart ürünü sunucuda bulunamadı.', auth: 'Oturum bulunamadı.' };
   function errText(e) { var m = (e && e.message) || ''; for (var k in ERR) if (m.indexOf(k) !== -1) return ERR[k]; return 'Satın alma başarısız. Tekrar dene.'; }
   async function readBal() {
     var w = window.__lefWallet;
