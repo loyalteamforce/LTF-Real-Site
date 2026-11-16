@@ -24,7 +24,6 @@ body.dk{background:#0a0a0b;color:#fff}
 .h1{font-size:30px;font-weight:500;letter-spacing:-.6px;margin-top:6px}
 .sub{color:var(--mut);font-size:14px;margin:6px 0 18px;line-height:1.45}
 .c{text-align:center}
-/* ---- 1) Kart seç ---- */
 .hd{position:relative;text-align:center;height:76px;margin-top:2px}
 .hd h1{font-size:32px;font-weight:500;letter-spacing:-.6px}
 .hd p{margin-top:5px;font-size:15px;font-weight:500;color:#1b1b1d}
@@ -41,7 +40,6 @@ body.dk{background:#0a0a0b;color:#fff}
 .dots{display:flex;gap:6px;justify-content:center;margin:4px 0 22px}
 .dots i{width:5px;height:5px;border-radius:5px;background:#d6d6da;transition:.3s}
 .dots i.on{width:16px;background:#8d8d92}
-/* ---- ortak ---- */
 .btn{height:56px;width:100%;border:0;border-radius:999px;background:#0b0b0c;color:#fff;font:500 16px 'Outfit',system-ui,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:transform .15s,opacity .2s,width .45s cubic-bezier(.3,1.2,.4,1),height .45s cubic-bezier(.3,1.2,.4,1)}
 .btn:active{transform:scale(.97)}
 .btn.w{background:#fff;color:#111;box-shadow:0 0 0 1px rgba(0,0,0,.05)}
@@ -54,13 +52,11 @@ body.dk{background:#0a0a0b;color:#fff}
 .lnk{border:0;background:none;color:var(--mut);font:500 14px 'Outfit',system-ui,sans-serif;padding:6px 10px;cursor:pointer}
 .sec{display:flex;align-items:center;gap:6px;color:#a8a8ad;font-size:12px}
 .sec svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-/* ---- 2) Siparişi onayla ---- */
 .box{width:100%;background:#fff;border-radius:20px;padding:4px 18px;margin-top:16px;text-align:left}
-.box p{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #eeecec;font-size:14px;color:#9a9a9f}
+.box p{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #eeecec;font-size:14px;color:#9a9a9f}
 .box p:last-child{border:0}
 .box b{color:#111;font-weight:500}.box p.tt b{font-weight:600}
 .box input{border:0;outline:0;text-align:right;font:500 14px 'Outfit',system-ui,sans-serif;color:#111;background:transparent;width:58%;text-transform:uppercase}
-/* ---- 3) Sipariş verildi ---- */
 .pos{width:min(80%,290px);margin:10px auto 0}
 .pos svg{width:100%;display:block;overflow:visible}
 .cardfly{animation:fly 1.7s .3s cubic-bezier(.55,0,.25,1) both}
@@ -72,7 +68,6 @@ body.dk{background:#0a0a0b;color:#fff}
 #s2 .ct,#s2 .box{opacity:0;animation:up .6s 1.7s both}
 #s2 .bot>*{opacity:0;animation:up .6s 2.15s both}
 @keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-/* ---- 4) Makbuz ---- */
 .rtop{position:relative;flex:none;height:40px;display:flex;align-items:center;justify-content:center}
 .rtop .bk{position:absolute;left:-8px;color:#bbb}
 .rtop span{font-size:15px;color:#eee}
@@ -114,12 +109,13 @@ body.dk{background:#0a0a0b;color:#fff}
 
 <section class="s" id="s1">
   <button class="bk" id="b1" type="button" aria-label="Geri"><svg viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg></button>
-  <h1 class="h1">Siparişi onayla</h1><p class="sub">Yeni kartını ödemeden önce kontrol et.</p>
+  <h1 class="h1">Siparişi onayla</h1><p class="sub">Kartını özelleştir. Fotoğraf profil fotoğrafından gelir.</p>
   <div id="pre"></div>
   <div class="box">
     <p>Kart<b id="cK"></b></p>
-    <p>Kart sahibi<input id="nameIn" maxlength="14" aria-label="Kart sahibi"></p>
-    <p>Teslimat<b>Ücretsiz · Anında</b></p>
+    <p>Ad<input id="nameIn" maxlength="14" aria-label="Ad"></p>
+    <p>Yol<input id="pathIn" maxlength="10" aria-label="Yol"></p>
+    <p>Tür<input id="typeIn" maxlength="10" aria-label="Tür"></p>
     <p class="tt">Bugünkü toplam<b>Ücretsiz</b></p>
   </div>
   <div class="bot"><button class="btn" id="ordB" type="button">Sipariş ver · Ücretsiz</button><p class="sec" id="sec"></p></div>
@@ -149,7 +145,7 @@ body.dk{background:#0a0a0b;color:#fff}
       <p class="tot"><span>TOPLAM</span><span>ÜCRETSİZ</span></p>
       <p><span>LTF ÜYELİĞİ İLE</span><span>ONAYLANDI</span></p>
       <div class="bc2" id="bc2"></div><p class="no" id="rN2"></p>
-      <em>Loyal Team Force’u seçtiğin için teşekkürler.</em>
+      <em>Loyal Elite Force’u seçtiğin için teşekkürler.</em>
       <div class="stamp">ÖDENDİ</div>
     </div></div>
   </div>
@@ -165,18 +161,26 @@ body.dk{background:#0a0a0b;color:#fff}
 (function(){
   var K = window.LTFKart, T = K.T, KEYS = K.KEYS, q = new URLSearchParams(location.search);
   var U = (q.get('u') || 'x').slice(0, 64), SK = 'ltf_kart_' + U;
-  var sel = 'p', photo = '', order = null, raf = 0;
+  var sel = 'p', photo = q.get('a') || '', order = null, raf = 0;
   var $ = function (i) { return document.getElementById(i); };
   var st = document.createElement('style'); st.textContent = K.css; document.head.appendChild(st);
 
   $('nameIn').value = ((q.get('n') || '').trim() || 'LTF ÜYESİ').slice(0, 14).toLocaleUpperCase('tr');
+  $('typeIn').value = 'Kalkan';
   try {
     var old = JSON.parse(localStorage.getItem(SK) || 'null');
-    if (old && T[old.k]) { $('rst').hidden = false; if (old.p) photo = old.p; if (old.n) $('nameIn').value = String(old.n).slice(0, 14); }
+    if (old && T[old.k]) {
+      $('rst').hidden = false;
+      if (old.n) $('nameIn').value = String(old.n).slice(0, 14);
+      if (old.y) $('pathIn').value = String(old.y).slice(0, 10);
+      if (old.t) $('typeIn').value = String(old.t).slice(0, 10);
+    }
   } catch (e) {}
 
   function name() { return ($('nameIn').value.trim() || 'LTF ÜYESİ').toLocaleUpperCase('tr'); }
-  function card(k, edit) { return K.card(k, name(), photo, edit); }
+  function pth() { return $('pathIn').value.trim(); }
+  function typ() { return $('typeIn').value.trim(); }
+  function card(k) { return K.card(k, { n: name(), y: pth(), t: typ(), p: photo }); }
   function send(a) { try { if (window.parent !== window) { window.parent.postMessage({ ltf: 'kart', a: a }, location.origin); return true; } } catch (e) {} return false; }
   function leave() { if (!send('close')) location.href = 'app.html#ana-sayfa'; }
   function show(id) {
@@ -185,7 +189,7 @@ body.dk{background:#0a0a0b;color:#fff}
     document.body.classList.toggle('dk', id === 's3');
   }
 
-  /* ---- 1) Kart seç: yana kaydır, kartlar eğilir ---- */
+  /* ---- 1) Kart seç ---- */
   var car = $('car');
   function dots() { [].forEach.call($('dots').children, function (d, i) { d.classList.toggle('on', KEYS[i] === sel); }); }
   function head() {
@@ -198,6 +202,7 @@ body.dk{background:#0a0a0b;color:#fff}
       h.classList.remove('sw');
     }, 130);
     $('pickB').textContent = T[sel][0] + ' seç';
+    $('pathIn').placeholder = T[sel][0];
     dots();
   }
   function tilt() {
@@ -214,35 +219,18 @@ body.dk{background:#0a0a0b;color:#fff}
   car.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(tilt); }, { passive: true });
   function build() {
     var x = car.scrollLeft;
-    car.innerHTML = KEYS.map(function (k) { return '<div>' + card(k, true) + '</div>'; }).join('');
+    car.innerHTML = KEYS.map(function (k) { return '<div>' + card(k) + '</div>'; }).join('');
     $('dots').innerHTML = KEYS.map(function () { return '<i></i>'; }).join('');
     car.scrollLeft = x; tilt(); dots();
   }
 
-  /* fotoğraf: kartın sağındaki alana dokun */
-  var file = document.createElement('input'); file.type = 'file'; file.accept = 'image/*'; file.hidden = true; document.body.appendChild(file);
-  document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-ph]')) file.click(); });
-  file.addEventListener('change', function () {
-    var f = file.files[0]; if (!f) return;
-    var im = new Image(), u = URL.createObjectURL(f);
-    im.onload = function () {
-      var c = document.createElement('canvas'), W = 180, H = 200; c.width = W; c.height = H;
-      var s = Math.max(W / im.width, H / im.height), w = im.width * s, h = im.height * s;
-      c.getContext('2d').drawImage(im, (W - w) / 2, (H - h) / 2, w, h);
-      photo = c.toDataURL('image/jpeg', .82); URL.revokeObjectURL(u); file.value = '';
-      build(); if ($('s1').classList.contains('on')) pre();
-    };
-    im.onerror = function () { URL.revokeObjectURL(u); };
-    im.src = u;
-  });
-
   /* ---- 2) Siparişi onayla ---- */
   var CHECK = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.7 2.7L16 9.8"/></svg>';
   var LOCK = '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
-  function pre() { $('pre').innerHTML = card(sel, true); $('cK').textContent = T[sel][0] + ' kart'; }
+  function pre() { $('pre').innerHTML = card(sel); $('cK').textContent = T[sel][0] + ' kart'; }
   function resetOrd() { var b = $('ordB'); b.classList.remove('proc'); b.textContent = 'Sipariş ver · Ücretsiz'; $('sec').innerHTML = LOCK + ' Güvenli ödeme · İstediğin zaman iptal'; }
   $('pickB').onclick = function () { pre(); resetOrd(); show('s1'); };
-  $('nameIn').addEventListener('input', function () { pre(); build(); });
+  ['nameIn', 'pathIn', 'typeIn'].forEach(function (id) { $(id).addEventListener('input', function () { pre(); build(); }); });
   $('ordB').onclick = function () {
     var b = this; if (b.classList.contains('proc')) return;
     b.classList.add('proc'); b.innerHTML = '<span class="dd"><i></i><i></i></span>';
@@ -254,7 +242,7 @@ body.dk{background:#0a0a0b;color:#fff}
     }, 1800);
   };
 
-  /* ---- 3) Sipariş verildi: ödeme cihazı ---- */
+  /* ---- 3) Sipariş verildi ---- */
   function pos() {
     var t = T[sel];
     $('okSub').innerHTML = t[0] + ' kartın hazır.<br>İstediğin zaman kullanabilirsin.';
@@ -280,7 +268,7 @@ body.dk{background:#0a0a0b;color:#fff}
   };
   $('useB').onclick = function () {
     var b = this; if (b.disabled) return; b.disabled = true; b.textContent = 'Kart uygulandı ✓';
-    try { localStorage.setItem(SK, JSON.stringify({ k: sel, n: name(), p: photo, t: Date.now() })); } catch (e) {}
+    try { localStorage.setItem(SK, JSON.stringify({ k: sel, n: name(), y: pth(), t: typ(), ts: Date.now() })); } catch (e) {}
     setTimeout(function () { b.disabled = false; if (!send('use')) location.href = 'app.html#ana-sayfa'; }, 500);
   };
   $('fin1').onclick = leave;
@@ -289,7 +277,7 @@ body.dk{background:#0a0a0b;color:#fff}
     if (!send('use')) location.href = 'app.html#ana-sayfa';
   };
 
-  /* ---- 4) Makbuz: yazıcıdan çıkar, ÖDENDİ damgası ---- */
+  /* ---- 4) Makbuz ---- */
   function printIt() {
     var r = $('rc'); r.classList.remove('print', 'done'); void r.offsetWidth; r.classList.add('print');
     $('act').classList.remove('on'); $('pr').style.display = 'flex';

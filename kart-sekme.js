@@ -1,8 +1,8 @@
 /* ============================================================
    KART (Ana Sayfa): puan kartının altındaki Gönder / Geçmiş butonlarının yanına "Kart" butonu ekler.
-   Basınca kart.html tam ekran açılır: kart seç (Platin / Gümüş / Altın), onayla, sipariş verildi,
-   makbuz yazdırma animasyonu. Sipariş verdikten sonra "Kullan" denince ana sayfadaki kartın
-   ön yüzü seçilen kartla değişir (dokununca yine puanlar görünür).
+   Basınca kart.html tam ekran açılır: kart seç (Platin / Gümüş / Altın), özelleştir (Ad / Yol / Tür),
+   onayla, sipariş verildi, makbuz. "Kullan" denince ana sayfadaki kartın ön yüzü seçilen kartla
+   değişir (dokununca yine puanlar görünür). Kartta KARE fotoğraf hesabın profil fotoğrafıdır.
    - Seçim bu cihazda saklanır (localStorage: ltf_kart_<kullanıcı>).
    - config.js bu dosyayı kendisi yükler; app.html'ye ekleme gerekmez.
    ============================================================ */
@@ -12,7 +12,7 @@ import { supabase } from './config.js';
   var home = document.getElementById('v-ana-sayfa');
   if (!home) return;   // bu sayfada Ana Sayfa yok (login, açılış vb.)
 
-  var uid = '', K = null;
+  var uid = '', K = null, avatar = '';
 
   var css = document.createElement('style');
   css.textContent = '.pc-acts{grid-template-columns:repeat(3,1fr)!important}' +
@@ -26,9 +26,20 @@ import { supabase } from './config.js';
   sc.onload = function () { K = window.LTFKart; if (K) { css.textContent += K.css; applyCard(); } };
   document.head.appendChild(sc);
 
+  // Hesabın profil fotoğrafı (karttaki kare)
+  function loadAvatar() {
+    if (!uid) return Promise.resolve();
+    return supabase.from('profiles').select('avatar_url').eq('id', uid).maybeSingle().then(function (r) {
+      var u = r && r.data && r.data.avatar_url;
+      avatar = typeof u === 'string' ? u : '';
+    }).catch(function () {});
+  }
   supabase.auth.getSession().then(function (r) {
-    uid = r.data && r.data.session ? r.data.session.user.id : ''; applyCard();
-  }).catch(function () {});
+    uid = r.data && r.data.session ? r.data.session.user.id : '';
+    return loadAvatar();
+  }).then(function () { applyCard(); }).catch(function () {});
+  window.addEventListener('lef-pf-saved', function () { loadAvatar().then(applyCard); });
+  window.addEventListener('lef-profile', function () { loadAvatar().then(applyCard); });
 
   /* ---------- seçilen kartı ana sayfadaki karta uygula ---------- */
   function readSel() {
@@ -39,11 +50,11 @@ import { supabase } from './config.js';
     var back = home.querySelector('.pc-back'); if (!back) return;
     var j = readSel(), cur = back.querySelector('.ltf-kc');
     if (!j) { if (cur) cur.remove(); back.classList.remove('ltf-k'); return; }
-    var sig = j.k + '|' + j.n + '|' + (j.p || '').length + '|' + (j.t || '');
+    var sig = [j.k, j.n, j.y, j.t, j.ts, avatar].join('|');
     if (cur && cur.dataset.s === sig) return;
     if (cur) cur.remove();
     var d = document.createElement('div'); d.className = 'ltf-kc'; d.dataset.s = sig;
-    d.innerHTML = K.card(j.k, j.n, j.p, false);
+    d.innerHTML = K.card(j.k, { n: j.n, y: j.y, t: j.t, p: avatar });
     back.classList.add('ltf-k'); back.appendChild(d);
   }
   function showCardSide() {   // puan yüzü açıksa kartı öne çevir
@@ -68,8 +79,12 @@ import { supabase } from './config.js';
   function ownerName() { var n = home.querySelector('.pc-name'); return n ? n.textContent.trim() : ''; }
   function open() {
     if (!ov) build();
-    fr.src = 'kart.html?u=' + encodeURIComponent(uid || 'x') + '&n=' + encodeURIComponent(ownerName());
     ov.style.display = 'block'; document.body.style.overflow = 'hidden';
+    var go = function () {
+      if (ov.style.display !== 'block') return;
+      fr.src = 'kart.html?u=' + encodeURIComponent(uid || 'x') + '&n=' + encodeURIComponent(ownerName()) + '&a=' + encodeURIComponent(avatar);
+    };
+    loadAvatar().then(go, go);
   }
   function close() {
     if (!ov) return;
