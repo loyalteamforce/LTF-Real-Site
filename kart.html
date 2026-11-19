@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@700&family=Bebas+Neue&family=Anton&family=Oswald:wght@600&family=Space+Mono:wght@700&family=Dancing+Script:wght@700&family=Pacifico&family=Caveat:wght@700&family=Lobster&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Cinzel:wght@700&family=Playfair+Display:wght@700&family=Bebas+Neue&family=Anton&family=Oswald:wght@600&family=Space+Mono:wght@700&family=Dancing+Script:wght@700&family=Pacifico&family=Caveat:wght@700&family=Lobster&display=swap" rel="stylesheet">
 <style>
 :root{--mut:#9a9a9f}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -210,7 +210,7 @@ body.dk{background:#0a0a0b;color:#fff}
   function balLine() { $('balL').innerHTML = info.bal === null ? '' : 'Puanın: <b>' + fmt(info.bal) + '</b>'; }
 
   $('fontIn').innerHTML = Object.keys(K.FONTS).map(function (k) { return '<option value="' + k + '">' + K.FONTS[k][0] + '</option>'; }).join('');
-  $('fontIn').value = 'cinzel';
+  $('fontIn').value = 'cormorant';
   $('nameIn').value = ((q.get('n') || '').trim() || 'LTF ÜYESI').slice(0, 20).toLocaleUpperCase('tr');
   $('typeIn').value = 'Kalkan';
   try {
@@ -235,6 +235,7 @@ body.dk{background:#0a0a0b;color:#fff}
     document.querySelectorAll('.s').forEach(function (s) { s.classList.toggle('on', s.id === id); });
     document.body.classList.toggle('w', id === 's0');
     document.body.classList.toggle('dk', id === 's3');
+    if (id === 's0') goSel();   // gizli ekranda kaydırma konumu sıfırlanır: seçili kartı tekrar ortala
   }
 
   /* ---- 1) Kart seç ---- */
@@ -257,7 +258,10 @@ body.dk{background:#0a0a0b;color:#fff}
   }
   function tilt() {
     raf = 0;
-    var cr = car.getBoundingClientRect(), cx = cr.left + cr.width / 2, best = 0, bd = 9;
+    var cr = car.getBoundingClientRect();
+    // Kart seçme ekranı gizliyken (ölçüler 0) seçimi DEĞİŞTİRME: eskiden bu yüzden seçim hep Platin'e dönüyordu
+    if (!cr.width) return;
+    var cx = cr.left + cr.width / 2, best = 0, bd = 9;
     [].forEach.call(car.children, function (it, i) {
       var r = it.getBoundingClientRect(), d = (r.left + r.width / 2 - cx) / r.width, a = Math.min(1, Math.abs(d)), c = it.firstChild;
       c.style.transform = 'perspective(900px) rotateY(' + (-d * 34).toFixed(1) + 'deg) rotateZ(' + (-d * 4).toFixed(1) + 'deg) scale(' + (1 - a * .13).toFixed(3) + ')';
@@ -265,6 +269,13 @@ body.dk{background:#0a0a0b;color:#fff}
       if (Math.abs(d) < bd) { bd = Math.abs(d); best = i; }
     });
     if (KEYS[best] !== sel) { sel = KEYS[best]; head(); }
+  }
+  function goSel() {   // seçili kartı carousel'in ortasına getir
+    var it = car.children[KEYS.indexOf(sel)], cr = car.getBoundingClientRect();
+    if (!it || !cr.width) return;
+    var r = it.getBoundingClientRect();
+    car.scrollLeft += (r.left + r.width / 2) - (cr.left + cr.width / 2);
+    tilt();
   }
   car.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(tilt); }, { passive: true });
   function build() {
