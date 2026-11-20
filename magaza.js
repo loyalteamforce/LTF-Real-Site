@@ -23,7 +23,8 @@ import { supabase } from './config.js';
     { id: 'cerceve-murekkep', tur: 'cerceve', ad: 'Mürekkep', fiyat: 600, aciklama: 'Siyah mürekkep çizgili çerçeve.' },
     { id: 'cerceve-kurdele', tur: 'cerceve', ad: 'Kurdele', fiyat: 750, aciklama: 'Parlak kurdele şeritli çerçeve.' }
   ];
-  var ERR = { insufficient: 'Yeterli puanın yok.', owned: 'Bunu zaten aldın.', not_found: 'Ürün bulunamadı.', auth: 'Oturum bulunamadı.', owned_required: 'Bu çerçeveyi önce almalısın.' };
+  // SIRA ÖNEMLİ: "owned_required" mesajı "owned" kelimesini de içerir; önce daha uzun anahtar denenmeli.
+  var ERR = { owned_required: 'Bu çerçeveyi önce almalısın.', insufficient: 'Yeterli puanın yok.', owned: 'Bunu zaten aldın.', not_found: 'Ürün bulunamadı.', auth: 'Oturum bulunamadı.' };
   var errText = function (e) { var m = (e && e.message) || ''; for (var k in ERR) if (m.indexOf(k) !== -1) return ERR[k]; return 'İşlem başarısız. magaza-kurulum.sql Supabase\'te çalıştırıldı mı?'; };
   var fmt = function (n) { return Number(n || 0).toLocaleString('tr-TR'); };
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
@@ -140,6 +141,7 @@ import { supabase } from './config.js';
       var s = await supabase.auth.getSession(); uid = s.data.session ? s.data.session.user.id : null;
       var r = await supabase.from('magaza_urunler').select('id,tur,ad,fiyat,aciklama,sira').eq('aktif', true).order('sira');
       if (!r.error && r.data && r.data.length) { items = r.data; setup = true; }
+      else if (!uid) { setup = false; setMsg('Mağazayı kullanmak için giriş yapmalısın.'); }   // tablo "authenticated" ister: girişsiz boş döner
       else { setup = false; setMsg('Mağaza sunucusu henüz kurulmamış: Supabase SQL Editor\'de magaza-kurulum.sql dosyasını çalıştır.'); }
       if (uid && setup) {
         var o = await supabase.from('magaza_sahip').select('urun_id').eq('user_id', uid);
@@ -170,7 +172,7 @@ import { supabase } from './config.js';
       ? '<button type="button" class="mg2-b" data-a="off">Çıkar</button>'
       : '<button type="button" class="mg2-b" data-a="on">Tak</button>';
     else if (has) act = '<button type="button" class="mg2-b" disabled>Profilinde görünüyor</button>';
-    else act = '<button type="button" class="mg2-b" data-a="buy"' + (can && setup ? '' : ' disabled') + '>Satın al · ' + fmt(it.fiyat) + ' puan</button>';
+    else act = '<button type="button" class="mg2-b" data-a="buy"' + (can && setup && uid ? '' : ' disabled') + '>Satın al · ' + fmt(it.fiyat) + ' puan</button>';
     card.innerHTML =
       '<button type="button" class="mg2-x" data-a="x" aria-label="Kapat">×</button>' +
       '<div class="mg2-pv">' + pv + '</div>' +
@@ -184,6 +186,7 @@ import { supabase } from './config.js';
     if (a === 'x') { closeSheet(); return; }
     b.disabled = true;
     try {
+      if (!uid) throw { message: 'auth' };
       if (a === 'buy') {
         err.textContent = 'Satın alınıyor…'; err.classList.add('ok');
         var r = await supabase.rpc('magaza_al', { p_urun: it.id });
