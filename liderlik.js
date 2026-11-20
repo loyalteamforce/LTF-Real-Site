@@ -4,6 +4,9 @@
      leaderboard_overall, leaderboard_weekly, leaderboard_classes, leaderboard_me
    - Tasarım: ütte podyum (ilk 3), altında sayfalı sıralama listesi ve puan çubukları,
      sınıflarda renkli çubuklu tablo. Sıralama listesi 10'ar kişilik sayfalara bölünür.
+   - Sınıflar sekmesinde bir sınıfa dokununca "Classroom of the Elite" tarzı SINIF EKRANI açılır:
+     sınıf puanı, genel yetenek (OAA) radar grafiği ve öğrenci listesi; öğrenciye dokununca
+     Akademik / Fiziksel / Uyum / Sosyal Katkı notları (A+ ... E) görünür.
    - Ana Sayfa'da kartın sağındaki #pcSide alanına önizleme kartı koyar; ona ya da
      Keşfet > "Sıralama" kutusuna basunca tam tablo açılır.
    - puan-karti.js tarafından yüklenir (dynamic import), ayrı script satırı gerekmez.
@@ -28,6 +31,16 @@ const classColor = c => PALETTE[(String(c || '?').toUpperCase().charCodeAt(0) ||
 const PAGE = 10;
 const SVG_CHEV = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
 
+/* ---------- OAA (Overall Ability Assessment) notları: 0-100 puan -> A+ ... E ---------- */
+const ABIL = [['academic', 'Akademik Yetenek', 'AKADEMİK'], ['physical', 'Fiziksel Yetenek', 'FİZİKSEL'], ['adaptability', 'Uyum Yeteneği', 'UYUM'], ['social', 'Sosyal Katkı', 'SOSYAL']];
+const GCOL = { A: '#7ee2a8', B: '#8ab4ff', C: '#ffd86b', D: '#ff9a6b', E: '#ff7a7a' };
+function grade(v) {
+  v = Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
+  const L = v >= 80 ? 'A' : v >= 60 ? 'B' : v >= 40 ? 'C' : v >= 20 ? 'D' : 'E', start = { A: 80, B: 60, C: 40, D: 20, E: 0 }[L], pos = v - start;
+  return { v, L, t: L + (L !== 'E' ? (pos >= 14 ? '+' : pos < 6 ? '-' : '') : ''), c: GCOL[L] };
+}
+const gChip = (v, none) => none ? '<span class="lc-g lc-gn">&ndash;</span>' : `<span class="lc-g" style="--g:${grade(v).c}">${grade(v).t}</span>`;
+
 let uid = null;
 try { const s = await supabase.auth.getSession(); uid = s.data.session && s.data.session.user.id; } catch (_) {}
 if (uid) init();
@@ -42,7 +55,7 @@ function init() {
   background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.025)); border:1px solid rgba(255,255,255,.12); box-shadow:inset 0 1px 0 rgba(255,255,255,.08); transition:border-color .2s,transform .2s; }
 .lb-mini:hover{ border-color:rgba(255,255,255,.26); }
 .lb-mini:active{ transform:scale(.985); }
-.lb-mini:focus-visible,.lb-tab:focus-visible,.lb-retry:focus-visible,.lb-pb:focus-visible,.lb-go:focus-visible,.lb-x:focus-visible{ outline:2px solid rgba(255,255,255,.7); outline-offset:2px; }
+.lb-mini:focus-visible,.lb-tab:focus-visible,.lb-retry:focus-visible,.lb-pb:focus-visible,.lb-go:focus-visible,.lb-x:focus-visible,.lb-cls:focus-visible,.lc-back:focus-visible,.lc-sh:focus-visible{ outline:2px solid rgba(255,255,255,.7); outline-offset:2px; }
 .lb-mh{ display:flex; align-items:center; justify-content:space-between; font-size:10px; font-weight:600; letter-spacing:.22em; color:#9ca3af; }
 .lb-mh svg{ width:14px; height:14px; }
 .lb-ml{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
@@ -67,7 +80,7 @@ function init() {
 @keyframes lbRise{ from{ transform:scaleY(0); } }
 
 /* --- Tam tablo (açılır panel) --- */
-.lb-sheet .st-card{ width:min(100%,720px); height:min(92dvh,780px); display:flex; flex-direction:column; padding:0; overflow:hidden; }
+.lb-sheet .st-card{ position:relative; width:min(100%,720px); height:min(92dvh,780px); display:flex; flex-direction:column; padding:0; overflow:hidden; }
 @media (min-width:900px){ .lb-sheet .st-card{ padding:0; } }
 .lb-hd{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:18px 20px 12px; }
 .lb-hd b{ display:block; font-size:19px; font-weight:650; letter-spacing:.01em; }
@@ -117,7 +130,9 @@ function init() {
 
 .lb-ch{ display:grid; grid-template-columns:42px minmax(0,1fr) 84px; column-gap:12px; padding:0 14px 8px; font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#8b919b; }
 .lb-ch span:last-child{ text-align:right; }
-.lb-cls{ display:grid; grid-template-columns:42px minmax(0,1fr) 84px; align-items:center; column-gap:12px; padding:12px 14px; margin-bottom:8px; border-radius:16px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.08); }
+.lb-cls{ display:grid; grid-template-columns:42px minmax(0,1fr) 84px; align-items:center; column-gap:12px; padding:12px 14px; margin-bottom:8px; border-radius:16px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.08); cursor:pointer; transition:border-color .2s,background-color .2s,transform .15s; }
+@media (hover:hover){ .lb-cls:hover{ border-color:color-mix(in srgb,var(--c) 70%,transparent); background:rgba(255,255,255,.06); } }
+.lb-cls:active{ transform:scale(.99); }
 .lb-cls.me{ border-color:rgba(255,255,255,.4); background:rgba(255,255,255,.09); }
 .lb-cb{ background:rgba(255,255,255,.08); display:grid; place-items:center; width:42px; height:42px; border-radius:12px; font-size:18px; font-weight:700; color:#fff; background:color-mix(in srgb,var(--c) 30%,#1b1b1f); border:1px solid color-mix(in srgb,var(--c) 60%,transparent); box-shadow:inset 0 0 0 1px rgba(255,255,255,.04); }
 .lb-cm{ min-width:0; }
@@ -138,6 +153,61 @@ function init() {
 .lb-sk{ height:52px; margin-bottom:6px; border-radius:14px; background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.09),rgba(255,255,255,.04)); background-size:200% 100%; animation:lbSh 1.3s linear infinite; }
 @keyframes lbSh{ from{ background-position:200% 0 } to{ background-position:-200% 0 } }
 
+/* --- SINIF EKRANI (Classroom of the Elite tarzı) --- */
+.lb-cote{ position:absolute; inset:0; z-index:6; display:flex; flex-direction:column; color:#e8eaee; animation:lcIn .35s cubic-bezier(.2,.9,.3,1) both;
+  background:radial-gradient(120% 55% at 50% -8%,color-mix(in srgb,var(--c) 30%,transparent),transparent 62%),repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 4px),#07080b; }
+.lb-cote[hidden]{ display:none; }
+@keyframes lcIn{ from{ opacity:0; transform:translateY(18px) scale(.985); } }
+.lc-top{ flex:none; display:flex; align-items:center; gap:12px; padding:14px 18px 8px; }
+.lc-back{ display:grid; place-items:center; width:34px; height:34px; border:1px solid rgba(255,255,255,.18); border-radius:50%; background:rgba(255,255,255,.06); color:#fff; cursor:pointer; }
+.lc-back svg{ width:16px; height:16px; }
+.lc-kick{ font-size:10px; font-weight:600; letter-spacing:.28em; color:#9ca3af; }
+.lc-scroll{ flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:4px 20px 22px; }
+.lc-hero{ display:flex; align-items:center; gap:16px; margin:6px 0 16px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,.1); }
+.lc-big{ flex:none; display:grid; place-items:center; width:76px; height:76px; border-radius:18px; font-size:44px; font-weight:800; line-height:1; color:#fff; background:color-mix(in srgb,var(--c) 38%,#101114); border:1px solid color-mix(in srgb,var(--c) 75%,transparent); box-shadow:0 0 34px -8px var(--c),inset 0 0 0 1px rgba(255,255,255,.05); }
+.lc-title{ font-size:24px; font-weight:700; letter-spacing:.02em; }
+.lc-rl{ margin-top:3px; font-size:13px; color:#9ca3af; }
+.lc-rl b{ color:#fff; font-weight:600; }
+.lc-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:18px; }
+.lc-stat{ padding:11px 12px; border-radius:14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09); }
+.lc-stat span{ display:block; font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8b919b; }
+.lc-stat b{ display:block; margin-top:4px; font-size:19px; font-weight:700; font-variant-numeric:tabular-nums; }
+.lc-sec{ margin:0 0 10px; font-size:10.5px; font-weight:600; letter-spacing:.24em; color:#8b919b; }
+.lc-oaa{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; align-items:center; margin-bottom:20px; padding:12px; border-radius:18px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.09); }
+.lc-rad{ width:100%; display:block; }
+.lc-rad .rg{ fill:none; stroke:rgba(255,255,255,.12); stroke-width:.8; }
+.lc-rad .ra{ stroke:rgba(255,255,255,.16); stroke-width:.8; }
+.lc-rad .rp{ fill:color-mix(in srgb,var(--c) 30%,transparent); stroke:var(--c); stroke-width:1.8; stroke-linejoin:round; transform-origin:100px 100px; animation:lcPop .8s cubic-bezier(.2,1.2,.3,1) both; }
+.lc-rad text{ font:600 8px system-ui,sans-serif; letter-spacing:.08em; fill:#9ca3af; }
+@keyframes lcPop{ from{ transform:scale(.05); opacity:0; } }
+.lc-ov{ text-align:center; }
+.lc-ov small{ display:block; font-size:10px; font-weight:600; letter-spacing:.18em; color:#8b919b; }
+.lc-ov .lc-gb{ display:block; margin:6px 0 8px; font-size:56px; font-weight:800; line-height:1; color:var(--g,#6b7280); text-shadow:0 0 28px color-mix(in srgb,var(--g,#6b7280) 55%,transparent); }
+.lc-ov .lc-av{ display:grid; gap:4px; text-align:left; font-size:11px; color:#aeb3bc; }
+.lc-ov .lc-av div{ display:flex; justify-content:space-between; gap:8px; }
+.lc-ov .lc-av b{ font-weight:700; color:var(--g); }
+.lc-g{ flex:none; display:inline-grid; place-items:center; min-width:30px; height:24px; padding:0 6px; border-radius:7px; font-size:12px; font-weight:800; letter-spacing:.02em; color:var(--g); background:color-mix(in srgb,var(--g) 16%,transparent); border:1px solid color-mix(in srgb,var(--g) 55%,transparent); }
+.lc-gn{ --g:#6b7280; }
+.lc-list{ border:1px solid rgba(255,255,255,.09); border-radius:16px; overflow:hidden; background:rgba(255,255,255,.02); }
+.lc-st{ border-bottom:1px solid rgba(255,255,255,.06); }
+.lc-st:last-child{ border-bottom:0; }
+.lc-st.me{ background:rgba(255,255,255,.08); box-shadow:inset 3px 0 0 #fff; }
+.lc-sh{ width:100%; display:grid; grid-template-columns:24px 34px minmax(0,1fr) auto auto; align-items:center; gap:10px; padding:10px 14px; border:0; background:transparent; color:inherit; font:inherit; text-align:left; cursor:pointer; }
+@media (hover:hover){ .lc-sh:hover{ background:rgba(255,255,255,.04); } }
+.lc-n{ font-size:12px; font-weight:600; color:#8b919b; font-variant-numeric:tabular-nums; }
+.lc-sh .lb-nm{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:14px; font-weight:500; }
+.lc-p{ font-size:13px; font-weight:600; font-variant-numeric:tabular-nums; }
+.lc-p small{ font-weight:400; font-size:10.5px; color:#9ca3af; margin-left:2px; }
+.lc-sd{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s cubic-bezier(.2,.9,.3,1); }
+.lc-st.open .lc-sd{ grid-template-rows:1fr; }
+.lc-sdi{ overflow:hidden; min-height:0; }
+.lc-sdp{ padding:2px 14px 14px 48px; display:grid; gap:9px; }
+.lc-ab{ display:grid; grid-template-columns:104px minmax(0,1fr) 30px 28px; align-items:center; gap:10px; font-size:12px; color:#aeb3bc; }
+.lc-ab .lb-fill{ --bg:var(--g); }
+.lc-ab b{ font-size:12px; font-weight:800; color:var(--g); text-align:center; }
+.lc-ab em{ font-style:normal; text-align:right; font-variant-numeric:tabular-nums; color:#8b919b; }
+.lc-none{ padding:2px 14px 14px 48px; font-size:12px; color:#8b919b; }
+
 @media (max-width:560px){
   .lb-hd{ padding:16px 16px 10px; } .lb-tabs{ margin:0 16px 10px; } .lb-note{ margin:0 18px 10px; } .lb-body{ padding:0 16px 12px; } .lb-me{ padding-left:16px; padding-right:16px; }
   .lb-th{ display:none; }
@@ -146,8 +216,12 @@ function init() {
   .lb-podium{ gap:6px; margin-bottom:14px; }
   .lb-pod .lb-av{ width:40px; height:40px; } .lb-pod.p1 .lb-av{ width:50px; height:50px; }
   .lb-pod.p1 .lb-pil{ height:62px; } .lb-pod.p2 .lb-pil{ height:46px; } .lb-pod.p3 .lb-pil{ height:34px; } .lb-pil b{ font-size:18px; }
+  .lc-scroll{ padding:4px 16px 20px; } .lc-top{ padding:12px 16px 6px; }
+  .lc-oaa{ grid-template-columns:1fr; } .lc-big{ width:64px; height:64px; font-size:36px; } .lc-title{ font-size:21px; }
+  .lc-sh{ grid-template-columns:22px 32px minmax(0,1fr) auto; } .lc-sh .lc-p{ display:none; }
+  .lc-sdp,.lc-none{ padding-left:14px; } .lc-ab{ grid-template-columns:88px minmax(0,1fr) 28px 26px; gap:8px; }
 }
-@media (prefers-reduced-motion:reduce){ .lb-sk{ animation:none } .lb-fill,.lb-pil{ animation:none } .lb-tab,.lb-row,.lb-mini{ transition:none } }
+@media (prefers-reduced-motion:reduce){ .lb-sk{ animation:none } .lb-fill,.lb-pil,.lc-rad .rp{ animation:none } .lb-tab,.lb-row,.lb-mini,.lb-cls,.lc-sd{ transition:none } .lb-cote{ animation:none } }
 `;
   document.head.appendChild(css);
 
@@ -159,7 +233,7 @@ function init() {
     if (error) throw error;
     return data || [];
   }
-  const FN = { overall: ['leaderboard_overall', { p_limit: 50 }], weekly: ['leaderboard_weekly', { p_limit: 50 }], classes: ['leaderboard_classes', {}], me: ['leaderboard_me', {}] };
+  const FN = { overall: ['leaderboard_overall', { p_limit: 50 }], overall100: ['leaderboard_overall', { p_limit: 100 }], weekly: ['leaderboard_weekly', { p_limit: 50 }], classes: ['leaderboard_classes', {}], me: ['leaderboard_me', {}] };
   async function load(key, force) {
     const c = cache[key];
     if (!force && c && Date.now() - c.t < TTL) return c.d;
@@ -200,13 +274,17 @@ function init() {
     <div class="lb-me" id="lbM" hidden></div>
   </div>`;
   document.body.appendChild(sheet);
+  const cote = document.createElement('div');
+  cote.className = 'lb-cote'; cote.hidden = true; cote.setAttribute('role', 'region'); cote.setAttribute('aria-label', 'Sınıf ekranı');
+  $('.st-card', sheet).appendChild(cote);
   const B = () => $('#lbB', sheet);
-  let tab = 'overall', tok = 0, lastFocus = null, rowsNow = [], page = 0, maxPts = 1;
+  let tab = 'overall', tok = 0, ctok = 0, lastFocus = null, rowsNow = [], clsRows = [], page = 0, maxPts = 1;
 
-  const close = () => { sheet.classList.remove('on'); sheet.setAttribute('aria-hidden', 'true'); if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (_) {} } };
+  const closeCote = () => { ctok++; cote.hidden = true; cote.innerHTML = ''; };
+  const close = () => { closeCote(); sheet.classList.remove('on'); sheet.setAttribute('aria-hidden', 'true'); if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (_) {} } };
   $('#lbX', sheet).addEventListener('click', close);
   sheet.addEventListener('click', e => { if (e.target === sheet) close(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && sheet.classList.contains('on')) close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && sheet.classList.contains('on')) { if (!cote.hidden) closeCote(); else close(); } });
   sheet.querySelector('.lb-tabs').addEventListener('click', e => { const b = e.target.closest('.lb-tab'); if (b) show(b.dataset.t); });
   sheet.querySelector('.lb-tabs').addEventListener('keydown', e => {
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
@@ -217,7 +295,7 @@ function init() {
   const NOTES = {
     overall: () => 'Cüzdan bakiyesine göre sıralanır.',
     weekly: () => `Pazartesi 00:00'da sıfırlanır, kalan süre: <b>${A(untilReset())}</b>. Yalnızca kazanılan puanlar sayılır.`,
-    classes: () => 'Sınıfın puanı, üyelerinin cüzdan toplamıdır. Ortalama kişi başına düşen puanı gösterir.'
+    classes: () => 'Sınıfın puanı, üyelerinin cüzdan toplamıdır. <b>Ayrıntılı sınıf ekranı için bir sınıfa dokun.</b>'
   };
   const SUB = {
     overall: n => `Tüm zamanlar${n ? ' · ' + fmt(n) + ' üye' : ''}`,
@@ -250,7 +328,7 @@ function init() {
     const max = Math.max(1, ...rows.map(r => Number(r.total)));
     return '<div class="lb-ch" aria-hidden="true"><span>Sınıf</span><span>Dağılım</span><span>Toplam</span></div>' + rows.map((r, i) => {
       const c = classColor(r.class);
-      return `<div class="lb-cls${r.class === myClass ? ' me' : ''}" style="--c:${c}"><span class="lb-cb">${A(r.class)}</span><div class="lb-cm"><div class="lb-ct">${fmt(r.rank)}. sıra${r.class === myClass ? '<small>Senin sınıfın</small>' : ''}</div><span class="lb-track"><i class="lb-fill" style="--w:${Math.max(2, Math.round(Number(r.total) / max * 100))}%;--d:${i * 60}ms"></i></span><div class="lb-cs"><span>${fmt(r.members)} üye</span><span>Ort. ${fmt(r.average)} pt</span></div></div><div class="lb-ctot">${fmt(r.total)}<small>pt</small></div></div>`;
+      return `<div class="lb-cls${r.class === myClass ? ' me' : ''}" style="--c:${c}" role="button" tabindex="0" data-cls="${A(r.class)}" aria-label="Sınıf ${A(r.class)} ekranını aç"><span class="lb-cb">${A(r.class)}</span><div class="lb-cm"><div class="lb-ct">${fmt(r.rank)}. sıra${r.class === myClass ? '<small>Senin sınıfın</small>' : ''}</div><span class="lb-track"><i class="lb-fill" style="--w:${Math.max(2, Math.round(Number(r.total) / max * 100))}%;--d:${i * 60}ms"></i></span><div class="lb-cs"><span>${fmt(r.members)} üye</span><span>Ort. ${fmt(r.average)} pt</span></div></div><div class="lb-ctot">${fmt(r.total)}<small>pt</small></div></div>`;
     }).join('');
   }
   function meBar(t, me) {
@@ -271,11 +349,81 @@ function init() {
       const i = rowsNow.findIndex(x => x.user_id === uid); if (i < 0) return;
       page = Math.floor(i / PAGE); drawList();
       const me = $('.lb-row.me', sheet); if (me) me.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      return;
     }
+    const cl = e.target.closest('.lb-cls[data-cls]');
+    if (cl) openCote(cl.dataset.cls, cl);
+  });
+  sheet.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const cl = e.target.closest && e.target.closest('.lb-cls[data-cls]');
+    if (cl && e.target === cl) { e.preventDefault(); openCote(cl.dataset.cls, cl); }
+  });
+
+  /* ---------- SINIF EKRANI ---------- */
+  function radar(av) {
+    const cx = 100, cy = 100, R = 64, ang = [-90, 0, 90, 180].map(d => d * Math.PI / 180);
+    const pt = (i, f) => [cx + Math.cos(ang[i]) * R * f, cy + Math.sin(ang[i]) * R * f].map(v => v.toFixed(1)).join(',');
+    const ring = f => ABIL.map((_, i) => pt(i, f)).join(' ');
+    const poly = ABIL.map((a, i) => pt(i, Math.max(.03, Math.min(1, av[a[0]] / 100)))).join(' ');
+    const lab = ABIL.map((a, i) => {
+      const [x, y] = pt(i, 1.2).split(',').map(Number), anc = i === 1 ? 'start' : i === 3 ? 'end' : 'middle';
+      return `<text x="${x}" y="${i === 0 ? y : i === 2 ? y + 7 : y + 3}" text-anchor="${anc}">${a[2]}</text>`;
+    }).join('');
+    const axes = ABIL.map((_, i) => `<line class="ra" x1="${cx}" y1="${cy}" x2="${pt(i, 1).split(',')[0]}" y2="${pt(i, 1).split(',')[1]}"/>`).join('');
+    return `<svg class="lc-rad" viewBox="-10 0 220 200" role="img" aria-label="Sınıf yetenek grafiği">${[.25, .5, .75, 1].map(f => `<polygon class="rg" points="${ring(f)}"/>`).join('')}${axes}<polygon class="rp" points="${poly}"/>${lab}</svg>`;
+  }
+  function studentHTML(p, i) {
+    const sum = ABIL.reduce((s, a) => s + (Number(p[a[0]]) || 0), 0), none = sum === 0, ov = sum / 4;
+    const detail = none
+      ? '<div class="lc-none">Henüz yetenek değerlendirmesi yapılmadı.</div>'
+      : `<div class="lc-sdp">${ABIL.map((a, k) => { const g = grade(p[a[0]]); return `<div class="lc-ab" style="--g:${g.c}"><span>${a[1]}</span><span class="lb-track"><i class="lb-fill" style="--w:${Math.max(2, g.v)}%;--d:${k * 70}ms"></i></span><b>${g.t}</b><em>${g.v}</em></div>`; }).join('')}</div>`;
+    return `<div class="lc-st${p.id === uid ? ' me' : ''}"><button type="button" class="lc-sh" aria-expanded="false"><span class="lc-n">${i + 1}</span>${avatar(p)}${nameHtml(p)}${gChip(ov, none)}<span class="lc-p">${fmt(p.points)}<small>pt</small></span></button><div class="lc-sd"><div class="lc-sdi">${detail}</div></div></div>`;
+  }
+  function coteBody(st) {
+    const n = st.length || 1, av = {};
+    ABIL.forEach(a => { av[a[0]] = st.reduce((s, p) => s + (Number(p[a[0]]) || 0), 0) / n; });
+    const tot = ABIL.reduce((s, a) => s + av[a[0]], 0), none = tot === 0, og = grade(tot / 4);
+    const avList = ABIL.map(a => { const g = grade(av[a[0]]); return `<div style="--g:${g.c}"><span>${a[1]}</span><b>${none ? '–' : g.t}</b></div>`; }).join('');
+    return `<h3 class="lc-sec">GENEL YETENEK DEĞERLENDİRMESİ (OAA)</h3>
+      <div class="lc-oaa">${radar(av)}<div class="lc-ov" style="--g:${none ? '#6b7280' : og.c}"><small>SINIF GENEL NOTU</small><span class="lc-gb">${none ? '–' : og.t}</span><div class="lc-av">${avList}</div></div></div>
+      <h3 class="lc-sec">ÖĞRENCİLER · ${fmt(st.length)}</h3>
+      ${st.length ? `<div class="lc-list">${st.map(studentHTML).join('')}</div>` : empty('Bu sınıfta henüz öğrenci yok.')}`;
+  }
+  async function openCote(c, from) {
+    const row = clsRows.find(r => r.class === c); if (!row) return;
+    const my = ++ctok, color = classColor(c);
+    cote.style.setProperty('--c', color);
+    cote.hidden = false;
+    cote.innerHTML = `<div class="lc-top"><button type="button" class="lc-back" aria-label="Sınıflara dön">${SVG_CHEV('m15 6-6 6 6 6')}</button><span class="lc-kick">SINIF DEĞERLENDİRME EKRANI</span></div>
+      <div class="lc-scroll"><div class="lc-hero"><div class="lc-big">${A(c)}</div><div><div class="lc-title">Sınıf ${A(c)}</div><div class="lc-rl">Sıralamada <b>#${fmt(row.rank)}</b>${c === myClass ? ' · Senin sınıfın' : ''}</div></div></div>
+      <div class="lc-stats"><div class="lc-stat"><span>Sınıf puanı</span><b>${fmt(row.total)}</b></div><div class="lc-stat"><span>Öğrenci</span><b>${fmt(row.members)}</b></div><div class="lc-stat"><span>Ortalama</span><b>${fmt(row.average)}</b></div></div>
+      <div id="lcDyn">${skeleton()}</div></div>`;
+    $('.lc-back', cote).addEventListener('click', () => { closeCote(); if (from && from.isConnected) { try { from.focus(); } catch (_) {} } });
+    $('.lc-back', cote).focus();
+    const dyn = () => $('#lcDyn', cote);
+    try {
+      const [ps, ov] = await Promise.all([
+        supabase.from('profiles').select('id,username,display_name,avatar_url,name_color,academic,physical,adaptability,social').eq('class', c).then(r => { if (r.error) throw r.error; return r.data || []; }),
+        load('overall100')
+      ]);
+      if (my !== ctok || !dyn()) return;
+      const pts = {}; ov.forEach(o => { pts[o.user_id] = Number(o.points); });
+      const st = ps.map(p => Object.assign({}, p, { points: pts[p.id] || 0 })).sort((a, b) => b.points - a.points || nameOf(a).localeCompare(nameOf(b), 'tr'));
+      dyn().innerHTML = coteBody(st);
+    } catch (_) {
+      if (my !== ctok || !dyn()) return;
+      dyn().innerHTML = empty('Sınıf ekranı şu an yüklenemedi.', true);
+      const rb = $('.lb-retry', cote); if (rb) rb.onclick = () => openCote(c, from);
+    }
+  }
+  cote.addEventListener('click', e => {
+    const h = e.target.closest('.lc-sh'); if (!h) return;
+    const st = h.parentElement, on = st.classList.toggle('open'); h.setAttribute('aria-expanded', on ? 'true' : 'false');
   });
 
   async function show(t, force) {
-    tab = t; const my = ++tok; page = 0; rowsNow = [];
+    tab = t; const my = ++tok; page = 0; rowsNow = []; closeCote();
     sheet.querySelectorAll('.lb-tab').forEach(b => b.setAttribute('aria-selected', b.dataset.t === t ? 'true' : 'false'));
     $('#lbN', sheet).innerHTML = NOTES[t]();
     $('#lbSub', sheet).textContent = SUB[t](0);
@@ -285,7 +433,7 @@ function init() {
       const [rows, me] = await Promise.all([load(t, force), t === 'classes' ? Promise.resolve({}) : myRow(force)]);
       if (my !== tok) return;
       $('#lbSub', sheet).textContent = SUB[t](rows.length);
-      if (t === 'classes') B().innerHTML = rows.length ? classes(rows) : empty('Henüz sınıf bilgisi yok.');
+      if (t === 'classes') { clsRows = rows; B().innerHTML = rows.length ? classes(rows) : empty('Henüz sınıf bilgisi yok.'); }
       else if (!rows.length) B().innerHTML = empty(t === 'weekly' ? 'Bu hafta henüz puan kazanan yok.<br>İlk sen ol!' : 'Henüz kimse puan toplamadı.<br>İlk sen ol!');
       else {
         rowsNow = rows; maxPts = Math.max(1, ...rows.map(r => Number(r.points)));
@@ -344,7 +492,7 @@ function init() {
   paintMini(); refreshMini();
 
   let dt = 0;
-  window.addEventListener('lef-wallet', () => { clearTimeout(dt); dt = setTimeout(() => { delete cache.overall; delete cache.weekly; delete cache.me; refreshMini(true); }, 1500); });
+  window.addEventListener('lef-wallet', () => { clearTimeout(dt); dt = setTimeout(() => { delete cache.overall; delete cache.overall100; delete cache.weekly; delete cache.me; refreshMini(true); }, 1500); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshMini(); });
   setInterval(() => { if (!document.hidden) refreshMini(); }, 120000);
 
