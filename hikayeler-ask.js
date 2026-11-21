@@ -3,7 +3,7 @@
    Biçim: { t: ad, tur: [ana tür, ikinci tür], ozet, kar: [[ad, rol]], bol: [[bölüm adı, metin], ...] }
    - Türler: 'ask' | 'intikam' | 'savas'
    - Bölüm metninde paragrafları boş satırla (\n\n) ayır.
-   - Resimler kodla çizilir (mangaart.js); gerçek çizim için bölüme 3. alan olarak ['yol.webp'] ekle.
+   - Hikâyelerde resim yok; sadece yazı.
    ============================================================ */
 window.MANGALAR = window.MANGALAR || [];
 window.MANGALAR.push(

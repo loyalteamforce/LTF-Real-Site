@@ -27,9 +27,6 @@ export function escapeHtml(str){
   return div.innerHTML;
 }
 
-// Profil şarkısı (MP3) modülü. Yüklenemese bile site normal çalışmaya devam eder.
-import('./profil-sarki.js').catch(() => {});
-
 // Ana Sayfa kısayolu (Ardevyl) ve alt menü düzeni. Yüklenemese bile site normal çalışmaya devam eder.
 import('./kisayollar.js').catch(() => {});
 

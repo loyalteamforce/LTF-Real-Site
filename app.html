@@ -118,12 +118,9 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .mg-cast span{ padding:5px 11px; border-radius:12px; background:rgba(255,255,255,.06); font-size:12px; color:#e5e7eb; line-height:1.35; }
 .mg-cast span b{ display:block; font-size:13px; }
 .mg-cast span small{ color:#9ca3af; font-size:11px; }
-.mg-art{ position:absolute; inset:0; width:100%; height:100%; z-index:0; }
 .mg-cover::before{ z-index:1; }
 .mg-cover b,.mg-cover small{ z-index:2; }
 .mg-cover .mg-big{ z-index:1; }
-.mg-art-pg{ width:min(100%,560px); aspect-ratio:2/3; margin:0 auto 22px; background:#f4f4f2; box-shadow:0 6px 24px rgba(0,0,0,.5); }
-.mg-art-pg svg{ display:block; width:100%; height:100%; }
 /* Alt menü: Ardevyl açıkken yuvarlak gösterge ona kayar, sekme beyazı söner; dokunmatikte takılı kalan hover yok */
 .dock-bar:has(.ag-dockbtn[aria-expanded="true"]) .dock-btn[aria-current="page"]{ color:#9ca3af; }
 .dock-bar .ag-dockbtn[aria-expanded="true"]{ color:#fff; }
@@ -153,6 +150,8 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
 .pf-btn:hover{ background:rgba(0,0,0,.75); }
 .pf-btn svg{ width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
 .pf-tools{ position:absolute; right:12px; top:12px; z-index:3; display:flex; gap:8px; }
+.pf-snd{ position:absolute; left:12px; bottom:12px; z-index:3; padding:8px 12px; }
+.pf-snd .i-on,.pf-snd.on .i-off{ display:none; } .pf-snd.on .i-on{ display:block; }
 .pf-head{ display:flex; align-items:flex-start; gap:16px; padding:0 14px; margin-top:-66px; position:relative; z-index:2; pointer-events:none; }
 .pf-head > *{ pointer-events:auto; }
 .pf-av{ position:relative; flex:none; width:132px; height:132px; padding:0; border-radius:50%; overflow:hidden; cursor:pointer; display:grid; place-items:center; color:#9ca3af;
@@ -329,6 +328,7 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
     <div class="pf-banner" id="pfBan">
       <img id="pfBanImg" alt="" hidden>
       <video id="pfVid" muted loop autoplay playsinline hidden></video>
+      <button type="button" class="pf-btn pf-snd" id="pfSnd" hidden aria-label="Videonun sesini aç" aria-pressed="false"><svg class="i-off" viewBox="0 0 18 18"><path d="M3 7h3l4-3.5v11L6 11H3z"/><path d="m12.5 7 4 4M16.5 7l-4 4"/></svg><svg class="i-on" viewBox="0 0 18 18"><path d="M3 7h3l4-3.5v11L6 11H3z"/><path d="M12.5 6.5a3.5 3.5 0 0 1 0 5"/><path d="M14.5 4.5a6.4 6.4 0 0 1 0 9"/></svg><span>Sesi aç</span></button>
       <button type="button" class="pf-btn" id="pfAdd"><svg viewBox="0 0 18 18"><rect x="2" y="4" width="10" height="10" rx="2"/><path d="m12 8 4-2.5v7L12 10"/></svg>Banner ekle (foto / video)</button>
       <div class="pf-tools" id="pfTools" hidden>
         <button type="button" class="pf-btn" id="pfChg">Değiştir</button>
@@ -714,10 +714,6 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
       det.appendChild(wrap); rdB.appendChild(det);
       o.bol.forEach(function(b, ci){
         el('h3', 'mg-tx-h', 'Bölüm ' + (ci + 1) + ': ' + b[0]);
-        if(b[2] && b[2].length){            // gerçek çizim sayfaları varsa onları göster
-          b[2].forEach(function(u){ var im = document.createElement('img'); im.src = u; im.loading = 'lazy'; im.alt = m[0] + ' · ' + b[0];
-            im.style.cssText = 'display:block;width:min(100%,560px);margin:0 auto 12px;border-radius:4px'; rdB.appendChild(im); });
-        } else { var pg = document.createElement('div'); pg.className = 'mg-art-pg'; pg.innerHTML = page(m, ci); rdB.appendChild(pg); }
         paras(b[1]);
       });
       rdB.insertAdjacentHTML('beforeend', '<p class="mg-end">Son.</p>');
@@ -783,7 +779,6 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
       det.appendChild(wrap); rdB.appendChild(det);
       CH[m[4]].forEach(function(title, ci){
         h('Bölüm ' + (ci + 1) + ': ' + title);
-        var pg = document.createElement('div'); pg.className = 'mg-art-pg'; pg.innerHTML = page(m, ci); rdB.appendChild(pg);
         for(var pi = 0; pi < 16; pi++){
           var t = [], n = 3 + rnd() % 2;
           for(var s = 0; s < n; s++) t.push(sentence());
@@ -800,73 +795,11 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
     }
     document.getElementById('mgBack').addEventListener('click', closeReader);
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && rd.classList.contains('on')) closeReader(); });
-    // ---- Manga görselleri: kapaklar ve okuyucu sayfaları kodla çizilir (SVG) ----
-    function mk(s){ return function(){ s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; }; }
-    function hs(t){ var h = 7; for(var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) % 1000003; return h; }
-    var SKIN = ['#f5d0b5','#e8b896','#d9a37f','#fbe0cf'], HAIR = ['#111','#2b1b12','#5b3a1e','#e8e4da','#7c2d12','#1e3a8a','#be123c'], uid = 0;
-    function person(r, x, y, sc, f, k, body){
-      var sk = SKIN[(r() * 4) | 0], hr = HAIR[(r() * 7) | 0], st = (r() * 3) | 0, o = f * 3;
-      var g = '<g transform="translate(' + x + ',' + y + ') scale(' + sc + ')" stroke="#000" stroke-width="2" stroke-linejoin="round">';
-      g += '<path d="M-36 96Q-32 36 0 32Q32 36 36 96Z" fill="' + body + '"/><rect x="-6" y="16" width="12" height="20" fill="' + sk + '"/>';
-      if(st === 1) g += '<path d="M-24 40Q-30 -34 0 -32Q30 -34 24 40L14 20L-14 20Z" fill="' + hr + '"/>';
-      g += '<ellipse rx="19" ry="23" fill="' + sk + '"/>';
-      if(st === 0) g += '<path d="M-21 0Q-26 -32 0 -29Q26 -32 21 0Q14 -16 0 -13Q-12 -16 -21 0Z" fill="' + hr + '"/>';
-      else if(st === 2) g += '<path d="M-21 -2L-24 -22L-12 -16L-8 -34L0 -18L8 -34L12 -16L24 -22L21 -2Q10 -14 0 -12Q-10 -14 -21 -2Z" fill="' + hr + '"/>';
-      else g += '<path d="M-21 -4Q-20 -30 0 -28Q20 -30 21 -4Q8 -18 -4 -12Q-14 -10 -21 -4Z" fill="' + hr + '"/>';
-      if(k === 'savas') g += '<path d="M-20 -8H20V-2H-20Z" fill="#dc2626"/>';
-      g += '<g stroke="none"><ellipse cx="' + (-7 + o) + '" cy="3" rx="2.6" ry="4.2" fill="#111"/><ellipse cx="' + (7 + o) + '" cy="3" rx="2.6" ry="4.2" fill="#111"/>';
-      g += '<circle cx="' + (-6 + o) + '" cy="1.5" r="1" fill="#fff"/><circle cx="' + (8 + o) + '" cy="1.5" r="1" fill="#fff"/>';
-      if(k === 'ask') g += '<ellipse cx="' + (-12 + o) + '" cy="11" rx="4" ry="2.4" fill="#fb7185" opacity=".7"/><ellipse cx="' + (12 + o) + '" cy="11" rx="4" ry="2.4" fill="#fb7185" opacity=".7"/>';
-      g += '</g><path fill="none" stroke-width="1.6" d="';
-      g += k === 'ask' ? 'M' + (-11 + o) + ' -5L' + (-4 + o) + ' -6M' + (4 + o) + ' -6L' + (11 + o) + ' -5M' + (-4 + o) + ' 14Q' + o + ' 17 ' + (4 + o) + ' 14' : 'M' + (-11 + o) + ' -8L' + (-4 + o) + ' -4M' + (4 + o) + ' -4L' + (11 + o) + ' -8M' + (-4 + o) + ' 15H' + (4 + o);
-      return g + '"/></g>';
-    }
-    function scene(k, seed, c1, c2){
-      var r = mk(seed), id = 'g' + (uid++), i, x, y, s = '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + c1 + '"/><stop offset="1" stop-color="' + c2 + '"/></linearGradient><pattern id="' + id + 'd" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1" fill="#000" opacity=".3"/></pattern></defs><rect width="200" height="300" fill="url(#' + id + ')"/>';
-      if(k === 'ask'){
-        x = (60 + r() * 80) | 0;
-        s += '<circle cx="' + x + '" cy="70" r="46" fill="#fff" opacity=".12"/><circle cx="' + x + '" cy="70" r="32" fill="#fff7e0" opacity=".92"/>';
-        for(i = 0; i < 16; i++) s += '<circle cx="' + ((r() * 200) | 0) + '" cy="' + ((r() * 140) | 0) + '" r="' + (.8 + r() * 1.2).toFixed(1) + '" fill="#fff" opacity=".8"/>';
-        s += person(r, 68, 168, 1.2, 1, k, '#1f1a3a') + person(r, 134, 176, 1.1, -1, k, '#3b1030');
-        s += '<path d="M68 205Q100 252 134 210" stroke="#ff4d6d" stroke-width="2.5" fill="none"/>';
-        for(i = 0; i < 16; i++){ x = (r() * 200) | 0; y = (r() * 280) | 0; s += '<ellipse cx="' + x + '" cy="' + y + '" rx="3.5" ry="1.8" fill="#ffb3c7" opacity=".85" transform="rotate(' + ((r() * 180) | 0) + ' ' + x + ' ' + y + ')"/>'; }
-        s += '<path d="M0 262Q60 246 120 258T200 252V300H0Z" fill="#0b0716"/>';
-      } else if(k === 'intikam'){
-        s += '<circle cx="100" cy="92" r="58" fill="#7f1d1d" opacity=".35"/><circle cx="100" cy="92" r="44" fill="#dc2626" opacity=".85"/>';
-        for(i = 0; i < 5; i++) s += '<path d="M' + ((r() * 160) | 0) + ' ' + ((r() * 90) | 0) + 'q5 -7 10 0q5 -7 10 0" stroke="#000" stroke-width="2" fill="none"/>';
-        s += person(r, 100, 176, 1.5, 0, k, '#050505');
-        for(i = 0; i < 7; i++) s += '<path d="M' + (60 + ((r() * 80) | 0)) + ' ' + (60 + ((r() * 40) | 0)) + 'L' + ((r() * 200) | 0) + ' ' + ((r() * 300) | 0) + '" stroke="#fff" stroke-width="1.1" opacity=".45"/>';
-        s += '<path d="M26 40L172 268" stroke="#e5e7eb" stroke-width="5"/><path d="M26 40L172 268" stroke="#fff" stroke-width="1.5" opacity=".8"/>';
-        s += '<path d="M0 300V252H20V232H34V252H60V240H74V252H200V300Z" fill="#050505"/>';
-      } else {
-        s += '<circle cx="100" cy="150" r="64" fill="#fbbf24" opacity=".25"/><circle cx="100" cy="150" r="38" fill="#fde68a" opacity=".95"/>';
-        for(i = 0; i < 12; i++){ var a = i * Math.PI / 6; s += '<path d="M' + (100 + 46 * Math.cos(a)).toFixed(1) + ' ' + (150 + 46 * Math.sin(a)).toFixed(1) + 'L' + (100 + 90 * Math.cos(a)).toFixed(1) + ' ' + (150 + 90 * Math.sin(a)).toFixed(1) + '" stroke="#fde68a" stroke-width="1.5" opacity=".4"/>'; }
-        for(i = 0; i < 4; i++) s += '<ellipse cx="' + ((r() * 200) | 0) + '" cy="' + (190 + ((r() * 60) | 0)) + '" rx="40" ry="12" fill="#9ca3af" opacity=".25"/>';
-        s += '<path d="M30 120V270M170 130V270" stroke="#111" stroke-width="2"/><path d="M150 50V260" stroke="#111" stroke-width="3"/><path d="M150 54L190 62L178 76L190 90L150 86Z" fill="#dc2626" stroke="#000" stroke-width="1.5"/>';
-        s += person(r, 56, 190, 1, 1, k, '#1b3a24') + person(r, 104, 198, 1.1, 0, k, '#243b2d');
-        s += '<path d="M0 262L40 250L90 260L200 246V300H0Z" fill="#050805"/>';
-      }
-      return s + '<rect y="140" width="200" height="160" fill="url(#' + id + 'd)"/>';
-    }
-    var LAY = [[[6,6,188,100],[6,112,92,90],[102,112,92,90],[6,208,188,86]],[[6,6,92,130],[102,6,92,130],[6,142,188,70],[6,218,188,76]],[[6,6,188,70],[6,82,120,120],[130,82,64,120],[6,208,188,86]]];
-    var BUB = { ask:['Seni bekledim...','Neden susuyorsun?','Yanlış anlama!','Bu kalp...','Gitme.'], intikam:['Unutmadım.','Hesap günü.','Sen miydin?!','Bitti.','Geç kaldın.'], savas:['İlerleyin!','Geri yok!','Siperlere!','Sancak düşmez!','Şafak yakın.'] };
-    function page(m, ci){
-      var r = mk(hs(m[0]) + ci * 977 + 13), k = m[4], s = '<svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + m[0] + ' sayfa ' + (ci + 1) + '"><rect width="200" height="300" fill="#f4f4f2"/>';
-      LAY[ci % 3].forEach(function(p, i){
-        var z = Math.min(.5 + r() * .5, 300 * p[2] / (p[3] * 200)), vw = 200 * z, vh = vw * p[3] / p[2], vx = r() * (200 - vw), vy = r() * (300 - vh);
-        s += '<svg x="' + p[0] + '" y="' + p[1] + '" width="' + p[2] + '" height="' + p[3] + '" viewBox="' + vx.toFixed(1) + ' ' + vy.toFixed(1) + ' ' + vw.toFixed(1) + ' ' + vh.toFixed(1) + '" preserveAspectRatio="xMidYMid slice">' + scene(k, hs(m[0]) + ci * 131 + i * 17, m[2], m[3]) + '</svg>';
-        s += '<rect x="' + p[0] + '" y="' + p[1] + '" width="' + p[2] + '" height="' + p[3] + '" fill="none" stroke="#111" stroke-width="2.2"/>';
-        var t = BUB[k][(ci + i) % 5], rx = t.length * 1.9 + 8;
-        if(i % 2 === 0 && rx * 2 + 10 < p[2]) s += '<ellipse cx="' + (p[0] + 6 + rx) + '" cy="' + (p[1] + 16) + '" rx="' + rx + '" ry="10" fill="#fff" stroke="#111" stroke-width="1.2"/><text x="' + (p[0] + 6 + rx) + '" y="' + (p[1] + 19) + '" text-anchor="middle" font-size="6.5" font-family="system-ui,sans-serif" font-weight="700" fill="#111">' + t + '</text>';
-      });
-      return s + '</svg>';
-    }
-    function artSvg(m){ if(m[6] && m[6].kapak) return '<img class="mg-art" src="' + m[6].kapak + '" alt="" style="object-fit:cover">'; return '<svg class="mg-art" viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + scene(m[4], hs(m[0]), m[2], m[3]) + '</svg>'; }
     function cover(m, i, tag){
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'mg-cover';
       b.style.setProperty('--c1', m[2]); b.style.setProperty('--c2', m[3]);
-      b.innerHTML = artSvg(m) + '<span class="mg-big">' + (i + 1) + '</span><b></b><small></small>';
+      b.innerHTML = '<span class="mg-big">' + (i + 1) + '</span><b></b><small></small>';
       b.querySelector('b').textContent = m[0];
       b.querySelector('small').textContent = m[1];
       b.addEventListener('click', function(){ openReader(m, b); });
@@ -1060,6 +993,11 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
   const doneBan = () => $('pfBan').classList.remove('pf-ld'), doneAv = () => $('pfAv').classList.remove('pf-ld');
   $('pfBanImg').addEventListener('load', doneBan); $('pfBanImg').addEventListener('error', doneBan);
   $('pfVid').addEventListener('loadeddata', doneBan); $('pfVid').addEventListener('error', doneBan);
+  // ---------- Banner videosunun sesi: tarayıcılar sesli otomatik oynatmaya izin vermez, ses bir dokunuşla açılır ----------
+  function sndSync(){ const v = $('pfVid'), b = $('pfSnd'), on = !v.muted; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    b.setAttribute('aria-label', on ? 'Videonun sesini kapat' : 'Videonun sesini aç'); b.querySelector('span').textContent = on ? 'Sesi kapat' : 'Sesi aç'; if(v.hidden) b.hidden = true; }
+  $('pfSnd').addEventListener('click', () => { const v = $('pfVid'); v.muted = !v.muted; if(!v.muted && v.paused) v.play().catch(() => {}); sndSync(); });
+  document.addEventListener('visibilitychange', () => { if(document.hidden && !$('pfVid').muted){ $('pfVid').muted = true; sndSync(); } });
   $('pfImg').addEventListener('load', doneAv); $('pfImg').addEventListener('error', doneAv);
 
   // ---------- Baskın renk: banner + profil fotoğrafı -> profil arka planı ----------
@@ -1115,10 +1053,10 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
     $('pfAv').disabled = !mine;
     // banner (foto veya video)
     const bu = safeUrl(d.banner_url), v = $('pfVid'), im = $('pfBanImg');
-    v.pause(); v.removeAttribute('src'); v.load(); v.hidden = true;
+    v.pause(); v.removeAttribute('src'); v.load(); v.hidden = true; v.muted = true; sndSync();
     im.removeAttribute('src'); im.hidden = true;
     glowStop();
-    if(bu && d.banner_type === 'video'){ $('pfBan').classList.add('pf-ld'); const auto = ST.get('vid', '1') === '1'; v.autoplay = auto; v.crossOrigin = 'anonymous'; v.src = bu; v.hidden = false; if(auto) v.play().catch(() => {}); glowVideo(v); }
+    if(bu && d.banner_type === 'video'){ $('pfBan').classList.add('pf-ld'); const auto = ST.get('vid', '1') === '1'; v.autoplay = auto; v.crossOrigin = 'anonymous'; v.src = bu; v.hidden = false; if(auto) v.play().catch(() => {}); glowVideo(v); $('pfSnd').hidden = false; }
     else if(bu){ $('pfBan').classList.add('pf-ld'); im.src = bu; im.hidden = false; glowImage(bu); }
     else $('pfBan').classList.remove('pf-ld');
     $('pfBan').classList.toggle('has', !!bu);

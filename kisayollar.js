@@ -1,6 +1,6 @@
 /* ============================================================
    KISAYOLLAR: Ardevyl alt menüden çıkarılır, Ana Sayfa'da kartın altına buton olarak gelir.
-   - Müzik sekmesi kaldırıldı; müzik artık profildeki banner müziğidir (profil-sarki.js).
+   - Müzik sekmesi kaldırıldı; banner videosunun sesi profildeki ses düğmesiyle açılır.
    - Ardevyl: sohbet panelini açar (maskota dokunmak da aynı işi yapar).
    - config.js bu dosyayı kendisi yükler; app.html'ye ekleme gerekmez.
    - Alt menü boyutları dock-buyuk.css içindedir.
