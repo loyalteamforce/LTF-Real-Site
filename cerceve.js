@@ -26,14 +26,16 @@ import { supabase } from './config.js';
 // key: [alt, üst] aydınlık (luma) eşiği; bunun altındaki koyu arka plan tamamen silinir
 // amin: [alt, üst] alfa eşiği; bunun altındaki yarı saydam sis / arka plan tamamen silinir (parlak çerçeveler için)
 // raw: görsel zaten şeffaf hazır, temizleme yok
+// ink: [alt, üst] aydınlık eşiği; bundan AÇIK dolgu (beyaz bant) silinir, koyu çizgiler kalır ve beyaza boyanır
+// in: çerçevenin ana çizgisinin dış kenardan uzaklığı (kaynak px); çizgi tam banner kenarına oturur
 // ban: banner PNG ölçüleri -> L,T,R,B = halka çubuklarının DİŞ kenarı; bx = alt kenarın başladığı x; ly = sol kenarın bittiği y
 const PAL = {
-  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, amin: [140, 235], ban: { L: 30, T: 30, R: 882, B: 352, bx: 372, ly: 314 } },
-  kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, key: [95, 160], ban: { L: 30, T: 30, R: 880, B: 358, bx: 368, ly: 304 } },
-  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, key: [85, 150], ban: { L: 30, T: 30, R: 874, B: 348, bx: 373, ly: 282 } },
-  kelebek: { n: 'Gece Kelebeği', hole: 111, out: 138, raw: true, ban: { L: 52, T: 190, R: 852, B: 478, bx: 342, ly: 322 } },
-  murekkep:{ n: 'Mürekkep', hole: 118, out: 138, raw: true, ban: { L: 44, T: 180, R: 862, B: 466, bx: 342, ly: 324 } },
-  kurdele: { n: 'Kurdele', hole: 108, out: 136, raw: true, ban: { L: 50, T: 170, R: 848, B: 458, bx: 338, ly: 302 } }
+  beyaz:   { n: 'Beyaz Diken', hole: 102, out: 134, ink: [110, 200], ban: { L: 30, T: 30, R: 882, B: 352, bx: 372, ly: 314, in: 14 } },
+  kirmizi: { n: 'Kızıl Melek', hole: 108, out: 143, key: [95, 160], ban: { L: 30, T: 30, R: 880, B: 358, bx: 368, ly: 304, in: 11 } },
+  mavi:    { n: 'Mavi Zincir', hole: 104, out: 132, key: [85, 150], ban: { L: 30, T: 30, R: 874, B: 348, bx: 373, ly: 282, in: 14 } },
+  kelebek: { n: 'Gece Kelebeği', hole: 111, out: 138, raw: true, ban: { L: 52, T: 190, R: 852, B: 478, bx: 342, ly: 322, in: 6 } },
+  murekkep:{ n: 'Mürekkep', hole: 118, out: 138, raw: true, ban: { L: 44, T: 180, R: 862, B: 466, bx: 342, ly: 324, in: 7 } },
+  kurdele: { n: 'Kurdele', hole: 108, out: 136, raw: true, ban: { L: 50, T: 170, R: 848, B: 458, bx: 338, ly: 302, in: 14 } }
 };
 const src = (k, t) => 'cr-' + k + '-' + t + '.png';
 
@@ -53,12 +55,19 @@ function cleanImg(k, t) {
         const c = document.createElement('canvas'); c.width = w; c.height = h;
         const x = c.getContext('2d'); x.drawImage(im, 0, 0);
         const id = x.getImageData(0, 0, w, h), d = id.data;
-        const hole = t === 'avatar' ? PAL[k].hole : 0, key = PAL[k].key, amin = PAL[k].amin, raw = PAL[k].raw;
+        const hole = t === 'avatar' ? PAL[k].hole : 0, key = PAL[k].key, amin = PAL[k].amin, raw = PAL[k].raw, ink = t === 'banner' && PAL[k].ink;
         for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) {
           const i = (y * w + xx) * 4; let a = d[i + 3];
           if (a === 0) continue;
           const mx = Math.max(d[i], d[i + 1], d[i + 2]);
           if (raw) { /* hazır şeffaf: dokunma */ }
+          else if (ink) {                  // beyaz bant arka planı silinir: sadece koyu diken/kenar çizgileri kalır, beyaz çizgi olur
+            const lum = .299 * d[i] + .587 * d[i + 1] + .114 * d[i + 2];
+            const tt = Math.min(1, Math.max(0, (ink[1] - lum) / (ink[1] - ink[0])));
+            const ta = Math.min(1, Math.max(0, (a - 140) / 95));   // yarı saydam duman da silinir
+            if (y < 40 && xx > 315 && xx < 428) a = 0;             // görselin üst bandındaki koyu leke
+            a *= tt * tt * (3 - 2 * tt) * ta * ta * (3 - 2 * ta); d[i] = 246; d[i + 1] = 248; d[i + 2] = 252;
+          }
           else if (amin) {                 // yarı saydam sis / arka plan: alfaya göre sil, sadece opak çerçeve çizgileri kalır
             const tt = Math.min(1, Math.max(0, (a - amin[0]) / (amin[1] - amin[0])));
             a *= tt * tt * (3 - 2 * tt);
@@ -90,7 +99,9 @@ const ready = Promise.all(Object.keys(PAL).map(k => Promise.all(['avatar', 'bann
 
 /* ---------- Banner çerçevesini parça parça çiz: banner'ı 4 kenardan TAM sarıyor ---------- */
 function drawBanner(canvas, k, Wd, Hd, dpr) {
-  const B = PAL[k].ban, im = CV[k + 'banner'];
+  // B: halkanın ana çizgisi (dış kenardan `in` kadar içeride) banner kenarına denk gelecek şekilde kutu
+  const B0 = PAL[k].ban, I = B0.in || 0, im = CV[k + 'banner'];
+  const B = { L: B0.L + I, T: B0.T + I, R: B0.R - I, B: B0.B - I, bx: B0.bx, ly: B0.ly };
   if (!im) return null;
   const iw = im.width, ih = im.height;
   const c = 110, Gm = 55, tb = 40, cap = 35, capH = 40;
@@ -125,7 +136,7 @@ function drawBanner(canvas, k, Wd, Hd, dpr) {
   P(B.bx + cap, B.B - tb, (B.R - c) - (B.bx + cap), tb + Gm, g + ci, g + Hd - tb * s, Wd - 2 * ci, (tb + Gm) * s);
   // sol kenar: görseldeki sol şerit (oğya kadar olan kısım) tüm yüksekliğe yayılır
   P(B.L - Gm, B.T + c, Gm + tb, B.ly - capH - (B.T + c), 0, g + ci, (Gm + tb) * s, Hd - 2 * ci);
-  return { g, rad: 46 * s };
+  return { g, rad: Math.max(8, 46 - I) * s };
 }
 
 /*ANIM-START*/
