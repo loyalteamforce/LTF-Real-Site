@@ -7,7 +7,7 @@
    - Sekme değişirken yeni sayfa geldiği yönden kayarak girer.
    - app.html'de, </body>'den hemen önce şu satır olmalı:
         <script src="ux.js"></script>
-   - iOS geri bildirim animasyonları (ios-fx.js), profil çerçeveleri (cerceve.js), Müzik (muzik.js) ve Mağaza (magaza.js) en altta buradan otomatik yüklenir.
+   - iOS geri bildirim animasyonları (ios-fx.js), profil çerçeveleri (cerceve.js) ve Mağaza (magaza.js) en altta buradan otomatik yüklenir.
    Ayarlar: aşağıdaki sabitler.
    ============================================================ */
 (function () {
@@ -167,16 +167,6 @@
   s.type = 'module';
   s.src = 'cerceve.js';
   s.setAttribute('data-cerceve', '');
-  document.body.appendChild(s);
-})();
-
-/* ---------- Müzik sekmesi (muzik.js) otomatik yüklenir ---------- */
-(function () {
-  if (document.querySelector('script[data-muzik]')) return;
-  var s = document.createElement('script');
-  s.type = 'module';
-  s.src = 'muzik.js';
-  s.setAttribute('data-muzik', '');
   document.body.appendChild(s);
 })();
 

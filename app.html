@@ -304,14 +304,14 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
 <main id="app">
   <section class="view" id="v-ana-sayfa"><h2>Ana Sayfa</h2></section>
   <section class="view" id="v-manga">
-    <h2>Manga</h2>
+    <h2>Hikâyeler</h2>
     <p class="mg-h" style="margin-top:16px">Öne çıkanlar</p>
-    <div class="mg-belt" aria-label="Öne çıkan mangalar"><div class="mg-track" id="mgTrack"></div></div>
+    <div class="mg-belt" aria-label="Öne çıkan hikâyeler"><div class="mg-track" id="mgTrack"></div></div>
     <div class="mg-sticky"><label class="mg-search">
       <svg viewBox="0 0 18 18"><circle cx="8" cy="8" r="5.25"/><line x1="11.9" y1="11.9" x2="15.5" y2="15.5"/></svg>
-      <input id="mgQ" type="search" placeholder="Manga ya da tür ara" autocomplete="off">
+      <input id="mgQ" type="search" placeholder="Hikâye ya da tür ara" autocomplete="off">
     </label></div>
-    <p class="mg-h">Tüm mangalar <span id="mgN"></span></p>
+    <p class="mg-h">Tüm hikâyeler <span id="mgN"></span></p>
     <div class="mg-grid" id="mgGrid"></div>
     <p class="mg-empty" id="mgNo">Sonuç yok. Başka bir isim ya da tür dene.</p>
   </section>
@@ -365,7 +365,7 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
   </section>
 </main>
 
-<div class="mg-rd" id="mgRd" role="dialog" aria-modal="true" aria-label="Manga okuyucu">
+<div class="mg-rd" id="mgRd" role="dialog" aria-modal="true" aria-label="Hikâye okuyucu">
   <div class="mg-rd-bar">
     <button type="button" id="mgBack" aria-label="Kapat"><svg viewBox="0 0 18 18"><path d="M11 3 5 9l6 6"/></svg></button>
     <div class="mg-rd-t" id="mgRdT"></div>
@@ -377,7 +377,7 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
 <div class="st" id="st" aria-hidden="true">
   <div class="st-card" role="dialog" aria-modal="true" aria-label="Ayarlar">
     <div class="st-top"><b>Ayarlar</b><button type="button" id="stX" aria-label="Kapat">&times;</button></div>
-    <div class="st-row"><span>Manga yazı boyutu</span><div class="st-seg" id="stFs"><button type="button" data-v="s">Küçük</button><button type="button" data-v="m">Normal</button><button type="button" data-v="l">Büyük</button></div></div>
+    <div class="st-row"><span>Hikâye yazı boyutu</span><div class="st-seg" id="stFs"><button type="button" data-v="s">Küçük</button><button type="button" data-v="m">Normal</button><button type="button" data-v="l">Büyük</button></div></div>
     <div class="st-row"><span>Banner videosu kendiliğinden oynasın</span><button type="button" class="st-sw" id="stVid" role="switch" aria-checked="true" aria-label="Banner videosu"></button></div>
     <div class="st-row"><span>Ardevyl maskotu<br><small style="color:#9ca3af;font-size:12px">Kapalıyken de alt menüden Ardevyl ile sohbet edebilirsin</small></span><button type="button" class="st-sw" id="stAg" role="switch" aria-checked="true" aria-label="Ardevyl maskotu"></button></div>
     <div class="st-row"><span>Klavye ve mesaj sesleri<br><small style="color:#9ca3af;font-size:12px">Harflere basınca ASMR tıkı, mesaj gelince ses</small></span><button type="button" class="st-sw" id="stSnd" role="switch" aria-checked="true" aria-label="Sesler"></button></div>
@@ -392,7 +392,7 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
     <button class="dock-btn" data-view="ana-sayfa" aria-label="Ana Sayfa" data-label="Ana Sayfa">
       <svg viewBox="0 0 18 18"><path d="M2.25 8.25 9 2.75l6.75 5.5"/><path d="M3.75 7.25v6.5a1.5 1.5 0 0 0 1.5 1.5h7.5a1.5 1.5 0 0 0 1.5-1.5v-6.5"/><path d="M7.25 15.25v-4h3.5v4"/></svg>
     </button>
-    <button class="dock-btn" data-view="manga" aria-label="Manga" data-label="Manga">
+    <button class="dock-btn" data-view="manga" aria-label="Hikâyeler" data-label="Hikâyeler">
       <svg viewBox="0 0 18 18"><path d="M9 4.25C7.8 3.25 6.1 2.75 3.25 2.75v10.5c2.85 0 4.55.5 5.75 1.5 1.2-1 2.9-1.5 5.75-1.5V2.75C11.9 2.75 10.2 3.25 9 4.25Z"/><line x1="9" y1="4.25" x2="9" y2="14.75"/></svg>
     </button>
     <button class="dock-btn" data-view="kesfet" aria-label="Keşfet" data-label="Keşfet">
@@ -524,7 +524,9 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
 
 </script>
 
-<script src="mangalar.js"></script>
+<script src="hikayeler-ask.js"></script>
+<script src="hikayeler-intikam.js"></script>
+<script src="hikayeler-savas.js"></script>
 <script>
   // ---------- Manga sekmesi (yazı tabanlı; resimler sonra eklenecek, veriler sonra Supabase'ten gelebilir) ----------
   (function(){
@@ -688,7 +690,7 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
       M.push([TITLES[k][i], NAME[k] + ' / ' + NAME[sec], p[0], p[1], k, sec]);
     });
 
-    // Mangalar mangalar.js'ten gelir (her birinin kendi hikâyesi var)
+    // Hikâyeler hikayeler-ask.js, hikayeler-intikam.js ve hikayeler-savas.js'ten gelir
     if(window.MANGALAR && window.MANGALAR.length) M = window.MANGALAR.map(function(o, i){
       var k = o.tur[0], sec = o.tur[1] || k, p = PAL[k][i % 4];
       return [o.t, NAME[k] + ' / ' + NAME[sec], p[0], p[1], k, sec, o];
@@ -701,6 +703,7 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
       function el(tag, cls, txt){ var e = document.createElement(tag); e.className = cls; e.textContent = txt; rdB.appendChild(e); return e; }
       document.querySelector('#mgRdT small').textContent = o.bol.length + ' bölüm';
       el('p', 'mg-tx', o.ozet);
+      function paras(t){ String(t).split(/\n\s*\n/).forEach(function(s){ s = s.trim(); if(s) el('p', 'mg-tx', s); }); }
       var det = document.createElement('details'); det.className = 'mg-cast';
       var sum = document.createElement('summary'); sum.textContent = 'Karakterler (' + o.kar.length + ')'; det.appendChild(sum);
       var wrap = document.createElement('div');
@@ -715,9 +718,9 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
           b[2].forEach(function(u){ var im = document.createElement('img'); im.src = u; im.loading = 'lazy'; im.alt = m[0] + ' · ' + b[0];
             im.style.cssText = 'display:block;width:min(100%,560px);margin:0 auto 12px;border-radius:4px'; rdB.appendChild(im); });
         } else { var pg = document.createElement('div'); pg.className = 'mg-art-pg'; pg.innerHTML = page(m, ci); rdB.appendChild(pg); }
-        el('p', 'mg-tx', b[1]);
+        paras(b[1]);
       });
-      rdB.insertAdjacentHTML('beforeend', '<p class="mg-end">Devamı yakında.</p>');
+      rdB.insertAdjacentHTML('beforeend', '<p class="mg-end">Son.</p>');
       rd.classList.add('on'); rdB.scrollTop = 0; document.body.style.overflow = 'hidden';
       document.getElementById('mgBack').focus();
     }
