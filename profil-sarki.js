@@ -1,5 +1,5 @@
 /* ============================================================
-   EN SEVİLDİĞİM ŞARKI (profil şarkısı): YouTube'dan aranır, sadece sevdiğin 20 saniyelik bölüm çalır.
+   BANNER MÜZİĞİ (profil şarkısı, banner'ın hemen altında durur): YouTube'dan aranır, sadece sevdiğin 20 saniyelik bölüm çalır.
    - Kart küçüktür: müzik simgesi + şarkı adı + çal düğmesi. Video görünmez, sadece ses gelir.
    - Profilin sahibi "Şarkı ekle" der, arar (ya da YouTube linki yapıştırır), sonra kaydırıcıyla
      20 saniyelik bölümün başlangıcını seçer, "Dinle" ile dener, "Kaydet" der.
@@ -41,6 +41,7 @@ const CSS = `
   border:3px solid rgba(0,0,0,.22); border-top-color:#0b0b0f; animation:psSpin .8s linear infinite; }
 @keyframes psSpin{ to{ transform:rotate(360deg); } }
 .ps-mid{ flex:1; min-width:0; }
+.ps-lbl{ font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--pf-a,#9db8ff); margin-bottom:2px; }
 .ps-title{ font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .ps-bar{ height:3px; margin-top:7px; border-radius:2px; background:rgba(255,255,255,.12); overflow:hidden; }
 .ps-bar i{ display:block; height:100%; width:0; background:var(--pf-a,#9db8ff); }
@@ -169,15 +170,15 @@ function init(){
   const style = document.createElement('style'); style.textContent = CSS; document.head.appendChild(style);
 
   const card = document.createElement('section');
-  card.className = 'ps-card'; card.hidden = true; card.setAttribute('aria-label', 'En sevdiğim şarkı');
+  card.className = 'ps-card'; card.hidden = true; card.setAttribute('aria-label', 'Banner müziği');
   card.innerHTML =
     '<div class="ps-row ps-player" hidden>' +
       '<button type="button" class="ps-btn" aria-label="Çal">' + ICON_NOTE + '</button>' +
-      '<div class="ps-mid"><div class="ps-title"></div><div class="ps-bar"><i></i></div></div>' +
+      '<div class="ps-mid"><div class="ps-lbl">Banner müziği</div><div class="ps-title"></div><div class="ps-bar"><i></i></div></div>' +
     '</div>' +
     '<div class="ps-hid"></div>' +
     '<div class="ps-own" hidden>' +
-      '<button type="button" class="bio-btn" data-a="pick">Şarkı ekle</button>' +
+      '<button type="button" class="bio-btn" data-a="pick">Banner müziği ekle</button>' +
       '<button type="button" class="bio-btn" data-a="del" hidden>Kaldır</button>' +
     '</div>' +
     '<div class="ps-find" hidden>' +
@@ -209,9 +210,11 @@ function init(){
     tryB: q('[data-a=try]'), saveB: q('[data-a=save]'), backB: q('[data-a=back]'), msg: q('.ps-msg')
   };
 
-  // Kartı profil sayfasına yerleştir (sayfa yeniden çizilirse olaylarda tekrar takılır)
+  // Kartı banner'ın hemen altına yerleştir (sayfa yeniden çizilirse olaylarda tekrar takılır)
   function attach(){
     if(card.isConnected) return;
+    const bw = pv.querySelector('.pf-bwrap');
+    if(bw){ bw.after(card); return; }
     const bio = pv.querySelector('.bio');
     if(bio && !head.contains(bio)) bio.after(card); else head.after(card);
   }
@@ -309,7 +312,7 @@ function init(){
     el.own.hidden = !mine || !setupOk || adding;
     el.find.hidden = !finding;
     el.clip.hidden = !picking;
-    el.pick.textContent = song ? 'Şarkıyı değiştir' : 'Şarkı ekle';
+    el.pick.textContent = song ? 'Banner müziğini değiştir' : 'Banner müziği ekle';
     el.del.hidden = !song;
     if(song) el.title.textContent = song.title;
   }
@@ -431,7 +434,7 @@ function init(){
       const r = await supabase.from('profile_songs').upsert(row);
       if(r.error) throw r.error;
       if(old) supabase.storage.from(BUCKET).remove([old]).catch(() => {});   // eski MP3 dosyası silinemese de sorun değil
-      if(my === token){ song = { title: row.title, id: p.id, start: row.start_sec }; picking = null; finding = false; el.res.textContent = ''; el.input.value = ''; msg('Şarkın eklendi.'); }
+      if(my === token){ song = { title: row.title, id: p.id, start: row.start_sec }; picking = null; finding = false; el.res.textContent = ''; el.input.value = ''; msg('Banner müziğin eklendi.'); }
     } catch(err){ if(my === token) msg(explain(err), true); }
     setBusy(false); render();
   }

@@ -111,7 +111,7 @@ function home() {
   el.innerHTML = `<div class="x-hero"><small>${g}</small><h2>${E(NAME) || 'Loyal Elite Force'}</h2></div>${bar()}
   <div class="x-card"><h3>Günün sözü</h3><p>${QUOTES[(new Date().getDate() + new Date().getMonth()) % QUOTES.length]}</p></div>
   <div class="x-card" id="xtasks"><h3>Günlük görevler</h3>${tasksHTML()}</div>
-  <div class="x-card"><h3>Hızlı erişim</h3><div class="x-bar"><button class="x-btn pri" data-go="kesfet">Eğlence merkezi</button><button class="x-btn" data-go="manga">Manga</button><button class="x-btn" data-go="kutuphane">Kütüphane</button></div></div>`;
+  <div class="x-card"><h3>Hızlı erişim</h3><div class="x-bar"><button class="x-btn pri" data-go="kesfet">Eğlence merkezi</button><button class="x-btn" data-go="manga">Hikâyeler</button><button class="x-btn" data-go="kutuphane">Kütüphane</button></div></div>`;
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) location.hash = b.dataset.go; });
 window.addEventListener('lef-profile', () => { if (window.__lefProfile && window.__lefProfile.mine) { const n = $('#pfNick'); if (n && n.textContent) { NAME = n.textContent; home(); } } });
@@ -237,7 +237,7 @@ function rx(p) {
 const ST = ['Okuyorum', 'Bitirdim', 'Sırada'];
 function lib() {
   const el = $('#v-kutuphane'); if (!el) return;
-  el.innerHTML = `<h2>Kütüphane</h2><div class="x-card"><input class="x-in" id="xl" maxlength="60" placeholder="Manga / seri adı"><div class="x-bar"><button class="x-btn pri" id="xla">Ekle</button></div></div>
+  el.innerHTML = `<h2>Kütüphane</h2><div class="x-card"><input class="x-in" id="xl" maxlength="60" placeholder="Hikâye / seri adı"><div class="x-bar"><button class="x-btn pri" id="xla">Ekle</button></div></div>
   <div class="x-card" id="xll">${S.lib.length ? S.lib.map((x, i) => `<div class="x-row"><b>${E(x.n)}</b><button class="x-btn" data-s="${i}">${ST[x.s]}</button><button class="x-btn" data-d="${i}" aria-label="Sil">✕</button></div>`).join('') : '<p>Listen boş. Okuduğun veya okuyacağın serileri ekle.</p>'}</div>`;
   const add = () => { const v = $('#xl').value.trim(); if (!v) return; S.lib.unshift({ n: v, s: 0 }); save(); mark('lib'); lib(); };
   $('#xla').onclick = add; $('#xl').onkeydown = e => { if (e.key === 'Enter') add(); };

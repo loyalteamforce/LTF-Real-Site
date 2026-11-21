@@ -108,7 +108,7 @@
     ],
     emptyLib: [
       ['h', "Kütüphane senin arşivin. Okuduğun her hikâye buraya bir yıldız olsun."],
-      ['n', "Bir manga ekle; hem görev tamamlanır hem yolculuğun kayda geçer."],
+      ['n', "Bir hikâye ekle; hem görev tamamlanır hem yolculuğun kayda geçer."],
       ['s', "Okuyorum, bitirdim, sırada... Üç kapı. Hangisinden yürüyorsun?"],
       ['a', "Düzenli bir raf, düzenli bir zihin demektir. Listeni güncel tut."]
     ],
@@ -252,7 +252,7 @@
     ['n', "Günaydın, yolcu. Sabahın sakinliği günün gücüdür."]
   ];
   P.evening = [
-    ['s', "Akşam çöktü; hikâye vakti. Bir manga açmak ister misin?"],
+    ['s', "Akşam çöktü; hikâye vakti. Bir hikâye açmak ister misin?"],
     ['n', "İyi akşamlar. Günün yükünü bırak, bir destanın içinde dinlen."]
   ];
   P.roast = [
@@ -276,7 +276,7 @@
   var TAIL = [" Şaka bir yana, hepsini severim; birlikte yürüdüğümüz yoldaşlar bunlar.", " Bunu ona söyleme; sır tutmak kalkanın görevidir.", " Gülmek de bir cesarettir. Dostça, elbette.", ""];
   var JOKES = [
     "Kalkan neden asla kavga etmez? Çünkü hep karşı tarafı savunur... Şaka bu, gülmende sakınca yok.",
-    "Kahraman neden manga okurken uyuyakalır? Çünkü en büyük sahne hep bir sonraki bölümde saklıdır.",
+    "Kahraman neden hikâye okurken uyuyakalır? Çünkü en büyük sahne hep bir sonraki bölümde saklıdır.",
     "Bir şövalyeye 'korkuyor musun?' demişler. 'Hayır,' demiş, 'sadece sancağı düzeltiyorum.'",
     "Taha neden saat takmaz? Çünkü kahramanlar geç gelince sahne onları bekler.",
     "Wi-Fi ile Quartex'in ortak yönü? İkisi de lazım olduğunda yok, geldiğinde destan."
@@ -291,7 +291,7 @@
 
   /* ---------- siteye eklenen özellikler için sözler ---------- */
   P.xnew = [
-    ['h', "Karargâhta çok şey değişti! Keşfet'te çark, sınav ve oyunlar var; puanlar toplanıyor, yeni mangalar geldi. Hepsi yolculuğunu zenginleştirsin diye."]
+    ['h', "Karargâhta çok şey değişti! Keşfet'te çark, sınav ve oyunlar var; puanlar toplanıyor, yeni hikâyeler geldi. Hepsi yolculuğunu zenginleştirsin diye."]
   ];
   P.xwheel = [
     ['h', "Çark sana {n} puan verdi! Kader yüzüne gülüyor."],
@@ -802,7 +802,7 @@
     while (all.length && chosen.length < 5) chosen.push(all.splice(rnd(all.length), 1)[0]);
     if (!chosen.length) {
       var e = document.createElement('div'); e.className = 'agc-note';
-      e.textContent = "Henüz öneri yok. Manga sekmesi yüklenmedi mi?";
+      e.textContent = "Henüz öneri yok. Hikâyeler sekmesi yüklenmedi mi?";
       recoBox.appendChild(e);
     }
     chosen.forEach(function (m) {
@@ -828,7 +828,7 @@
 
   /* ---------- sohbet: hızlı düğmeler + yerel komutlar (sunucuya gitmez) ---------- */
   var chipBox = $('#agChips');
-  ['Manga öner', 'Yeni ne var?', 'Oyun öner', 'Puanım kaç?', 'Görevlerim', 'Motivasyon ver', 'Şaka yap', 'Fal bak', 'Yazı tura', 'Kim gürültücü?', "Taha'ya takıl", "Quartex'e takıl", "Narancia'ya takıl", "Kemal'e takıl", "Rai'ye takıl", "Thoya'ya takıl"].forEach(function (t) {
+  ['Hikâye öner', 'Yeni ne var?', 'Oyun öner', 'Puanım kaç?', 'Görevlerim', 'Motivasyon ver', 'Şaka yap', 'Fal bak', 'Yazı tura', 'Kim gürültücü?', "Taha'ya takıl", "Quartex'e takıl", "Narancia'ya takıl", "Kemal'e takıl", "Rai'ye takıl", "Thoya'ya takıl"].forEach(function (t) {
     var b = document.createElement('button'); b.type = 'button'; b.textContent = t;
     b.addEventListener('click', function () { send(t); });
     chipBox.appendChild(b);
@@ -849,7 +849,7 @@
     if (/kim.*(terbiyesiz|saygısız|arsız|gürültücü|gürültülü)|(terbiyesiz|saygısız|gürültücü|gürültülü).*kim/.test(t)) { y = randName(); return { m: 's', t: 'En gürültücü kim diye soruyorsun... Bana kalırsa ' + CASTN[y] + '. ' + roastOf(y) }; }
     if (n && /laf|sal|sok|takıl|dalga|ez\b|yak|rezil|anlat|hakkında|ne diyor/.test(t)) return { m: 's', t: roastOf(n) };
     if (/laf (sok|sal)|takıl|roast/.test(t)) { y = randName(); return { m: 's', t: roastOf(y) }; }
-    if (/manga.*(öner|öneri|ver|bul)|(öner|öneri).*manga/.test(t)) {
+    if (/(manga|hikaye|hikâye).*(öner|öneri|ver|bul)|(öner|öneri).*(manga|hikaye|hikâye)/.test(t)) {
       m = randomManga();
       if (m) return { m: 'h', t: "'" + m.title + "' seni çağırıyor. Cesaretle aç, yolcu.", btn: { t: 'Hemen aç', f: function () { openManga(m.title); } } };
     }
@@ -865,7 +865,7 @@
   function buildMsg(text, view) {
     var x = X(), pre = PERSONA, extras = [
       ' Kullanıcı "' + view + '" sekmesinde.',
-      ' Sitede: Ana Sayfa (görevler), Manga, Keşfet (çark, sınav, oyunlar, sıralama), Kütüphane, Profil.',
+      ' Sitede: Ana Sayfa (görevler), Hikâyeler, Keşfet (çark, sınav, oyunlar, sıralama), Kütüphane, Profil.',
       x ? ' Puanı ' + x.pts + ', serisi ' + x.streak + ' gün.' : ''
     ];
     for (var i = 0; i < extras.length; i++) {
@@ -988,7 +988,7 @@
   function xLocal(t) {
     var x = X(), g;
     if (/yeni.*(var|ne)|yenilik|neler eklendi|ne eklendi|neler var/.test(t))
-      return { m: 'h', t: "Karargâhta yeni olanlar: Keşfet'te günlük çark, sınav, hafıza, XO ve refleks oyunları. Her giriş puan ve seri kazandırıyor; görevler, sıralama, kütüphane ve 10 yeni manga hazır. Hepsi yolculuğun için.", btn: { t: "Keşfet'e git", f: function () { location.hash = 'kesfet'; } } };
+      return { m: 'h', t: "Karargâhta yeni olanlar: Keşfet'te günlük çark, sınav, hafıza, XO ve refleks oyunları. Her giriş puan ve seri kazandırıyor; görevler, sıralama, kütüphane ve 30 uzun hikâye hazır. Hepsi yolculuğun için.", btn: { t: "Keşfet'e git", f: function () { location.hash = 'kesfet'; } } };
     if (/puan|seri\b|serim/.test(t)) {
       if (!x) return { m: 'n', t: 'Puan sistemi henüz yüklenmedi, biraz sonra tekrar sor.' };
       return { m: x.pts > 100 ? 'h' : 'n', t: 'Puanın ' + x.pts + ', serin ' + x.streak + ' gün. ' + (x.streak >= 3 ? 'İstikrarın takdire değer.' : 'Her gün gelirsen bonus büyür.') };
