@@ -168,7 +168,7 @@ function init() {
 .lc-title{ font-size:24px; font-weight:700; letter-spacing:.02em; }
 .lc-rl{ margin-top:3px; font-size:13px; color:#9ca3af; }
 .lc-rl b{ color:#fff; font-weight:600; }
-.lc-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:18px; }
+.lc-stats{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:18px; }
 .lc-stat{ padding:11px 12px; border-radius:14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09); }
 .lc-stat span{ display:block; font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8b919b; }
 .lc-stat b{ display:block; margin-top:4px; font-size:19px; font-weight:700; font-variant-numeric:tabular-nums; }
@@ -397,19 +397,22 @@ function init() {
     cote.hidden = false;
     cote.innerHTML = `<div class="lc-top"><button type="button" class="lc-back" aria-label="Sınıflara dön">${SVG_CHEV('m15 6-6 6 6 6')}</button><span class="lc-kick">SINIF DEĞERLENDİRME EKRANI</span></div>
       <div class="lc-scroll"><div class="lc-hero"><div class="lc-big">${A(c)}</div><div><div class="lc-title">Sınıf ${A(c)}</div><div class="lc-rl">Sıralamada <b>#${fmt(row.rank)}</b>${c === myClass ? ' · Senin sınıfın' : ''}</div></div></div>
-      <div class="lc-stats"><div class="lc-stat"><span>Sınıf puanı</span><b>${fmt(row.total)}</b></div><div class="lc-stat"><span>Öğrenci</span><b>${fmt(row.members)}</b></div><div class="lc-stat"><span>Ortalama</span><b>${fmt(row.average)}</b></div></div>
+      <div class="lc-stats"><div class="lc-stat"><span>Sınıf puanı (CP)</span><b id="lcCp">…</b></div><div class="lc-stat"><span>Aylık özel puan (PP)</span><b id="lcPp">…</b></div><div class="lc-stat"><span>Öğrenci</span><b>${fmt(row.members)}</b></div><div class="lc-stat"><span>Toplam cüzdan</span><b>${fmt(row.total)}</b></div></div>
       <div id="lcDyn">${skeleton()}</div></div>`;
     $('.lc-back', cote).addEventListener('click', () => { closeCote(); if (from && from.isConnected) { try { from.focus(); } catch (_) {} } });
     $('.lc-back', cote).focus();
     const dyn = () => $('#lcDyn', cote);
     try {
       const [ps, ov] = await Promise.all([
-        supabase.from('profiles').select('id,username,display_name,avatar_url,name_color,academic,physical,adaptability,social').eq('class', c).then(r => { if (r.error) throw r.error; return r.data || []; }),
+        // yetenek sütunları doğrudan okunamaz; sınıf ekranı verisi class_screen() sunucu fonksiyonundan gelir (sinif-ekrani-kurulum.sql)
+        supabase.rpc('class_screen', { p_class: c }).then(r => { if (r.error || !r.data) throw r.error || new Error('veri yok'); return r.data; }),
         load('overall100')
       ]);
       if (my !== ctok || !dyn()) return;
       const pts = {}; ov.forEach(o => { pts[o.user_id] = Number(o.points); });
-      const st = ps.map(p => Object.assign({}, p, { points: pts[p.id] || 0 })).sort((a, b) => b.points - a.points || nameOf(a).localeCompare(nameOf(b), 'tr'));
+      const cp = Number(ps.cp) || 0, cpEl = $('#lcCp', cote), ppEl = $('#lcPp', cote);
+      if (cpEl) cpEl.textContent = fmt(cp); if (ppEl) ppEl.textContent = fmt(cp * 100);   // COTE: her öğrenciye ayda CP × 100 özel puan
+      const st = (ps.students || []).map(p => Object.assign({}, p, { points: pts[p.id] || 0 })).sort((a, b) => b.points - a.points || nameOf(a).localeCompare(nameOf(b), 'tr'));
       dyn().innerHTML = coteBody(st);
     } catch (_) {
       if (my !== ctok || !dyn()) return;
