@@ -47,7 +47,7 @@ function init() {
              repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 7px),
              linear-gradient(135deg,#1a1a1a 0%,#000 48%,#0d0d0d 100%); }
 /* Logo ayrı bir <img> değil, arka yüzün kendi arka planı: kartla aynı düzlemde, 3D döner (Safari'de yandan düz görünmez) */
-.pc-back{ background-image:url("crest.png"),radial-gradient(circle at 50% 32%,rgba(255,255,255,.13),transparent 62%),linear-gradient(135deg,#242424 0%,#0b0b0b 55%,#1b1b1b 100%);
+.pc-back{ background-image:url("crest.webp"),radial-gradient(circle at 50% 32%,rgba(255,255,255,.13),transparent 62%),linear-gradient(135deg,#242424 0%,#0b0b0b 55%,#1b1b1b 100%);
   background-repeat:no-repeat; background-position:center,0 0,0 0; background-size:54cqw auto,100% 100%,100% 100%; }
 .pc-back::before{ content:""; position:absolute; inset:0; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity:.09; pointer-events:none; }
 .pc-back::after{ content:""; position:absolute; inset:0; background:linear-gradient(118deg,transparent 28%,rgba(255,255,255,.08) 50%,transparent 72%); pointer-events:none; }

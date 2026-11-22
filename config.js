@@ -11,10 +11,6 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 export const FUNCTIONS_URL = SUPABASE_URL + '/functions/v1'; // Ardevyl için
 export { SUPABASE_ANON_KEY };
 
-// Profil şarkısı aramasında kullanılan YouTube Data API anahtarı (boş bırakılırsa herkese açık Piped sunucularına düşer).
-// Anahtar Google Cloud'da "HTTP referrers: loyalteamforce.com/*" ve sadece YouTube Data API v3 ile kısıtlanmalı.
-export const YOUTUBE_API_KEY = 'AIzaSyAHn208oZwEIBtG8FacnNlnHoM5Av8EAqE';
-
 const EMAIL_DOMAIN = '@lefmembers.com';
 
 export function usernameToEmail(username){
@@ -29,9 +25,6 @@ export function escapeHtml(str){
 
 // Ana Sayfa kısayolu (Ardevyl) ve alt menü düzeni. Yüklenemese bile site normal çalışmaya devam eder.
 import('./kisayollar.js').catch(() => {});
-
-// YouTube çalma yardımcısı: hata nedenini ekranda gösterir. Yüklenemese bile site çalışır.
-import('./yt-duzelt.js').catch(() => {});
 
 // Kart sekmesi: alt menüye Kart butonu ekler (kart seç, fiş animasyonu, LTF üye kartı).
 import('./kart-sekme.js').catch(() => {});

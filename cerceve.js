@@ -2,7 +2,7 @@
    PROFİL ÇERÇEVELERİ: banner + avatar çerçevesi (6 tasarım)
    - "Profil efekti" panelinin üstüne iki sekme ekler: Normal efektler / Çerçeve tasarımları
    - Seçim profiles.fx_cerceve sütununa kaydedilir: beyaz | kirmizi | mavi | kelebek | murekkep | kurdele
-   - Repo kökünde şu görseller olmalı:
+   - Repo kökünde şu görseller olmalı (site .webp sürümlerini yükler; .png yedek olarak durur):
        cr-beyaz-banner.png    cr-beyaz-avatar.png
        cr-kirmizi-banner.png  cr-kirmizi-avatar.png
        cr-mavi-banner.png     cr-mavi-avatar.png
@@ -37,7 +37,7 @@ const PAL = {
   murekkep:{ n: 'Mürekkep', hole: 118, out: 138, raw: true, ban: { L: 44, T: 180, R: 862, B: 466, bx: 342, ly: 324, in: 7 } },
   kurdele: { n: 'Kurdele', hole: 108, out: 136, raw: true, ban: { L: 50, T: 170, R: 848, B: 458, bx: 338, ly: 302, in: 14 } }
 };
-const src = (k, t) => 'cr-' + k + '-' + t + '.png';
+const src = (k, t) => 'cr-' + k + '-' + t + '.webp';   // kayıpsız WebP (PNG'nin ~1/5'i)
 
 /* ---------- Arka plan temizleme: koyu yarı saydam pikselleri sil, avatar değiğinin içini boşalt ---------- */
 const CV = {};      // temizlenmiş canvas'lar

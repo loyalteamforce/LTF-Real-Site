@@ -102,7 +102,7 @@ import { supabase } from './config.js';
   function art(it) {
     var k = key(it);
     if (!k) return '<div class="tk">' + TICK + '</div>';
-    return '<span class="mg2-ring"></span><img src="cr-' + k + '-avatar.png" alt="" loading="lazy" onerror="this.style.display=\'none\'">';
+    return '<span class="mg2-ring"></span><img src="cr-' + k + '-avatar.webp" alt="" loading="lazy" onerror="this.style.display=\'none\'">';
   }
   function priceTxt(it) {
     var k = key(it);
@@ -165,7 +165,7 @@ import { supabase } from './config.js';
     if (!it) return;
     var k = key(it), has = !!owned[it.id], left = (bal === null ? 0 : bal) - it.fiyat, can = bal !== null && left >= 0;
     var pv = k
-      ? '<img class="bn" src="cr-' + k + '-banner.png" alt="" onerror="this.style.display=\'none\'"><img class="av" src="cr-' + k + '-avatar.png" alt="" onerror="this.style.display=\'none\'">'
+      ? '<img class="bn" src="cr-' + k + '-banner.webp" alt="" onerror="this.style.display=\'none\'"><img class="av" src="cr-' + k + '-avatar.webp" alt="" onerror="this.style.display=\'none\'">'
       : '<div class="tk">' + TICK + '</div>';
     var act;
     if (has && k) act = equipped === k
