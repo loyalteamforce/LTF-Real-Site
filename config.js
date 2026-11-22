@@ -26,6 +26,9 @@ export function escapeHtml(str){
 // Ana Sayfa kısayolu (Ardevyl) ve alt menü düzeni. Yüklenemese bile site normal çalışmaya devam eder.
 import('./kisayollar.js').catch(() => {});
 
+// Duyurular: Ana Sayfa'da son duyurular (Supabase > announcements tablosundan eklenir).
+import('./duyurular.js').catch(() => {});
+
 // Kart sekmesi: alt menüye Kart butonu ekler (kart seç, fiş animasyonu, LTF üye kartı).
 import('./kart-sekme.js').catch(() => {});
 
