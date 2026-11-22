@@ -99,6 +99,18 @@ html,body{ min-height:100%; background:#121212; color:#fff;
 .mg-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:14px; }
 .mg-grid .mg-cover{ width:auto; }
 .mg-empty{ display:none; padding:32px 0; text-align:center; color:#9ca3af; font-size:14px; }
+.mg-chips{ display:flex; gap:8px; margin-top:10px; overflow-x:auto; scrollbar-width:none; }
+.mg-chips button{ flex:none; height:34px; padding:0 16px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:transparent; color:#cfd3da; font:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+.mg-chips button.on{ background:#fff; color:#111; border-color:#fff; }
+.mg-chips button:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+/* kapak: tür amblemi + türe özgü desen */
+.mg-cover::after{ content:""; position:absolute; inset:0; z-index:0; opacity:.16; pointer-events:none; }
+.mg-cover[data-g="ask"]::after{ background:radial-gradient(circle,#fff 1.2px,transparent 1.6px) 0 0/14px 14px; }
+.mg-cover[data-g="intikam"]::after{ background:repeating-linear-gradient(135deg,#fff 0 1px,transparent 1px 11px); }
+.mg-cover[data-g="savas"]::after{ background:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 9px),repeating-linear-gradient(90deg,#fff 0 1px,transparent 1px 9px); opacity:.09; }
+.mg-cover .mg-gi{ position:absolute; top:12px; left:12px; z-index:2; width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.25); }
+.mg-cover .mg-chn{ position:relative; z-index:2; display:block; margin-top:2px; font-style:normal; font-size:11px; color:rgba(255,255,255,.55); }
+.mg-cover .mg-gi svg{ width:15px; height:15px; fill:none; stroke:#fff; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
 .mg-rd{ position:fixed; inset:0; z-index:60; background:#0b0b0b; display:none; flex-direction:column; }
 .mg-rd.on{ display:flex; }
 .mg-rd-bar{ display:flex; align-items:center; gap:12px; padding:10px 14px; padding-top:max(10px, env(safe-area-inset-top)); background:#121212; border-bottom:1px solid rgba(255,255,255,.1); }
@@ -309,7 +321,8 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
     <div class="mg-sticky"><label class="mg-search">
       <svg viewBox="0 0 18 18"><circle cx="8" cy="8" r="5.25"/><line x1="11.9" y1="11.9" x2="15.5" y2="15.5"/></svg>
       <input id="mgQ" type="search" placeholder="Hikâye ya da tür ara" autocomplete="off">
-    </label></div>
+    </label>
+    <div class="mg-chips" id="mgChips" role="group" aria-label="Türe göre süz"><button type="button" class="on" data-g="" aria-pressed="true">Tümü</button><button type="button" data-g="ask" aria-pressed="false">Aşk</button><button type="button" data-g="intikam" aria-pressed="false">İntikam</button><button type="button" data-g="savas" aria-pressed="false">Savaş</button></div></div>
     <p class="mg-h">Tüm hikâyeler <span id="mgN"></span></p>
     <div class="mg-grid" id="mgGrid"></div>
     <p class="mg-empty" id="mgNo">Sonuç yok. Başka bir isim ya da tür dene.</p>
@@ -693,8 +706,11 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
     // Hikâyeler hikayeler-ask.js, hikayeler-intikam.js ve hikayeler-savas.js'ten gelir
     if(window.MANGALAR && window.MANGALAR.length) M = window.MANGALAR.map(function(o, i){
       var k = o.tur[0], sec = o.tur[1] || k, p = PAL[k][i % 4];
-      return [o.t, NAME[k] + ' / ' + NAME[sec], p[0], p[1], k, sec, o];
+      return [o.t, k === sec ? NAME[k] : NAME[k] + ' · ' + NAME[sec], p[0], p[1], k, sec, o];
     });
+    // türler sırayla karışsın: aşk, intikam, savaş, aşk, ... (öne çıkanlarda her türden hikâye olur)
+    (function(){ var by = {}; M.forEach(function(m){ (by[m[4]] = by[m[4]] || []).push(m); }); var out = [];
+      for(var r = 0; out.length < M.length; r++) ORDER.forEach(function(k){ if(by[k] && by[k][r]) out.push(by[k][r]); }); M = out; })();
 
     var rd = document.getElementById('mgRd'), rdB = document.getElementById('mgRdB'), lastBtn = null;
 
@@ -795,13 +811,20 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
     }
     document.getElementById('mgBack').addEventListener('click', closeReader);
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && rd.classList.contains('on')) closeReader(); });
+    var GICON = {
+      ask: '<svg viewBox="0 0 18 18"><path d="M9 15S2.5 11 2.5 6.6A3.3 3.3 0 0 1 9 5a3.3 3.3 0 0 1 6.5 1.6C15.5 11 9 15 9 15Z"/></svg>',
+      intikam: '<svg viewBox="0 0 18 18"><path d="M13.5 2.5 15.5 4.5 7 13l-2-2Z"/><path d="m4 10 4 4M3 15l2.2-2.2"/></svg>',
+      savas: '<svg viewBox="0 0 18 18"><path d="M3 3l9.5 9.5M15 3l-9.5 9.5"/><path d="m11 14 3-3M7 14l-3-3M2.5 15.5l2-2M15.5 15.5l-2-2"/></svg>'
+    };
     function cover(m, i, tag){
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'mg-cover';
       b.style.setProperty('--c1', m[2]); b.style.setProperty('--c2', m[3]);
-      b.innerHTML = '<span class="mg-big">' + (i + 1) + '</span><b></b><small></small>';
+      b.dataset.g = m[4];
+      b.innerHTML = '<span class="mg-gi" aria-hidden="true">' + (GICON[m[4]] || '') + '</span><span class="mg-big">' + (i + 1) + '</span><b></b><small></small>';
       b.querySelector('b').textContent = m[0];
       b.querySelector('small').textContent = m[1];
+      if(m[6]){ var ch = document.createElement('i'); ch.className = 'mg-chn'; ch.textContent = m[6].bol.length + ' bölüm'; b.appendChild(ch); }
       b.addEventListener('click', function(){ openReader(m, b); });
       if(tag) b.tabIndex = -1, b.setAttribute('aria-hidden', 'true');
       return b;
@@ -815,9 +838,12 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
     var q = document.getElementById('mgQ'), n = document.getElementById('mgN'), no = document.getElementById('mgNo');
     function filter(){
       var v = q.value.trim().toLocaleLowerCase('tr'), c = 0;
-      cards.forEach(function(el){ var ok = !v || el.dataset.t.indexOf(v) !== -1; el.style.display = ok ? '' : 'none'; if(ok) c++; });
+      cards.forEach(function(el){ var ok = (!v || el.dataset.t.indexOf(v) !== -1) && (!genre || el.dataset.g === genre); el.style.display = ok ? '' : 'none'; if(ok) c++; });
       n.textContent = '(' + c + ')'; no.style.display = c ? 'none' : 'block';
     }
+    var genre = '', chips = document.getElementById('mgChips');
+    chips.addEventListener('click', function(e){ var bt = e.target.closest('button[data-g]'); if(!bt) return; genre = bt.dataset.g;
+      chips.querySelectorAll('button').forEach(function(x){ var on = x === bt; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); }); filter(); });
     q.addEventListener('input', filter); filter();
   })();
 </script>

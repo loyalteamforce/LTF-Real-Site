@@ -88,7 +88,7 @@
     var ft = fit(shown, fo[3] || .6);
     var ph = PH_OK.test(o.p || '') ? '<img src="' + o.p + '" alt="" referrerpolicy="no-referrer">' : SIL;
     return '<div class="idc" style="--c1:' + t[1] + ';--c2:' + t[2] + '">' +
-      '<div class="lg"><img src="crest.png" alt="LTF" onerror="this.onerror=null;this.src=\'lef-logo.png\'"></div>' +
+      '<div class="lg"><img src="crest.webp" alt="LTF" onerror="this.onerror=null;this.src=\'lef-logo.webp\'"></div>' +
       '<div class="ht">Loyal Elite Force<br>LTF Resmî Üye Kartı</div>' +
       '<div class="f n"><i>No.</i><b>' + id + '</b></div>' +
       '<div class="f nm' + (ft.two ? ' two' : '') + '"><i>Ad</i><b style="font-family:' + fo[1] + ';font-size:' + ft.fs.toFixed(2) + 'cqw">' + ft.html + '</b></div>' +

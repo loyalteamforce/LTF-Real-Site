@@ -24,7 +24,7 @@
   d.id = 'lefSplash';
   d.setAttribute('role', 'status'); d.setAttribute('aria-label', 'Yükleniyor');
   d.style.cssText = 'position:fixed;inset:0;z-index:100000;background:#000;display:grid;place-items:center;transition:opacity .5s ease';
-  d.innerHTML = '<img src="crest.png" alt="Loyal Elite Force" style="width:clamp(110px,24vw,190px);height:auto;opacity:0;transition:opacity .6s ease">';
+  d.innerHTML = '<img src="crest.webp" alt="Loyal Elite Force" style="width:clamp(110px,24vw,190px);height:auto;opacity:0;transition:opacity .6s ease">';
   document.documentElement.appendChild(d);
   var img = d.firstChild;
   requestAnimationFrame(function () { requestAnimationFrame(function () { img.style.opacity = '1'; }); });
