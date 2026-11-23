@@ -35,5 +35,6 @@ import('./kart-sekme.js').catch(() => {});
 // Hız ayarları: profil banner'ı ve fotoğrafı daha öncelikli yüklenir.
 import('./hiz.js').catch(() => {});
 
-// Banner çerçevesi: profile Kelebek / Mürekkep / Kurdele çerçeveleri (profiles.pf_frame).
-import('./profil-cerceve.js').catch(() => {});
+// Profil teması (Mağaza'dan alınan arka plan) ve Profil tasarımı paneli (sadece Mağaza'dan alınanlar).
+import('./profil-tema.js').catch(() => {});
+import('./dolap.js').catch(() => {});
