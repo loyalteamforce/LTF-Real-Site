@@ -3,10 +3,10 @@
    - Alt menüye "Mağaza" butonu ve kendi sayfasını ekler (ux.js bu dosyayı otomatik yükler).
    - Raflar: her ürün rafta durur, dokununca detay + "Satın al" açılır. Satın alma sunucuda yapılır
      (magaza_al fonksiyonu); puan tarayıcıda değiştirilemez.
-   - Alınan ürün "Tak" ile profile uygulanır: çerçeve -> profiles.fx_cerceve, tema -> profiles.pf_tema,
+   - Alınan ürün "Tak" ile profile uygulanır: profil çerçevesi -> profiles.pf_cerceve, tema -> profiles.pf_tema,
      rozet -> profiles.rozet. Sahip olmadan takmayı sunucu engeller (magaza-v2-kurulum.sql).
-   - Çerçeve ve tema önizlemeleri kodla çizilir (cerceve.js -> window.__crDraw, profil-tema.js -> window.__lefTema).
-   - Ürün eklemek/fiyat değiştirmek: Supabase > magaza_urunler tablosu (id: cerceve-xxx / tema-xxx / rozet-xxx).
+   - Önizlemeler: profil-cerceve.js -> window.__lefPcer, profil-tema.js -> window.__lefTema.
+   - Ürün eklemek/fiyat değiştirmek: Supabase > magaza_urunler tablosu (id: pcer-xxx / tema-xxx / rozet-xxx).
    ============================================================ */
 import { supabase } from './config.js';
 
@@ -18,14 +18,13 @@ import { supabase } from './config.js';
   // sunucu tablosu okunamazsa gösterilecek yedek liste (magaza-v2-kurulum.sql ile aynı)
   var FALLBACK = [
     ['rozet-gri-tik', 'Gri Tik', 1000], ['rozet-yildiz', 'Yıldız', 600], ['rozet-alev', 'Alev', 800], ['rozet-tac', 'Taç', 1500], ['rozet-altin-tik', 'Altın Tik', 2500],
-    ['cerceve-damla', 'Turkuaz Damla', 600], ['cerceve-neon', 'Mor Neon', 700], ['cerceve-nilufer', 'Mavi Nilüfer', 750], ['cerceve-balik', 'Ay Balığı', 850], ['cerceve-melek', 'Mor Melek', 900], ['cerceve-buz', 'Kristal Buz', 1000], ['cerceve-gotik', 'Gotik Zincir', 1200],
     ['pcer-mor', 'Mor Kelebek', 1500],
     ['tema-gece', 'Gece Yarısı', 800], ['tema-murekkep', 'Mürekkep Gölgesi', 800], ['tema-zumrut', 'Zümrüt Orman', 800], ['tema-sakura', 'Sakura Bahçesi', 1000], ['tema-higanbana', 'Kızıl Zambak', 1200]
   ].map(function (r) { return { id: r[0], tur: r[0].split('-')[0], ad: r[1], fiyat: r[2], aciklama: '' }; });
-  var COL = { cerceve: 'fx_cerceve', pcer: 'pf_cerceve', tema: 'pf_tema', rozet: 'rozet' };
-  var SHELF = [['rozet', 'Rozetler'], ['cerceve', 'Banner çerçeveleri'], ['pcer', 'Profil çerçeveleri'], ['tema', 'Profil temaları']];
+  var COL = { pcer: 'pf_cerceve', tema: 'pf_tema', rozet: 'rozet' };
+  var SHELF = [['rozet', 'Rozetler'], ['pcer', 'Profil çerçeveleri'], ['tema', 'Profil temaları']];
   // SIRA ÖNEMLİ: "owned_required" mesajı "owned" kelimesini de içerir; önce daha uzun anahtar denenmeli.
-  var ERR = { owned_required: 'Bunu takmak için önce satın almalısın.', insufficient: 'Yeterli puanın yok.', owned: 'Bunu zaten aldın.', not_found: 'Ürün bulunamadı.', auth: 'Oturum bulunamadı.', check: 'Sunucu bu ürünü henüz tanımıyor: cerceve-yeni-kurulum.sql çalıştırılmalı.' };
+  var ERR = { owned_required: 'Bunu takmak için önce satın almalısın.', insufficient: 'Yeterli puanın yok.', owned: 'Bunu zaten aldın.', not_found: 'Ürün bulunamadı.', auth: 'Oturum bulunamadı.', check: 'Sunucu bu ürünü henüz tanımıyor: profil-cerceve-kurulum.sql çalıştırılmalı.' };
   var errText = function (e) { var m = (e && e.message) || ''; for (var k in ERR) if (m.indexOf(k) !== -1) return ERR[k]; return 'İşlem başarısız. İnternetini kontrol edip tekrar dene.'; };
   var fmt = function (n) { return Number(n || 0).toLocaleString('tr-TR'); };
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
@@ -97,12 +96,12 @@ import { supabase } from './config.js';
 
   var $ = function (id) { return document.getElementById(id); };
   var balEl = $('mg2Bal'), msgEl = $('mg2Msg'), listEl = $('mg2List'), card = $('mg2Card');
-  var items = FALLBACK.slice(), owned = {}, equipped = { cerceve: null, pcer: null, tema: null, rozet: null }, uid = null, bal = null, loading = false, setup = true;
+  var items = FALLBACK.slice(), owned = {}, equipped = { pcer: null, tema: null, rozet: null }, uid = null, bal = null, loading = false, setup = true;
 
   function setMsg(t, ok) { msgEl.textContent = t || ''; msgEl.classList.toggle('ok', !!ok); }
   function setBal(n) { bal = Number(n); balEl.textContent = fmt(bal); }
   window.addEventListener('lef-wallet', function (e) { if (e.detail) setBal(e.detail.balance); if (sheet.classList.contains('on')) fillSheet(curItem); });
-  // ürün kimliği -> { tur, k }: 'cerceve-sakura' -> { tur: 'cerceve', k: 'sakura' }
+  // ürün kimliği -> { tur, k }: 'pcer-mor' -> { tur: 'pcer', k: 'mor' }
   var parse = function (it) { var i = it.id.indexOf('-'), t = it.id.slice(0, i); return COL[t] ? { tur: t, k: it.id.slice(i + 1) } : { tur: t, k: null }; };
 
   /* ---------- Görseller ---------- */
@@ -111,12 +110,11 @@ import { supabase } from './config.js';
     if (p.tur === 'rozet') { box.className = 'tk'; box.innerHTML = (ROZET[p.k] || ROZET['gri-tik']).svg; return box; }
     var c = document.createElement('canvas'), tries = 0;
     if (p.tur === 'tema') c.className = 'sw';
-    // çizim modülleri (cerceve.js, profil-cerceve.js, profil-tema.js) mağazadan sonra yüklenebilir: hazır olunca çiz
+    // çizim modülleri (profil-cerceve.js, profil-tema.js) mağazadan sonra yüklenebilir: hazır olunca çiz
     (function paint() {
-      var mod = p.tur === 'cerceve' ? window.__crDraw : p.tur === 'pcer' ? window.__lefPcer : p.tur === 'tema' ? window.__lefTema : null;
+      var mod = p.tur === 'pcer' ? window.__lefPcer : p.tur === 'tema' ? window.__lefTema : null;
       if (!mod) { if (++tries < 40) setTimeout(paint, 150); return; }
-      if (p.tur === 'cerceve') mod.preview(c, p.k, big ? 420 : 160, big ? 250 : 120);
-      else if (p.tur === 'pcer') mod.preview(c, p.k, big ? 300 : 120, big ? 300 : 120);
+      if (p.tur === 'pcer') mod.preview(c, p.k, big ? 300 : 120, big ? 300 : 120);
       else mod.swatch(c, p.k, big ? 200 : 120, big ? 300 : 150);
     })();
     return c;
@@ -145,9 +143,9 @@ import { supabase } from './config.js';
   }
   function render() {
     listEl.replaceChildren();
-    // kaldırılmış eski çerçeveler (cerceve.js'de çizimi olmayanlar) listelenmez
-    var hasCr = function (i) { if (i.tur === 'pcer') return !window.__lefPcer || !!window.__lefPcer.PC[i.id.slice(5)]; return i.tur !== 'cerceve' || !window.__crDraw || !!window.__crDraw.DES[i.id.slice(8)]; };
-    SHELF.forEach(function (sh) { shelf(sh[1], items.filter(function (i) { return i.tur === sh[0] && hasCr(i); }), sh[0] === 'cerceve'); });
+    // çizimi olmayan (kaldırılmış) ürünler listelenmez
+    var hasCr = function (i) { if (i.tur === 'pcer') return !window.__lefPcer || !!window.__lefPcer.PC[i.id.slice(5)]; return true; };
+    SHELF.forEach(function (sh) { shelf(sh[1], items.filter(function (i) { return i.tur === sh[0] && hasCr(i); }), false); });
   }
 
   /* ---------- Yükleme ---------- */
@@ -162,8 +160,8 @@ import { supabase } from './config.js';
       if (uid && setup) {
         var o = await supabase.from('magaza_sahip').select('urun_id').eq('user_id', uid);
         owned = {}; (o.data || []).forEach(function (x) { owned[x.urun_id] = 1; });
-        var p = await supabase.from('profiles').select('fx_cerceve,pf_cerceve,pf_tema,rozet').eq('id', uid).maybeSingle();
-        if (p.data) equipped = { cerceve: p.data.fx_cerceve || null, pcer: p.data.pf_cerceve || null, tema: p.data.pf_tema || null, rozet: p.data.rozet || null };
+        var p = await supabase.from('profiles').select('pf_cerceve,pf_tema,rozet').eq('id', uid).maybeSingle();
+        if (p.data) equipped = { pcer: p.data.pf_cerceve || null, tema: p.data.pf_tema || null, rozet: p.data.rozet || null };
       }
       if (window.__lefWallet) { if (window.__lefWallet.balance !== null && window.__lefWallet.balance !== undefined) setBal(window.__lefWallet.balance); window.__lefWallet.refresh && window.__lefWallet.refresh(); }
     } catch (e) { setMsg('Mağaza yüklenemedi. İnternetini kontrol et.'); }
@@ -222,7 +220,6 @@ import { supabase } from './config.js';
   function notifySaved(tur, v) {
     // kendi profilin açıksa (ya da arka planda yüklüyse) hemen uygula: sayfayı yenilemek gerekmez
     var P0 = window.__lefProfile, mine = !!(P0 && P0.id === uid);
-    if (tur === 'cerceve' && window.__lefCerceve) { window.__lefCerceve.saved(uid, v); if (mine) window.__lefCerceve.preview(v); }
     if (tur === 'tema' && window.__lefTema) { window.__lefTema.saved(uid, v); if (mine) window.__lefTema.preview(v); }
     if (tur === 'pcer' && window.__lefPcer) { window.__lefPcer.saved(uid, v); if (mine) window.__lefPcer.apply(v); }
     try { window.dispatchEvent(new CustomEvent('lef-equip', { detail: { tur: tur, k: v } })); } catch (e) {}
