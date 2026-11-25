@@ -137,6 +137,7 @@ import { supabase } from './config.js';
     if (r.error) { say(/owned_required/.test(r.error.message || '') ? 'Bunu takmak için önce Mağaza\'dan almalısın.' : 'Kaydedilemedi. Tekrar dene.', true); return; }
     const MOD = { cerceve: window.__lefCerceve, pcer: window.__lefPcer, tema: window.__lefTema, rozet: window.__lefRozet };
     Object.keys(COL).forEach(t => { if (COL[t] in upd && MOD[t]) MOD[t].saved(uid, pick[t] || null); });
+    window.dispatchEvent(new CustomEvent('lef-equip', { detail: upd }));
     saved = Object.assign({}, pick); say(''); close(false);
   });
 })();

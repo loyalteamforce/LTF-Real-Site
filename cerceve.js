@@ -203,6 +203,12 @@ if (typeof document !== 'undefined') (async function main() {
   }
   window.addEventListener('lef-profile', onProfile); onProfile();
 
+  // Profil sekmesine her girişte kendi profilinin takılı seçimini sunucudan yeniden oku:
+  // Mağaza'dan / başka sekmeden / başka cihazdan takılan şey yenilemeden görünür.
+  function fresh() { const P = window.__lefProfile; if (P && P.mine && location.hash.slice(1) === 'profil') { delete memo[P.id]; onProfile(); } }
+  window.addEventListener('hashchange', fresh);
+  window.addEventListener('lef-equip', () => { const P = window.__lefProfile; if (P && P.mine) { delete memo[P.id]; onProfile(); } });
+
   // Profil tasarımı paneli (dolap.js) ve mağaza buradan önizler / kaydeder
   window.__lefCerceve = {
     preview: k => apply(k),
