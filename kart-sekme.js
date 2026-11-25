@@ -21,6 +21,8 @@ import { supabase } from './config.js';
     '.pc-back.ltf-k{background:none!important}.pc-back.ltf-k::before,.pc-back.ltf-k::after{display:none}' +
     '.ltf-kc{position:absolute;inset:0;border-radius:inherit;overflow:hidden}' +
     '.ltf-kc .idc{width:100%;height:100%;aspect-ratio:auto;border-radius:0;box-shadow:none;border:0}' +
+    /* kart yuvaya otursun: iç çerçeve, yuvanın yuvarlak köşeleriyle aynı eğride */
+    '.ltf-kc .idc::before{inset:2.6cqw;border-radius:5.6cqw}' +
     /* ARKA YÜZ (puan yüzü): seçilen kartla aynı renk ve sade görünüm */
     '.pc-flip[data-ltfk] .pc-front{background:linear-gradient(135deg,var(--k1),var(--k2));color:#161616;border:1px solid rgba(0,0,0,.14);box-shadow:0 10px 24px -14px rgba(0,0,0,.35)}' +
     '.pc-flip[data-ltfk] .pc-front::before{content:"";position:absolute;inset:3cqw;border-radius:5.4cqw;border:.4cqw solid rgba(0,0,0,.14);pointer-events:none}' +

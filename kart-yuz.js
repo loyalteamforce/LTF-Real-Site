@@ -27,7 +27,9 @@
     lobster: ['Lobster', "Lobster,'Brush Script MT',cursive", 1, 0.52],
     sistem: ['Varsayılan', "system-ui,-apple-system,'Segoe UI',sans-serif", 0, 0.62]
   };
-  var FONT_URL = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Cinzel:wght@700&family=Playfair+Display:wght@700&family=Bebas+Neue&family=Anton&family=Oswald:wght@600&family=Space+Mono:wght@700&family=Dancing+Script:wght@700&family=Pacifico&family=Caveat:wght@700&family=Lobster&display=swap';
+  var FONT_URL = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Cinzel:wght@700&family=Playfair+Display:wght@700&family=Bebas+Neue&family=Anton&family=Oswald:wght@600&family=Space+Mono:wght@700&family=Dancing+Script:wght@700&family=Pacifico&family=Caveat:wght@700&family=Lobster&family=Inter:wght@500;600;700&display=swap';
+  // Kartın yazı tipleri her sayfada yüklensin (eskiden sadece kart.html'de yükleniyordu, Ana Sayfa'daki kart Georgia/Times'a düşüyordu)
+  if (!document.querySelector('link[data-ltfk-font]')) { var fl = document.createElement('link'); fl.rel = 'stylesheet'; fl.href = FONT_URL; fl.setAttribute('data-ltfk-font', ''); document.head.appendChild(fl); }
   var SIL = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="4.2"/><path d="M3.5 22c.8-4.6 4.2-7 8.5-7s7.7 2.4 8.5 7z"/></svg>';
   var PH_OK = /^(data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+|https:\/\/mbyyuovlipbpioxtkjcp\.supabase\.co\/storage\/v1\/object\/public\/[^\s"'<>]+)$/;
   var AVAIL = 45;   // adın kullanabileceği genişlik (cqw): "Ad" etiketinden fotoğrafın soluna kadar
@@ -44,22 +46,24 @@
     /* kalkan logosu: arka plan YOK, sadece şeffaf logo */
     '.idc .lg{left:4cqw;top:4cqw;width:15cqw;height:15cqw;display:grid;place-items:center;background:none}',
     '.idc .lg img{position:static;width:100%;height:100%;object-fit:contain;background:none}',
-    '.idc .ht{left:21.5cqw;top:5.6cqw;font:700 3.6cqw/1.3 Georgia,"Times New Roman",serif;text-transform:uppercase;letter-spacing:.2px;white-space:nowrap}',
+    '.idc .ht{left:21.5cqw;top:6cqw;font:700 3.2cqw/1.3 Cinzel,"Cormorant Garamond",Georgia,serif;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}',
+    '.idc .ht small{position:static;display:block;font:600 2.1cqw/1.5 Inter,system-ui,sans-serif;letter-spacing:.22em;color:rgba(0,0,0,.6)}',
     '.idc .f{left:4cqw;display:flex;align-items:baseline;gap:2cqw;white-space:nowrap}',
-    '.idc .f i{position:static;font:700 3.4cqw Georgia,serif;font-style:normal;width:13cqw;flex:none}',
-    '.idc .f b{position:static;font:700 3.9cqw Georgia,"Times New Roman",serif}',
-    '.idc .f.n{top:19.5cqw}.idc .f.nm{top:25.2cqw;z-index:3}.idc .f.nm.two{top:23.4cqw;align-items:flex-start}.idc .f.y{top:35.4cqw}.idc .f.t{top:41cqw}',
-    '.idc .f.nm.two i{margin-top:.6cqw}',
+    '.idc .f i{position:static;font:600 2.15cqw Inter,system-ui,sans-serif;font-style:normal;text-transform:uppercase;letter-spacing:.16em;color:rgba(0,0,0,.55);width:13cqw;flex:none}',
+    '.idc .f b{position:static;font:600 3.6cqw/1.1 Inter,system-ui,sans-serif;letter-spacing:.01em}',
+    '.idc .f.n b{font:700 3.4cqw "Space Mono",ui-monospace,Consolas,monospace;letter-spacing:.12em}',
+    '.idc .f.n{top:18.6cqw}.idc .f.nm{top:25.2cqw;z-index:3}.idc .f.nm.two{top:24.2cqw;align-items:flex-start}.idc .f.y{top:35.4cqw}.idc .f.t{top:41cqw}',
+    '.idc .f.nm.two i{margin-top:1.3cqw}',
     /* ad: kesilmez, taşarsa çizgilerin üstünden geçer */
     '.idc .f.nm b{display:block;max-width:none;overflow:visible;text-overflow:clip;font-weight:700;line-height:1.08;white-space:nowrap;text-shadow:0 0 .8cqw rgba(255,255,255,.55)}',
     /* üyelik yazısı kısa ve tek satır: karta sığar, barkodun üstüne binmez */
-    '.idc .cert{left:4cqw;top:47.5cqw;width:56cqw;font:600 2.3cqw/1.3 Georgia,serif;color:#222;white-space:nowrap}',
+    '.idc .cert{left:4cqw;top:47.5cqw;width:56cqw;font:500 2.2cqw/1.3 Inter,system-ui,sans-serif;letter-spacing:.04em;color:rgba(0,0,0,.65);white-space:nowrap}',
     /* fotoğraf: sade, ince gri çerçeve, kimlik fotoğrafı gibi */
     '.idc .ph{right:4cqw;top:20cqw;width:28cqw;height:28cqw;border:.3cqw solid #6b6b72;border-radius:.6cqw;background:#ececef;overflow:hidden;z-index:1}',
     '.idc .ph img{position:static;width:100%;height:100%;object-fit:cover;filter:grayscale(.3) contrast(1.02)}',
     '.idc .ph svg{width:100%;height:100%;fill:#b9b9c0}',
-    '.idc .bdg{right:27cqw;top:14.5cqw;width:11cqw;height:11cqw;border-radius:50%;background:#fff;border:.3cqw solid #55555b;display:grid;place-items:center;text-align:center;font:700 3.2cqw/1 Georgia,serif;z-index:2}',
-    '.idc .bdg small{position:static;display:block;font-size:1.5cqw;letter-spacing:.3px;margin-top:.4cqw;font-weight:600}',
+    '.idc .bdg{right:27cqw;top:14.5cqw;width:11cqw;height:11cqw;border-radius:50%;background:#fff;border:.3cqw solid #55555b;display:grid;place-items:center;text-align:center;font:700 3.2cqw/1 Cinzel,Georgia,serif;z-index:2}',
+    '.idc .bdg small{position:static;display:block;font:700 1.45cqw Inter,system-ui,sans-serif;letter-spacing:.06em;margin-top:.5cqw}',
     '.idc .bc{left:4cqw;bottom:3.5cqw;width:50cqw;height:5.5cqw;display:flex}',
     '.idc .bc s{position:static;display:block;background:#111}'
   ].join('\n');
@@ -89,8 +93,8 @@
     var ph = PH_OK.test(o.p || '') ? '<img src="' + o.p + '" alt="" referrerpolicy="no-referrer">' : SIL;
     return '<div class="idc" style="--c1:' + t[1] + ';--c2:' + t[2] + '">' +
       '<div class="lg"><img src="crest.webp" alt="LTF" onerror="this.onerror=null;this.src=\'lef-logo.webp\'"></div>' +
-      '<div class="ht">Loyal Elite Force<br>LTF Resmî Üye Kartı</div>' +
-      '<div class="f n"><i>No.</i><b>' + id + '</b></div>' +
+      '<div class="ht">Loyal Elite Force<small>LTF Resmî Üye Kartı</small></div>' +
+      '<div class="f n"><i>No</i><b>' + id + '</b></div>' +
       '<div class="f nm' + (ft.two ? ' two' : '') + '"><i>Ad</i><b style="font-family:' + fo[1] + ';font-size:' + ft.fs.toFixed(2) + 'cqw">' + ft.html + '</b></div>' +
       '<div class="f y"><i>Yol</i><b>' + esc(yol) + '</b></div>' +
       '<div class="f t"><i>Tür</i><b>' + esc(tur) + '</b></div>' +
