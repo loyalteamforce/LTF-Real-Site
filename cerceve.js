@@ -150,6 +150,7 @@ if (typeof document !== 'undefined') (async function main() {
   const resetBan = () => { bn.style.borderColor = ''; bn.style.borderRadius = ''; };
   function render() {
     const w = bn.offsetWidth, h = bn.offsetHeight;
+    wrap.classList.toggle('cr-on', !!(cur && DES[cur]));   // mobilde banner, çerçeve ekrana sığacak kadar içeri alınır
     if (!cur || !DES[cur] || !w || !h) { banEl.style.display = 'none'; avEl.style.display = 'none'; resetBan(); banKey = avKey = ''; return; }
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const key = [cur, w, h, dpr].join();
