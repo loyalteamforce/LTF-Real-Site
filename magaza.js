@@ -220,9 +220,11 @@ import { supabase } from './config.js';
   });
   // profilde açık olan modüllerin önbelleğini güncelle: sayfayı yenilemeden yeni seçim görünür
   function notifySaved(tur, v) {
-    if (tur === 'cerceve' && window.__lefCerceve) window.__lefCerceve.saved(uid, v);
-    if (tur === 'tema' && window.__lefTema) window.__lefTema.saved(uid, v);
-    if (tur === 'pcer' && window.__lefPcer) { window.__lefPcer.saved(uid, v); var P0 = window.__lefProfile; if (P0 && P0.id === uid) window.__lefPcer.apply(v); }
+    // kendi profilin açıksa (ya da arka planda yüklüyse) hemen uygula: sayfayı yenilemek gerekmez
+    var P0 = window.__lefProfile, mine = !!(P0 && P0.id === uid);
+    if (tur === 'cerceve' && window.__lefCerceve) { window.__lefCerceve.saved(uid, v); if (mine) window.__lefCerceve.preview(v); }
+    if (tur === 'tema' && window.__lefTema) { window.__lefTema.saved(uid, v); if (mine) window.__lefTema.preview(v); }
+    if (tur === 'pcer' && window.__lefPcer) { window.__lefPcer.saved(uid, v); if (mine) window.__lefPcer.apply(v); }
     if (tur === 'rozet') { rozetCache[uid] = v; paintRozet(); }
   }
 
