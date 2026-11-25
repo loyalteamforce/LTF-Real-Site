@@ -18,14 +18,13 @@ import { supabase } from './config.js';
   // sunucu tablosu okunamazsa gösterilecek yedek liste (magaza-v2-kurulum.sql ile aynı)
   var FALLBACK = [
     ['rozet-gri-tik', 'Gri Tik', 1000], ['rozet-yildiz', 'Yıldız', 600], ['rozet-alev', 'Alev', 800], ['rozet-tac', 'Taç', 1500], ['rozet-altin-tik', 'Altın Tik', 2500],
-    ['cerceve-beyaz', 'Beyaz Diken', 300], ['cerceve-kirmizi', 'Kızıl Melek', 450], ['cerceve-mavi', 'Mavi Zincir', 450], ['cerceve-kelebek', 'Gece Kelebeği', 600],
-    ['cerceve-murekkep', 'Mürekkep', 600], ['cerceve-kurdele', 'Kurdele', 750], ['cerceve-dantel', 'Kızıl Dantel', 900], ['cerceve-katana', 'Kara Kılıç', 900], ['cerceve-sakura', 'Sakura Püskülü', 1000],
+    ['cerceve-damla', 'Turkuaz Damla', 600], ['cerceve-nilufer', 'Mavi Nilüfer', 750], ['cerceve-melek', 'Mor Melek', 900], ['cerceve-buz', 'Kristal Buz', 1000], ['cerceve-gotik', 'Gotik Zincir', 1200],
     ['tema-gece', 'Gece Yarısı', 800], ['tema-murekkep', 'Mürekkep Gölgesi', 800], ['tema-zumrut', 'Zümrüt Orman', 800], ['tema-sakura', 'Sakura Bahçesi', 1000], ['tema-higanbana', 'Kızıl Zambak', 1200]
   ].map(function (r) { return { id: r[0], tur: r[0].split('-')[0], ad: r[1], fiyat: r[2], aciklama: '' }; });
   var COL = { cerceve: 'fx_cerceve', tema: 'pf_tema', rozet: 'rozet' };
   var SHELF = [['rozet', 'Rozetler'], ['cerceve', 'Banner çerçeveleri'], ['tema', 'Profil temaları']];
   // SIRA ÖNEMLİ: "owned_required" mesajı "owned" kelimesini de içerir; önce daha uzun anahtar denenmeli.
-  var ERR = { owned_required: 'Bunu takmak için önce satın almalısın.', insufficient: 'Yeterli puanın yok.', owned: 'Bunu zaten aldın.', not_found: 'Ürün bulunamadı.', auth: 'Oturum bulunamadı.', check: 'Sunucu bu ürünü henüz tanımıyor: magaza-v2-kurulum.sql çalıştırılmalı.' };
+  var ERR = { owned_required: 'Bunu takmak için önce satın almalısın.', insufficient: 'Yeterli puanın yok.', owned: 'Bunu zaten aldın.', not_found: 'Ürün bulunamadı.', auth: 'Oturum bulunamadı.', check: 'Sunucu bu ürünü henüz tanımıyor: cerceve-yeni-kurulum.sql çalıştırılmalı.' };
   var errText = function (e) { var m = (e && e.message) || ''; for (var k in ERR) if (m.indexOf(k) !== -1) return ERR[k]; return 'İşlem başarısız. İnternetini kontrol edip tekrar dene.'; };
   var fmt = function (n) { return Number(n || 0).toLocaleString('tr-TR'); };
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
@@ -138,7 +137,9 @@ import { supabase } from './config.js';
   }
   function render() {
     listEl.replaceChildren();
-    SHELF.forEach(function (sh) { shelf(sh[1], items.filter(function (i) { return i.tur === sh[0]; }), sh[0] === 'cerceve'); });
+    // kaldırılmış eski çerçeveler (cerceve.js'de çizimi olmayanlar) listelenmez
+    var hasCr = function (i) { return i.tur !== 'cerceve' || !window.__crDraw || !!window.__crDraw.DES[i.id.slice(8)]; };
+    SHELF.forEach(function (sh) { shelf(sh[1], items.filter(function (i) { return i.tur === sh[0] && hasCr(i); }), sh[0] === 'cerceve'); });
   }
 
   /* ---------- Yükleme ---------- */
