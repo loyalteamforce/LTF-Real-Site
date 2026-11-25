@@ -3,7 +3,7 @@
    - Kendi profilinde "Profil tasarımı" düğmesi çıkar. Panelde sahip olduğun çerçeveler, temalar ve rozetler
      listelenir; dokununca canlı önizlenir, "Kaydet" ile profiline uygulanır.
    - Hiçbir şeyin yoksa Mağaza'ya yönlendirir. Satın almadan takmayı sunucu da engeller.
-   - Çizimler: cerceve.js (window.__crDraw), profil-tema.js (window.__lefTema), magaza.js (window.__lefRozet).
+   - Çizimler: profil-cerceve.js (window.__lefPcer), profil-tema.js (window.__lefTema), magaza.js (window.__lefRozet).
    - config.js bu dosyayı kendisi yükler.
    ============================================================ */
 import { supabase } from './config.js';
@@ -15,8 +15,8 @@ import { supabase } from './config.js';
   try { const ss = await supabase.auth.getSession(); uid = ss.data.session && ss.data.session.user.id; } catch (_) {}
   if (!uid) return;
 
-  const COL = { cerceve: 'fx_cerceve', pcer: 'pf_cerceve', tema: 'pf_tema', rozet: 'rozet' };
-  const TITLE = { cerceve: 'Banner çerçeveleri', pcer: 'Profil çerçeveleri', tema: 'Profil temaları', rozet: 'Rozetler' };
+  const COL = { pcer: 'pf_cerceve', tema: 'pf_tema', rozet: 'rozet' };
+  const TITLE = { pcer: 'Profil çerçeveleri', tema: 'Profil temaları', rozet: 'Rozetler' };
   const css = document.createElement('style');
   css.textContent =
     '.dl-open{margin-top:8px}' +
@@ -63,19 +63,16 @@ import { supabase } from './config.js';
     if (!k) { const n = document.createElement('span'); n.className = 'no'; n.textContent = '–'; return n; }
     if (tur === 'rozet') { const d = document.createElement('span'); d.className = 'tk'; d.innerHTML = window.__lefRozet && window.__lefRozet.ROZET[k] ? window.__lefRozet.ROZET[k].svg : ''; return d; }
     const c = document.createElement('canvas');
-    if (tur === 'cerceve' && window.__crDraw) window.__crDraw.preview(c, k, 150, 88);
     if (tur === 'pcer' && window.__lefPcer) window.__lefPcer.preview(c, k, 80, 80);
     if (tur === 'tema' && window.__lefTema) window.__lefTema.swatch(c, k, 64, 80);
     return c;
   }
   function previewAll() {
-    if (window.__lefCerceve) window.__lefCerceve.preview(pick.cerceve || null);
     if (window.__lefTema) window.__lefTema.preview(pick.tema || null);
     if (window.__lefPcer) window.__lefPcer.apply(pick.pcer || null);
     if (window.__lefRozet) window.__lefRozet.preview(pick.rozet || null);
   }
   function restoreAll() {
-    if (window.__lefCerceve) window.__lefCerceve.restore();
     if (window.__lefTema) window.__lefTema.restore();
     if (window.__lefPcer) window.__lefPcer.restore();
     if (window.__lefRozet) window.__lefRozet.restore();
@@ -88,7 +85,7 @@ import { supabase } from './config.js';
     Object.keys(COL).forEach(tur => {
       if (!own[tur].length) return;
       const h = document.createElement('p'); h.className = 'dl-h'; h.textContent = TITLE[tur]; body.appendChild(h);
-      const g = document.createElement('div'); g.className = 'dl-g' + (tur === 'cerceve' ? ' wide' : ''); g.setAttribute('role', 'group'); g.setAttribute('aria-label', TITLE[tur]);
+      const g = document.createElement('div'); g.className = 'dl-g'; g.setAttribute('role', 'group'); g.setAttribute('aria-label', TITLE[tur]);
       [''].concat(own[tur]).forEach(k => {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'dl-it'; b.dataset.t = tur; b.dataset.k = k;
         b.setAttribute('aria-pressed', String((pick[tur] || '') === k)); b.classList.toggle('on', (pick[tur] || '') === k);
@@ -111,14 +108,14 @@ import { supabase } from './config.js';
     try {
       const [o, pr, it] = await Promise.all([
         supabase.from('magaza_sahip').select('urun_id').eq('user_id', uid),
-        supabase.from('profiles').select('fx_cerceve,pf_cerceve,pf_tema,rozet').eq('id', uid).maybeSingle(),
+        supabase.from('profiles').select('pf_cerceve,pf_tema,rozet').eq('id', uid).maybeSingle(),
         supabase.from('magaza_urunler').select('id,ad')
       ]);
       if (o.error || pr.error) throw o.error || pr.error;
       names = {}; (it.data || []).forEach(r => { names[r.id] = r.ad; });
-      const own = { cerceve: [], pcer: [], tema: [], rozet: [] };
-      (o.data || []).forEach(r => { const i = r.urun_id.indexOf('-'), t = r.urun_id.slice(0, i); const k = r.urun_id.slice(i + 1); if (t === 'cerceve' && window.__crDraw && !window.__crDraw.DES[k]) return; if (own[t]) own[t].push(k); });
-      const fc = pr.data && pr.data.fx_cerceve; saved = { cerceve: fc && (!window.__crDraw || window.__crDraw.DES[fc]) ? fc : null, pcer: pr.data && pr.data.pf_cerceve || null, tema: pr.data && pr.data.pf_tema || null, rozet: pr.data && pr.data.rozet || null };
+      const own = { pcer: [], tema: [], rozet: [] };
+      (o.data || []).forEach(r => { const i = r.urun_id.indexOf('-'), t = r.urun_id.slice(0, i); const k = r.urun_id.slice(i + 1); if (own[t]) own[t].push(k); });
+      saved = { pcer: pr.data && pr.data.pf_cerceve || null, tema: pr.data && pr.data.pf_tema || null, rozet: pr.data && pr.data.rozet || null };
       pick = Object.assign({}, saved); say(''); draw(own);
     } catch (_) { say('Yüklenemedi. Tekrar dene.', true); }
   }
@@ -135,7 +132,7 @@ import { supabase } from './config.js';
     const r = await supabase.from('profiles').update(upd).eq('id', uid);
     saveB.disabled = false;
     if (r.error) { say(/owned_required/.test(r.error.message || '') ? 'Bunu takmak için önce Mağaza\'dan almalısın.' : 'Kaydedilemedi. Tekrar dene.', true); return; }
-    const MOD = { cerceve: window.__lefCerceve, pcer: window.__lefPcer, tema: window.__lefTema, rozet: window.__lefRozet };
+    const MOD = { pcer: window.__lefPcer, tema: window.__lefTema, rozet: window.__lefRozet };
     Object.keys(COL).forEach(t => { if (COL[t] in upd && MOD[t]) MOD[t].saved(uid, pick[t] || null); });
     window.dispatchEvent(new CustomEvent('lef-equip', { detail: upd }));
     saved = Object.assign({}, pick); say(''); close(false);

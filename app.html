@@ -307,24 +307,17 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
   .pf-banner{ width:100%; max-width:100%; min-height:0; aspect-ratio:2.2/1; isolation:isolate; }
   .pf-banner video,.pf-banner img{ position:absolute; inset:0; width:100%; height:100%; max-width:100%; min-width:0; object-fit:cover; object-position:center; display:block; }
 }
-/* ---- Mobil: banner ekranın en üstünde, kenardan kenara (tam genişlik); ambilight altına doğru yayılır ---- */
+/* ---- Mobil: banner ekranın en üstünde, kenardan kenara (boyu aynı: 2.2/1); ambilight sayfanın üstüne yayılır ---- */
 @media (max-width:600px){
   .pf-bwrap{ margin:calc(-24px - env(safe-area-inset-top,0px)) -16px 0; }
-  #pfSk .a{ width:calc(100% + 32px); margin:calc(-24px - env(safe-area-inset-top,0px)) -16px 0; border-radius:0; aspect-ratio:16/10; }
-  .pf-banner{ aspect-ratio:auto; height:calc(min(62.5vw, 300px) + env(safe-area-inset-top,0px)); border-radius:0; border:none !important; }
+  #pfSk .a{ width:calc(100% + 32px); margin:calc(-24px - env(safe-area-inset-top,0px)) -16px 0; border-radius:0; }
+  .pf-banner{ aspect-ratio:2.2/1; border-radius:0; border:none !important; }
   .pf-banner.has{ border:none; }
-  .pf-banner::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:38%; z-index:2; pointer-events:none;
-    background:linear-gradient(180deg,transparent,rgba(0,0,0,.35)); }
-  .pf-glow{ inset:20% -10% -70px; border-radius:0; transform:none; filter:blur(46px) saturate(1.9) brightness(1.15); }
+  /* ambilight: banner'ın renkleri sayfanın üst kısmına, profil fotoğrafının ve adın arkasına yayılır */
+  .pf-glow{ inset:-10% -20% -120%; border-radius:0; transform:none; filter:blur(56px) saturate(1.9) brightness(1.15); }
   .pf-tools{ top:calc(12px + env(safe-area-inset-top,0px)); }
   .pf-snd{ top:calc(12px + env(safe-area-inset-top,0px)); }
-  .pf-head{ margin-top:-56px; }
-  .pf-av{ box-shadow:0 0 0 1px rgba(255,255,255,.08),0 10px 28px rgba(0,0,0,.55); }
-  /* banner çerçevesi takılıyken çerçeve ekrana sığsın diye banner kenarlardan biraz içeride durur */
-  .pf-bwrap.cr-on{ margin:calc(14px + env(safe-area-inset-top,0px) - 24px) -6px 0; }
-  .pf-bwrap.cr-on .pf-banner{ height:min(54vw, 260px); }
-  .pf-bwrap.cr-on .pf-banner::after{ display:none; }
-  .pf-bwrap.cr-on .pf-glow{ inset:-20px; }
+}
 }
 </style>
 </head>
