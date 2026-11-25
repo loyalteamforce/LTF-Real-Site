@@ -114,8 +114,8 @@ import { supabase } from './config.js';
       if (o.error || pr.error) throw o.error || pr.error;
       names = {}; (it.data || []).forEach(r => { names[r.id] = r.ad; });
       const own = { cerceve: [], tema: [], rozet: [] };
-      (o.data || []).forEach(r => { const i = r.urun_id.indexOf('-'), t = r.urun_id.slice(0, i); if (own[t]) own[t].push(r.urun_id.slice(i + 1)); });
-      saved = { cerceve: pr.data && pr.data.fx_cerceve || null, tema: pr.data && pr.data.pf_tema || null, rozet: pr.data && pr.data.rozet || null };
+      (o.data || []).forEach(r => { const i = r.urun_id.indexOf('-'), t = r.urun_id.slice(0, i); const k = r.urun_id.slice(i + 1); if (t === 'cerceve' && window.__crDraw && !window.__crDraw.DES[k]) return; if (own[t]) own[t].push(k); });
+      const fc = pr.data && pr.data.fx_cerceve; saved = { cerceve: fc && (!window.__crDraw || window.__crDraw.DES[fc]) ? fc : null, tema: pr.data && pr.data.pf_tema || null, rozet: pr.data && pr.data.rozet || null };
       pick = Object.assign({}, saved); say(''); draw(own);
     } catch (_) { say('Yüklenemedi. Tekrar dene.', true); }
   }
