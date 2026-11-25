@@ -38,3 +38,6 @@ import('./hiz.js').catch(() => {});
 // Profil teması (Mağaza'dan alınan arka plan) ve Profil tasarımı paneli (sadece Mağaza'dan alınanlar).
 import('./profil-tema.js').catch(() => {});
 import('./dolap.js').catch(() => {});
+
+// 3D: Ana Sayfa madalyonu, 3D kitap kapakları, puan kartı eğilmesi.
+import('./uc-boyut.js').catch(() => {});
