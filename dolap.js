@@ -15,8 +15,8 @@ import { supabase } from './config.js';
   try { const ss = await supabase.auth.getSession(); uid = ss.data.session && ss.data.session.user.id; } catch (_) {}
   if (!uid) return;
 
-  const COL = { cerceve: 'fx_cerceve', tema: 'pf_tema', rozet: 'rozet' };
-  const TITLE = { cerceve: 'Banner çerçeveleri', tema: 'Profil temaları', rozet: 'Rozetler' };
+  const COL = { cerceve: 'fx_cerceve', pcer: 'pf_cerceve', tema: 'pf_tema', rozet: 'rozet' };
+  const TITLE = { cerceve: 'Banner çerçeveleri', pcer: 'Profil çerçeveleri', tema: 'Profil temaları', rozet: 'Rozetler' };
   const css = document.createElement('style');
   css.textContent =
     '.dl-open{margin-top:8px}' +
@@ -64,17 +64,20 @@ import { supabase } from './config.js';
     if (tur === 'rozet') { const d = document.createElement('span'); d.className = 'tk'; d.innerHTML = window.__lefRozet && window.__lefRozet.ROZET[k] ? window.__lefRozet.ROZET[k].svg : ''; return d; }
     const c = document.createElement('canvas');
     if (tur === 'cerceve' && window.__crDraw) window.__crDraw.preview(c, k, 150, 88);
+    if (tur === 'pcer' && window.__lefPcer) window.__lefPcer.preview(c, k, 80, 80);
     if (tur === 'tema' && window.__lefTema) window.__lefTema.swatch(c, k, 64, 80);
     return c;
   }
   function previewAll() {
     if (window.__lefCerceve) window.__lefCerceve.preview(pick.cerceve || null);
     if (window.__lefTema) window.__lefTema.preview(pick.tema || null);
+    if (window.__lefPcer) window.__lefPcer.apply(pick.pcer || null);
     if (window.__lefRozet) window.__lefRozet.preview(pick.rozet || null);
   }
   function restoreAll() {
     if (window.__lefCerceve) window.__lefCerceve.restore();
     if (window.__lefTema) window.__lefTema.restore();
+    if (window.__lefPcer) window.__lefPcer.restore();
     if (window.__lefRozet) window.__lefRozet.restore();
   }
   function draw(own) {
@@ -108,14 +111,14 @@ import { supabase } from './config.js';
     try {
       const [o, pr, it] = await Promise.all([
         supabase.from('magaza_sahip').select('urun_id').eq('user_id', uid),
-        supabase.from('profiles').select('fx_cerceve,pf_tema,rozet').eq('id', uid).maybeSingle(),
+        supabase.from('profiles').select('fx_cerceve,pf_cerceve,pf_tema,rozet').eq('id', uid).maybeSingle(),
         supabase.from('magaza_urunler').select('id,ad')
       ]);
       if (o.error || pr.error) throw o.error || pr.error;
       names = {}; (it.data || []).forEach(r => { names[r.id] = r.ad; });
-      const own = { cerceve: [], tema: [], rozet: [] };
+      const own = { cerceve: [], pcer: [], tema: [], rozet: [] };
       (o.data || []).forEach(r => { const i = r.urun_id.indexOf('-'), t = r.urun_id.slice(0, i); const k = r.urun_id.slice(i + 1); if (t === 'cerceve' && window.__crDraw && !window.__crDraw.DES[k]) return; if (own[t]) own[t].push(k); });
-      const fc = pr.data && pr.data.fx_cerceve; saved = { cerceve: fc && (!window.__crDraw || window.__crDraw.DES[fc]) ? fc : null, tema: pr.data && pr.data.pf_tema || null, rozet: pr.data && pr.data.rozet || null };
+      const fc = pr.data && pr.data.fx_cerceve; saved = { cerceve: fc && (!window.__crDraw || window.__crDraw.DES[fc]) ? fc : null, pcer: pr.data && pr.data.pf_cerceve || null, tema: pr.data && pr.data.pf_tema || null, rozet: pr.data && pr.data.rozet || null };
       pick = Object.assign({}, saved); say(''); draw(own);
     } catch (_) { say('Yüklenemedi. Tekrar dene.', true); }
   }
@@ -132,7 +135,7 @@ import { supabase } from './config.js';
     const r = await supabase.from('profiles').update(upd).eq('id', uid);
     saveB.disabled = false;
     if (r.error) { say(/owned_required/.test(r.error.message || '') ? 'Bunu takmak için önce Mağaza\'dan almalısın.' : 'Kaydedilemedi. Tekrar dene.', true); return; }
-    const MOD = { cerceve: window.__lefCerceve, tema: window.__lefTema, rozet: window.__lefRozet };
+    const MOD = { cerceve: window.__lefCerceve, pcer: window.__lefPcer, tema: window.__lefTema, rozet: window.__lefRozet };
     Object.keys(COL).forEach(t => { if (COL[t] in upd && MOD[t]) MOD[t].saved(uid, pick[t] || null); });
     saved = Object.assign({}, pick); say(''); close(false);
   });
