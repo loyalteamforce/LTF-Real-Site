@@ -2,7 +2,8 @@
    UX: Instagram tarzı dokunma ve kaydırma hissi
    - Butonlara basınca küçülür, bırakınca yaylanarak geri gelir.
      Çok hızlı basılsa bile animasyon en az MIN_PRESS ms görünür.
-   - Ekranda sağa/sola kaydırınca sekmeler (Ana Sayfa, Manga, ...) arasında geçilir.
+   - Ekranın SOL / SAĞ KENARINDAN kaydırınca sekmeler (Ana Sayfa, Hikâyeler, ...) arasında geçilir.
+     Ekranın ortasında kaydırmak sekme değiştirmez: kitap halkası, listeler, oyunlar rahatça çevrilir.
      Parmakla birlikte hareket eder, yeterince çekilirse sekme değişir.
    - Sekme değişirken yeni sayfa geldiği yönden kayarak girer.
    - app.html'de, </body>'den hemen önce şu satır olmalı:
@@ -13,7 +14,8 @@
 (function () {
   var MIN_PRESS = 140;      // ms: basılı görüntü en az bu kadar kalsın
   var SCALE = .93;          // basılınca küçülme oranı
-  var SWIPE_MIN = 70;       // px: sekme değişmesi için gereken çekme
+  var SWIPE_MIN = 90;       // px: sekme değişmesi için gereken çekme
+  var EDGE = 28;            // px: kaydırma ekranın bu kadar kenarından başlamalı
   var VIBRATE = 8;          // ms: Android'de hafif titreşim (0 = kapalı)
 
   /* ---------- CSS ---------- */
@@ -95,11 +97,11 @@
   function blocked(target) {
     if (!target || !target.closest) return true;
     if (document.querySelector('.st.on, .mg-rd.on, .mg2-sh.on')) return true;      // açık panel / okuyucu / mağaza detayı
-    if (target.closest('input,textarea,select,video,[contenteditable],.agc,.ag,.dock,.ch-log,.fr-list,.bio-fonts,.ux-noswipe')) return true;
+    if (target.closest('input,textarea,select,video,canvas,[contenteditable],[draggable="true"],.agc,.ag,.dock,.ch-log,.fr-list,.bio-fonts,.mg-belt,.mg-track,.ux-noswipe')) return true;
     for (var n = target; n && n !== document.body; n = n.parentElement) {          // yatay kayan listeler (türler vb.)
       if (n.scrollWidth > n.clientWidth + 4) {
         var ox = getComputedStyle(n).overflowX;
-        if (ox === 'auto' || ox === 'scroll') return true;
+        if (ox === 'auto' || ox === 'scroll' || ox === 'hidden') return true;   // kayan / dönen şeritler
       }
     }
     return false;
@@ -109,7 +111,7 @@
   document.addEventListener('touchstart', function (e) {
     if (e.touches.length !== 1) { ok = false; return; }
     var t = e.touches[0];
-    ok = !blocked(e.target); sx = t.clientX; sy = t.clientY; dx = 0; mode = ''; view = curView();
+    ok = (t.clientX <= EDGE || t.clientX >= innerWidth - EDGE) && !blocked(e.target); sx = t.clientX; sy = t.clientY; dx = 0; mode = ''; view = curView();
     if (view) view.classList.remove('ux-snap');
   }, { passive: true });
 
