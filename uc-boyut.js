@@ -58,7 +58,7 @@ css.textContent = `
 .mg2-it:nth-child(2) .tk{ animation-delay:-2.3s } .mg2-it:nth-child(3) .tk{ animation-delay:-4.6s }
 .mg2-it:hover .mg2-art,.mg2-it:focus-visible .mg2-art{ transform:rotateY(-14deg) rotateX(8deg) translateZ(10px); }
 .mg2-it:active .mg2-art{ transform:rotateY(-6deg) rotateX(4deg) scale(.96); }
-.mg2-pv{ perspective:900px; } .mg2-pv > *{ animation:pv3 6s ease-in-out infinite alternate; }
+.mg2-pv{ perspective:900px; } .mg2-pv > .tk{ animation:pv3 6s ease-in-out infinite alternate; }
 @keyframes pv3{ from{ transform:rotateY(-12deg) rotateX(6deg) } to{ transform:rotateY(12deg) rotateX(-4deg) } }
 /* ---------- liderlik: 3D podyum blokları ---------- */
 .lb-podium.p3d{ perspective:700px; }
@@ -74,7 +74,7 @@ css.textContent = `
 #v-ana-sayfa{ position:relative; }
 #v-ana-sayfa > .dust3{ position:absolute; left:-16px; right:-16px; top:-10px; width:calc(100% + 32px); height:460px; pointer-events:none; z-index:0; -webkit-mask-image:linear-gradient(180deg,#000 60%,transparent); mask-image:linear-gradient(180deg,#000 60%,transparent); }
 #v-ana-sayfa > :not(.dust3){ position:relative; z-index:1; }
-@media (prefers-reduced-motion:reduce){ .mg-cover.bk,.pc-flip.tl{ transition:none; } .mg2-art .tk,.mg2-pv > *,.lb-podium.p3d .lb-av{ animation:none!important; } }
+@media (prefers-reduced-motion:reduce){ .mg-cover.bk,.pc-flip.tl{ transition:none; } .mg2-art .tk,.mg2-pv > .tk,.lb-podium.p3d .lb-av{ animation:none!important; } }
 `;
 document.head.appendChild(css);
 

@@ -40,6 +40,7 @@ import('./hiz.js').catch(() => {});
 
 // Profil teması (Mağaza'dan alınan arka plan) ve Profil tasarımı paneli (sadece Mağaza'dan alınanlar).
 import('./profil-tema.js').catch(() => {});
+import('./profil-cerceve.js').catch(() => {});
 import('./dolap.js').catch(() => {});
 
 // 3D: kitaplar, dönen öne çıkanlar halkası, kart eğilmesi, altın tozu, mağaza ve podyum.

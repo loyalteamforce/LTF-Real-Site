@@ -1,14 +1,14 @@
 /* ============================================================
-   PROFİL ÇERÇEVELERİ: banner + avatar çerçevesi (5 tasarım, resimleri cerceveler/ klasöründe)
-   - Kristal Buz, Gotik Zincir, Mor Melek, Turkuaz Damla, Mavi Nilüfer.
+   BANNER ÇERÇEVELERİ: banner + avatar çerçevesi (7 tasarım, resimleri cerceveler/ klasöründe)
+   - Kristal Buz, Gotik Zincir, Mor Melek, Turkuaz Damla, Mavi Nilüfer, Ay Balığı, Mor Neon.
    - Çerçevenin ANA ÇİZGİSİ her ekran boyutunda tam banner'ın kenarına (ve avatarın dış kenarına) oturur.
      Köşe ve orta süsler oranını korur, aradaki düz kenarlar banner'ın boyuna göre uzar;
      banner'ın köşe yuvarlaklığı da çerçevenin köşesine eşitlenir.
    - Seçim profiles.fx_cerceve sütunundadır. Takmak için önce Mağaza'dan almak gerekir (cerceve-yeni-kurulum.sql).
    - Mağaza ve "Profil tasarımı" paneli aynı çizimleri kullanır: window.__crDraw.
-   - Yeni tasarım: cerceveler/ANAHTAR-ban.webp + ANAHTAR-ring.webp ekle, DES'e ölçülerini, ANIM'e parlama rengini yaz,
+   - Yeni tasarım: cerceveler/ANAHTAR-ban.webp + ANAHTAR-ring.webp ekle, DES'e ölçülerini yaz,
      SQL'deki fx_cerceve listesine anahtarı ekle.
-   - ANİMASYON: parlama süpürmesi + yıldız pırıltıları + hafif nefes alma. "Hareketi azalt" açıksa kapanır.
+   - Animasyon ve parıltı yok: çerçeveler resimdeki gibi durur.
    - ux.js içinden otomatik yüklenir.
    ============================================================ */
 import { supabase } from './config.js';
@@ -31,7 +31,9 @@ const DES = {
   gotik:   { n: 'Gotik Zincir',  W0: 908, H0: 390, pad: 30, rc: 8,  cs: 95, cw: 62, ch: 38, rr: 145 },
   melek:   { n: 'Mor Melek',     W0: 820, H0: 290, pad: 30, rc: 40, cs: 75, cw: 62, ch: 38, rr: 158 },
   damla:   { n: 'Turkuaz Damla', W0: 790, H0: 282, pad: 24, rc: 30, cs: 70, cw: 62, ch: 38, rr: 126 },
-  nilufer: { n: 'Mavi Nilüfer',  W0: 798, H0: 276, pad: 26, rc: 36, cs: 85, cw: 62, ch: 38, rr: 131 }
+  nilufer: { n: 'Mavi Nilüfer',  W0: 798, H0: 276, pad: 26, rc: 36, cs: 85, cw: 62, ch: 38, rr: 131 },
+  balik:   { n: 'Ay Balığı',     W0: 804, H0: 281, pad: 32, rc: 28, cs: 90, cw: 62, ch: 38, rr: 125 },
+  neon:    { n: 'Mor Neon',      W0: 924, H0: 367, pad: 30, rc: 22, cs: 60, cw: 62, ch: 38, rr: 157 }
 };
 const KEYS = Object.keys(DES);
 const BASE = new URL('./cerceveler/', import.meta.url).href;
@@ -117,127 +119,45 @@ function preview(canvas, k, w, h, dpr) {
 }
 window.__crDraw = { DES, KEYS, drawBanner, drawRing, preview, name: k => (DES[k] ? DES[k].n : '') };
 
-/*ANIM-START*/
-// Çerçeve animasyonu: parlama süpürmesi + yıldız pırıltıları (sadece çerçevenin kendi piksellerinde)
-const ANIM = {
-  buz:     { col: '235,245,255', per: 4.4 },
-  gotik:   { col: '190,170,255', per: 5.2 },
-  melek:   { col: '220,200,255', per: 4.0 },
-  damla:   { col: '190,255,250', per: 4.2 },
-  nilufer: { col: '170,210,255', per: 4.6 }
-};
-function mkAnim(el, circle) { return { el, circle: !!circle, base: null, k: null, cands: [], sp: [], u: 6 }; }
-function setAnimBase(A, base, k, count) {
-  A.base = base; A.k = k;
-  A.el.width = base.width; A.el.height = base.height;
-  A.u = Math.max(base.width, base.height) * (A.circle ? .018 : .0065);
-  // pırıltı adayları: çerçevenin parlak, opak pikselları
-  const W = base.width, H = base.height, d = base.getContext('2d').getImageData(0, 0, W, H).data;
-  const strong = [], any = [], st = Math.max(2, Math.round(Math.max(W, H) / 220));
-  for (let y = 0; y < H; y += st) for (let x = 0; x < W; x += st) {
-    const i = (y * W + x) * 4;
-    if (d[i + 3] > 200) { any.push(x, y); if (Math.max(d[i], d[i + 1], d[i + 2]) > 150) strong.push(x, y); }
-  }
-  A.cands = strong.length >= 40 ? strong : any;
-  A.sp = Array.from({ length: count }, () => ({ per: 1.5 + Math.random() * 1.6, ph: Math.random() * 3, cyc: -1, i: 0 }));
-}
-function paintAnim(A, t) {
+// Animasyon yok: çerçeve resmi olduğu gibi görünür (parlama / pırıltı yok)
+function mkAnim(el) { return { el, base: null }; }
+function setAnimBase(A, base) { A.base = base; A.el.width = base.width; A.el.height = base.height; }
+function paintAnim(A) {
   if (!A.base) return;
-  const c = A.el, x = c.getContext('2d'), W = c.width, H = c.height, cfg = ANIM[A.k]; if (!cfg) return;
-  x.setTransform(1, 0, 0, 1, 0, 0); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
-  x.clearRect(0, 0, W, H); x.drawImage(A.base, 0, 0);
-  // 1) parlama süpürmesi (source-atop: sadece çerçeve piksellerinin üstüne biner)
-  x.globalCompositeOperation = 'source-atop';
-  if (A.circle && x.createConicGradient) {
-    const g = x.createConicGradient((t / cfg.per) * Math.PI * 2, W / 2, H / 2);
-    g.addColorStop(0, 'rgba(' + cfg.col + ',0)'); g.addColorStop(.05, 'rgba(' + cfg.col + ',.75)'); g.addColorStop(.12, 'rgba(' + cfg.col + ',0)');
-    g.addColorStop(.55, 'rgba(' + cfg.col + ',0)'); g.addColorStop(.6, 'rgba(' + cfg.col + ',.4)'); g.addColorStop(.66, 'rgba(' + cfg.col + ',0)'); g.addColorStop(1, 'rgba(' + cfg.col + ',0)');
-    x.fillStyle = g; x.fillRect(0, 0, W, H);
-  } else {
-    const u = (t % cfg.per) / cfg.per;
-    if (u < .45) {
-      const p = u / .45, cx = -.3 * W + p * 1.6 * W, hw = .16 * W;
-      const g = x.createLinearGradient(cx - hw, 0, cx + hw, hw * .55);
-      g.addColorStop(0, 'rgba(' + cfg.col + ',0)'); g.addColorStop(.5, 'rgba(' + cfg.col + ',.8)'); g.addColorStop(1, 'rgba(' + cfg.col + ',0)');
-      x.fillStyle = g; x.fillRect(0, 0, W, H);
-    }
-  }
-  // 2) yıldız pırıltıları
-  x.globalCompositeOperation = 'source-over';
-  const n = A.cands.length / 2; if (!n) return;
-  for (const s of A.sp) {
-    const q = (t + s.ph) / s.per, cyc = Math.floor(q);
-    if (cyc !== s.cyc) { s.cyc = cyc; s.i = Math.floor(Math.random() * n); }
-    const f = q - cyc, a = Math.sin(Math.PI * f), v = a * a;
-    if (v < .02) continue;
-    const px = A.cands[s.i * 2], py = A.cands[s.i * 2 + 1], r = A.u * (.6 + .9 * v);
-    const g = x.createRadialGradient(px, py, 0, px, py, r * 1.7);
-    g.addColorStop(0, 'rgba(255,255,255,' + (.95 * v) + ')'); g.addColorStop(.35, 'rgba(' + cfg.col + ',' + (.55 * v) + ')'); g.addColorStop(1, 'rgba(' + cfg.col + ',0)');
-    x.fillStyle = g; x.beginPath(); x.arc(px, py, r * 1.7, 0, 6.2832); x.fill();
-    x.fillStyle = 'rgba(255,255,255,' + (.9 * v) + ')';
-    x.beginPath();   // 4 uçlu yıldız
-    x.moveTo(px, py - r * 2.1); x.quadraticCurveTo(px + r * .18, py - r * .18, px + r * 2.1, py);
-    x.quadraticCurveTo(px + r * .18, py + r * .18, px, py + r * 2.1); x.quadraticCurveTo(px - r * .18, py + r * .18, px - r * 2.1, py);
-    x.quadraticCurveTo(px - r * .18, py - r * .18, px, py - r * 2.1); x.fill();
-  }
+  const x = A.el.getContext('2d'); x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, A.el.width, A.el.height); x.drawImage(A.base, 0, 0);
 }
-/*ANIM-END*/
 if (typeof document !== 'undefined') (async function main() {
   if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r));
   const $ = (s, r) => (r || document).querySelector(s);
   const wrap = $('.pf-bwrap'), head = $('.pf-head'), av = $('#pfAv'), bn = $('#pfBan');
   if (!wrap || !head || !av || !bn) return;
-  const reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   const css = document.createElement('style');
   css.textContent =
-    '.cr-ban{position:absolute;z-index:2;pointer-events:none;display:none;animation:crBreath 4.5s ease-in-out infinite alternate}' +
+    '.cr-ban{position:absolute;z-index:2;pointer-events:none;display:none}' +
     '.cr-av{position:absolute;z-index:4;pointer-events:none;display:none}' +
-    '.cr-av canvas{position:absolute;left:0;top:0;display:block;animation:crBreath 4.5s ease-in-out infinite alternate}' +
-    '@keyframes crBreath{from{filter:brightness(1)}to{filter:brightness(1.14) saturate(1.08)}}' +
-    '.cr-ban.cr-in{animation:crBanIn .75s cubic-bezier(.2,.8,.2,1) backwards,crBreath 4.5s .75s ease-in-out infinite alternate}' +
-    '.cr-av canvas.cr-in{animation:crAvIn .8s cubic-bezier(.2,1.25,.3,1) backwards,crBreath 4.5s .8s ease-in-out infinite alternate}' +
-    '@keyframes crBanIn{0%{opacity:0;transform:scale(1.04);filter:brightness(2.4)}55%{opacity:1}100%{opacity:1;transform:none;filter:brightness(1)}}' +
-    '@keyframes crAvIn{0%{opacity:0;transform:scale(.6) rotate(-40deg);filter:brightness(2.4)}100%{opacity:1;transform:none;filter:brightness(1)}}' +
-    '.cr-ban.cr-out,.cr-av.cr-out{animation:crOut .26s ease-in forwards}' +
-    '@keyframes crOut{to{opacity:0;filter:brightness(2)}}' +
-    '@media (prefers-reduced-motion:reduce){.cr-ban,.cr-av canvas,.cr-ban.cr-in,.cr-av canvas.cr-in,.cr-ban.cr-out,.cr-av.cr-out{animation:none}}';
+    '.cr-av canvas{position:absolute;left:0;top:0;display:block}';
   document.head.appendChild(css);
 
   const banEl = document.createElement('canvas'); banEl.className = 'cr-ban'; banEl.setAttribute('aria-hidden', 'true'); wrap.appendChild(banEl);
   const avEl = document.createElement('div'); avEl.className = 'cr-av'; avEl.setAttribute('aria-hidden', 'true'); head.appendChild(avEl);
   const avCan = document.createElement('canvas'); avEl.appendChild(avCan);
   const banBase = document.createElement('canvas'), avBase = document.createElement('canvas');
-  const banA = mkAnim(banEl, false), avA = mkAnim(avCan, true);
+  const banA = mkAnim(banEl), avA = mkAnim(avCan);
   let banKey = '', avKey = '', cur = null;
-
-  /* ---------- Animasyon döngüsü (~30 fps, sekme gizliyken durur) ---------- */
-  let raf = 0, last = 0;
-  function tick(ts) {
-    raf = requestAnimationFrame(tick);
-    if (ts - last < 32) return; last = ts;
-    if (document.hidden || !cur || !bn.offsetParent) return;
-    const t = ts / 1000;
-    if (banEl.style.display === 'block' && banA.base) paintAnim(banA, t);
-    if (avEl.style.display === 'block' && avA.base) paintAnim(avA, t);
-  }
-  const startLoop = () => { if (!raf && !reduce) raf = requestAnimationFrame(tick); };
-  const stopLoop = () => { if (raf) cancelAnimationFrame(raf); raf = 0; };
-  const retrigger = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
-  const playIn = () => { if (reduce) return; retrigger(banEl, 'cr-in'); retrigger(avCan, 'cr-in'); };
 
   // Çerçeve takılıyken banner'ın kendi kenar çizgisi gizlenir: çerçevenin ana çizgisi onun yerini alır
   const resetBan = () => { bn.style.borderColor = ''; bn.style.borderRadius = ''; };
   function render() {
     const w = bn.offsetWidth, h = bn.offsetHeight;
-    if (!cur || !DES[cur] || !w || !h) { banEl.style.display = 'none'; avEl.style.display = 'none'; resetBan(); banKey = avKey = ''; stopLoop(); return; }
+    if (!cur || !DES[cur] || !w || !h) { banEl.style.display = 'none'; avEl.style.display = 'none'; resetBan(); banKey = avKey = ''; return; }
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const key = [cur, w, h, dpr].join();
     if (key !== banKey) {
       const res = drawBanner(banBase, cur, w, h, 0, dpr);
-      banKey = res.ok ? key : ''; banEl.dataset.g = res.g; banEl.dataset.r = res.r; setAnimBase(banA, banBase, cur, 9);
+      banKey = res.ok ? key : ''; banEl.dataset.g = res.g; banEl.dataset.r = res.r; setAnimBase(banA, banBase);
       banEl.style.width = banBase.style.width; banEl.style.height = banBase.style.height;
-      paintAnim(banA, 0);
+      paintAnim(banA);
     }
     const g = Number(banEl.dataset.g) || 0;
     banEl.style.display = 'block';
@@ -252,32 +172,18 @@ if (typeof document !== 'undefined') (async function main() {
       const k2 = [cur, d, dpr].join();
       if (k2 !== avKey) {
         const q = drawRing(avBase, cur, d, dpr);
-        avKey = q.ok ? k2 : ''; avEl.dataset.m = q.m; setAnimBase(avA, avBase, cur, 5);
+        avKey = q.ok ? k2 : ''; avEl.dataset.m = q.m; setAnimBase(avA, avBase);
         avCan.style.width = avBase.style.width; avCan.style.height = avBase.style.height;
-        paintAnim(avA, 0);
+        paintAnim(avA);
       }
       const m = Number(avEl.dataset.m) || 0, C = d + 2 * m;
       avEl.style.left = (av.offsetLeft - m) + 'px'; avEl.style.top = (av.offsetTop - m) + 'px';
       avEl.style.width = C + 'px'; avEl.style.height = C + 'px';
       avEl.style.display = 'block';
     } else { avKey = ''; avEl.style.display = 'none'; }
-    startLoop();
   }
 
-  let outT = 0;
-  function apply(k) {
-    clearTimeout(outT);
-    const nk = DES[k] ? k : null;
-    if (!nk && cur && !reduce) {              // çerçeve kaldırıldı: yumuşakça sol
-      banEl.classList.add('cr-out'); avEl.classList.add('cr-out');
-      outT = setTimeout(() => { cur = null; banEl.classList.remove('cr-out'); avEl.classList.remove('cr-out'); render(); }, 260);
-      return;
-    }
-    const changed = !!nk && nk !== cur;
-    cur = nk; banEl.classList.remove('cr-out'); avEl.classList.remove('cr-out');
-    render();
-    if (changed) playIn();
-  }
+  function apply(k) { cur = DES[k] ? k : null; render(); }
   window.addEventListener('lef-cr-img', () => { if (cur) render(); });
   if (window.ResizeObserver) { const ro = new ResizeObserver(render); ro.observe(bn); ro.observe(head); ro.observe(av); } else window.addEventListener('resize', render);
 
