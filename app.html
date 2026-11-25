@@ -330,11 +330,6 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
   <section class="view" id="v-kesfet"><h2>Keşfet</h2></section>
   <section class="view" id="v-kutuphane"><h2>Kütüphane</h2></section>
   <section class="view pf-loading" id="v-profil" aria-label="Profil">
-    <div class="pf-search">
-      <label class="mg-search"><svg viewBox="0 0 18 18"><circle cx="8" cy="8" r="5.25"/><line x1="11.9" y1="11.9" x2="15.5" y2="15.5"/></svg>
-        <input id="pfQ" type="search" placeholder="Üye ara" autocomplete="off" maxlength="30"></label>
-      <div class="pf-res" id="pfRes" hidden></div>
-    </div>
     <div id="pfSk" aria-hidden="true"><div class="sk a"></div><div class="sk b"></div><div class="sk c"></div><div class="sk d"></div><div class="sk e"></div></div>
     <div class="pf-bwrap">
     <div class="pf-glow" id="pfGlow" hidden><img id="pfGlowImg" alt=""><canvas id="pfGlowCv" width="64" height="29"></canvas></div>
@@ -1197,41 +1192,7 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
     finally { $('pfBan').classList.remove('busy'); }
   });
 
-  // ---------- Üye ara + başkasının profilini aç ----------
-  let qTimer = null;
-  const res = $('pfRes');
-  function hideRes(){ res.hidden = true; res.replaceChildren(); }
-  $('pfQ').addEventListener('input', () => {
-    clearTimeout(qTimer);
-    const q = $('pfQ').value.trim().replace(/[^\p{L}\p{N}_.]/gu, '');
-    if(q.length < 2){ hideRes(); return; }
-    qTimer = setTimeout(async () => {
-      const f = 'username.ilike.%' + q + '%,display_name.ilike.%' + q + '%';
-      const { data, error } = await supabase.from('profiles')
-        .select('id,username,display_name,avatar_url,role').or(f).limit(8);
-      res.replaceChildren();
-      if(error || !data || !data.length){
-        const p = document.createElement('div'); p.className = 'pf-empty'; p.textContent = error ? 'Arama başarısız.' : 'Kimse bulunamadı.'; res.appendChild(p);
-      } else data.forEach(u => {
-        const b = document.createElement('button'); b.type = 'button'; b.className = 'pf-it';
-        const au = safeUrl(u.avatar_url), av = document.createElement(au ? 'img' : 'i'); if(au){ av.src = au; av.alt = ''; }
-        const t = document.createElement('span'), n = document.createElement('b'), s = document.createElement('small');
-        n.textContent = u.display_name || u.username;
-        t.append(n);
-        if(roles[u.role] && u.role !== 'member'){ s.textContent = roles[u.role].label; t.append(s); }
-        b.append(av, t);
-        b.addEventListener('click', async () => {
-          try {
-            $('v-profil').classList.add('pf-loading'); window.scrollTo(0, 0);
-            const p = await fetchProfile(u.id); if(!p){ $('v-profil').classList.remove('pf-loading'); return; }
-            d = p; msg(''); hideRes(); $('pfQ').value = ''; render(); window.scrollTo(0, 0);
-          } catch(e){ $('v-profil').classList.remove('pf-loading'); msg('Profil açılamadı.'); }
-        });
-        res.appendChild(b);
-      });
-      res.hidden = false;
-    }, 300);
-  });
+  // Üye araması Keşfet sekmesine taşındı (kesfet-arama.js); bir üyeye dokununca 'lef-open-profile' ile burada açılır.
   $('pfBack').addEventListener('click', () => { if(me){ d = me; msg(''); render(); } });
   setTimeout(() => $('v-profil').classList.remove('pf-loading'), 10000);   // güvenlik: iskelet hiçbir zaman takılı kalmasın
   // Arkadaş listesinden bir profile git (friends.js tetikler)
