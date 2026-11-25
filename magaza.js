@@ -225,6 +225,7 @@ import { supabase } from './config.js';
     if (tur === 'cerceve' && window.__lefCerceve) { window.__lefCerceve.saved(uid, v); if (mine) window.__lefCerceve.preview(v); }
     if (tur === 'tema' && window.__lefTema) { window.__lefTema.saved(uid, v); if (mine) window.__lefTema.preview(v); }
     if (tur === 'pcer' && window.__lefPcer) { window.__lefPcer.saved(uid, v); if (mine) window.__lefPcer.apply(v); }
+    try { window.dispatchEvent(new CustomEvent('lef-equip', { detail: { tur: tur, k: v } })); } catch (e) {}
     if (tur === 'rozet') { rozetCache[uid] = v; paintRozet(); }
   }
 
@@ -244,6 +245,8 @@ import { supabase } from './config.js';
     if (k && ROZET[k]) { var s = document.createElement('span'); s.className = 'mg-tick'; s.title = ROZET[k].n; s.innerHTML = ROZET[k].svg; n.after(s); }
   }
   window.addEventListener('lef-profile', paintRozet); paintRozet();
+  // Profil sekmesine dönünce kendi rozetini sunucudan tazele (yenilemeden görünsün)
+  window.addEventListener('hashchange', function () { var P = window.__lefProfile; if (P && P.mine && location.hash.slice(1) === 'profil') { delete rozetCache[P.id]; paintRozet(); } });
   window.__lefRozet = {
     ROZET: ROZET,
     preview: function (k) { preview = k || null; paintRozet(); },
