@@ -42,5 +42,8 @@ import('./hiz.js').catch(() => {});
 import('./profil-tema.js').catch(() => {});
 import('./dolap.js').catch(() => {});
 
-// 3D: Ana Sayfa madalyonu, 3D kitap kapakları, puan kartı eğilmesi.
+// 3D: kitaplar, dönen öne çıkanlar halkası, kart eğilmesi, altın tozu, mağaza ve podyum.
 import('./uc-boyut.js').catch(() => {});
+
+// Hikâye kitaplarının kapak resimleri (kodla çizilir, dosya indirmez).
+import('./kapaklar.js').catch(() => {});
