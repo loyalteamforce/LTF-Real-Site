@@ -29,6 +29,9 @@ import('./kisayollar.js').catch(() => {});
 // Duyurular: Ana Sayfa'da son duyurular (Supabase > announcements tablosundan eklenir).
 import('./duyurular.js').catch(() => {});
 
+// Keşfet: üye arama (profildeki arama buraya taşındı).
+import('./kesfet-arama.js').catch(() => {});
+
 // Kart sekmesi: alt menüye Kart butonu ekler (kart seç, fiş animasyonu, LTF üye kartı).
 import('./kart-sekme.js').catch(() => {});
 
