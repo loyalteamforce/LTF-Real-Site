@@ -1,16 +1,17 @@
 /* ============================================================
-   3D: sitenin gerçekçi üç boyutlu dokunuşları
-   1) Ana Sayfa: başlığın yanında gerçek zamanlı 3D LTF madalyonu (Three.js, metal yüzey ve yansımalar).
-      Parmakla / fareyle çevrilir, bırakınca yavaşça döner. Ekranda değilken çizim durur.
-   2) Hikâyeler: kapaklar kalınlığı, sayfa kenarı ve sırtı olan 3D kitaplar. İmlece / parmağa göre eğilir,
-      ışık yansıması kayar. Kitaba dokununca kapak açılarak okuyucuya geçilir.
+   3D: sitenin hareketli üç boyutlu dokunuşları
+   1) Hikâyeler: kapaklar kalınlığı, sayfa kenarı ve sırtı olan 3D kitaplar; imlece göre eğilir, ışık kayar.
+      Kitaba dokununca kapak açılarak okuyucuya geçilir.
+   2) Öne çıkanlar: kitaplar dönen bir 3D halkada; parmakla çevrilir, bırakınca kendi kendine döner.
    3) Ana Sayfa'daki puan kartı imlece / parmağa göre eğilir, üstünde ışık parlaması gezer.
-   - "Hareketi azalt" açıksa eğilme ve dönme kapanır, madalyon sabit durur.
+   4) Ana Sayfa'nın üstünde derinlikli, süzülen altın tozu (imlece göre paralaks).
+   5) Mağaza: rozetler kendi ekseninde döner, ürünler dokununca 3D eğilir, önizleme yavaşça sallanır.
+   6) Liderlik: podyum blokları 3D, kişiler hafifçe süzülür, birincinin fotoğrafı arada bir döner.
+   - "Hareketi azalt" açıksa dönme, eğilme ve toz kapanır. Ekranda olmayan animasyonlar durur.
    - config.js bu dosyayı kendisi yükler.
    ============================================================ */
 const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 const fine = !!(window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches);
-const THREE_URL = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js';
 
 const css = document.createElement('style');
 css.textContent = `
@@ -44,12 +45,36 @@ css.textContent = `
   background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.55),rgba(255,255,255,0) 50%); }
 .pc-flip.tl.live .pc-gl{ opacity:1; }
 /* ---------- 3D madalyon ---------- */
-.x-hero{ position:relative; }
-.md3{ position:absolute; right:0; top:50%; width:84px; height:84px; transform:translateY(-50%); cursor:grab; touch-action:pan-y; }
-.md3:active{ cursor:grabbing; }
-.md3 canvas{ display:block; width:100%; height:100%; }
-.x-hero h2,.x-hero small{ padding-right:96px; }
-@media (prefers-reduced-motion:reduce){ .mg-cover.bk,.pc-flip.tl{ transition:none; } }
+/* ---------- öne çıkanlar: 3D kitap halkası ---------- */
+.mg-belt.cf-belt{ height:262px; perspective:1000px; perspective-origin:50% 40%; cursor:grab; touch-action:pan-y; position:relative; }
+.mg-belt.cf-belt:active{ cursor:grabbing; }
+.mg-track.cf{ animation:none!important; position:absolute; left:50%; top:14px; width:150px; height:225px; margin-left:-75px; padding:0; display:block; transform-style:preserve-3d; }
+.mg-track.cf .mg-cover.cf-it{ position:absolute; left:0; top:0; width:150px; transform:rotateY(var(--a)) translateZ(var(--r))!important; transition:none!important; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
+.mg-track.cf .mg-cover.cf-it .bk-pg,.mg-track.cf .mg-cover.cf-it .bk-bt{ display:none; }
+/* ---------- mağaza: dönen rozetler, eğilen ürünler ---------- */
+.mg2-art{ perspective:600px; transition:transform .45s cubic-bezier(.2,.8,.2,1); transform-style:preserve-3d; }
+.mg2-art .tk{ animation:rz3 7s cubic-bezier(.45,0,.55,1) infinite; transform-style:preserve-3d; }
+@keyframes rz3{ 0%,62%{ transform:rotateY(0deg) } 82%{ transform:rotateY(360deg) translateZ(8px) } 100%{ transform:rotateY(360deg) } }
+.mg2-it:nth-child(2) .tk{ animation-delay:-2.3s } .mg2-it:nth-child(3) .tk{ animation-delay:-4.6s }
+.mg2-it:hover .mg2-art,.mg2-it:focus-visible .mg2-art{ transform:rotateY(-14deg) rotateX(8deg) translateZ(10px); }
+.mg2-it:active .mg2-art{ transform:rotateY(-6deg) rotateX(4deg) scale(.96); }
+.mg2-pv{ perspective:900px; } .mg2-pv > *{ animation:pv3 6s ease-in-out infinite alternate; }
+@keyframes pv3{ from{ transform:rotateY(-12deg) rotateX(6deg) } to{ transform:rotateY(12deg) rotateX(-4deg) } }
+/* ---------- liderlik: 3D podyum blokları ---------- */
+.lb-podium.p3d{ perspective:700px; }
+.lb-podium.p3d .lb-pil{ position:relative; border-radius:2px; overflow:visible; box-shadow:inset 0 -18px 24px -12px rgba(0,0,0,.45); }
+.lb-podium.p3d .lb-pil::before{ content:""; position:absolute; left:4px; right:-8px; top:-9px; height:9px; background:linear-gradient(90deg,var(--c),rgba(255,255,255,.55)); opacity:.75; transform:skewX(-42deg); transform-origin:bottom; border-radius:2px 2px 0 0; }
+.lb-podium.p3d .lb-pil::after{ content:""; position:absolute; top:-5px; right:-9px; bottom:0; width:9px; background:linear-gradient(180deg,var(--cs),rgba(0,0,0,.5)); transform:skewY(-48deg); transform-origin:left; }
+.lb-podium.p3d .lb-av{ animation:bob3 3.2s ease-in-out infinite alternate; }
+.lb-podium.p3d .lb-pod.p1 .lb-av{ animation:bob3 3.2s ease-in-out infinite alternate,spin3 9s cubic-bezier(.45,0,.55,1) 1s infinite; }
+.lb-podium.p3d .lb-pod.p2 .lb-av{ animation-delay:-1.1s } .lb-podium.p3d .lb-pod.p3 .lb-av{ animation-delay:-2.2s }
+@keyframes bob3{ from{ translate:0 0 } to{ translate:0 -6px } }
+@keyframes spin3{ 0%,80%{ transform:rotateY(0) } 100%{ transform:rotateY(360deg) } }
+/* ---------- ana sayfa: altın tozu ---------- */
+#v-ana-sayfa{ position:relative; }
+#v-ana-sayfa > .dust3{ position:absolute; left:-16px; right:-16px; top:-10px; width:calc(100% + 32px); height:460px; pointer-events:none; z-index:0; -webkit-mask-image:linear-gradient(180deg,#000 60%,transparent); mask-image:linear-gradient(180deg,#000 60%,transparent); }
+#v-ana-sayfa > :not(.dust3){ position:relative; z-index:1; }
+@media (prefers-reduced-motion:reduce){ .mg-cover.bk,.pc-flip.tl{ transition:none; } .mg2-art .tk,.mg2-pv > *,.lb-podium.p3d .lb-av{ animation:none!important; } }
 `;
 document.head.appendChild(css);
 
@@ -113,79 +138,71 @@ function tiltCard(flip) {
   flip.addEventListener('pointerleave', reset); flip.addEventListener('pointercancel', reset); flip.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') reset(); });
 }
 
-/* ============ 2) 3D MADALYON (Three.js) ============ */
-async function medallion(host) {
-  if (host.querySelector('.md3')) return;
-  const wrap = document.createElement('div'); wrap.className = 'md3'; wrap.setAttribute('role', 'img'); wrap.setAttribute('aria-label', 'Döndürülebilir 3D LTF madalyonu');
-  host.appendChild(wrap);
-  let THREE;
-  try { THREE = await import(THREE_URL); } catch (_) { wrap.remove(); return; }
-  const size = 84, dpr = Math.min(devicePixelRatio || 1, 2);
-  let renderer;
-  try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' }); } catch (_) { wrap.remove(); return; }
-  renderer.setPixelRatio(dpr); renderer.setSize(size, size, false);
-  renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
-  wrap.appendChild(renderer.domElement);
-
-  const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(32, 1, .1, 20); cam.position.set(0, 0, 4.4);
-  // yansıma ortamı: stüdyo ışıklandırması (koyu oda + parlak paneller)
-  const env = new THREE.Scene(), box = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), new THREE.MeshBasicMaterial({ color: 0x15151a, side: THREE.BackSide }));
-  env.add(box);
-  [[0, 4.6, 0, 6, .2, 3, 6], [-4.6, 1, 1, .2, 3, 4, 3], [4.6, -.5, -1, .2, 2.5, 3, 2.2], [0, -1, 4.6, 3, 2, .2, 1.2]].forEach(([x, y, z, sx, sy, sz, I]) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), new THREE.MeshBasicMaterial({ color: new THREE.Color(I, I, I) })); m.position.set(x, y, z); env.add(m);
-  });
-  const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(env, .04).texture; pm.dispose();
-  const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(2, 3, 4); scene.add(key);
-
-  // yüz dokusu: koyu mine üstünde arma + yazı
-  const face = document.createElement('canvas'); face.width = face.height = 512; const f = face.getContext('2d');
-  const g = f.createRadialGradient(256, 220, 40, 256, 256, 256); g.addColorStop(0, '#2b2b33'); g.addColorStop(1, '#09090c');
-  f.fillStyle = g; f.fillRect(0, 0, 512, 512);
-  f.strokeStyle = '#c9a24a'; f.lineWidth = 10; f.beginPath(); f.arc(256, 256, 236, 0, Math.PI * 2); f.stroke();
-  f.lineWidth = 3; f.beginPath(); f.arc(256, 256, 214, 0, Math.PI * 2); f.stroke();
-  f.fillStyle = '#e6c77a'; f.font = '700 30px Georgia,serif'; f.textAlign = 'center'; f.textBaseline = 'middle';
-  const txt = '· LOYAL ELITE FORCE · LTF ', step = (Math.PI * 2) / (txt.length * 1.55);
-  for (let i = 0; i < txt.length * 1.55; i++) { const ch = txt[i % txt.length], a = -Math.PI / 2 + i * step; f.save(); f.translate(256 + Math.cos(a) * 192, 256 + Math.sin(a) * 192); f.rotate(a + Math.PI / 2); f.fillText(ch, 0, 0); f.restore(); }
-  const tex = new THREE.CanvasTexture(face); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-  const crest = new Image(); crest.src = 'crest.webp';
-  crest.onload = () => { f.drawImage(crest, 256 - 120, 256 - 120, 240, 240); tex.needsUpdate = true; };
-
-  const gold = new THREE.MeshStandardMaterial({ color: 0xd9b04f, metalness: 1, roughness: .28 });
-  const faceM = new THREE.MeshStandardMaterial({ map: tex, metalness: .55, roughness: .38 });
-  const coin = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, .16, 96, 1), [gold, faceM, faceM]);
-  body.rotation.x = Math.PI / 2; coin.add(body);
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(1, .06, 18, 96), gold); coin.add(rim);
-  // kenar tırtılları
-  const ridge = new THREE.Mesh(new THREE.BoxGeometry(.018, .05, .17), gold);
-  const ridges = new THREE.InstancedMesh(ridge.geometry, gold, 120), M = new THREE.Matrix4();
-  for (let i = 0; i < 120; i++) { const a = i / 120 * Math.PI * 2; M.makeRotationZ(a); M.setPosition(Math.cos(a) * 1.055, Math.sin(a) * 1.055, 0); ridges.setMatrixAt(i, M); }
-  coin.add(ridges); scene.add(coin);
-  coin.rotation.x = .18;
-
-  let vel = reduce ? 0 : .012, rot = -.5, drag = false, lastX = 0, visible = true, raf = 0;
-  const draw = () => { coin.rotation.y = rot; renderer.render(scene, cam); };
+/* ============ 2) ÖNE ÇIKANLAR: DÖNEN 3D KİTAP HALKASI ============ */
+function coverFlow(track) {
+  if (track.dataset.cf) return;
+  const items = [...track.querySelectorAll('.mg-cover')].filter(c => c.getAttribute('aria-hidden') !== 'true');
+  if (items.length < 5) return;
+  track.dataset.cf = '1';
+  track.querySelectorAll('.mg-cover[aria-hidden="true"]').forEach(c => c.remove());
+  const belt = track.parentElement; belt.classList.add('cf-belt'); track.classList.add('cf');
+  const n = items.length, R = Math.round(75 / Math.tan(Math.PI / n)) + 24;
+  items.forEach((c, i) => { c.style.setProperty('--a', (i * 360 / n) + 'deg'); c.classList.add('cf-it'); });
+  track.style.setProperty('--r', R + 'px');
+  let ang = 0, vel = 0, drag = false, lastX = 0, moved = 0, raf = 0, visible = true;
+  const AUTO = reduce ? 0 : -.09;
+  const draw = () => { track.style.transform = 'translateZ(' + (-R) + 'px) rotateY(' + ang.toFixed(2) + 'deg)'; };
   const loop = () => {
     raf = 0; if (!visible || document.hidden) return;
-    if (!drag) { vel += ((reduce ? 0 : .012) - vel) * .02; rot += vel; }
-    draw(); raf = requestAnimationFrame(loop);
+    if (!drag) { vel += (AUTO - vel) * .03; ang += vel; }
+    draw(); if (AUTO || Math.abs(vel) > .01 || drag) raf = requestAnimationFrame(loop);
   };
   const start = () => { if (!raf) raf = requestAnimationFrame(loop); };
-  wrap.addEventListener('pointerdown', e => { drag = true; lastX = e.clientX; wrap.setPointerCapture(e.pointerId); start(); });
-  wrap.addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - lastX; lastX = e.clientX; rot += dx * .02; vel = dx * .02; draw(); });
-  const up = () => { drag = false; start(); };
-  wrap.addEventListener('pointerup', up); wrap.addEventListener('pointercancel', up);
-  if (window.IntersectionObserver) new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) start(); }).observe(wrap);
+  belt.addEventListener('pointerdown', e => { drag = true; moved = 0; lastX = e.clientX; start(); });
+  window.addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - lastX; lastX = e.clientX; moved += Math.abs(dx); ang += dx * .3; vel = dx * .3; draw(); }, { passive: true });
+  window.addEventListener('pointerup', () => { if (drag) { drag = false; start(); } });
+  // sürükleme sonrası gelen tıklama kitabı açmasın (window yakalaması, belgedeki kitap-açma dinleyicisinden önce çalışır)
+  window.addEventListener('click', e => { if (moved > 8 && belt.contains(e.target)) { moved = 0; e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+  if (window.IntersectionObserver) new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) start(); }).observe(belt);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) start(); });
-  draw(); if (!reduce) start();
+  draw(); start();
 }
 
+/* ============ 4) ANA SAYFA: DERİNLİKLİ ALTIN TOZU ============ */
+function dust(hero) {
+  const home = document.getElementById('v-ana-sayfa');
+  if (!home || home.querySelector('.dust3') || reduce) return;
+  const c = document.createElement('canvas'); c.className = 'dust3'; c.setAttribute('aria-hidden', 'true'); home.prepend(c);
+  const x = c.getContext('2d'); let W = 0, H = 0, dpr = Math.min(devicePixelRatio || 1, 2), mx = 0, my = 0, tx = 0, ty = 0, raf = 0, visible = true;
+  const P = Array.from({ length: 70 }, () => ({ x: Math.random() * 2 - 1, y: Math.random() * 2 - 1, z: .2 + Math.random() * .8, s: .4 + Math.random() * 1.2, v: .0006 + Math.random() * .0012, ph: Math.random() * 6.28 }));
+  const size = () => { W = c.clientWidth; H = c.clientHeight; c.width = W * dpr; c.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0); };
+  window.addEventListener('pointermove', e => { tx = (e.clientX / innerWidth - .5) * 2; ty = (e.clientY / innerHeight - .5) * 2; }, { passive: true });
+  const frame = t => {
+    raf = 0; if (!visible || document.hidden) return;
+    mx += (tx - mx) * .04; my += (ty - my) * .04;
+    x.clearRect(0, 0, W, H);
+    for (const p of P) {
+      p.y -= p.v; if (p.y < -1.1) { p.y = 1.1; p.x = Math.random() * 2 - 1; }
+      const k = 1 / p.z, px = W / 2 + (p.x + mx * .12 * k) * W * .55 * Math.min(k, 2.2) * .5, py = H / 2 + (p.y + my * .12 * k) * H * .5;
+      const tw = .55 + .45 * Math.sin(t / 700 + p.ph), r = p.s * k * .9, a = Math.min(1, .15 + (1 - p.z) * .8) * tw;
+      const g = x.createRadialGradient(px, py, 0, px, py, r * 3); g.addColorStop(0, 'rgba(255,226,150,' + a + ')'); g.addColorStop(1, 'rgba(255,226,150,0)');
+      x.fillStyle = g; x.beginPath(); x.arc(px, py, r * 3, 0, 6.2832); x.fill();
+    }
+    raf = requestAnimationFrame(frame);
+  };
+  if (window.ResizeObserver) new ResizeObserver(size).observe(c); size();
+  if (window.IntersectionObserver) new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !raf) raf = requestAnimationFrame(frame); }).observe(c);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && !raf) raf = requestAnimationFrame(frame); });
+  raf = requestAnimationFrame(frame);
+}
 /* ============ başlat ============ */
 function scan() {
   const grid = document.getElementById('mgGrid'), track = document.getElementById('mgTrack');
   if (grid) bookify(grid); if (track) bookify(track);
   const flip = document.querySelector('.pc-flip'); if (flip) tiltCard(flip);
-  const hero = document.querySelector('#v-ana-sayfa .x-hero'); if (hero) medallion(hero);
+  if (track) coverFlow(track);
+  document.querySelectorAll('.lb-podium:not(.p3d)').forEach(p => p.classList.add('p3d'));
+  const hero = document.querySelector('#v-ana-sayfa .x-hero'); if (hero) dust(hero);
 }
 scan(); tiltBooks(); openAnim();
-new MutationObserver(scan).observe(document.getElementById('app') || document.body, { childList: true, subtree: true });
+new MutationObserver(scan).observe(document.body, { childList: true, subtree: true });
