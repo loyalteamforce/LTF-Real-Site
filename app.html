@@ -310,8 +310,8 @@ body:has(#v-profil.on) #pfBg.on{ opacity:1; }
 /* ---- Mobil: banner ekranın en üstünde, kenardan kenara (boyu aynı: 2.2/1); ambilight sayfanın üstüne yayılır ---- */
 @media (max-width:600px){
   .pf-bwrap{ margin:calc(-24px - env(safe-area-inset-top,0px)) -16px 0; }
-  #pfSk .a{ width:calc(100% + 32px); margin:calc(-24px - env(safe-area-inset-top,0px)) -16px 0; border-radius:0; }
-  .pf-banner{ aspect-ratio:2.2/1; border-radius:0; border:none !important; }
+  #pfSk .a{ width:calc(100% + 32px); margin:calc(-24px - env(safe-area-inset-top,0px)) -16px 0; border-radius:16px; }
+  .pf-banner{ aspect-ratio:2.2/1; border-radius:16px; border:none !important; }
   .pf-banner.has{ border:none; }
   /* ambilight: banner'ın renkleri sayfanın üst kısmına, profil fotoğrafının ve adın arkasına yayılır */
   .pf-glow{ inset:-10% -20% -120%; border-radius:0; transform:none; filter:blur(56px) saturate(1.9) brightness(1.15); }
